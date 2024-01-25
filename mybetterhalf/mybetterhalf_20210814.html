@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>给我的老婆大人</title>
+    <link type="text/css" rel="stylesheet" href="/js/renxi/default.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+    <script type="text/javascript" src="/js/renxi/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-parser.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-jit.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-builderbase.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async-powerpack.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/functions.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/renxi/love.js" charset="utf-8"></script>
+    <script src="/js/renxi/riqi.js"></script>
+</head>
+
+<body background="#FFE">
+    <audio id="audio">
+        <source src="/resource/jiandanai.m4a" type="audio/mpeg" />
+    </audio>
+    <div id="main">
+        <div id="error">本页面采用HTML5编辑，目前您的浏览器无法显示，请换成谷歌(Chrome)或者火狐(Firefox)浏览器，或者其他游览器的最新版本。</div>
+        <div id="wrap">
+            <div id="text" style="display:block;">
+                <div id="code">
+                    <font color="#4682B4">
+                        <span class="say"> 第一个没能在一起的七夕，也是时隔将近两个月再次捡起这个博客，更是十六天没见对你止不住的思念。</span><br>
+						<span class="say"> 整个七月，我们白天奔波于自己的事，晚上在老地方碰头，一起吃饭，一起学习，再一起回家。这总能让我有种不同的感受，可能是想到了以后我们工作了的样子，忙碌而又幸福。</span><br>
+						<span class="say"> 匆匆把你送走的感觉就像是把自己的家人送到安全区，因为送你离开是对你最安全的选择，虽然这意味着分离。
+						<span class="say"> 独自一人在宿舍的晚上总会有种不真实感，你会突然出现在我的宿舍么？或者我们一会会见面么？几个月的朝夕相处让我对你有了更深的依恋。</span><br>
+						<span class="say"> 严苛的封校，反复的疫情不停考验着我们的内心，也不停考验着我们一路坎坷走来的感情。</span><br>
+						<span class="say"> 但是相信，我们都深爱彼此，都能够把后背交给深爱的对方。</span><br>
+						<span class="say"> 毕竟，只有一半的天空是不完整的，我们两个合在一起才是最完美最幸福的。</span><br>
+						<span class="say"> </span><br>
+                        <span class="say" style="float:right;"> 永远爱你的另外半边天</span><br>
+                        </p>
+                </div>
+            </div>
+            <br>
+            <div id="clock-box"> <span class="STYLE1"></span>
+                <font color="#EEB4B4">亲爱的老婆大人，我们在一起</font> <span class="STYLE1">已经是……</span>
+                <div id="clock"></div>
+            </div>
+            <canvas id="canvas" width="1100" height="680"></canvas>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+
+            var textAnimate = eval(Jscex.compile("async", function () {
+                var together = new Date();
+                together.setFullYear(2020, 1, 11);
+                together.setHours(22);
+                together.setMinutes(32);
+                together.setSeconds(0);
+                together.setMilliseconds(0);
+
+                $("#code").show().typewriter();
+                $("#clock-box").fadeIn(500);
+                while (true) {
+                    timeElapse(together);
+                    $await(Jscex.Async.sleep(1000));
+                }
+            }));
+
+            var runAsync = eval(Jscex.compile("async", function () {
+                textAnimate().start();
+            }));
+
+            runAsync().start();
+        })();
+    </script>
+</body>
+
+</html>

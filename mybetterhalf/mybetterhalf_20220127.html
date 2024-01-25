@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>给我的老婆大人</title>
+    <link type="text/css" rel="stylesheet" href="/js/renxi/default.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+    <script type="text/javascript" src="/js/renxi/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-parser.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-jit.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-builderbase.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async-powerpack.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/functions.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/renxi/love.js" charset="utf-8"></script>
+    <script src="/js/renxi/riqi.js"></script>
+</head>
+
+<body background="#FFE">
+    <audio id="audio">
+        <source src="/resource/jiandanai.m4a" type="audio/mpeg" />
+    </audio>
+    <div id="main">
+        <div id="error">本页面采用HTML5编辑，目前您的浏览器无法显示，请换成谷歌(Chrome)或者火狐(Firefox)浏览器，或者其他游览器的最新版本。</div>
+        <div id="wrap">
+            <div id="text" style="display:block;">
+                <div id="code">
+                    <font color="#4682B4">
+						<span class="say"> 可能因为之前都在一起，只有最近几天处于异地吧，总是不能集中精力做事情，在没有和你聊天的时间里总是会想起你。</span><br>
+						<span class="say"> 想到你甚至会心跳，仿佛又回到了我们刚在一起的时候，我感受到了那种悸动和心动，也总会有种别样的情绪，想向你表达我的爱意，想让你知道我有多爱你，有多想你。</span><br>
+						<span class="say"> 最近听你说了一些你以前的事情，我想，我缺席了你之前的人生，这是让我时时感到遗憾甚至嫉妒的事情，我嫉妒那个陪你度过最无忧无虑大学时光的人，他见证了你最无忧无虑的时光。</span><br>
+						<span class="say"> 但是幸好上天让我们在最合适的时候相识相知相恋相依，并让彼此成为生命中最重要的一部分，</span><br>
+						<span class="say"> 希望你以后的日子里每一天都有我，希望我是你今后人生路上最值得信赖的伴侣，希望你能在我的陪伴下做最幸福的小公主</span><br>
+                        <span class="say" style="float:right;"> 永远爱你的另外半边天</span><br>
+                        </p>
+                </div>
+            </div>
+            <br>
+            <div id="clock-box"> <span class="STYLE1"></span>
+                <font color="#EEB4B4">亲爱的老婆大人，我们在一起</font> <span class="STYLE1">已经是……</span>
+                <div id="clock"></div>
+            </div>
+            <canvas id="canvas" width="1100" height="680"></canvas>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+
+            var textAnimate = eval(Jscex.compile("async", function () {
+                var together = new Date();
+                together.setFullYear(2020, 1, 11);
+                together.setHours(22);
+                together.setMinutes(32);
+                together.setSeconds(0);
+                together.setMilliseconds(0);
+
+                $("#code").show().typewriter();
+                $("#clock-box").fadeIn(500);
+                while (true) {
+                    timeElapse(together);
+                    $await(Jscex.Async.sleep(1000));
+                }
+            }));
+
+            var runAsync = eval(Jscex.compile("async", function () {
+                textAnimate().start();
+            }));
+
+            runAsync().start();
+        })();
+    </script>
+</body>
+
+</html>

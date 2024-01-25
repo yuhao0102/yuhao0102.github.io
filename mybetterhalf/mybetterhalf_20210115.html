@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-122717978-3"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-122717978-3');
+    </script>
+    <meta charset="UTF-8">
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="/js/caihong/materialize/css/materialize.min.css"  media="screen,projection"/>
+    <title>我来使劲地夸你</title>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="/css/caihong/index.css">
+</head>
+
+<body style="">
+<div class="pageContainer ">
+
+        <div class="contentArea">
+            <div class="card-panel nameSection surface" id="card">
+                <h4>彩虹屁生成器</h4>
+                <div class="input-field">
+                    <input id="name" type="text" placeholder="Ta的名字"/>
+                    <label for="name"></label>
+                </div>
+                <div class="button green z-depth-1" onclick="buttonClick()">
+                    生成!
+                </div> 
+            </div>
+            <div id="contentContainer" class="card-panel content surface hide">
+                <div id="content"></div>
+                <div class="button z-depth-1 green nameSection" onclick="buttonClick()">重新生成</div>
+                <div class="button z-depth-1 blue nameSection" id="copy" data-clipboard-target="#content">复制生成的彩虹屁</div>
+            </div>
+        </div>
+</div>
+
+
+
+<!--JavaScript at end of body for optimized loading-->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script type="text/javascript" src="/js/caihong/materialize/js/materialize.min.js"></script>
+<script src="/js/caihong/clipboard.min.js"></script>
+<script src="/js/caihong/jquery.js"></script>
+<script src="/js/caihong/vue.js"></script>
+<script src="/js/caihong/caihongpi.js"></script>
+<script src="/js/caihong/qinghua.js"></script>
+<script src="/js/caihong/JHCOMMONLIB.js"></script>
+<script src="/js/caihong/index.js"></script>
+</body>
+</html>

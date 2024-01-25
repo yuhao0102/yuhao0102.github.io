@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>给我的老婆大人</title>
+    <link type="text/css" rel="stylesheet" href="/js/renxi/default.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+    <script type="text/javascript" src="/js/renxi/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-parser.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-jit.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-builderbase.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async-powerpack.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/functions.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/renxi/love.js" charset="utf-8"></script>
+    <script src="/js/renxi/riqi.js"></script>
+</head>
+
+<body background="#FFE">
+    <audio id="audio">
+        <source src="/resource/jiandanai.m4a" type="audio/mpeg" />
+    </audio>
+    <div id="main">
+        <div id="error">本页面采用HTML5编辑，目前您的浏览器无法显示，请换成谷歌(Chrome)或者火狐(Firefox)浏览器，或者其他游览器的最新版本。</div>
+        <div id="wrap">
+            <div id="text" style="display:block;">
+                <div id="code">
+                    <font color="#4682B4">
+						<span class="say"> 正好准备面试烦了，来写一些东西吧。</span><br>
+						<span class="say"> 最近其实争吵的蛮多的，也比较凶，甚至负伤了。有就业、求学、疫情等等乱七八糟的事，把我们的生活搞得一团糟。</span><br>
+						<span class="say"> 你说是我们没有把感情放到重要的位置，我想告诉你不是的，我把你放到很重要的位置，放到了我的心里。</span><br>
+						<span class="say"> 看到你在认真地拍照时，或者看到你发的某一条消息时，心好像抽了一下，这是我理想中爱人的样子。</span><br>
+						<span class="say"> 虽然我们有过争吵，但是俗话说：破屋撑塌，争吵之后我们总能相拥在一起，倾吐我们心中的不快。</span><br>
+						<span class="say"> 每当这个时候我也会重新看着你的眼睛，你的眼睛还是那么迷人，让人心动。</span><br>
+						<span class="say"> 或许激烈争吵后的重归于好更让人懂得珍惜这段感情吧，水与火并存的感情也更让人留恋。</span><br>
+						<span class="say"> </span><br>
+                        <span class="say" style="float:right;"> 每天想你的另外半边天</span><br>
+                        </p>
+                </div>
+            </div>
+            <br>
+            <div id="clock-box"> <span class="STYLE1"></span>
+                <font color="#EEB4B4">亲爱的老婆大人，我们在一起</font> <span class="STYLE1">已经是……</span>
+                <div id="clock"></div>
+            </div>
+            <canvas id="canvas" width="1100" height="680"></canvas>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+
+            var textAnimate = eval(Jscex.compile("async", function () {
+                var together = new Date();
+                together.setFullYear(2020, 1, 11);
+                together.setHours(22);
+                together.setMinutes(32);
+                together.setSeconds(0);
+                together.setMilliseconds(0);
+
+                $("#code").show().typewriter();
+                $("#clock-box").fadeIn(500);
+                while (true) {
+                    timeElapse(together);
+                    $await(Jscex.Async.sleep(1000));
+                }
+            }));
+
+            var runAsync = eval(Jscex.compile("async", function () {
+                textAnimate().start();
+            }));
+
+            runAsync().start();
+        })();
+    </script>
+</body>
+
+</html>

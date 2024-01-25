@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>给我的老婆大人</title>
+    <link type="text/css" rel="stylesheet" href="/js/renxi/default.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+    <script type="text/javascript" src="/js/renxi/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-parser.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-jit.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-builderbase.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async-powerpack.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/functions.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/renxi/love.js" charset="utf-8"></script>
+    <script src="/js/renxi/riqi.js"></script>
+</head>
+
+<body background="#FFE">
+    <audio id="audio">
+        <source src="/resource/jiandanai.m4a" type="audio/mpeg" />
+    </audio>
+    <div id="main">
+        <div id="error">本页面采用HTML5编辑，目前您的浏览器无法显示，请换成谷歌(Chrome)或者火狐(Firefox)浏览器，或者其他游览器的最新版本。</div>
+        <div id="wrap">
+            <div id="text" style="display:block;">
+                <div id="code">
+                    <font color="#4682B4">
+                        <span class="say"> 纪念我们在一起之后的我第一个生日。这应该是我出生以来最好最幸福的一个生日了。之前都是我自己过，或者跟父母过，说不上平平无奇，但也没什么波澜。</span><br>
+                        <span class="say"> 但是跟你在一起之后，就大不一样了，我很期待你会给我什么样的惊喜，收到你为我挑的衣服我已经超级超级开心，这算是第一份真正意义上的生日礼物。</span><br>
+                        <span class="say"> 昨天晚上你又提到要给我一份大礼，我的心就砰砰直跳，心想小乖乖又要给我什么惊喜呢。看到你给我画的画，我想，这也太像了吧！真的是太惊喜了！这也是我一直想要的礼物。</span><br>
+                        <span class="say"> 非常感谢你，我最爱的小姑娘，你给了我一个独一无二最珍贵的生日，你也是上天给我最珍贵的礼物，让我视若珍宝并下定决心认真守护。</span><br>
+                        <span class="say"> 很感动你为我准备的这些，不管是生日礼物还是一双拖鞋；不管是准时的朋友圈还是我一睁开眼睛就看到的祝福。</span><br>
+                        <span class="say"> 跟你视频的时候忍不住鼻头一酸，痴痴地看着你对我笑，心想，我何德何能遇到这么好的你，和你生活在一起，和你共同经历风雨，并能和你共度余生。</span><br>
+                        <span class="say"> 感谢你，我最爱的小姑娘，我未来的人生伴侣。</span><br>
+                        <span class="say"> 我全身心地爱你。</span><br>
+                        <span class="say" style="float:right;"> 臭狗子</span><br>
+                        </p>
+                </div>
+            </div>
+			<img src="/img/68fd661118020ad73c55ddb1d80f522.jpg" height="750" style="float:right;" width="500">
+			<br>
+            <div id="clock-box"> <span class="STYLE1"></span>
+                <font color="#EEB4B4">亲爱的老婆大人，我们在一起</font> <span class="STYLE1">已经是……</span>
+                <div id="clock"></div>
+            </div>
+            <canvas id="canvas" width="1100" height="680"></canvas>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+
+            var textAnimate = eval(Jscex.compile("async", function () {
+                var together = new Date();
+                together.setFullYear(2020, 1, 11);
+                together.setHours(22);
+                together.setMinutes(32);
+                together.setSeconds(0);
+                together.setMilliseconds(0);
+
+                $("#code").show().typewriter();
+                $("#clock-box").fadeIn(500);
+                while (true) {
+                    timeElapse(together);
+                    $await(Jscex.Async.sleep(1000));
+                }
+            }));
+
+            var runAsync = eval(Jscex.compile("async", function () {
+                textAnimate().start();
+            }));
+
+            runAsync().start();
+        })();
+    </script>
+</body>
+
+</html>

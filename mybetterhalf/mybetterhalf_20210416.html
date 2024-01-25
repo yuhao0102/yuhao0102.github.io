@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>给我的老婆大人</title>
+    <link type="text/css" rel="stylesheet" href="/js/renxi/default.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+    <script type="text/javascript" src="/js/renxi/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-parser.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-jit.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-builderbase.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async-powerpack.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/functions.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/renxi/love.js" charset="utf-8"></script>
+    <script src="/js/renxi/riqi.js"></script>
+</head>
+
+<body background="#FFE">
+    <audio id="audio">
+        <source src="/resource/jiandanai.m4a" type="audio/mpeg" />
+    </audio>
+    <div id="main">
+        <div id="error">本页面采用HTML5编辑，目前您的浏览器无法显示，请换成谷歌(Chrome)或者火狐(Firefox)浏览器，或者其他游览器的最新版本。</div>
+        <div id="wrap">
+            <div id="text" style="display:block;">
+                <div id="code">
+                    <font color="#4682B4">
+                        <span class="say"> 每个人的心里都有一团火，路过的人只看到烟，但是总有一个人，总有那么一个人能看到这火，然后走过来，陪我一起。</span><br>
+                        <span class="say"> 我们就是最契合的一对，我能听到你心底的声音，你也能触摸到我心底最柔软的部分，我在你身边才能坦露出真实的我。</span><br>
+                        <span class="say"> </span><br>
+                        <span class="say"> 最近很神奇，我出差开会紧接着你回家，可能是我们呆在一起太久了，熟悉了彼此的存在，也让我忘记了当初对我们团圆的欣喜和期待，只有当真正暂时分开的时候，我对你的依恋和依赖才会真正浮出水面。</span><br>
+                        <span class="say"> 自以为可以用依赖这个词来形容我对你的感情，更直接的例子是周四一整天我们都呆在一起，恍惚间让我有了我们我们已经在一起很久的感觉。</span><br>
+                        <span class="say"> 好叭，已经被你俘虏了，你说怎么办呢，就算你脾气大也想一直跟你在一起。</span><br>
+                        <span class="say"> </span><br>
+                        <span class="say"> 我全身心地爱着你。</span><br>
+                        <span class="say" style="float:right;"> 臭狗子</span><br>
+                        </p>
+                </div>
+            </div>
+            <br>
+            <div id="clock-box"> <span class="STYLE1"></span>
+                <font color="#EEB4B4">亲爱的老婆大人，我们在一起</font> <span class="STYLE1">已经是……</span>
+                <div id="clock"></div>
+            </div>
+            <canvas id="canvas" width="1100" height="680"></canvas>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+
+            var textAnimate = eval(Jscex.compile("async", function () {
+                var together = new Date();
+                together.setFullYear(2020, 1, 11);
+                together.setHours(22);
+                together.setMinutes(32);
+                together.setSeconds(0);
+                together.setMilliseconds(0);
+
+                $("#code").show().typewriter();
+                $("#clock-box").fadeIn(500);
+                while (true) {
+                    timeElapse(together);
+                    $await(Jscex.Async.sleep(1000));
+                }
+            }));
+
+            var runAsync = eval(Jscex.compile("async", function () {
+                textAnimate().start();
+            }));
+
+            runAsync().start();
+        })();
+    </script>
+</body>
+
+</html>

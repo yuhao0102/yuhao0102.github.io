@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>给我的老婆大人</title>
+    <link type="text/css" rel="stylesheet" href="/js/renxi/default.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+    <script type="text/javascript" src="/js/renxi/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-parser.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-jit.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-builderbase.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async-powerpack.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/functions.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/renxi/love.js" charset="utf-8"></script>
+    <script src="/js/renxi/riqi.js"></script>
+</head>
+
+<body background="#FFE">
+    <audio id="audio">
+        <source src="/resource/jiandanai.m4a" type="audio/mpeg" />
+    </audio>
+    <div id="main">
+        <div id="error">本页面采用HTML5编辑，目前您的浏览器无法显示，请换成谷歌(Chrome)或者火狐(Firefox)浏览器，或者其他游览器的最新版本。</div>
+        <div id="wrap">
+            <div id="text" style="display:block;">
+                <div id="code" style="display: block; font-size: 14px">
+                    <font color="#4682B4">
+						<span class="say"> 在遇到你之前我的生活里好像只有老板和一串串代码，生活好像是一片平静的湖水，毫无波澜。我以为以后生活可能也会是这样，等到三十多岁通过相亲找一个女朋友平静的过一辈子。但是你仿佛是一支画笔，让我的生活有了缤纷的色彩。</span><br>                      
+						<span class="say"> 其实刚遇到你的时候，我有些慌张，有些受宠若惊，害怕不能担得起你的好意和超喜欢。但是初见时的冲动和勇气让我也坚定地选择了喜欢。我们慢慢了解，慢慢熟悉，让我越来越有和你在一起的冲动，终于，我鼓足了勇气，小心翼翼的问你能不能接受我，我不是一个冲动的人，但是那一次我做出了人生中可能是最冲动也最正确的决定，向你表明了我的心意，幸好，你答应了。认识你之前，我没有想到我会那么喜欢一个人，会有如此强烈的心动和心疼，我遇到的人会那么善良，那么体贴。这个姑娘我可能错过之后就再也遇不到，再也体会不到那么纯粹的心动了。</span><br>                                             <span class="say"> 在我们在一起的三年里，我们在一起从头到尾经历了疫情，这段感情经过了疫情的重重考验，从最开始的相隔两地，到天津济南的短暂相会，到被迫远赴青岛，到相隔铁窗，再到一起封在家里。中间有过焦虑，崩溃，有过绝望，迷茫，但是没有变过的是我们坚持在一起的信心和我们的真心。</span><br>                      
+                        <span class="say"> 在疫情过去了，我们总算等到了柳暗花明的时刻。我仿佛已经按捺不住内心的爱意，想要像上一次一样，冲动，忐忑又有着坚定地做一次决定：</span><br>
+						<span class="say"> 你，愿意嫁给我吗？</span><br>
+                        <span class="say" style="float:right;"> 会从1000天后一直爱你的另外半边天</span><br>
+                        </p>
+                </div>
+            </div>
+            <br>
+            <div id="clock-box"> <span class="STYLE1"></span>
+                <font color="#EEB4B4">亲爱的老婆大人，我们在一起</font> <span class="STYLE1">已经是……</span>
+                <div id="clock"></div>
+            </div>
+            <canvas id="canvas" width="1100" height="680"></canvas>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+
+            var textAnimate = eval(Jscex.compile("async", function () {
+                var together = new Date();
+                together.setFullYear(2020, 1, 11);
+                together.setHours(22);
+                together.setMinutes(32);
+                together.setSeconds(0);
+                together.setMilliseconds(0);
+
+                $("#code").show().typewriter();
+                $("#clock-box").fadeIn(500);
+                while (true) {
+                    timeElapse(together);
+                    $await(Jscex.Async.sleep(1000));
+                }
+            }));
+
+            var runAsync = eval(Jscex.compile("async", function () {
+                textAnimate().start();
+            }));
+
+            runAsync().start();
+        })();
+    </script>
+</body>
+
+</html>

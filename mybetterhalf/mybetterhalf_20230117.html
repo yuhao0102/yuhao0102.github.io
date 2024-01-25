@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>给我的老婆大人</title>
+    <link type="text/css" rel="stylesheet" href="/js/renxi/default.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+    <script type="text/javascript" src="/js/renxi/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-parser.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-jit.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-builderbase.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async-powerpack.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/functions.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/renxi/love.js" charset="utf-8"></script>
+    <script src="/js/renxi/riqi.js"></script>
+</head>
+
+<body background="#FFE">
+    <audio id="audio">
+        <source src="/resource/jiandanai.m4a" type="audio/mpeg" />
+    </audio>
+    <div id="main">
+        <div id="error">本页面采用HTML5编辑，目前您的浏览器无法显示，请换成谷歌(Chrome)或者火狐(Firefox)浏览器，或者其他游览器的最新版本。</div>
+        <div id="wrap">
+            <div id="text" style="display:block;">
+                <div id="code">
+                    <font color="#4682B4">
+						<span class="say"> 谢谢老婆，每次生日你都会给我很多惊喜，应了你之前说过的“跟我谈恋爱也太甜了吧”，你真是我的小甜艺啊，和你在一起真的每天都能成为最幸福的男人，每天都能品尝到你准备的甜甜心意。每次看到你精心准备的礼物都让我非常感动，也会让我再次体会到刚在一起时非常心动的感觉。特别是现在异地，让我更有一种对你深深的思念，我急切地想要见到你，更想在未来的每一天都和你在一起。</span><br>
+						<span class="say"> 我好爱你，好爱好爱你，我的心现在在剧烈地跳动，想要奔向你的方向，和你紧紧的拥抱在一起，和你的距离近一点，再近一点，直到让你感受我的心跳和对你满满的爱意，让我感受到你的温度和轻抚，感受到一个真实的你而不是屏幕后的文字。我要把这些天积攒的对你的爱和思念凝结成一个吻，落在你的额头。</span><br>
+						<span class="say"> 翻看着我的相册，看到我们的点点滴滴和你的笑靥如花，真的感觉你是上天送给我的最好的礼物，或许是上天觉得最好的总要留到最后，所以才让你姗姗来迟，不过这也让我更加庆幸和你的相遇，珍惜和你在一起的每一分每一秒，并在未来的每一天都能与你相伴相守，共度一生。</span><br>
+						<span class="say"> 时常会遗憾我没有在大学甚至更早的时候遇到你，也会嫉妒（抓心挠肝）别人能够那么早遇见你，但我知道一切都是上天最好的安排，我能够在最好的年华遇见你并和你在一起已是用尽了今生的好运气。</span><br>
+						<span class="say"> 等到我们老了，回忆起现在的点滴，应该也会相视一笑，然后轻轻地接吻吧。</span><br>
+						<span class="say"> 我无比期待那一天，和你一起。</span><br>
+						<span class="say"> </span><br>
+                        <span class="say" style="float:right;"> 会从1000天后一直爱你的另外半边天</span><br>
+                        </p>
+                </div>
+            </div>
+            <br>
+            <div id="clock-box"> <span class="STYLE1"></span>
+                <font color="#EEB4B4">亲爱的老婆大人，我们在一起</font> <span class="STYLE1">已经是……</span>
+                <div id="clock"></div>
+            </div>
+            <canvas id="canvas" width="1100" height="680"></canvas>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+
+            var textAnimate = eval(Jscex.compile("async", function () {
+                var together = new Date();
+                together.setFullYear(2020, 1, 11);
+                together.setHours(22);
+                together.setMinutes(32);
+                together.setSeconds(0);
+                together.setMilliseconds(0);
+
+                $("#code").show().typewriter();
+                $("#clock-box").fadeIn(500);
+                while (true) {
+                    timeElapse(together);
+                    $await(Jscex.Async.sleep(1000));
+                }
+            }));
+
+            var runAsync = eval(Jscex.compile("async", function () {
+                textAnimate().start();
+            }));
+
+            runAsync().start();
+        })();
+    </script>
+</body>
+
+</html>

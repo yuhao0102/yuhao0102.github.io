@@ -1,0 +1,225 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>给我亲爱的小管同学</title>
+<link type="text/css" rel="stylesheet" href="/js/renxi/default.css">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+<script type="text/javascript" src="/js/renxi/jquery.min.js"></script>
+<script type="text/javascript" src="/js/renxi/jscex.min.js"></script>
+<script type="text/javascript" src="/js/renxi/jscex-parser.js"></script>
+<script type="text/javascript" src="/js/renxi/jscex-jit.js"></script>
+<script type="text/javascript" src="/js/renxi/jscex-builderbase.min.js"></script>
+<script type="text/javascript" src="/js/renxi/jscex-async.min.js"></script>
+<script type="text/javascript" src="/js/renxi/jscex-async-powerpack.min.js"></script>
+<script type="text/javascript" src="/js/renxi/functions.js" charset="utf-8"></script>
+<script type="text/javascript" src="/js/renxi/love.js" charset="utf-8"></script>
+<script src="/js/renxi/riqi.js"></script>
+<style type="text/css">
+<!--
+.STYLE1 {
+	color: #666666
+}
+-->
+</style>
+</head>
+<body background="/img/background_manhuaxingxiang.png">
+<audio id="audio">
+  <source src="/resource/jiandanai.m4a" type="audio/mpeg" />
+</audio>
+<div id="main">
+  <div id="error">本页面采用HTML5编辑，目前您的浏览器无法显示，请换成谷歌(Chrome)或者火狐(Firefox)浏览器，或者其他游览器的最新版本。</div>
+  <div id="wrap">
+    <div id="text" style="display:block;">
+      <div id="code"> <font color="#FF0000"> 
+		<span class="say"> 好啦，把我说过的话放在这里吧，相当于一个记录，也是一个鞭策。</span><br>
+		<span class="say"> 关于我们的未来，我一直都很期待，也很坚定，我想要跟你一直在一起，并且给你一个承诺，还有一个属于我们的小家。</span><br>
+		<span class="say"> 关于领证这件事，在你出国之前领证，我们觉得可以让你更踏实，也更有安全感，不会担心距离带来的问题，我们也能有一个看得见摸得着的未来，这也是我们当时商量这件事的目的。</span><br>
+		<span class="say"> 当然啦，现在我们还是异地的状态，老婆可能会有一些不安全感，那不妨就让我用以后的行动向你证明：</span><br>
+		<span class="say"> <strong>我是真的做好了跟你共度余生的准备，而且非常坚定地期待一直跟你走下去。</strong></span><br>
+		<span class="say"> 当然，领证这件事不仅要看你的意愿，也要看叔叔阿姨对我是否认可，看这一年多的时间我能不能让他们放心地把你交给我照顾。</span><br>
+	    <span class="say"> 我也会尽力向他们证明，未来我会好好照顾你，并且尽力给你想要的生活。</span><br>
+		<span class="say"> 关于时间点的选择，如果你觉得这个时间有点早了，会让你觉得没有安全感；或者叔叔阿姨觉得我们还太小，抑或我们相处时间还短，不足以让他们真正放心地把你交给我，希望我们能够再相处一段时间，晚一点再领证的话，我当然也可以理解，毕竟是关系到你一生的大事，要确保这个人可靠并且能够承担起家庭的责任。</span><br>
+		<span class="say"> </span><br>
+		<span class="say"> 最后再说一句吧，之前跟你说过不会骗你，不会做伤害你的事，这个我一定会做到。</span><br>
+		<span class="say"> 而且，你是我认定了要一直在一起的人，我不想错过你，</span><br>
+		<span class="say"> 如果错过你，我会后悔一辈子的。</span><br>
+		<span class="say"> 我爱你。</span><br>
+		</p>
+		</div>
+    </div>
+	<br>
+	<div id="clock-box"> <span class="STYLE1"></span><font color="#33CC00">亲爱的小管同学，我们在一起</font> <span class="STYLE1">已经是……</span>
+      <div id="clock"></div>
+    </div>
+    <canvas id="canvas" width="1100" height="680"></canvas>
+</div>
+</div>
+<script>
+    (function(){
+	 	var canvas = $('#canvas');
+		
+        if (!canvas[0].getContext) {
+            $("#error").show();
+            return false;        }
+
+        var width = canvas.width();
+        var height = canvas.height();        
+        canvas.attr("width", width);
+        canvas.attr("height", height);
+        var opts = {
+            seed: {
+                x: width / 2 - 20,
+                color: "rgb(190, 26, 37)",
+                scale: 2
+            },
+            branch: [
+                [535, 680, 570, 250, 500, 200, 30, 100, [
+                    [540, 500, 455, 417, 340, 400, 13, 100, [
+                        [450, 435, 434, 430, 394, 395, 2, 40]
+                    ]],
+                    [550, 445, 600, 356, 680, 345, 12, 100, [
+                        [578, 400, 648, 409, 661, 426, 3, 80]
+                    ]],
+                    [539, 281, 537, 248, 534, 217, 3, 40],
+                    [546, 397, 413, 247, 328, 244, 9, 80, [
+                        [427, 286, 383, 253, 371, 205, 2, 40],
+                        [498, 345, 435, 315, 395, 330, 4, 60]
+                    ]],
+                    [546, 357, 608, 252, 678, 221, 6, 100, [
+                        [590, 293, 646, 277, 648, 271, 2, 80]
+                    ]]
+                ]] 
+            ],
+            bloom: {
+                num: 700,
+                width: 1080,
+                height: 650,
+            },
+            footer: {
+                width: 1200,
+                height: 5,
+                speed: 10,
+            }
+        }
+
+        var tree = new Tree(canvas[0], width, height, opts);
+        var seed = tree.seed;
+        var foot = tree.footer;
+        var hold = 1;
+
+        canvas.click(function(e) {
+        	var audio = document.getElementById('audio');
+			audio.play();
+            var offset = canvas.offset(), x, y;
+            x = e.pageX - offset.left;
+            y = e.pageY - offset.top;
+            if (seed.hover(x, y)) {
+                hold = 0; 
+                canvas.unbind("click");
+                canvas.unbind("mousemove");
+                canvas.removeClass('hand');
+            }
+			audio.src = '/resource/jiandanai.m4a';
+			audio.play();
+			var fbox = document.getElementById("wrap");
+			fbox.style.backgroundColor="#FFE";
+            var textbox = document.getElementById("text");
+            textbox.style.width="800px";
+		}).mousemove(function(e){
+            var offset = canvas.offset(), x, y;
+            x = e.pageX - offset.left;
+            y = e.pageY - offset.top;
+            canvas.toggleClass('hand', seed.hover(x, y));
+        });
+
+        var seedAnimate = eval(Jscex.compile("async", function () {
+            seed.draw();
+            while (hold) {
+                $await(Jscex.Async.sleep(10));
+            }
+            while (seed.canScale()) {
+                seed.scale(0.95);
+                $await(Jscex.Async.sleep(10));
+            }
+            while (seed.canMove()) {
+                seed.move(0, 2);
+                foot.draw();
+                $await(Jscex.Async.sleep(10));
+            }
+        }));
+
+        var growAnimate = eval(Jscex.compile("async", function () {
+            do {
+    	        tree.grow();
+                $await(Jscex.Async.sleep(10));
+            } while (tree.canGrow());
+        }));
+
+        var flowAnimate = eval(Jscex.compile("async", function () {
+            do {
+    	        tree.flower(2);
+                $await(Jscex.Async.sleep(10));
+            } while (tree.canFlower());
+        }));
+
+        var moveAnimate = eval(Jscex.compile("async", function () {
+            tree.snapshot("p1", 240, 0, 610, 680);
+            while (tree.move("p1", 500, 0)) {
+                foot.draw();
+                $await(Jscex.Async.sleep(10));
+            }
+            foot.draw();
+            tree.snapshot("p2", 500, 0, 610, 680);
+
+            canvas.parent().css("background", "url(" + tree.toDataURL('image/png') + ")");
+            canvas.css("background", "#ffe");
+            $await(Jscex.Async.sleep(300));
+            canvas.css("background", "none");
+        }));
+
+        var jumpAnimate = eval(Jscex.compile("async", function () {
+            var ctx = tree.ctx;
+            while (true) {
+                tree.ctx.clearRect(0, 0, width, height);
+                tree.jump();
+                foot.draw();
+                $await(Jscex.Async.sleep(25));
+            }
+        }));
+
+        var textAnimate = eval(Jscex.compile("async", function () {
+		    var together = new Date();
+		    together.setFullYear(2020, 1, 11);
+		    together.setHours(22);
+		    together.setMinutes(32);					
+		    together.setSeconds(0);
+		    together.setMilliseconds(0);
+
+		    $("#code").show().typewriter();
+            $("#clock-box").fadeIn(500);
+            //$("#pic").fadeIn(200);
+			while (true) {
+                timeElapse(together);
+                $await(Jscex.Async.sleep(1000));
+            }
+        }));
+
+        var runAsync = eval(Jscex.compile("async", function () {
+            $await(seedAnimate());
+            $await(growAnimate());
+            $await(flowAnimate());
+            $await(moveAnimate());
+
+            textAnimate().start();
+
+            $await(jumpAnimate());
+        }));
+
+        runAsync().start();
+    })();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>给我的老婆大人</title>
+    <link type="text/css" rel="stylesheet" href="/js/renxi/default.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+    <script type="text/javascript" src="/js/renxi/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-parser.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-jit.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-builderbase.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async-powerpack.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/functions.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/renxi/love.js" charset="utf-8"></script>
+    <script src="/js/renxi/riqi.js"></script>
+</head>
+
+<body background="#FFE">
+    <audio id="audio">
+        <source src="/resource/jiandanai.m4a" type="audio/mpeg" />
+    </audio>
+    <div id="main">
+        <div id="error">本页面采用HTML5编辑，目前您的浏览器无法显示，请换成谷歌(Chrome)或者火狐(Firefox)浏览器，或者其他游览器的最新版本。</div>
+        <div id="wrap">
+            <div id="text" style="display:block; width:auto">
+                <div id="code" style="display:block; width:auto">
+                    <font color="#4682B4">
+						<span class="say"> （为了表示歉意和叙述方便，以下用“主人”指代道歉的对方）就在腊月二十八这个即将过年的好日子，我犯了一个很严重很严重的错误。事情是这样的，我的妹妹发了一个微博，主人截图给我表达了主人对我妹妹也有这样一个包的感叹，感叹于好巧，你们的眼光是相似的。我也觉得很巧，并申请了问一下妹妹是从哪里买的。本来这是一个很好的事情，我们问好了可以少走一些弯路，但是就在问的过程中，我图省事把主人发给我的带着微博头像的图直接转发给了妹妹，这暴露了图是主人截给我的这一事实，间接把我跟我妹妹两人之间的交流，变成了三人之间的交流，并把主人推向了前台，让主人陷入了非常尴尬的境地，会让别人联想到是主人让我来问的，从侧面塑造了主人的不好的形象。</span><br>
+						
+						 <span class="say"> 然而这还不是最严重的错误，在这件事情发生后，我们进行了一些争论，由于我的脾气，在争论了一些时间之后，我没有回复任何消息就终止了交流，把主人一个人落在那里没有管她，在睡觉之前也没有及时地找主人进行安抚和交流，而是直接就睡觉去了，虽然睡觉之前曾经多次看了手机，但由于正在气头上也没有主动去发消息。如果在中断当时或者中断之后的一段时间能够主动联系主人，那就不会让主人这么伤心，就算只发一个表情包不冷落了主人也好啊，但是就是没有这么做，这让主人很伤心，也辜负了主人这段时间以来主人对我的柔情。</span><br>
+					
+						 <span class="say"> 这个毛病不是一天两天的了，即有多次在微信上，聊着聊着生气了就不会再去说话把主人冷落在一边了，如果是在线下还好说，但是在线上也没有物理上的安抚，冷落了主人就更加严重了。从此以后在线上或者线下都要注意不能冷落了主人，不能把主人一个人落在一边不理她！！！主人是这么好的一个人，值得更好的人来关心爱护她，值得用最浓烈的热血和热泪来温暖她！</span><br>
+            			<span class="say"> 在之后的吵架过程中，我应该用比较温和的脾气来和蔼的交流，在遇到做得不对的地方积极承认，在遇到做对了但是被误解的地方要先承认再说，在遇到生气之后无语凝噎的时候也要先发个表情包缓和气氛，避免出现超过一晚上不说话冷落了主人的情况，一定要避免这种情况！记住了！</span><br>
+			 			 <span class="say" style="float:right;"> 永远爱你的另外半边天</span><br>
+                        </p>
+                </div>
+            </div>
+            <br>
+            <div id="clock-box"> <span class="STYLE1"></span>
+                <font color="#EEB4B4">亲爱的老婆大人，我们在一起</font> <span class="STYLE1">已经是……</span>
+                <div id="clock"></div>
+            </div>
+            <canvas id="canvas" width="1100" height="680"></canvas>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+
+            var textAnimate = eval(Jscex.compile("async", function () {
+                var together = new Date();
+                together.setFullYear(2020, 1, 11);
+                together.setHours(22);
+                together.setMinutes(32);
+                together.setSeconds(0);
+                together.setMilliseconds(0);
+
+                $("#code").show().typewriter();
+                $("#clock-box").fadeIn(500);
+                while (true) {
+                    timeElapse(together);
+                    $await(Jscex.Async.sleep(1000));
+                }
+            }));
+
+            var runAsync = eval(Jscex.compile("async", function () {
+                textAnimate().start();
+            }));
+
+            runAsync().start();
+        })();
+    </script>
+</body>
+
+</html>

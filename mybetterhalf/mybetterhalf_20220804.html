@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>给我的老婆大人</title>
+    <link type="text/css" rel="stylesheet" href="/js/renxi/default.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+    <script type="text/javascript" src="/js/renxi/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-parser.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-jit.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-builderbase.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/jscex-async-powerpack.min.js"></script>
+    <script type="text/javascript" src="/js/renxi/functions.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/renxi/love.js" charset="utf-8"></script>
+    <script src="/js/renxi/riqi.js"></script>
+</head>
+
+<body background="#FFE">
+    <audio id="audio">
+        <source src="/resource/jiandanai.m4a" type="audio/mpeg" />
+    </audio>
+    <div id="main">
+        <div id="error">本页面采用HTML5编辑，目前您的浏览器无法显示，请换成谷歌(Chrome)或者火狐(Firefox)浏览器，或者其他游览器的最新版本。</div>
+        <div id="wrap">
+            <div id="text" style="display:block;">
+                <div id="code">
+                    <font color="#4682B4">
+						<span class="say"> 怎么办，感觉最近让我心动的事有好多呢~~</span><br>
+						<span class="say"> 包括你全神贯注找各种角度拍照而丝毫不顾及个人形象，任凭我在旁边拍下你的各种奇怪姿势；</span><br>
+						<span class="say"> 包括你像一只小猫咪一样趴在我的身边，用爪爪挠我，然后温顺地任我抚摸你柔顺的长发；</span><br>
+						<span class="say"> 包括我们同仇敌忾一起吐槽外事，就好像我们是认识十多年的故友，也好似我们是过命的兄弟；</span><br>
+						<span class="say"> 当然也包括去洗漱时那早已摆好的牙刷和水杯，就好似乖乖在家等我回来的你一样让我心动。</span><br>
+						<span class="say"> 生活中的一些些小事，往往会让我有种我们是青梅竹马多年相识的感觉，又往往会让我有种刚认识你时的悸动</span><br>
+						<span class="say"> 这些奇妙的情感有时会让我有些冲动，有些触动，会让我在你睡着时爱怜地摸摸你的头，亲亲你的脸（邪恶地玩玩你的脚）</span><br>
+						<span class="say"> 然后看着你睡眼惺忪地叫我，期待你勾住我的脖子，我们又一起满足地睡去</span><br>
+						<span class="say"> 希望我们能比之前更好，同时保有之前的那份悸动。七夕节快乐吧！</span><br>
+
+                        <span class="say" style="float:right;"> 会一直爱你的另外半边天</span><br>
+                        </p>
+                </div>
+            </div>
+            <br>
+            <div id="clock-box"> <span class="STYLE1"></span>
+                <font color="#EEB4B4">亲爱的老婆大人，我们在一起</font> <span class="STYLE1">已经是……</span>
+                <div id="clock"></div>
+            </div>
+            <canvas id="canvas" width="1100" height="680"></canvas>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+
+            var textAnimate = eval(Jscex.compile("async", function () {
+                var together = new Date();
+                together.setFullYear(2020, 1, 11);
+                together.setHours(22);
+                together.setMinutes(32);
+                together.setSeconds(0);
+                together.setMilliseconds(0);
+
+                $("#code").show().typewriter();
+                $("#clock-box").fadeIn(500);
+                while (true) {
+                    timeElapse(together);
+                    $await(Jscex.Async.sleep(1000));
+                }
+            }));
+
+            var runAsync = eval(Jscex.compile("async", function () {
+                textAnimate().start();
+            }));
+
+            runAsync().start();
+        })();
+    </script>
+</body>
+
+</html>

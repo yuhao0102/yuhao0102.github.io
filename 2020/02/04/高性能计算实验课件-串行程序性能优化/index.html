@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zn-ch">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="积累," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="ILP指令级并行（ILP）是用于在同一CPU内核中同时执行多个指令的一组技术。（请注意，ILP与多核无关。）问题：CPU内核有很多电路，并且在任何给定时间，大多数都处于空闲状态，这很浪费。 解决方案：让CPU内核的不同部分同时执行不同的操作：如果CPU内核能够一次执行10次操作，则该程序原则上可以运行多达10次。 （尽管实际上并没有那么多）。 指令好像是必须按照程序顺序来执行，但是独立的指令可以同">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高性能计算实验课件-串行程序性能优化">
+<meta property="og:url" content="http://yoursite.com/2020/02/04/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97%E5%AE%9E%E9%AA%8C%E8%AF%BE%E4%BB%B6-%E4%B8%B2%E8%A1%8C%E7%A8%8B%E5%BA%8F%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="ILP指令级并行（ILP）是用于在同一CPU内核中同时执行多个指令的一组技术。（请注意，ILP与多核无关。）问题：CPU内核有很多电路，并且在任何给定时间，大多数都处于空闲状态，这很浪费。 解决方案：让CPU内核的不同部分同时执行不同的操作：如果CPU内核能够一次执行10次操作，则该程序原则上可以运行多达10次。 （尽管实际上并没有那么多）。 指令好像是必须按照程序顺序来执行，但是独立的指令可以同">
+<meta property="og:locale" content="zn_CH">
+<meta property="article:published_time" content="2020-02-04T06:57:00.000Z">
+<meta property="article:modified_time" content="2020-02-05T12:26:40.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="积累">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/02/04/高性能计算实验课件-串行程序性能优化/"/>
+
+
+
+
+
+  <title>高性能计算实验课件-串行程序性能优化 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zn-ch">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hao Yu's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">The program monkey was eaten by the siege lion.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/04/%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97%E5%AE%9E%E9%AA%8C%E8%AF%BE%E4%BB%B6-%E4%B8%B2%E8%A1%8C%E7%A8%8B%E5%BA%8F%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">高性能计算实验课件-串行程序性能优化</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-02-04T14:57:00+08:00">
+                2020-02-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="ILP"><a href="#ILP" class="headerlink" title="ILP"></a>ILP</h2><p>指令级并行（ILP）是用于在同一CPU内核中同时执行多个指令的一组技术。<br>（请注意，ILP与多核无关。）<br>问题：CPU内核有很多电路，并且在任何给定时间，大多数都处于空闲状态，这很浪费。 解决方案：让CPU内核的不同部分同时执行不同的操作：如果CPU内核能够一次执行10次操作，则该程序原则上可以运行多达10次。 （尽管实际上并没有那么多）。</p>
+<p>指令好像是必须按照程序顺序来执行，但是独立的指令可以同时执行，不会影响程序正确性。</p>
+<p>超标量执行：处理器在指令序列中动态选择独立的指令并并行执行他们。</p>
+<ul>
+<li>超标量：同时执行多项运算（例如，同时执行加，乘和加运算）。</li>
+<li>流水线：开始对一个数据执行操作，同时对另一数据完成相同的操作-同时对不同的操作数集执行同一操作的不同阶段（如组装线）。</li>
+<li>超流水线：超标量和流水线的结合–同时执行多个流水线操作。</li>
+<li>向量：将多个数据加载到特殊寄存器中，并同时对所有这些数据执行相同的操作。使用SSE，AVX等，一条指令产生多个结果。</li>
+</ul>
+<h2 id="编译器优化"><a href="#编译器优化" class="headerlink" title="编译器优化"></a>编译器优化</h2><p>Copy Propagation复制传播<br>从<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x = y</span><br><span class="line">z = 1 + x</span><br></pre></td></tr></table></figure><br>转换成：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x = y</span><br><span class="line">z = 1 + y</span><br></pre></td></tr></table></figure><br>消除数据依赖。</p>
+<p>Constant Folding常量折叠<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">add = 100;</span><br><span class="line">aug = 200;</span><br><span class="line">sum = add + aug;</span><br></pre></td></tr></table></figure><br>变为：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sum = 300;</span><br></pre></td></tr></table></figure><br>注意，sum实际上是两个常量的和，因此编译器可以对其进行预先计算，从而消除了否则会在运行时执行的加法运算。</p>
+<p>删除死代码<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var = 5;</span><br><span class="line">printf(&quot;%d&quot;, var);</span><br><span class="line">exit(-1);</span><br><span class="line">printf(&quot;%d&quot;, var * 2);</span><br></pre></td></tr></table></figure><br>变为：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var = 5;</span><br><span class="line">printf(&quot;%d&quot;, var);</span><br><span class="line">exit(-1);</span><br></pre></td></tr></table></figure></p>
+<p>强度降低<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x = pow(y, 2.0);</span><br><span class="line">a = c / 2.0;</span><br></pre></td></tr></table></figure><br>变为：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x = y * y;</span><br><span class="line">a = c * 0.5;</span><br></pre></td></tr></table></figure><br>计算一个值的乘方或进行除法要比乘法更昂贵。 如果编译器可以判断出幂是一个小整数，或者分母是一个常数，那么它将使用乘法。</p>
+<p>常见子表达消除<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">d = c * (a / b);</span><br><span class="line">e = (a / b) * 2.0;</span><br></pre></td></tr></table></figure><br>变为：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">adivb = a / b;</span><br><span class="line">d = c * adivb;</span><br><span class="line">e = adivb * 2.0;</span><br></pre></td></tr></table></figure><br>子表达式（a / b）出现在两个赋值语句中，因此没有必要进行两次计算。通常只有在通用子表达式的计算成本很高的情况下，才值得这样做。</p>
+<p>变量重命名<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x = y * z;</span><br><span class="line">q = r + x * 2;</span><br><span class="line">x = a + b;</span><br></pre></td></tr></table></figure><br>变为：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x0 = y * z;</span><br><span class="line">q = r + x0 * 2;</span><br><span class="line">x = a + b;</span><br></pre></td></tr></table></figure><br>原始代码具有输出依赖性，而新代码则没有输出依赖性，但是x的最终值仍然正确。</p>
+<p>循环优化</p>
+<ul>
+<li>循环内不变的代码称为循环不变式。 不需要一遍又一遍地计算。</li>
+<li>我们可以通过剥离特殊的迭代来消除IF</li>
+<li>分组迭代消除IF</li>
+<li>数组元素<code>a[i][j]</code>和<code>a[i][j+1]</code>在内存中彼此靠近，而<code>a[i+1][j]</code>可能很远，因此使j循环为内循环。 （在Fortran中是相反的。）</li>
+<li>循环展开。上次我们看到，具有很多操作的循环可以获得更好的性能（在某种程度上），特别是在有很多算术操作但主存储器加载和存储很少的情况下。展开会创建多个操作，这些操作通常从相同或相邻的缓存行加载。 因此，展开的循环可以执行更多的操作，而不会增加太多的内存访问。同样，展开将减少循环计数器变量上比较的次数，并减少到循环顶部的分支数。</li>
+</ul>
+<p>循环融合<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">for (i = 0; i &lt; n; i++) &#123;</span><br><span class="line">	a[i] = b[i] + 1;</span><br><span class="line">&#125;</span><br><span class="line">for (i = 0; i &lt; n; i++) &#123;</span><br><span class="line">	c[i] = a[i] / 2;</span><br><span class="line">&#125;</span><br><span class="line">for (i = 0; i &lt; n; i++) &#123;</span><br><span class="line">	d[i] = 1 / c[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>变为：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">for (i = 0; i &lt; n; i++) &#123;</span><br><span class="line">	a[i] = b[i] + 1;</span><br><span class="line">	c[i] = a[i] / 2;</span><br><span class="line">	d[i] = 1 / c[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>与展开一样，这具有较少的分支。 它还具有较少的总内存引用。</p>
+<p>从理论上讲，编译器和硬件可以“理解”所有这些内容，并可以优化您的程序；实际上，他们没有。</p>
+<ul>
+<li>他们不会知道与处理器更好的“匹配”的不同算法</li>
+<li>但是实际上编译器可能需要您的帮助- 选择其他编译器，优化标志等，其中包括控制单处理器优化的选项：超标量，流水线，矢量化，标量优化，循环优化，内联等。</li>
+<li>重新排列代码以使事情变得更明显</li>
+<li>使用特殊功能（“固有”）或编写汇编</li>
+</ul>
+<p>高级优化：过程间优化 (IPO)</p>
+<ul>
+<li>ip: 源程序文件内部的过程间优化</li>
+<li>ipo: 多个源程序的过程间优化</li>
+<li>函数内联是ipo中最重要性能优化手段</li>
+</ul>
+<p>为什么循环不向量化</p>
+<ul>
+<li>独立</li>
+<li>循环迭代通常必须独立</li>
+<li>一些相关的限定词：</li>
+<li>某些依赖循环可以向量化。</li>
+<li>大多数函数调用无法向量化。</li>
+<li>一些条件分支会阻止矢量化。</li>
+<li>循环必须是可数的。</li>
+<li>无法对嵌套的外循环进行矢量化处理。</li>
+<li>混合数据类型无法向量化</li>
+</ul>
+<p>处理内存延迟的方法</p>
+<ul>
+<li>通过将值保存在小型快速内存（缓存）中并重新使用它们来消除内存操作</li>
+<li>在程序中需要时间局部性</li>
+<li>通过获取一块内存并将其保存在小型快速内存（高速缓存）中并使用整个内存块，来利用更好的带宽</li>
+<li>带宽改善快于延迟</li>
+<li>在程序中需要空间局部性</li>
+<li>通过允许处理器一次向存储系统发出多次读取来利用更好的带宽</li>
+<li>指令流中的并发，例如 像矢量处理器一样加载整个数组； 或预取</li>
+<li>重叠计算和内存操作</li>
+<li>预取</li>
+</ul>
+<p>如果有两个以上的内存级别怎么办？</p>
+<ul>
+<li>需要最小化所有级别之间的沟通<ul>
+<li>在L1和L2缓存，缓存和DRAM，DRAM和磁盘之间…</li>
+</ul>
+</li>
+<li>算法需要找到合适的块大小<ul>
+<li>机器相关</li>
+<li>需要在最里面的循环中“阻止” b x b矩阵乘法<ul>
+<li>1级内存-&gt;3个嵌套循环（幼稚算法）</li>
+<li>2级内存-&gt;6个嵌套循环</li>
+<li>3级内存-&gt;9个嵌套循环…</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>缓存遗忘算法提供了另一种选择<ul>
+<li>将nxn矩阵乘法视为一组较小的问题</li>
+<li>最终，这些将适合缓存</li>
+<li>将最小化在每个内存级别之间移动的＃个单词</li>
+<li>“遗忘”级别的数量和大小</li>
+</ul>
+</li>
+</ul>
+<p>向量化通用准则</p>
+<ul>
+<li>优先考虑可计数的单入口和单出口“for”循环。它可以作为外部循环索引的功能，也可以作为嵌套循环中最里面的循环的函数。</li>
+<li>编写序列代码（避免使用诸如switch，goto或return语句之类的分支，大多数函数调用或不能视为掩码分配的“if”构造）。</li>
+<li>避免循环迭代之间的依赖关系，或者至少避免读后写依赖关系。</li>
+<li>array首选使用数组表示法而不是指针，尤其是对于C语言。尽可能在数组下标中直接使用循环索引，而不是增加单独的计数器以用作数组地址。</li>
+<li>使用有效的内存访问，例如连续访问和对齐访问（16/32字节边界）。并最大程度地减少间接寻址</li>
+<li>首选结构阵列（struct of array, SoA）优于结构阵列（array of structure, AoS）</li>
+<li>尝试使用矢量化库，包括英特尔®MKL和英特尔®IPP</li>
+</ul>
+<p>profiling<br>profiling意味着收集有关程序执行的数据。两种主要的性能分析是：</p>
+<ul>
+<li>Subroutine profiling：插装</li>
+<li>Hardware counters：统计</li>
+</ul>
+<p>假设您有一个hot循环，您认为应该进行矢量化，但没有进行矢量化（如在Vtune，SDE或其他热循环工具中发现的那样）。首先使用适当的编译器选项尝试基本的自动矢量化。使用“ -vec-report2”或更高版本可获取有关循环是否正在向量化的调试信息。要为Intel Xeon E5-2680要求AVX自动矢量化，请使用编译器命令行选项“ -xAVX –O3”。要为Intel Xeon Phi本机可执行文件要求Xeon Phi自动矢量化，请使用编译器命令行选项“ -mmic –O3”。离线编译通常应该给您提供–mmic自动矢量化功能，但是如果需要，您可以使用主机编译器选项-offload-option，compiler，mic，“将任何其他选项传递给Xeon Phi编译器。<br>其他可尝试的内容包括：<br>1.尝试使用“#pragma vector”来禁用编译器的矢量化成本模型。引入此选项后，请始终检查性能。您需要知道的主要事情是向量化器使用启发式算法。根据定义，启发式方法并不总是正确的。<br>2.如果您知道没有真正的依赖关系可以阻止矢量化，请尝试使用“ #pragma ivdep”。引入此选项后，请始终检查正确性和可能的​​崩溃。<br>3.尝试“ #pragma simd”。如果以上两种方法都无法为您提供矢量化代码，请尝试使用此选项。引入此选项后，请始终检查性能，正确性和可能的​​崩溃。<br>不要忘记通过使用编译器–S选项检查汇编并交叉检查源代码行号来“检查工作”。如果您从未编写过汇编文件，那么“检查汇编”听起来可能是一项艰巨的任务。</p>
+<p>向量化建议：</p>
+<ul>
+<li>首先找到您的热循环/热基本块（Vtune，SDE等）</li>
+<li>确保数组边界对齐（如果可能）</li>
+<li>确保您没有不良依赖关系（即算法可向量化）</li>
+<li>首先尝试自动矢量化，例如：<code>–O3 –xAVX –vec-report2 –openmp</code></li>
+<li>分析为什么编译器无法进行矢量化，然后尝试：<code>#pragma vector always</code></li>
+<li>然后尝试：<code>#pragma ivdep</code></li>
+<li>使用：<code>#pragma vector aligned</code>，如果编译器未注意到您的数组已对齐。</li>
+<li>然后尝试：<code>#pragma simd</code>：如果它是可向量化的循环，通常将对其向量化。<ul>
+<li>无论安全性如何，都强制进行矢量化：检查正确性并进行彻底测试</li>
+</ul>
+</li>
+<li>在工作时定期查阅编译器的–S程序集列表</li>
+<li>您可能需要专门标记减少操作，例如<ul>
+<li>如果您知道行程计数（循环计数），请使用#pragma loop_count帮助编译器。</li>
+<li>在循环周围测试#pragma unroll(N)，以查看它是否有助于提高性能。</li>
+</ul>
+</li>
+</ul>
+<p>CP是基本3d形状匹配算法。 ICP基准相对而言一个简单的500行程序，该程序执行ICP算法的复杂度是O(N^2)。由于程序的简单性，我们不仅可以测量单精度和双精度结果，测量阵列结构（structure of array, SoA）和结构阵列（array of structure, AoS）的性能也非常容易。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">#if defined(AOS)</span><br><span class="line">#define AOSFLAG 1 // 1 for AoS</span><br><span class="line">#else</span><br><span class="line">#define AOSFLAG 0 // 0 for SoA (default)</span><br><span class="line">#endif</span><br><span class="line">#if defined(DOUBLEPREC)</span><br><span class="line">#define FPPRECFLAG 2 // 2 for Double precision</span><br><span class="line">#define FLOATINGPTPRECISION double</span><br><span class="line">#else</span><br><span class="line">#define FPPRECFLAG 1 // 1 for Single precision (default)</span><br><span class="line">#define FLOATINGPTPRECISION float</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">// AoS </span><br><span class="line">typedef struct Point3d</span><br><span class="line">&#123;</span><br><span class="line">FLOATINGPTPRECISION x,y,z,t; // use of t padding is optional</span><br><span class="line">&#125; Point3d,*Point3dPtr;</span><br><span class="line"></span><br><span class="line">#if AOSFLAG == 1</span><br><span class="line">Point3dPtr org = NULL;</span><br><span class="line">Point3dPtr tfm = NULL;</span><br><span class="line">#endif</span><br><span class="line">#if AOSFLAG == 0 // SoA (set of arrays here, structure of arrays normally)</span><br><span class="line">FLOATINGPTPRECISION *orgx = NULL;</span><br><span class="line">FLOATINGPTPRECISION *orgy = NULL;</span><br><span class="line">FLOATINGPTPRECISION *orgz = NULL;</span><br><span class="line">FLOATINGPTPRECISION *tfmx = NULL;</span><br><span class="line">FLOATINGPTPRECISION *tfmy = NULL;</span><br><span class="line">FLOATINGPTPRECISION *tfmz = NULL;</span><br><span class="line">#endif</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>源代码如下，因此我们将列出一个简单的循环以显示程序中的代码类型。 点集的简单旋转和平移明确表示如下：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">#if AOSFLAG == 1</span><br><span class="line">#pragma omp parallel for shared(tfm,Rf,Tf,nxfmpts) private(x,y,z)</span><br><span class="line">for(i=0;i&lt;nxfmpts;i++)</span><br><span class="line">&#123;</span><br><span class="line">	x = tfm[i].x; y = tfm[i].y; z = tfm[i].z;</span><br><span class="line">	tfm[i].x = Rf[0][0]*x + Rf[0][1]*y + Rf[0][2]*z + Tf[0];</span><br><span class="line">	tfm[i].y = Rf[1][0]*x + Rf[1][1]*y + Rf[1][2]*z + Tf[1];</span><br><span class="line">	tfm[i].z = Rf[2][0]*x + Rf[2][1]*y + Rf[2][2]*z + Tf[2];</span><br><span class="line">&#125;</span><br><span class="line">#endif</span><br><span class="line">#if AOSFLAG == 0</span><br><span class="line">#pragma omp parallel for shared(tfmx,tfmy,tfmz,Rf,Tf,nxfmpts) private(x,y,z)</span><br><span class="line">for(i=0;i&lt;nxfmpts;i++)</span><br><span class="line">&#123;</span><br><span class="line">	x = tfmx[i]; y = tfmy[i]; z = tfmz[i];</span><br><span class="line">	tfmx[i] = Rf[0][0]*x + Rf[0][1]*y + Rf[0][2]*z + Tf[0];</span><br><span class="line">	tfmy[i] = Rf[1][0]*x + Rf[1][1]*y + Rf[1][2]*z + Tf[1];</span><br><span class="line">	tfmz[i] = Rf[2][0]*x + Rf[2][1]*y + Rf[2][2]*z + Tf[2];</span><br><span class="line">&#125;</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure></p>
+<p>SoA is better than AoS on “Intel Xeon Phi and Intel Xeon_E5-2680 for both Single and Double Precision.<br>该代码的属性可帮助实现此应用程序的源代码，如下所示：</p>
+<ul>
+<li>几乎所有读和写都发生第1步访问。</li>
+<li>所有数组都是64字节对齐的，并且编译器知道它们是64字节对齐的。</li>
+<li>编译器成功地向量化了所有热循环。</li>
+<li>循环是高速缓存友好的，以减少内存访问。</li>
+<li>主循环中没有除法。</li>
+<li>循环非常简单。</li>
+</ul>
+<p>MPI编程模型：全局地址空间</p>
+<ul>
+<li>程序由一组命名线程组成。<ul>
+<li>通常在程序启动时固定</li>
+<li>本地和共享数据，如共享内存模型中一样</li>
+<li>但是，共享数据在本地进程中分区</li>
+<li>成本模型表明远程数据非常昂贵</li>
+</ul>
+</li>
+<li>示例：UPC，Co-Array Fortran</li>
+<li>全局地址空间编程是消息传递和共享内存之间的中间点<ul>
+<li>线程等全局地址空间（可编程性）</li>
+<li>SPMD并行性，例如MPI（性能）</li>
+<li>本地/全局区别，即布局很重要（性能）</li>
+</ul>
+</li>
+</ul>
+<p>主流并行程序模型－数据并行</p>
+<ul>
+<li>单线程模式<ul>
+<li>并行操作于聚合数据结构上，一般是数组</li>
+<li>隐式相互作用，不需要显式同步</li>
+<li>隐式数据分配</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>相对严格的计算结构要求，不是所有应用模式都适合这种模型</li>
+<li>在粗粒度的并行机上难于映射</li>
+</ul>
+</li>
+</ul>
+<p>现代机器中的“自动”并行性</p>
+<ul>
+<li>位级并行<ul>
+<li>在浮点运算等中</li>
+</ul>
+</li>
+<li>指令级并行性（ILP）<ul>
+<li>每个时钟周期执行多个指令</li>
+</ul>
+</li>
+<li>内存系统并行<ul>
+<li>内存操作与计算重叠</li>
+</ul>
+</li>
+<li>OS并行性<ul>
+<li>在商品SMP上并行运行多个作业</li>
+</ul>
+</li>
+</ul>
+<p>常见的并行开销有哪些？</p>
+<ul>
+<li>创建和销毁并行进程、线程的开销<ul>
+<li>创建和销毁进程本身是高开销的工作<ul>
+<li>PowerPC 700MHz(每个周期 15ns 执行4flops; 创建一个进程1.4ms，可执行372,000flops)</li>
+</ul>
+</li>
+<li>创建和销毁多个进程的开销在系统中随进程数增加<ul>
+<li>启动万规模进程需要s级时间</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>通信开销是并行开销的主要部分<ul>
+<li>多机间的通信开销相对于计算很大</li>
+<li>通信模型参数会因很多因素不同而变化<ul>
+<li>同时通信的进程数</li>
+<li>同时发送的消息数</li>
+<li>消息的大小</li>
+<li>网络的拓扑结构</li>
+<li>网络的拥挤程度</li>
+<li>不同的MPI实现</li>
+<li>群集消息通信算法</li>
+<li>之前发送的消息情况</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>并行化过程中引入的空间和相应的时间开销<ul>
+<li>多进程并行化过程中引入的空间和相应的时间开销<ul>
+<li>消息缓冲区准备</li>
+<li>交叠数据的分配和使用</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>回顾编程模型1：共享内存</p>
+<ul>
+<li>程序是控制线程的集合。</li>
+<li>可以在某些语言中执行时动态创建</li>
+<li>每个线程都有一组私有变量，例如局部堆栈变量</li>
+<li>还有一组共享变量，例如静态变量，共享公共块，全局堆。</li>
+<li>线程通过读写共享来隐式通信变量。</li>
+<li>线程通过共享变量同步来协调。</li>
+</ul>
+<p>几个线程库/系统</p>
+<ul>
+<li>PTHREADS是POSIX标准<ul>
+<li>相对较低的水平</li>
+<li>便携式但可能很慢； 相对较重</li>
+</ul>
+</li>
+<li>用于应用程序级编程的OpenMP标准<ul>
+<li>支持对共享内存进行科学编程</li>
+</ul>
+</li>
+</ul>
+<p>POSIX线程概述</p>
+<ul>
+<li>POSIX：便携式操作系统接口<ul>
+<li>与操作系统实用程序的接口</li>
+</ul>
+</li>
+<li>PThreads：POSIX线程接口<ul>
+<li>系统调用以创建和同步线程</li>
+<li>在类似UNIX的OS平台上应该相对统一</li>
+</ul>
+</li>
+<li>PThread包含对以下几点的支持<ul>
+<li>创建并行</li>
+<li>同步</li>
+<li>不明确支持通信，因为共享内存是隐式的；指向共享数据的指针被传递给线程</li>
+</ul>
+</li>
+</ul>
+<p>OpenMP的主要特点</p>
+<ul>
+<li>面向共享存储体系结构，特别是SMP系统</li>
+<li>显式并行方法</li>
+<li>基于fork-join的多线程执行模型，但同样可以开发SPMD（Single Program Multi-Data )类型的程序</li>
+<li>可以进行增量式并行开发( Incremental development )，支持条件编译( Conditional Compilation )和条件并行</li>
+<li>允许嵌套的并行性（nested Parallelism )和动态线程<ul>
+<li>并不是在所有的编译器实现中支持</li>
+</ul>
+</li>
+</ul>
+<p>线程数目的讨论</p>
+<ul>
+<li>通常情况下线程组内线程数目由环境变量OMP_NUM_THREADS控制</li>
+<li>如果parallel语句有num_threads子句，或者用户调用了omp_set_num_threads函数，线程数目由它们给出，num_threads具有高优先级</li>
+<li>上述三种设置方法作用域分别为系统、并行块级以及程序级</li>
+<li>这里给出的线程数目可以大于系统中处理器个数，它是一个上限值</li>
+<li>系统实际产生的线程数目可能由于资源的限制而比上限值要小</li>
+</ul>
+<p>并行结构：Work-sharing Construct(1) - loop</p>
+<ul>
+<li>为线程分配了一组独立的迭代</li>
+<li>线程必须在工作共享结构的末尾等待</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#pragma omp parallel</span><br><span class="line">#pragma omp for</span><br><span class="line">	for(i = 1, i &lt; 13, i++)</span><br><span class="line">		c[i] = a[i] + b[i]</span><br></pre></td></tr></table></figure>
+<p>Work-sharing Construct(2): Parallel Sections<br>section中代码的独立部分可以同时执行。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#pragma omp parallel sections</span><br><span class="line">&#123;</span><br><span class="line">	#pragma omp section</span><br><span class="line">	phase1();</span><br><span class="line">	#pragma omp section</span><br><span class="line">	phase2();</span><br><span class="line">	#pragma omp section</span><br><span class="line">	phase3();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Work-sharing Construct(3): Single Construct<br>表示仅由一个线程执行的代码块</p>
+<ul>
+<li>选择第一个到达的线程</li>
+<li>隐式障碍</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#pragma omp parallel</span><br><span class="line">&#123;</span><br><span class="line">	DoManyThings();</span><br><span class="line">	#pragma omp single</span><br><span class="line">	&#123;</span><br><span class="line">		ExchangeBoundaries();</span><br><span class="line">	&#125; // threads wait here for single</span><br><span class="line">	DoManyMoreThings();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>分配迭代：schedule子句影响循环迭代如何映射到线程上</p>
+<ul>
+<li>schedule(static [,chunk])<ul>
+<li>线程大小为“块”的迭代块</li>
+<li>循环分配</li>
+<li>默认值= N / t</li>
+<li>对于Ni个迭代和Nt个线程，每个线程获得Ni/Nt个循环迭代的一个块：</li>
+</ul>
+</li>
+<li>schedule(dynamic[,chunk])<ul>
+<li>线程获取“块”迭代</li>
+<li>完成迭代后，线程将请求下一组请求</li>
+<li>默认值= 1</li>
+<li>对于Ni个迭代和Nt个线程，每个线程都会获得k个循环迭代的固定大小的块，当特定线程完成其迭代块时，将为其分配新的块。因此，迭代与线程之间的关系是不确定的。<ul>
+<li>优势：非常灵活</li>
+<li>缺点：高开销–关于哪个线程获取每个块的大量决策</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>schedule(guided [，chunk])<ul>
+<li>动态计划以大块开始</li>
+<li>块的尺寸缩小； 不小于“块”</li>
+<li>默认值= 1</li>
+<li>对于Ni迭代和Nt线程，最初，每个线程都会获得k &lt;Ni/Nt循环迭代的固定大小的块：</li>
+<li>每个线程完成其k次迭代的块之后，它将获得k / 2次迭代的块，然后是k / 4个，依此类推。当线程完成其先前的块时，将动态分配块。<ul>
+<li>优于静态：可处理不平衡负载</li>
+<li>动态优势：更少的决策，因此更少的开销</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>schedule(runtime)<ul>
+<li>OMP_SCHEDULE</li>
+</ul>
+</li>
+</ul>
+<p>现在的消息传递系统多使用三种通信模式:</p>
+<ul>
+<li>同步的消息传递 (Synchronous Message Passing)</li>
+<li>阻塞的消息传递 (Blocking Message Passing)</li>
+<li>非阻塞的消息传递 (Nonblocking Message Passing) </li>
+</ul>
+<p>非阻塞模式为计算和通信重叠带来机会，但本身也会带来一些额外开销:</p>
+<ul>
+<li>作为临时缓冲区用的内存空间</li>
+<li>分配缓冲区的操作</li>
+<li>将消息拷入和拷出临时缓冲区</li>
+<li>执行一个额外的检测和等待函数</li>
+</ul>
+<p>消息缓冲(message buffer, 简称buffer), 在不同的消息传递使用场合有不同的含义. 下面给出一些例子:</p>
+<ul>
+<li>消息缓冲指的是由程序员定义的应用程序的存储区域, 用于存放消息的数据值.例如, 在Send(A, 16, Q, tag)中, 缓冲A是在用户应用程序中声明的变量.</li>
+<li>缓冲的起始地址在消息例程中被使用.</li>
+<li>消息缓冲也可以指由消息传递系统(而非用户)创建和管理的一些内存区, 它用于发送消息时暂存消息. 这种缓冲不在用户的应用程序中出现, 有时被称为(消息传递)统消息缓冲(或系统缓冲).</li>
+<li>MPI允许第三种可能的定义. 用户可以划出一定大小的内存区, 作为出现在其应用中的任意消息的中间缓冲. </li>
+</ul>
+<p>用在MPI中的通信模式(communication mode)：</p>
+<ul>
+<li>同步的(synchronous)：直到相应的接收已经启动，发送才返回<ul>
+<li>阻塞的同步发送：发送缓冲区可用，发送完成</li>
+<li>非阻塞的同步发送：它的返回不意味着消息已经被发出! 它的实现不需要在接收端有附加的缓冲, 但需要在发送端有一个系统缓冲. 为了消除额外的消息拷贝, 应使用阻塞的同步发送</li>
+</ul>
+</li>
+<li>缓冲的(buffered)：缓冲的发送假定能得到一定大小的缓冲空间, 它必须事先由用户程序分配和管理。通过调用子例程<code>MPI_Buffer_attch(buffer,size)</code>来定义, 由它来分配大小为size的用户缓冲. 这个缓冲可以用<code>MPI_Buffer_detach(*buffer, *size )</code>来实现.无缓冲区时，返回错误.</li>
+<li>就绪的(ready)：<ul>
+<li>在肯定相应的接收已经开始才进行发送. 它不像在同步模式中那样需要等待. 这就允许在相同的情况下实际使用一个更有效的通信协议.使用较少，程序员要保证程序正确性</li>
+</ul>
+</li>
+<li>标准的(standard)：最常用的模式。发送可以是同步的或缓冲的(系统缓冲), 取决于实现，给予系统以灵活选择的机会；发送的返回意味着消息缓冲区可用</li>
+</ul>
+<p>常见错误调试心得</p>
+<ul>
+<li>确保栈空间分配的有效性<ul>
+<li>ulimit –s unlimited (可以根据需要调整)</li>
+<li>export KMP_STACKSIZE=16000000 (可以根据需要调整)</li>
+</ul>
+</li>
+<li>确保串行程序的正确执行（OMP_NUM_THREADS=1）</li>
+<li>验证private变量使用的正确性</li>
+<li>逐项确保变量的使用了然于胸，特别是f90: SAVE, DATA, default(none), private(…), shared(…)</li>
+<li>利用增量级开发的特性进行代码二分查找</li>
+<li>确认是否由于舍入误差导致</li>
+<li>对于连加等可能由于计算次序导致不同计算结果的操作，不使用reduction子句，将加法部分放到串行区完成</li>
+<li>借助Intel Inspector，totalview等工具寻找数据竞争问题</li>
+</ul>
+<p>处理器：多核时代</p>
+<ul>
+<li>想法1：使用增加的晶体管数量添加更多处理器核心，而不是使用晶体管来增加。先进的处理器逻辑加速单个指令流（例如，乱序和投机操作）</li>
+<li>想法2：添加ALU以提高计算能力。摊销跨多个ALU管理指令流的成本/复杂性。SIMD处理，一条指令，多个数据向所有ALU广播相同的指令在所有ALU上并行执行</li>
+</ul>
+<p>指令流一致性（“一致性执行”）</p>
+<ul>
+<li>相同的指令序列适用于同时操作的所有元素</li>
+<li>要有效利用SIMD处理资源，必须执行一致的执行</li>
+<li>由于每个内核都具有获取/解码不同指令流的能力，因此对于内核之间的高效并行化而言，一致性执行不是必需的</li>
+<li>“分散”执行<ul>
+<li>缺乏指令流一致性</li>
+</ul>
+</li>
+</ul>
+<p>在现代CPU上执行SIMD</p>
+<ul>
+<li>SSE指令：128位操作：4x32位或2x64位（4宽格式向量）</li>
+<li>AVX2指令：256位操作：8x32位或4x64位（8宽格式向量）</li>
+<li>AVX512指令：512位操作：16x32位…</li>
+<li>指令由编译器生成<ul>
+<li>程序员使用内在函数明确要求的并行性</li>
+<li>使用并行语言语义传达的并行性（例如，forall示例）</li>
+<li>通过对循环的依赖性分析推断出并行性（困难的问题，即使是最好的编译器也不能在任意C / C ++代码上使用）</li>
+</ul>
+</li>
+<li>术语：“显式SIMD”：SIMD并行化在编译时执行</li>
+</ul>
+<p>在许多现代GPU上执行SIMD</p>
+<ul>
+<li>“隐含SIMD”<ul>
+<li>编译器生成标量二进制（标量指令）</li>
+<li>但是程序的N个实例始终在处理器上<strong>一起运行</strong>，<code>execute(my_function，N)</code>，执行my_function N次</li>
+</ul>
+</li>
+<li>换句话说，硬件本身的接口是数据并行的</li>
+<li>硬件（不是编译器）负责同时从多个实例对SIMD ALU上的不同数据执行同一条指令</li>
+<li>大多数现代GPU的SIMD宽度为8到32</li>
+<li>分歧可能是个大问题（写得不好的代码可能以机器峰值能力的1/32执行！）</li>
+</ul>
+<p>摘要：并行执行</p>
+<ul>
+<li>现代处理器中的几种并行执行形式<ul>
+<li>多核：使用多个处理核<ul>
+<li>提供线程级并行性：在每个内核上同时执行完全不同的指令流</li>
+<li>软件决定何时创建线程（例如，通过pthreads API）</li>
+</ul>
+</li>
+<li>SIMD：使用同一指令流（在内核内）控制的多个ALU<ul>
+<li>高效的数据并行工作负载设计：控制可摊销许多ALU</li>
+<li>矢量化可以由编译器（显式SIMD）完成，也可以在运行时由硬件完成</li>
+<li>[缺乏]依赖关系在执行之前就已经知道（通常由程序员声明，但可以通过高级编译器的循环分析来推断）</li>
+</ul>
+</li>
+<li>超标量：在指令流中利用ILP。 处理来自相同的指令流并行（在内核内）<ul>
+<li>硬件在执行过程中自动动态发现并行性（程序员看不到）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>多线程减少了停顿</p>
+<ul>
+<li>想法：对同一核心上的多个线程进行交错处理以隐藏停顿</li>
+<li>与预取一样，多线程隐藏了延迟，而不是减少延迟的技术</li>
+</ul>
+<p>硬件支持的多线程</p>
+<ul>
+<li>Core管理多个线程的执行上下文<ul>
+<li>从可运行线程运行指令（处理器决定每个时钟运行哪个线程，而不是操作系统的运行）</li>
+<li>核心仍然具有相同数量的ALU资源：多线程仅在面对诸如内存访问之类的高延迟操作时才有助于更有效地使用它们</li>
+</ul>
+</li>
+<li>交错多线程（也称为时间多线程）<ul>
+<li>每个时钟，内核都会选择一个线程，并在ALU上运行来自该线程的指令（交织多线程）</li>
+</ul>
+</li>
+<li>同时多线程（SMT，同时多线程）<ul>
+<li>每个时钟，内核从多个线程中选择指令以在ALU上运行</li>
+<li>扩展超标量CPU设计</li>
+<li>示例：英特尔超线程（每个内核2个线程）</li>
+</ul>
+</li>
+</ul>
+<p>多线程摘要</p>
+<ul>
+<li>优势：更有效地利用核心的ALU资源<ul>
+<li>隐藏内存延迟</li>
+<li>填充超标量架构的多个功能单元（当一个线程的ILP不足时）</li>
+</ul>
+</li>
+<li>劣势<ul>
+<li>需要额外存储线程上下文</li>
+<li>增加任何单线程的运行时间（通常不是问题，我们通常关心并行应用程序中的吞吐量）</li>
+<li>需要程序中的其他独立工作（比ALU更加独立！）</li>
+<li>严重依赖内存带宽</li>
+<li>更多线程→更大的工作集→每个线程更少的缓存空间</li>
+<li>可能会更频繁地进入内存，但可以隐藏延迟</li>
+</ul>
+</li>
+</ul>
+<p>带宽是至关重要的资源。高性能并行程序将：</p>
+<ul>
+<li>组织计算以减少从内存中获取数据的频率<ul>
+<li>重用先前由同一线程加载的数据（传统的线程内时间局部性优化）</li>
+<li>跨线程共享数据（线程间协作）</li>
+</ul>
+</li>
+<li>减少请求数据的频率（取而代之的是做更多的算术：“免费”）<ul>
+<li>有用的术语：“算术强度” —指令流中数学运算与数据访问运算的比率</li>
+<li>要点：程序必须具有很高的算术强度才能有效利用现代处理器</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag"># 积累</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/28/cpp11%E7%89%B9%E6%80%A7/" rel="next" title="C++11特性笔记">
+                <i class="fa fa-chevron-left"></i> C++11特性笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/02/19/Taichi/" rel="prev" title="Taichi编程语言—高性能稀疏视觉计算与可微编程">
+                Taichi编程语言—高性能稀疏视觉计算与可微编程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ILP"><span class="nav-number">1.</span> <span class="nav-text">ILP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8%E4%BC%98%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">编译器优化</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

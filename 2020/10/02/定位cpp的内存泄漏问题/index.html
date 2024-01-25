@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zn-ch">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="C++," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="用C&#x2F;C++开发的程序执行效率很高，但却经常受到内存泄漏的困扰。本文提供一种通过wrap malloc查找memory leak的思路，依靠这个方法，笔者紧急解决了内存泄漏问题，避免项目流血上大促，该方法在日后工作中大放光彩，发现了项目中大量沉疴已久的内存泄漏问题。 什么是内存泄漏？动态申请的内存丢失引用，造成没有办法回收它（我知道杠jing要说进程退出前系统会统一回收），这便是内存泄漏。 Jav">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通过wrap malloc定位CC++的内存泄漏问题">
+<meta property="og:url" content="http://yoursite.com/2020/10/02/%E5%AE%9A%E4%BD%8Dcpp%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="用C&#x2F;C++开发的程序执行效率很高，但却经常受到内存泄漏的困扰。本文提供一种通过wrap malloc查找memory leak的思路，依靠这个方法，笔者紧急解决了内存泄漏问题，避免项目流血上大促，该方法在日后工作中大放光彩，发现了项目中大量沉疴已久的内存泄漏问题。 什么是内存泄漏？动态申请的内存丢失引用，造成没有办法回收它（我知道杠jing要说进程退出前系统会统一回收），这便是内存泄漏。 Jav">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/img/20210513112200.jpg">
+<meta property="article:published_time" content="2020-10-02T06:48:00.000Z">
+<meta property="article:modified_time" content="2023-09-07T02:51:32.290Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/20210513112200.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/10/02/定位cpp的内存泄漏问题/"/>
+
+
+
+
+
+  <title>通过wrap malloc定位CC++的内存泄漏问题 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zn-ch">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hao Yu's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">The program monkey was eaten by the siege lion.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/02/%E5%AE%9A%E4%BD%8Dcpp%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">通过wrap malloc定位CC++的内存泄漏问题</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-10-02T14:48:00+08:00">
+                2020-10-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>用C/C++开发的程序执行效率很高，但却经常受到内存泄漏的困扰。本文提供一种通过wrap malloc查找memory leak的思路，依靠这个方法，笔者紧急解决了内存泄漏问题，避免项目流血上大促，该方法在日后工作中大放光彩，发现了项目中大量沉疴已久的内存泄漏问题。</p>
+<h1 id="什么是内存泄漏？"><a href="#什么是内存泄漏？" class="headerlink" title="什么是内存泄漏？"></a>什么是内存泄漏？</h1><p>动态申请的内存丢失引用，造成没有办法回收它（我知道杠jing要说进程退出前系统会统一回收），这便是内存泄漏。</p>
+<p>Java等编程语言会自动管理内存回收，而C/C++需要显式的释放，有很多手段可以避免内存泄漏，比如RAII，比如智能指针（大多基于引用计数计数），比如内存池。</p>
+<p>理论上，只要我们足够小心，在每次申请的时候，都牢记释放，那这个世界就清净了，但现实往往没有那么美好，比如抛异常了，释放内存的语句执行不到，又或者某菜鸟程序员不小心埋了一个雷，所以，我们必须直面真实的世界，那就是我们会遭遇内存泄漏。</p>
+<h1 id="怎么查内存泄漏？"><a href="#怎么查内存泄漏？" class="headerlink" title="怎么查内存泄漏？"></a>怎么查内存泄漏？</h1><p>我们可以review代码，但从海量代码里找到隐藏的问题，这如同大海捞针，往往两手空空。</p>
+<p>所以，我们需要借助工具，比如<code>valgrind</code>，但这些找内存泄漏的工具，往往对你使用动态内存的方式有某种期待，或者说约束，比如常驻内存的对象会被误报出来，然后真正有用的信息会掩盖在误报的汪洋大海里。很多时候，甚至<code>valgrind</code>根本解决不了日常项目中的问题。</p>
+<p>所以很多著名的开源项目，为了能用<code>valgrind</code>跑，都费大力气，大幅修改源代码，从而使得项目符合<code>valgrind</code>的要求，满足这些要求，用<code>valgrind</code>跑完没有任何报警的项目叫<code>valgrind</code>干净。</p>
+<p>既然这些玩意儿都中看不中用，所以，求人不如求己，还是得自力更生。</p>
+<h1 id="什么是动态内存分配器？"><a href="#什么是动态内存分配器？" class="headerlink" title="什么是动态内存分配器？"></a>什么是动态内存分配器？</h1><p>动态内存分配器是介于kernel跟应用程序之间的一个函数库，glibc提供的动态内存分配器叫ptmalloc，它也是应用最广泛的动态内存分配器实现。</p>
+<p>从kernel角度看，动态内存分配器属于应用程序层；而从应用程序的角度看，动态内存分配器属于系统层。</p>
+<p>应用程序可以通过mmap系统直接向kernel申请动态内存，也可以通过动态内存分配器的malloc接口分配内存，而动态内存分配器会通过sbrk、mmap向kernel分配内存，所以应用程序通过free释放的内存，并不一定会真正返还给系统，它也有可能被动态内存分配器缓存起来。</p>
+<p>google有自己的动态内存分配器tcmalloc，另外jemalloc也是著名的动态内存分配器，他们有不同的性能表现，也有不同的缓存和分配策略。你可以用它们替换linux系统glibc自带的ptmalloc。</p>
+<h1 id="new-delete跟malloc-free的关系"><a href="#new-delete跟malloc-free的关系" class="headerlink" title="new/delete跟malloc/free的关系"></a>new/delete跟malloc/free的关系</h1><p>new是c++的用法，比如<code>Foo *f = new Foo</code>，其实它分为3步。</p>
+<ol>
+<li>通过<code>operator new()</code>分配<code>sizeof(Foo)</code>的内存，最终通过malloc分配。</li>
+<li>在新分配的内存上构建Foo对象。</li>
+<li>返回新构建的对象地址。</li>
+</ol>
+<p>new=分配内存+构造+返回，而delete则是等于析构+free。所以搞定malloc、free就是从根本上搞定动态内存分配。</p>
+<h2 id="chunk"><a href="#chunk" class="headerlink" title="chunk"></a>chunk</h2><p>每次通过malloc返回的一块内存叫一个chunk，动态内存分配器是这样定义的，后面我们都这样称呼。</p>
+<h2 id="wrap-malloc"><a href="#wrap-malloc" class="headerlink" title="wrap malloc"></a>wrap malloc</h2><p>gcc支持wrap，即通过传递<code>-Wl,--wrap,malloc</code>的方式，可以改变调用<code>malloc</code>的行为，把对<code>malloc</code>的调用链接到自定义的<code>__wrap_malloc(size_t)</code>函数，而我们可以在<code>__wrap_malloc(size_t)</code>函数的实现中通过<code>__real_malloc(size_t)</code>真正分配内存，而后我们可以做搞点小动作。</p>
+<p>同样，我们可以<code>wrap free</code>。<code>malloc</code>跟<code>free</code>是配对的，当然也有其他相关API，比如<code>calloc</code>、<code>realloc</code>、<code>valloc</code>，但这根本上还是<code>malloc+free</code>，比如realloc就是malloc + free。</p>
+<h1 id="怎么去定位内存泄漏呢？"><a href="#怎么去定位内存泄漏呢？" class="headerlink" title="怎么去定位内存泄漏呢？"></a>怎么去定位内存泄漏呢？</h1><p>我们会malloc各种不同size的chunk，也就是每种不同size的chunk会有不同数量，如果我们能够跟踪每种size的chunk数量，那就可以知道哪种size的chunk在泄漏。很简单，如果该size的chunk数量一直在增长，那它很可能泄漏。</p>
+<p>光知道某种size的chunk泄漏了还不够，我们得知道是哪个调用路径上导致该size的chunk被分配，从而去检查是不是正确释放了。</p>
+<h1 id="怎么跟踪到每种size的chunk数量？"><a href="#怎么跟踪到每种size的chunk数量？" class="headerlink" title="怎么跟踪到每种size的chunk数量？"></a>怎么跟踪到每种size的chunk数量？</h1><p>我们可以维护一个全局 <code>unsigned int malloc_map[1024 * 1024]</code>数组，该数组的下标就是chunk的size，<code>malloc_map[size]</code>的值就对应到该size的chunk分配量。</p>
+<p>这等于维护了一个chunk size到chunk count的映射表，它足够快，而且它可以覆盖到0 ~ 1M大小的chunk的范围，它已经足够大了，试想一次分配一兆的块已经很恐怖了，可以覆盖到大部分场景。</p>
+<p>那大于1M的块怎么办呢？我们可以通过log记录下来。</p>
+<ul>
+<li>在<code>__wrap_malloc</code>里，<code>++malloc_map[size]</code></li>
+<li>在<code>__wrap_free</code>里，<code>--malloc_map[size]</code></li>
+</ul>
+<p>很简单，我们通过<code>malloc_map</code>记录了各size的chunk的分配量。</p>
+<h1 id="如何知道释放的chunk的size？"><a href="#如何知道释放的chunk的size？" class="headerlink" title="如何知道释放的chunk的size？"></a>如何知道释放的chunk的size？</h1><p>不对，<code>free(void *p)</code>只有一个参数，我如何知道释放的chunk的size呢？怎么办？</p>
+<p>我们通过在<code>__wrap_malloc(size_t)</code>的时候，分配8+size的chunk，也就是多分配8字节，开始的8字节存储该chunk的size，然后返回的是(char*)chunk + 8，也就是偏移8个字节返回给调用malloc的应用程序。</p>
+<p>这样在free的时候，传入参数<code>void* p</code>，我们把p往前移动8个字节，解引用就能得到该chunk的大小，而该大小值就是前一步，在__wrap_malloc的时候设置的size。</p>
+<p>好了，我们真正做到记录各size的chunk数量了，它就存在于<code>malloc_map[1M]</code>的数组中，假设64个字节的chunk一直在被分配，数量一直在增长，我们觉得该size的chunk很有可能泄漏，那怎么定位到是哪里调用过来的呢？</p>
+<h1 id="如何记录调用链？"><a href="#如何记录调用链？" class="headerlink" title="如何记录调用链？"></a>如何记录调用链？</h1><p>我们可以维护一个toplist数组，该数组假设有10个元素，它保存的是chunk数最大的10种size，这个很容易做到，通过对malloc_map取top 10就行。</p>
+<p>然后我们在<code>__wrap_malloc(size_t)</code>里，测试该size是不是toplist之一，如果是的话，那我们通过glibc的backtrace把调用堆栈dump到log文件里去。</p>
+<p>注意：这里不能再分配内存，所以你只能使用backtrace，而不能使用backtrace_symbols，这样你只能得到调用堆栈的符号地址，而不是符号名。</p>
+<h1 id="如何把符号地址转换成符号名，也就是对应到代码行呢？"><a href="#如何把符号地址转换成符号名，也就是对应到代码行呢？" class="headerlink" title="如何把符号地址转换成符号名，也就是对应到代码行呢？"></a>如何把符号地址转换成符号名，也就是对应到代码行呢？</h1><h2 id="addr2line"><a href="#addr2line" class="headerlink" title="addr2line"></a>addr2line</h2><p>addr2line工具可以做到，你可以追查到调用链，进而定位到内存泄漏的问题。</p>
+<p>至此，你已经get到了整个核心思想。</p>
+<p>当然，实际项目中，我们做的更多，我们不仅仅记录了toplist size，还记录了各size chunk的增量toplist，会记录大块的malloc/free，会wrap更多的API。</p>
+<p>总结一下：通过wrap malloc/free + backtrace + addr2line，你就可以定位到内存泄漏了，恭喜大家。</p>
+<h1 id="使用valgrind"><a href="#使用valgrind" class="headerlink" title="使用valgrind"></a>使用valgrind</h1><h2 id="valgrind是什么？"><a href="#valgrind是什么？" class="headerlink" title="valgrind是什么？"></a>valgrind是什么？</h2><p>Valgrind是一套Linux下，开放源代码（GPL V2）的仿真调试工具的集合。Valgrind由内核（core）以及基于内核的其他调试工具组成。内核类似于一个框架（framework），它模拟了一个CPU环境，并提供服务给其他工具；而其他工具则类似于插件 (plug-in)，利用内核提供的服务完成各种特定的内存调试任务。Valgrind的体系结构如下图所示：<br><img src="/img/20210513112200.jpg" alt=""></p>
+<p>Valgrind包括如下一些工具：</p>
+<h3 id="Memcheck"><a href="#Memcheck" class="headerlink" title="Memcheck"></a>Memcheck</h3><p>最常用的工具，用来检测程序中出现的内存问题，所有对内存的读写都会被检测到，一切对malloc()/free()/new/delete的调用都会被捕获。所以，它能检测以下问题：</p>
+<ul>
+<li>对未初始化内存的使用；</li>
+<li>读/写释放后的内存块；</li>
+<li>读/写超出malloc分配的内存块；</li>
+<li>读/写不适当的栈中内存块；</li>
+<li>内存泄漏，指向一块内存的指针永远丢失；</li>
+<li>不正确的malloc/free或new/delete匹配；</li>
+<li>memcpy()相关函数中的dst和src指针重叠。</li>
+</ul>
+<h3 id="Callgrind"><a href="#Callgrind" class="headerlink" title="Callgrind"></a>Callgrind</h3><p>和gprof类似的分析工具，但它对程序的运行观察更是入微，能给我们提供更多的信息。和gprof不同，它不需要在编译源代码时附加特殊选项，但加上调试选项是推荐的。Callgrind收集程序运行时的一些数据，建立函数调用关系图，还可以有选择地进行cache模拟。在运行结束时，它会把分析数据写入一个文件。callgrind_annotate可以把这个文件的内容转化成可读的形式。</p>
+<h3 id="Cachegrind"><a href="#Cachegrind" class="headerlink" title="Cachegrind"></a>Cachegrind</h3><p>Cache分析器，它模拟CPU中的一级缓存I1，Dl和二级缓存，能够精确地指出程序中cache的丢失和命中。如果需要，它还能够为我们提供cache丢失次数，内存引用次数，以及每行代码，每个函数，每个模块，整个程序产生的指令数。这对优化程序有很大的帮助。</p>
+<h3 id="Helgrind"><a href="#Helgrind" class="headerlink" title="Helgrind"></a>Helgrind</h3><p>它主要用来检查多线程程序中出现的竞争问题。Helgrind寻找内存中被多个线程访问，而又没有一贯加锁的区域，这些区域往往是线程之间失去同步的地方，而且会导致难以发掘的错误。Helgrind实现了名为“Eraser”的竞争检测算法，并做了进一步改进，减少了报告错误的次数。不过，Helgrind仍然处于实验阶段。</p>
+<h3 id="Massif"><a href="#Massif" class="headerlink" title="Massif"></a>Massif</h3><p>堆栈分析器，它能测量程序在堆栈中使用了多少内存，告诉我们堆块，堆管理块和栈的大小。Massif能帮助我们减少内存的使用，在带有虚拟内存的现代系统中，它还能够加速我们程序的运行，减少程序停留在交换区中的几率。</p>
+<p>此外，lackey和nulgrind也会提供。Lackey是小型工具，很少用到；Nulgrind只是为开发者展示如何创建一个工具。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>一个典型的Linux C程序内存空间由如下几部分组成：</p>
+<ul>
+<li>代码段（.text）。这里存放的是CPU要执行的指令。代码段是可共享的，相同的代码在内存中只会有一个拷贝，同时这个段是只读的，防止程序由于错误而修改自身的指令。</li>
+<li>初始化数据段（.data）。这里存放的是程序中需要明确赋初始值的变量，例如位于所有函数之外的全局变量：int val=”100”。需要强调的是，以上两段都是位于程序的可执行文件中，内核在调用exec函数启动该程序时从源程序文件中读入。</li>
+<li>未初始化数据段（.bss）。位于这一段中的数据，内核在执行该程序前，将其初始化为0或者null。例如出现在任何函数之外的全局变量：int sum;</li>
+<li>堆（Heap）。这个段用于在程序中进行动态内存申请，例如经常用到的malloc，new系列函数就是从这个段中申请内存。</li>
+<li>栈（Stack）。函数中的局部变量以及在函数调用过程中产生的临时变量都保存在此段中。</li>
+</ul>
+<p>Memcheck 能够检测出内存问题，关键在于其建立了两个全局表。</p>
+<ul>
+<li>Valid-Value 表：<ul>
+<li>对于进程的整个地址空间中的每一个字节(byte)，都有与之对应的 8 个 bits；对于 CPU 的每个寄存器，也有一个与之对应的 bit 向量。这些 bits 负责记录该字节或者寄存器值是否具有有效的、已初始化的值。</li>
+</ul>
+</li>
+<li>Valid-Address 表</li>
+<li>对于进程整个地址空间中的每一个字节(byte)，还有与之对应的 1 个 bit，负责记录该地址是否能够被读写。</li>
+</ul>
+<h2 id="检测原理"><a href="#检测原理" class="headerlink" title="检测原理"></a>检测原理</h2><p>当要读写内存中某个字节时，首先检查这个字节对应的 A bit。如果该A bit显示该位置是无效位置，memcheck 则报告读写错误。</p>
+<p>内核（core）类似于一个虚拟的 CPU 环境，这样当内存中的某个字节被加载到真实的 CPU 中时，该字节对应的 V bit 也被加载到虚拟的 CPU 环境中。一旦寄存器中的值，被用来产生内存地址，或者该值能够影响程序输出，则 memcheck 会检查对应的V bits，如果该值尚未初始化，则会报告使用未初始化内存错误。</p>
+<h2 id="Valgrind-使用"><a href="#Valgrind-使用" class="headerlink" title="Valgrind 使用"></a>Valgrind 使用</h2><p>用法: <code>valgrind [options] prog-and-args</code></p>
+<ul>
+<li><code>[options]</code>：常用选项，适用于所有Valgrind工具</li>
+<li><code>-tool=&lt;name&gt;</code>：最常用的选项。运行 valgrind中名为toolname的工具。默认memcheck。</li>
+<li><code>h –help</code>：显示帮助信息。</li>
+<li><code>-version</code>：显示valgrind内核的版本，每个工具都有各自的版本。</li>
+<li><code>q –quiet</code>：安静地运行，只打印错误信息。</li>
+<li><code>v –verbose</code>：更详细的信息, 增加错误数统计。</li>
+<li><code>-trace-children=no|yes</code>：跟踪子线程? <code>[no]</code></li>
+<li><code>-track-fds=no|yes</code>：跟踪打开的文件描述？<code>[no]</code></li>
+<li><code>-time-stamp=no|yes</code>：增加时间戳到LOG信息? <code>[no]</code></li>
+<li><code>-log-fd=&lt;number&gt;</code>：输出LOG到描述符文件 <code>[2=stderr]</code></li>
+<li><code>-log-file=&lt;file&gt;</code>：将输出的信息写入到filename.PID的文件里，PID是运行程序的进行ID</li>
+<li><code>-log-file-exactly=&lt;file&gt;</code>：输出LOG信息到 file</li>
+<li><code>-log-file-qualifier=&lt;VAR&gt;</code>：取得环境变量的值来做为输出信息的文件名。 <code>[none]</code></li>
+<li><code>-log-socket=ipaddr:port</code>：输出LOG到socket ，ipaddr:port</li>
+</ul>
+<p>LOG信息输出</p>
+<ul>
+<li><code>-xml=yes</code>：将信息以xml格式输出，只有memcheck可用</li>
+<li><code>-num-callers=&lt;number&gt; show &lt;number&gt;</code>：callers in stack traces <code>[12]</code></li>
+<li><code>-error-limit=no|yes</code>：如果太多错误，则停止显示新错误? <code>[yes]</code></li>
+<li><code>-error-exitcode=&lt;number&gt;</code>：如果发现错误则返回错误代码 <code>[0=disable]</code></li>
+<li><code>-db-attach=no|</code>：当出现错误，valgrind会自动启动调试器gdb。<code>[no]</code></li>
+<li><code>-db-command=&lt;command&gt;</code>：启动调试器的命令行选项 <code>[gdb -nw %f %p]</code></li>
+</ul>
+<p>适用于Memcheck工具的相关选项：</p>
+<ul>
+<li><code>-leak-check=no|summary|full</code>：要求对leak给出详细信息? <code>[summary]</code></li>
+<li><code>-leak-resolution=low|med|high</code>：how much bt merging in leak check <code>[low]</code></li>
+<li><code>-show-reachable=no|yes</code>：show reachable blocks in leak check? <code>[no]</code></li>
+</ul>
+<h1 id="Valgrind-使用举例（一）"><a href="#Valgrind-使用举例（一）" class="headerlink" title="Valgrind 使用举例（一）"></a>Valgrind 使用举例（一）</h1><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mpirun -n 12 valgrind run/cpl/c_coupler/exe/c_coupler : -n 10 valgrind run/atm/gamil/exe/gamil : -n 4 valgrind run/ocn/licom/exe/licom : -n 4 valgrind run/sice/cice/exe/cice : -n 4 valgrind run/lnd/clm/exe/clm</span><br></pre></td></tr></table></figure>
+<p>下面是一段有问题的C程序代码test.c<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">f</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">   <span class="type">int</span>* x = <span class="built_in">malloc</span>(<span class="number">10</span> * <span class="keyword">sizeof</span>(<span class="type">int</span>));</span><br><span class="line">   x[<span class="number">10</span>] = <span class="number">0</span>;  <span class="comment">//问题1: 数组下标越界</span></span><br><span class="line">&#125;                  <span class="comment">//问题2: 内存没有释放</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">   f();</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">valgrind --tool=memcheck --leak-check=full ./test</span><br></pre></td></tr></table></figure></p>
+<p>问题分析：</p>
+<ul>
+<li>对于位于程序中不同段的变量，其初始值是不同的，全局变量和静态变量初始值为0，而局部变量和动态申请的变量，其初始值为随机值。如果程序使用了为随机值的变量，那么程序的行为就变得不可预期。</li>
+</ul>
+<h2 id="数组越界-内存未释放"><a href="#数组越界-内存未释放" class="headerlink" title="数组越界/内存未释放"></a>数组越界/内存未释放</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">k</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> *x = <span class="built_in">malloc</span>(<span class="number">8</span> * <span class="keyword">sizeof</span>(<span class="type">int</span>));</span><br><span class="line">    x[<span class="number">9</span>] = <span class="number">0</span>; <span class="comment">//数组下标越界</span></span><br><span class="line">&#125; <span class="comment">//内存未释放</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    k();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>1）编译程序test.c</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -Wall test.c -g -o <span class="built_in">test</span> <span class="comment">#Wall提示所有告警，-g 调试信息，-o输出</span></span><br></pre></td></tr></table></figure>
+<p>2）使用Valgrind检查程序BUG</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">valgrind --tool=memcheck --leak-check=full ./test</span><br><span class="line"><span class="comment">#--leak-check=full 所有泄露检查</span></span><br></pre></td></tr></table></figure>
+<p>3) 运行结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">==2989== Memcheck, a memory error detector</span><br><span class="line">==2989== Copyright (C) 2002-2012, and GNU GPL&#x27;d, by Julian Seward</span><br><span class="line">et al.</span><br><span class="line">==2989== Using Valgrind-3.8.1 and LibVEX; rerun with -h for</span><br><span class="line">copyright info</span><br><span class="line">==2989== Command: ./test</span><br><span class="line">==2989==</span><br><span class="line">==2989== Invalid write of size 4</span><br><span class="line">==2989== at 0x4004E2: k (test.c:5)</span><br><span class="line">==2989== by 0x4004F2: main (test.c:10)</span><br><span class="line">==2989== Address 0x4c27064 is 4 bytes after a block of size 32 alloc&#x27;d</span><br><span class="line">==2989== at 0x4A06A2E: malloc (vg_replace_malloc.c:270)</span><br><span class="line">==2989== by 0x4004D5: k (test.c:4)</span><br><span class="line">==2989== by 0x4004F2: main (test.c:10)</span><br><span class="line">==2989==</span><br><span class="line">==2989==</span><br><span class="line">==2989== HEAP SUMMARY:</span><br><span class="line">==2989== in use at exit: 32 bytes in 1 blocks</span><br><span class="line">==2989== total heap usage: 1 allocs, 0 frees, 32 bytes allocated</span><br><span class="line">==2989==</span><br><span class="line">==2989== 32 bytes in 1 blocks are definitely lost in loss record 1 of 1</span><br><span class="line">==2989== at 0x4A06A2E: malloc (vg_replace_malloc.c:270)</span><br><span class="line">==2989== by 0x4004D5: k (test.c:4)</span><br><span class="line">==2989== by 0x4004F2: main (test.c:10)</span><br><span class="line">==2989==</span><br><span class="line">==2989== LEAK SUMMARY:</span><br><span class="line">==2989== definitely lost: 32 bytes in 1 blocks</span><br><span class="line">==2989== indirectly lost: 0 bytes in 0 blocks</span><br><span class="line">==2989== possibly lost: 0 bytes in 0 blocks</span><br><span class="line">==2989== still reachable: 0 bytes in 0 blocks</span><br><span class="line">==2989==suppressed: 0 bytes in 0 blocks</span><br><span class="line">==2989==</span><br><span class="line">==2989== For counts of detected and suppressed errors, rerun with: -v</span><br><span class="line">==2989== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 6 from 6)</span><br></pre></td></tr></table></figure>
+<h2 id="内存释放后读写"><a href="#内存释放后读写" class="headerlink" title="内存释放后读写"></a>内存释放后读写</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">char</span> *p = <span class="built_in">malloc</span>(<span class="number">1</span>); <span class="comment">//分配</span></span><br><span class="line">    *p = <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">char</span> c = *p;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\n [%c]\n&quot;</span>,c);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">free</span>(p); <span class="comment">//释放</span></span><br><span class="line">    c = *p; <span class="comment">//取值</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>1）编译程序t2.c</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -Wall t2.c -g -o t2</span><br></pre></td></tr></table></figure>
+<p>2）使用Valgrind检查程序BUG</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valgrind --tool=memcheck --leak-check=full ./t2</span><br></pre></td></tr></table></figure>
+<p>3) 运行结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">==3058== Memcheck, a memory error detector</span><br><span class="line">==3058== Copyright (C) 2002-2012, and GNU GPL&#x27;d, by Julian</span><br><span class="line">Seward et al.</span><br><span class="line">==3058== Using Valgrind-3.8.1 and LibVEX; rerun with -h</span><br><span class="line">for copyright info</span><br><span class="line">==3058== Command: ./t2</span><br><span class="line">==3058==</span><br><span class="line"></span><br><span class="line">[a]</span><br><span class="line">==3058== Invalid read of size 1</span><br><span class="line">==3058== at 0x4005A3: main (t2.c:14)</span><br><span class="line">==3058== Address 0x4c27040 is 0 bytes inside a block of size</span><br><span class="line">1 free&#x27;d</span><br><span class="line">==3058== at 0x4A06430: free (vg_replace_malloc.c:446)</span><br><span class="line">==3058== by 0x40059E: main (t2.c:13)</span><br><span class="line">==3058==</span><br><span class="line">==3058==</span><br><span class="line">==3058== HEAP SUMMARY:</span><br><span class="line">==3058== in use at exit: 0 bytes in 0 blocks</span><br><span class="line">==3058== total heap usage: 1 allocs, 1 frees, 1 bytes allocated</span><br><span class="line">==3058==</span><br><span class="line">==3058== All heap blocks were freed -- no leaks are possible</span><br><span class="line">==3058==</span><br><span class="line">==3058== For counts of detected and suppressed errors, rerun with:</span><br><span class="line">-v</span><br><span class="line">==3058== ERROR SUMMARY: 1 errors from 1 contexts</span><br><span class="line">(suppressed: 6 from 6)</span><br></pre></td></tr></table></figure>
+<p>从上输出内容可以看到，Valgrind检测到无效的读取操作然后输出“Invalid read of size 1”。</p>
+<h2 id="无效读写"><a href="#无效读写" class="headerlink" title="无效读写"></a>无效读写</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">char</span> *p = <span class="built_in">malloc</span>(<span class="number">1</span>); <span class="comment">//分配1字节</span></span><br><span class="line">    *p = <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">    <span class="type">char</span> c = *(p+<span class="number">1</span>); <span class="comment">//地址加1</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\n [%c]\n&quot;</span>,c);</span><br><span class="line">    <span class="built_in">free</span>(p);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>1）编译程序t3.c</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -Wall t3.c -g -o t3</span><br></pre></td></tr></table></figure>
+<p>2）使用Valgrind检查程序BUG</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valgrind --tool=memcheck --leak-check=full ./t3</span><br></pre></td></tr></table></figure>
+<p>3) 运行结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">==3128== Memcheck, a memory error detector</span><br><span class="line">==3128== Copyright (C) 2002-2012, and GNU GPL&#x27;d, by Julian Seward et al.</span><br><span class="line">==3128== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info</span><br><span class="line">==3128== Command: ./t3</span><br><span class="line">==3128==</span><br><span class="line">==3128== Invalid read of size 1 #无效读取</span><br><span class="line">==3128==at 0x400579: main (t3.c:9)</span><br><span class="line">==3128==Address 0x4c27041 is 0 bytes after a block of size 1 alloc&#x27;d</span><br><span class="line">==3128==at 0x4A06A2E: malloc (vg_replace_malloc.c:270)</span><br><span class="line">==3128==by 0x400565: main (t3.c:6)</span><br><span class="line">==3128==[]</span><br><span class="line">==3128==</span><br><span class="line">==3128== HEAP SUMMARY:</span><br><span class="line">==3128==in use at exit: 0 bytes in 0 blocks</span><br><span class="line">==3128==total heap usage: 1 allocs, 1 frees, 1 bytes allocated</span><br><span class="line">==3128==</span><br><span class="line">==3128== All heap blocks were freed -- no leaks are possible</span><br><span class="line">==3128==</span><br><span class="line">==3128== For counts of detected and suppressed errors, rerun with: -v</span><br><span class="line">==3128== ERROR SUMMARY: 1 errors from 1 contexts</span><br><span class="line">(suppressed: 6 from 6)</span><br></pre></td></tr></table></figure>
+<h2 id="内存泄露"><a href="#内存泄露" class="headerlink" title="内存泄露"></a>内存泄露</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> *p = <span class="built_in">malloc</span>(<span class="number">1</span>);</span><br><span class="line">    *p = <span class="string">&#x27;x&#x27;</span>;</span><br><span class="line">    <span class="type">char</span> c = *p;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%c\n&quot;</span>,c); <span class="comment">//申请后未释放</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>1）编译程序t4.c</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -Wall t4.c -g -o t4</span><br></pre></td></tr></table></figure>
+<p>2）使用Valgrind检查程序BUG</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valgrind --tool=memcheck --leak-check=full ./t4</span><br></pre></td></tr></table></figure>
+<p>3) 运行结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">==3221== Memcheck, a memory error detector</span><br><span class="line">==3221== Copyright (C) 2002-2012, and GNU GPL&#x27;d, by Julian Seward et al.</span><br><span class="line">==3221== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info</span><br><span class="line">==3221== Command: ./t4</span><br><span class="line">==3221==</span><br><span class="line">==3221== Invalid write of size 4</span><br><span class="line">==3221==at 0x40051E: main (t4.c:7)</span><br><span class="line">==3221==Address 0x4c27040 is 0 bytes inside a block of size 1 alloc&#x27;d</span><br><span class="line">==3221==at 0x4A06A2E: malloc (vg_replace_malloc.c:270)</span><br><span class="line">==3221==by 0x400515: main (t4.c:6)</span><br><span class="line">==3221==</span><br><span class="line">==3221== Invalid read of size 4</span><br><span class="line">==3221==at 0x400528: main (t4.c:8)</span><br><span class="line">==3221==Address 0x4c27040 is 0 bytes inside a block of size 1 alloc&#x27;d</span><br><span class="line">==3221==at 0x4A06A2E: malloc (vg_replace_malloc.c:270)</span><br><span class="line">==3221==by 0x400515: main (t4.c:6)</span><br><span class="line">==3221==</span><br><span class="line">==3221==</span><br><span class="line">==3221== HEAP SUMMARY:</span><br><span class="line">==3221==in use at exit: 1 bytes in 1 blocks</span><br><span class="line">==3221==total heap usage: 1 allocs, 0 frees, 1 bytes allocated</span><br><span class="line">==3221==</span><br><span class="line">==3221== 1 bytes in 1 blocks are definitely lost in loss record 1 of 1</span><br><span class="line">==3221==at 0x4A06A2E: malloc (vg_replace_malloc.c:270)</span><br><span class="line">==3221==by 0x400515: main (t4.c:6)</span><br><span class="line">==3221==</span><br><span class="line">==3221== LEAK SUMMARY:</span><br><span class="line">==3221==definitely lost: 1 bytes in 1 blocks</span><br><span class="line">==3221==indirectly lost: 0 bytes in 0 blocks</span><br><span class="line">==3221== possibly lost: 0 bytes in 0 blocks</span><br><span class="line">==3221==still reachable: 0 bytes in 0 blocks</span><br><span class="line">==3221== suppressed: 0 bytes in 0 blocks</span><br><span class="line">==3221==</span><br><span class="line">==3221== For counts of detected and suppressed errors, rerun with: -v</span><br><span class="line">==3221== ERROR SUMMARY: 3 errors from 3 contexts</span><br><span class="line">(suppressed: 6 from 6)</span><br></pre></td></tr></table></figure>
+<p>从检查结果看，可以发现内存泄露。</p>
+<h2 id="内存多次释放"><a href="#内存多次释放" class="headerlink" title="内存多次释放"></a>内存多次释放</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">char</span> *p;</span><br><span class="line">    p=(<span class="type">char</span> *)<span class="built_in">malloc</span>(<span class="number">100</span>);</span><br><span class="line">    <span class="keyword">if</span>(p)</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Memory Allocated at: %s/n&quot;</span>,p);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Not Enough Memory!/n&quot;</span>);</span><br><span class="line">    <span class="built_in">free</span>(p); <span class="comment">//重复释放</span></span><br><span class="line">    <span class="built_in">free</span>(p);</span><br><span class="line">    <span class="built_in">free</span>(p);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>1）编译程序t5.c</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -Wall t5.c -g -o t5</span><br></pre></td></tr></table></figure>
+<p>2）使用Valgrind检查程序BUG</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valgrind --tool=memcheck --leak-check=full ./t5</span><br></pre></td></tr></table></figure>
+<p>3) 运行结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">==3294== Memcheck, a memory error detector</span><br><span class="line">==3294== Copyright (C) 2002-2012, and GNU GPL&#x27;d, by Julian Seward et al.</span><br><span class="line">==3294== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info</span><br><span class="line">==3294== Command: ./t5</span><br><span class="line">==3294==</span><br><span class="line">==3294== Conditional jump or move depends on uninitialised value(s)</span><br><span class="line">==3294== at 0x3CD4C47E2C: vfprintf (in /lib64/libc-2.12.so)</span><br><span class="line">==3294== by 0x3CD4C4F189: printf (in /lib64/libc-2.12.so)</span><br><span class="line">==3294== by 0x400589: main (t5.c:9)</span><br><span class="line">==3294==</span><br><span class="line">==3294== Invalid free() / delete / delete[] / realloc()</span><br><span class="line">==3294== at 0x4A06430: free (vg_replace_malloc.c:446)</span><br><span class="line">==3294== by 0x4005B5: main (t5.c:13)</span><br><span class="line">==3294== Address 0x4c27040 is 0 bytes inside a block of size</span><br><span class="line">100 free&#x27;d</span><br><span class="line">==3294== at 0x4A06430: free (vg_replace_malloc.c:446)</span><br><span class="line">==3294== by 0x4005A9: main (t5.c:12)</span><br><span class="line">==3294==</span><br><span class="line">==3294== Invalid free() / delete / delete[] / realloc()</span><br><span class="line">==3294== at 0x4A06430: free (vg_replace_malloc.c:446)</span><br><span class="line">==3294== by 0x4005C1: main (t5.c:14)</span><br><span class="line">==3294== Address 0x4c27040 is 0 bytes inside a block of size</span><br><span class="line">100 free&#x27;d</span><br><span class="line">==3294== at 0x4A06430: free (vg_replace_malloc.c:446)</span><br><span class="line">==3294== by 0x4005A9: main (t5.c:12)</span><br><span class="line">==3294==</span><br><span class="line">Memory Allocated at: /n==3294==</span><br><span class="line">==3294== HEAP SUMMARY:</span><br><span class="line">==3294== in use at exit: 0 bytes in 0 blocks</span><br><span class="line">==3294== total heap usage: 1 allocs, 3 frees, 100 bytes allocated</span><br></pre></td></tr></table></figure>
+<p>从上面的输出可以看到(标注), 该功能检测到我们对同一个指针调用了3次释放内存操作。</p>
+<h2 id="内存动态管理"><a href="#内存动态管理" class="headerlink" title="内存动态管理"></a>内存动态管理</h2><p>常见的内存分配方式分三种：静态存储，栈上分配，堆上分配。全局变量属于静态存储，它们是在编译时就被分配了存储空间，函数内的局部变量属于栈上分配，而最灵活的内存使用方式当属堆上分配，也叫做内存动态分配了。常用的内存动态分配函数包括：malloc, alloc, realloc, new等，动态释放函数包括free, delete。</p>
+<p>一旦成功申请了动态内存，我们就需要自己对其进行内存管理，而这又是最容易犯错误的。下面的一段程序，就包括了内存动态管理中常见的错误。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc,<span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line">    <span class="type">char</span>* p = (<span class="type">char</span>*)<span class="built_in">malloc</span>(<span class="number">10</span>);</span><br><span class="line">    <span class="type">char</span>* pt=p;</span><br><span class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; <span class="number">10</span>;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        p[i] = <span class="string">&#x27;z&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">free</span>(p);</span><br><span class="line">    pt[<span class="number">1</span>] = <span class="string">&#x27;x&#x27;</span>;</span><br><span class="line">    <span class="built_in">free</span>(pt);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>1）编译程序t6.c</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -Wall t6.c -g -o t6</span><br></pre></td></tr></table></figure>
+<p>2）使用Valgrind检查程序BUG</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valgrind --tool=memcheck --leak-check=full ./t6</span><br></pre></td></tr></table></figure>
+<p>3) 运行结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">==3380== Memcheck, a memory error detector</span><br><span class="line">==3380== Copyright (C) 2002-2012, and GNU GPL&#x27;d, by Julian Seward et al.</span><br><span class="line">==3380== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info</span><br><span class="line">==3380== Command: ./t6</span><br><span class="line">==3380==</span><br><span class="line">==3380== Invalid write of size 1</span><br><span class="line">==3380==at 0x40055C: main (t6.c:14)</span><br><span class="line">==3380==Address 0x4c27041 is 1 bytes inside a block of size 10 free&#x27;d</span><br><span class="line">==3380==at 0x4A06430: free (vg_replace_malloc.c:446)</span><br><span class="line">==3380==by 0x400553: main (t6.c:13)</span><br><span class="line">==3380==</span><br><span class="line">==3380== Invalid free() / delete / delete[] / realloc()</span><br><span class="line">==3380==at 0x4A06430: free (vg_replace_malloc.c:446)</span><br><span class="line">==3380==by 0x40056A: main (t6.c:15)</span><br><span class="line">==3380==Address 0x4c27040 is 0 bytes inside a block of size 10 free&#x27;d</span><br><span class="line">==3380==at 0x4A06430: free (vg_replace_malloc.c:446)</span><br><span class="line">==3380==by 0x400553: main (t6.c:13)</span><br><span class="line">==3380==</span><br><span class="line">==3380==</span><br><span class="line">==3380== HEAP SUMMARY:</span><br><span class="line">==3380==in use at exit: 0 bytes in 0 blocks</span><br><span class="line">==3380==total heap usage: 1 allocs, 2 frees, 10 bytes allocated</span><br></pre></td></tr></table></figure>
+<p>申请内存在使用完成后就要释放。如果没有释放，或少释放了就是内存泄露；多释放也会产生问题。上述程序中，指针p和pt指向的是同一块内存，却被先后释放两次。系统会在堆上维护一个动态内存链表，如果被释放，就意味着该块内存可以继续被分配给其他部分，如果内存被释放后再访问，就可能覆盖其他部分的信息，这是一种严重的错误，上述程序第14行中就在释放后仍然写这块内存。</p>
+<p>输出结果显示，第13行分配和释放函数不一致；第14行发生非法写操作，也就是往释放后的内存地址写值；第15行释放内存函数无效。</p>
+<h1 id="massif"><a href="#massif" class="headerlink" title="massif"></a>massif</h1><h2 id="Massif-命令行选项"><a href="#Massif-命令行选项" class="headerlink" title="Massif 命令行选项"></a>Massif 命令行选项</h2><p>关于 massif 命令行选项，可以直接查看 valgrind 的 help 信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">MASSIF OPTIONS</span><br><span class="line">       --heap=&lt;yes|no&gt; [default: yes]</span><br><span class="line">           Specifies whether heap profiling should be done.</span><br><span class="line"></span><br><span class="line">       --heap-admin=&lt;size&gt; [default: 8]</span><br><span class="line">           If heap profiling is enabled, gives the number of administrative bytes per block to use. This should be an estimate of the average, since it may vary. For example, the</span><br><span class="line">           allocator used by glibc on Linux requires somewhere between 4 to 15 bytes per block, depending on various factors. That allocator also requires admin space for freed blocks,</span><br><span class="line">           but Massif cannot account for this.</span><br><span class="line"></span><br><span class="line">       --stacks=&lt;yes|no&gt; [default: no]</span><br><span class="line">           Specifies whether stack profiling should be done. This option slows Massif down greatly, and so is off by default. Note that Massif assumes that the main stack has size zero</span><br><span class="line">           at start-up. This is not true, but doing otherwise accurately is difficult. Furthermore, starting at zero better indicates the size of the part of the main stack that a user</span><br><span class="line">           program actually has control over.</span><br><span class="line"></span><br><span class="line">       --pages-as-heap=&lt;yes|no&gt; [default: no]</span><br><span class="line">           Tells Massif to profile memory at the page level rather than at the malloc&#x27;d block level. See above for details.</span><br><span class="line"></span><br><span class="line">       --depth=&lt;number&gt; [default: 30]</span><br><span class="line">           Maximum depth of the allocation trees recorded for detailed snapshots. Increasing it will make Massif run somewhat more slowly, use more memory, and produce bigger output</span><br><span class="line">           files.</span><br><span class="line"></span><br><span class="line">       --alloc-fn=&lt;name&gt;</span><br><span class="line">           Functions specified with this option will be treated as though they were a heap allocation function such as malloc. This is useful for functions that are wrappers to malloc or</span><br><span class="line">           new, which can fill up the allocation trees with uninteresting information. This option can be specified multiple times on the command line, to name multiple functions.</span><br><span class="line"></span><br><span class="line">           Note that the named function will only be treated this way if it is the top entry in a stack trace, or just below another function treated this way. For example, if you have a</span><br><span class="line">           function malloc1 that wraps malloc, and malloc2 that wraps malloc1, just specifying --alloc-fn=malloc2 will have no effect. You need to specify --alloc-fn=malloc1 as well.</span><br><span class="line">           This is a little inconvenient, but the reason is that checking for allocation functions is slow, and it saves a lot of time if Massif can stop looking through the stack trace</span><br><span class="line">           entries as soon as it finds one that doesn&#x27;t match rather than having to continue through all the entries.</span><br><span class="line"></span><br><span class="line">           Note that C++ names are demangled. Note also that overloaded C++ names must be written in full. Single quotes may be necessary to prevent the shell from breaking them up. For</span><br><span class="line">           example:</span><br><span class="line"></span><br><span class="line">               --alloc-fn=&#x27;operator new(unsigned, std::nothrow_t const&amp;)&#x27;</span><br><span class="line"></span><br><span class="line">       --ignore-fn=&lt;name&gt;</span><br><span class="line">           Any direct heap allocation (i.e. a call to malloc, new, etc, or a call to a function named by an --alloc-fn option) that occurs in a function specified by this option will be</span><br><span class="line">           ignored. This is mostly useful for testing purposes. This option can be specified multiple times on the command line, to name multiple functions.</span><br><span class="line"></span><br><span class="line">           Any realloc of an ignored block will also be ignored, even if the realloc call does not occur in an ignored function. This avoids the possibility of negative heap sizes if</span><br><span class="line">           ignored blocks are shrunk with realloc.</span><br><span class="line"></span><br><span class="line">           The rules for writing C++ function names are the same as for --alloc-fn above.</span><br><span class="line"></span><br><span class="line">       --threshold=&lt;m.n&gt; [default: 1.0]</span><br><span class="line">           The significance threshold for heap allocations, as a percentage of total memory size. Allocation tree entries that account for less than this will be aggregated. Note that</span><br><span class="line">           this should be specified in tandem with ms_print&#x27;s option of the same name.</span><br><span class="line"></span><br><span class="line">       --peak-inaccuracy=&lt;m.n&gt; [default: 1.0]</span><br><span class="line">           Massif does not necessarily record the actual global memory allocation peak; by default it records a peak only when the global memory allocation size exceeds the previous peak</span><br><span class="line">           by at least 1.0%. This is because there can be many local allocation peaks along the way, and doing a detailed snapshot for every one would be expensive and wasteful, as all</span><br><span class="line">           but one of them will be later discarded. This inaccuracy can be changed (even to 0.0%) via this option, but Massif will run drastically slower as the number approaches zero.</span><br><span class="line"></span><br><span class="line">       --time-unit=&lt;i|ms|B&gt; [default: i]</span><br><span class="line">           The time unit used for the profiling. There are three possibilities: instructions executed (i), which is good for most cases; real (wallclock) time (ms, i.e. milliseconds),</span><br><span class="line">           which is sometimes useful; and bytes allocated/deallocated on the heap and/or stack (B), which is useful for very short-run programs, and for testing purposes, because it is</span><br><span class="line">           the most reproducible across different machines.</span><br><span class="line"></span><br><span class="line">       --detailed-freq=&lt;n&gt; [default: 10]</span><br><span class="line">           Frequency of detailed snapshots. With --detailed-freq=1, every snapshot is detailed.</span><br><span class="line"></span><br><span class="line">       --max-snapshots=&lt;n&gt; [default: 100]</span><br><span class="line">           The maximum number of snapshots recorded. If set to N, for all programs except very short-running ones, the final number of snapshots will be between N/2 and N.</span><br><span class="line"></span><br><span class="line">       --massif-out-file=&lt;file&gt; [default: massif.out.%p]</span><br><span class="line">           Write the profile data to file rather than to the default output file, massif.out.&lt;pid&gt;. The %p and %q format specifiers can be used to embed the process ID and/or the</span><br><span class="line">           contents of an environment variable in the name, as is the case for the core option --log-file.</span><br></pre></td></tr></table></figure>
+<p>对其中几个常用的选项做一个说明：</p>
+<ul>
+<li><code>–stacks</code>: 栈内存的采样开关，默认关闭。打开后，会针对栈上的内存也进行采样，会使 massif 性能变慢；</li>
+<li><code>–time-unit</code>：指定用来分析的时间单位。这个选项三个有效值：执行的指令（i），即默认值，用于大多数情况；即时（ms，单位毫秒），可用于某些特定事务；以及在堆（/或者）栈中分配/取消分配的字节（B），用于很少运行的程序，且用于测试目的，因为它最容易在不同机器中重现。这个选项在使用 ms_print 输出结果画图是游泳</li>
+<li><code>–detailed-freq</code>: 针对详细内存快照的频率，默认是 10， 即每 10 个快照会有采集一个详细的内存快照</li>
+<li><code>–massif-out-file</code>： 采样结束后，生成的采样文件（后续可以使用 ms_print 或者 massif-visualizer 进行分析）</li>
+</ul>
+<h2 id="开始采集"><a href="#开始采集" class="headerlink" title="开始采集"></a>开始采集</h2><p>经过上面的了解，接下来可以开始内存数据采集了，假设我们需要采集的二进制程序名为 xprogram:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valgrind -v --tool=massif --time-unit=B --detailed-freq=1 --massif-out-file=./massif.out  ./xprogram someargs</span><br></pre></td></tr></table></figure>
+<p>运行一段时间后，采集到足够多的内存数据之后，我们需要停止程序，让它生成采集的数据文件，使用 kill 命令让 valgrind 程序退出。</p>
+<p>attention: 这里禁止使用 kill -9 模式去杀进程，不然不会产生采样文件</p>
+<h2 id="ms-print-分析采样文件"><a href="#ms-print-分析采样文件" class="headerlink" title="ms_print 分析采样文件"></a>ms_print 分析采样文件</h2><p>ms_print 是用来分析 massif 采样得到的内存数据文件的，使用命令为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ms_print ./massif.out</span><br></pre></td></tr></table></figure>
+<p>或者把输出保存到文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ms_print ./massif.out &gt; massif.result</span><br></pre></td></tr></table></figure>
+<p>打开 massif.result 看看长啥样：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">Command:            ./xprogram someargs</span><br><span class="line">Massif arguments:   --time-unit=B --massif-out-file=./massif.out</span><br><span class="line">ms_print arguments: massif.out</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    GB</span><br><span class="line">1.279^                                                                       #</span><br><span class="line">     |                                                                       #</span><br><span class="line">     |                                                                   @  @#</span><br><span class="line">     |                                                                   @::@#</span><br><span class="line">     |                                                                 @:@: @#</span><br><span class="line">     |                                                            @::  @:@: @#</span><br><span class="line">     |                                                      : ::::@: ::@:@: @#</span><br><span class="line">     |                                             @ @@@@ :::::: :@: : @:@: @#</span><br><span class="line">     |                                          :  @:@ @ @: :::: :@: : @:@: @#</span><br><span class="line">     |                                     @  :::::@:@ @ @: :::: :@: : @:@: @#</span><br><span class="line">     |                               @@:::@@::: :: @:@ @ @: :::: :@: : @:@: @#</span><br><span class="line">     |                            :::@ : :@@: : :: @:@ @ @: :::: :@: : @:@: @#</span><br><span class="line">     |                    :: @@::::: @ : :@@: : :: @:@ @ @: :::: :@: : @:@: @#</span><br><span class="line">     |                 :::: :@ :: :: @ : :@@: : :: @:@ @ @: :::: :@: : @:@: @#</span><br><span class="line">     |          @  :::::::: :@ :: :: @ : :@@: : :: @:@ @ @: :::: :@: : @:@: @#</span><br><span class="line">     |        ::@::: : :::: :@ :: :: @ : :@@: : :: @:@ @ @: :::: :@: : @:@: @#</span><br><span class="line">     |      ::::@: : : :::: :@ :: :: @ : :@@: : :: @:@ @ @: :::: :@: : @:@: @#</span><br><span class="line">     |     :: ::@: : : :::: :@ :: :: @ : :@@: : :: @:@ @ @: :::: :@: : @:@: @#</span><br><span class="line">     |   @@:: ::@: : : :::: :@ :: :: @ : :@@: : :: @:@ @ @: :::: :@: : @:@: @#</span><br><span class="line">     | ::@ :: ::@: : : :::: :@ :: :: @ : :@@: : :: @:@ @ @: :::: :@: : @:@: @#</span><br><span class="line">   0 +-----------------------------------------------------------------------&gt;GB</span><br><span class="line">     0                                                                   813.9</span><br><span class="line"></span><br><span class="line">Number of snapshots: 68</span><br><span class="line"> Detailed snapshots: [2, 7, 16, 21, 24, 25, 30, 32, 33, 34, 41, 44, 46, 48, 51, 52, 58, 59, 61, 64, 65, 66, 67 (peak)]</span><br></pre></td></tr></table></figure>
+<p>这张图大概意思就表示堆内存的分配量随着采样时间的变化。从上图可以看到堆内存一直在增长，可能存在一些内存泄露等问题。</p>
+<p>往下看还能看到内存的分配栈：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">  0              0                0                0             0            0</span><br><span class="line">  1 20,021,463,688      133,278,776      124,687,612     8,591,164            0</span><br><span class="line">  2 45,201,848,936      204,228,232      191,089,596    13,138,636            0</span><br><span class="line">93.57% (191,089,596B) (heap allocation functions) malloc/new/new[], --alloc-fns, etc.</span><br><span class="line">-&gt;41.07% (83,886,080B) 0xF088E6: rocksdb::Arena::AllocateNewBlock(unsigned long) (in /chain/xtopchain)</span><br><span class="line">| -&gt;41.07% (83,886,080B) 0xF08500: rocksdb::Arena::AllocateFallback(unsigned long, bool) (in /chain/xtopchain)</span><br><span class="line">|   -&gt;41.07% (83,886,080B) 0xF0886C: rocksdb::Arena::AllocateAligned(unsigned long, unsigned long, rocksdb::Logger*) (in /chain/xtopchain)</span><br><span class="line">|     -&gt;41.07% (83,886,080B) 0xDE62BC: rocksdb::ConcurrentArena::AllocateAligned(unsigned long, unsigned long, rocksdb::Logger*)::&#123;lambda()</span><br><span class="line">|     | -&gt;41.07% (83,886,080B) 0xDE7D9A: char* rocksdb::ConcurrentArena::AllocateImpl&lt;rocksdb::ConcurrentArena::AllocateAligned(unsigned long, unsigned long, rocksdb::Logger*)::&#123;lambda()</span><br><span class="line">|     |   -&gt;41.07% (83,886,080B) 0xDE6371: rocksdb::ConcurrentArena::AllocateAligned(unsigned long, unsigned long, rocksdb::Logger*) (in /chain/xtopchain)</span><br><span class="line">|     |     -&gt;41.07% (83,886,080B) 0xE6FAB0: rocksdb::InlineSkipList&lt;rocksdb::MemTableRep::KeyComparator const&amp;&gt;::AllocateNode(unsigned long, int) (in /chain/xtopchain)</span><br><span class="line">|     |       -&gt;41.07% (83,886,080B) 0xE6F472: rocksdb::InlineSkipList&lt;rocksdb::MemTableRep::KeyComparator const&amp;&gt;::AllocateKey(unsigned long) (in /chain/xtopchain)</span><br><span class="line">|     |         -&gt;41.07% (83,886,080B) 0xE6E40A: rocksdb::(anonymous namespace)::SkipListRep::Allocate(unsigned long, char**) (in /chain/xtopchain)</span><br><span class="line">|     |           -&gt;41.07% (83,886,080B) 0xDE32E3: rocksdb::MemTable::Add(unsigned long, rocksdb::ValueType, rocksdb::Slice const&amp;, rocksdb::Slice const&amp;, bool, rocksdb::MemTablePostProcessInfo*) (in /chain/xtopchain)</span><br><span class="line">|     |             -&gt;41.07% (83,886,080B) 0xE5C218: rocksdb::MemTableInserter::PutCFImpl(unsigned int, rocksdb::Slice const&amp;, rocksdb::Slice const&amp;, rocksdb::ValueType) (in /chain/xtopchain)</span><br><span class="line">|     |               -&gt;41.07% (83,886,080B) 0xE5C92C: rocksdb::MemTableInserter::PutCF(unsigned int, rocksdb::Slice const&amp;, rocksdb::Slice const&amp;) (in /chain/xtopchain)</span><br><span class="line">|     |                 -&gt;41.07% (83,886,080B) 0xE570E4: rocksdb::WriteBatch::Iterate(rocksdb::WriteBatch::Handler*) const (in /chain/xtopchain)</span><br><span class="line">|     |                   -&gt;41.07% (83,886,080B) 0xE598D5: rocksdb::WriteBatchInternal::InsertInto(rocksdb::WriteThread::WriteGroup&amp;, unsigned long, rocksdb::ColumnFamilyMemTables*, rocksdb::FlushScheduler*, bool, unsigned long, rocksdb::DB*, bool, bool, bool) (in /chain/xtopchain)</span><br><span class="line">|     |                     -&gt;41.07% (83,886,080B) 0xD45AD7: rocksdb::DBImpl::WriteImpl(rocksdb::WriteOptions const&amp;, rocksdb::WriteBatch*, rocksdb::WriteCallback*, unsigned long*, unsigned long, bool, unsigned long*, unsigned long, rocksdb::PreReleaseCallback*) (in /chain/xtopchain)</span><br><span class="line">|     |                       -&gt;28.75% (58,720,256B) 0x1013B9C: rocksdb::WriteCommittedTxn::CommitWithoutPrepareInternal() (in /chain/xtopchain)</span><br><span class="line">|     |                       | -&gt;28.75% (58,720,256B) 0x1013653: rocksdb::PessimisticTransaction::Commit() (in /chain/xtopchain)</span><br><span class="line">|     |                       |   -&gt;28.75% (58,720,256B) 0xF40E17: rocksdb::PessimisticTransactionDB::Put(rocksdb::WriteOptions const&amp;, rocksdb::ColumnFamilyHandle*, rocksdb</span><br></pre></td></tr></table></figure>
+<p>能看到内存分配的调用堆栈情况，据此可以看到哪里分配的内存较多。</p>
+<h1 id="手册"><a href="#手册" class="headerlink" title="手册"></a>手册</h1><p>一般像下面这样调用Valgrind:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valgrind program args</span><br></pre></td></tr></table></figure>
+<p>这样将在Valgrind使用Memcheck运行程序program(带有参数args)。内存检查执行一系列的内存检查功能，包括检测访问未初始化的内存，已经分配内存的错误使用(两次释放，释放后再访问，等等)并检查内存泄漏。</p>
+<p>可用—tool指定使用其它工具：<br><code>valgrind --tool=toolname program args</code></p>
+<p>可使用的工具如下：</p>
+<ul>
+<li>cachegrind是一个缓冲模拟器。它可以用来标出你的程序每一行执行的指令数和导致的缓冲不命中数。</li>
+<li>callgrind在cachegrind基础上添加调用追踪。它可以用来得到调用的次数以及每次函数调用的开销。作为对cachegrind的补充，callgrind可以分别标注各个线程，以及程序反汇编输出的每条指令的执行次数以及缓存未命中数。</li>
+<li>helgrind能够发现程序中潜在的条件竞争。</li>
+<li>lackey是一个示例程序，以其为模版可以创建你自己的工具。在程序结束后，它打印出一些基本的关于程序执行统计数据。</li>
+<li>massif是一个堆剖析器，它测量你的程序使用了多少堆内存。</li>
+<li>memcheck是一个细粒度的的内存检查器。</li>
+<li>none没有任何功能。它它一般用于Valgrind的调试和基准测试。</li>
+</ul>
+<p>基本选项：<br>这些选项对所有工具都有效。</p>
+<p>-h —help<br>显示所有选项的帮助，包括内核和选定的工具两者。</p>
+<p>—help-debug<br>和—help相同，并且还能显示通常只有Valgrind的开发人员使用的调试选项。</p>
+<p>—version<br>显示Valgrind内核的版本号。工具可以有他们自已的版本号。这是一种保证工具只在它们可以运行的内核上工作的一种设置。这样可以减少在工具和内核之间版本兼容性导致奇怪问题的概率。</p>
+<p>-q —quiet<br>安静的运行，只打印错误信息。在进行回归测试或者有其它的自动化测试机制时会非常有用。</p>
+<p>-v —verbose<br>显示详细信息。在各个方面显示你的程序的额外信息，例如：共享对象加载，使用的重置，执行引擎和工具的进程，异常行为的警告信息。重复这个标记可以增加详细的级别。</p>
+<p>-d 调试Valgrind自身发出的信息。通常只有Valgrind开发人员对此感兴趣。重复这个标记可以产生更详细的输出。如果你希望发送一个bug报告，通过-v -d生成的输出会使你的报告更加有效。</p>
+<p>—tool=<toolname> [default: memcheck]<br>运行toolname指定的Valgrind，例如，Memcheck, Addrcheck, Cachegrind,等等。</p>
+<p>—trace-children=<yes|no> [default: no]<br>当这个选项打开时，Valgrind会跟踪到子进程中。这经常会导致困惑，而且通常不是你所期望的，所以默认这个选项是关闭的。</p>
+<p>—track-fds=<yes|no> [default: no]<br>当这个选项打开时，Valgrind会在退出时打印一个打开文件描述符的列表。每个文件描述符都会打印出一个文件是在哪里打开的栈回溯，和任何与此文件描述符相关的详细信息比如文件名或socket信息。</p>
+<p>—time-stamp=<yes|no> [default: no]<br>当这个选项打开时，每条信息之前都有一个从程序开始消逝的时间，用天，小时，分钟，秒和毫秒表示。</p>
+<p>—log-fd=<number> [default: 2, stderr]<br>指定Valgrind把它所有的消息都输出到一个指定的文件描述符中去。默认值2,　是标准错误输出(stderr)。注意这可能会干扰到客户端自身对stderr的使用, Valgrind的输出与客户程序的输出将穿插在一起输出到stderr。</p>
+<p>—log-file=<filename><br>指定Valgrind把它所有的信息输出到指定的文件中。实际上，被创建文件的文件名是由filename、’.’和进程号连接起来的（即<filename>.<pid>），从而每个进程创建不同的文件。</p>
+<p>—log-file-exactly=<filename><br>类似于—log-file，但是后缀”.pid”不会被添加。如果设置了这个选项，使用Valgrind跟踪多个进程，可能会得到一个乱七八糟的文件。</p>
+<p>—log-file-qualifier=<VAR><br>当和—log-file一起使用时，日志文件名将通过环境变量$VAR来筛选。这对于MPI程序是有益的。更多的细节，查看手册2.3节 “注解”。</p>
+<p>—log-socket=<ip-address:port-number><br>指定Valgrind输出所有的消息到指定的IP，指定的端口。当使用1500端口时，端口有可能被忽略。如果不能建立一个到指定端口的连接，Valgrind将输出写到标准错误(stderr)。这个选项经常和一个Valgrind监听程序一起使用。</p>
+<p>错误相关选项：<br>这些选项适用于所有产生错误的工具，比如Memcheck,　但是Cachegrind不行。</p>
+<p>—xml=<yes|no> [default: no]<br>当这个选项打开时，输出将是XML格式。这是为了使用Valgrind的输出做为输入的工具，例如GUI前端更加容易些。目前这个选项只在Memcheck时生效。</p>
+<p>—xml-user-comment=<string><br>在XML开头 附加用户注释，仅在指定了—xml=yes时生效，否则忽略。</p>
+<p>—demangle=<yes|no> [default: yes]<br>打开/关闭C++的名字自动解码。默认打开。当打开时，Valgrind将尝试着把编码过的C++名字自动转回初始状态。这个解码器可以处理g++版本为2.X,3.X或4.X生成的符号。</p>
+<p>一个关于名字编码解码重要的事实是，禁止文件中的解码函数名仍然使用他们未解码的形式。Valgrind在搜寻可用的禁止条目时不对函数名解码，因为这将使禁止文件内容依赖于Valgrind的名字解码机制状态， 会使速度变慢，且无意义。</p>
+<p>—num-callers=<number> [default: 12]<br>默认情况下，Valgrind显示12层函数调用的函数名有助于确定程序的位置。可以通过这个选项来改变这个数字。这样有助在嵌套调用的层次很深时确定程序的位置。注意错误信息通常只回溯到最顶上的4个函数。(当前函数，和它的3个调用者的位置)。所以这并不影响报告的错误总数。</p>
+<p>这个值的最大值是50。注意高的设置会使Valgrind运行得慢，并且使用更多的内存,但是在嵌套调用层次比较高的程序中非常实用。</p>
+<p>—error-limit=<yes|no> [default: yes]<br>当这个选项打开时，在总量达到10,000,000，或者1,000个不同的错误，Valgrind停止报告错误。这是为了避免错误跟踪机制在错误很多的程序下变成一个巨大的性能负担。</p>
+<p>—error-exitcode=<number> [default: 0]<br>指定如果Valgrind在运行过程中报告任何错误时的退出返回值，有两种情况；当设置为默认值(零)时，Valgrind返回的值将是它模拟运行的程序的返回值。当设置为非零值时，如果Valgrind发现任何错误时则返回这个值。在Valgrind做为一个测试工具套件的部分使用时这将非常有用，因为使测试工具套件只检查Valgrind返回值就可以知道哪些测试用例Valgrind报告了错误。</p>
+<p>—show-below-main=<yes|no> [default: no]<br>默认地，错误时的栈回溯不显示main()之下的任何函数(或者类似的函数像glibc的<code>__libc_start_main()</code>，如果main()没有出现在栈回溯中)；这些大部分都是令人厌倦的C库函数。如果打开这个选项，在main()之下的函数也将会显示。</p>
+<p>—suppressions=<filename> [default: $PREFIX/lib/valgrind/default.supp]<br>指定一个额外的文件读取不需要理会的错误；你可以根据需要使用任意多的额外文件。</p>
+<p>—gen-suppressions=<yes|no|all> [default: no]<br>当设置为yes时，Valgrind将会在每个错误显示之后自动暂停并且打印下面这一行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---- Print suppression ? --- [Return/N/n/Y/y/C/c] ----</span><br></pre></td></tr></table></figure>
+<p>这个提示的行为和—db-attach选项(见下面)相同。</p>
+<p>如果选择是，Valgrind会打印出一个错误的禁止条目，你可以把它剪切然后粘帖到一个文件，如果不希望在将来再看到这个错误信息。</p>
+<p>当设置为all时，Valgrind会对每一个错误打印一条禁止条目，而不向用户询问。</p>
+<p>这个选项对C++程序非常有用，它打印出编译器调整过的名字。</p>
+<p>注意打印出来的禁止条目是尽可能的特定的。如果需要把类似的条目归纳起来，比如在函数名中添加通配符。并且，有些时候两个不同的错误也会产生同样的禁止条目，这时Valgrind就会输出禁止条目不止一次，但是在禁止条目的文件中只需要一份拷贝(但是如果多于一份也不会引起什么问题)。并且，禁止条目的名字像&lt;在这儿输入一个禁止条目的名字&gt;;名字并不是很重要，它只是和-v选项一起使用打印出所有使用的禁止条目记录。</p>
+<p>—db-attach=<yes|no> [default: no]<br>当这个选项打开时，Valgrind将会在每次打印错误时暂停并打出如下一行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---- Attach to debugger ? --- [Return/N/n/Y/y/C/c] ----</span><br></pre></td></tr></table></figure>
+<p>按下回车,或者N、回车，n、回车，Valgrind不会对这个错误启动调试器。</p>
+<p>按下Y、回车，或者y、回车，Valgrind会启动调试器并设定在程序运行的这个点。当调试结束时，退出，程序会继续运行。在调试器内部尝试继续运行程序，将不会生效。</p>
+<p>按下C、回车，或者c、回车，Valgrind不会启动一个调试器，并且不会再次询问。</p>
+<p>注意：—db-attach=yes与—trace-children=yes有冲突。你不能同时使用它们。Valgrind在这种情况下不能启动。</p>
+<p>—db-command=<command> [default: gdb -nw %f %p]<br>通过—db-attach指定如何使用调试器。默认的调试器是gdb.默认的选项是一个运行时扩展Valgrind的模板。 %f会用可执行文件的文件名替换，%p会被可执行文件的进程ID替换。</p>
+<p>这指定了Valgrind将怎样调用调试器。默认选项不会因为在构造时是否检测到了GDB而改变,通常是/usr/bin/gdb.使用这个命令，你可以指定一些调用其它的调试器来替换。</p>
+<p>给出的这个命令字串可以包括一个或多个%p %f扩展。每一个%p实例都被解释成将调试的进程的PID，每一个%f实例都被解释成要调试的进程的可执行文件路径。</p>
+<p>—input-fd=<number> [default: 0, stdin]<br>使用—db-attach=yes和—gen-suppressions=yes选项，在发现错误时，Valgrind会停下来去读取键盘输入。默认地，从标准输入读取，所以关闭了标准输入的程序会有问题。这个选项允许你指定一个文件描述符来替代标准输入读取。</p>
+<p>—max-stackframe=<number> [default: 2000000]<br>栈的最大值。如果栈指针的偏移超过这个数量，Valgrind则会认为程序是切换到了另外一个栈执行。</p>
+<p>如果在程序中有大量的栈分配的数组，你可能需要使用这个选项。valgrind保持对程序栈指针的追踪。如果栈指针的偏移超过了这个数量，Valgrind假定你的程序切换到了另外一个栈，并且Memcheck行为与栈指针的偏移没有超出这个数量将会不同。通常这种机制运转得很好。然而，如果你的程序在栈上申请了大的结构，这种机制将会表现得愚蠢，并且Memcheck将会报告大量的非法栈内存访问。这个选项允许把这个阀值设置为其它值。</p>
+<p>应该只在Valgrind的调试输出中显示需要这么做时才使用这个选项。在这种情况下，它会告诉你应该指定的新的阀值。</p>
+<p>普遍地，在栈中分配大块的内存是一个坏的主意。因为这很容易用光你的栈空间，尤其是在内存受限的系统或者支持大量小堆栈的线程的系统上，因为Memcheck执行的错误检查，对于堆上的数据比对栈上的数据要高效很多。如果你使用这个选项，你可能希望考虑重写代码在堆上分配内存而不是在栈上分配。</p>
+<p>MALLOC()相关的选项:<br>对于使用自有版本的malloc() (例如Memcheck和massif)，下面的选项可以使用。</p>
+<p>—alignment=<number> [default: 8]<br>默认Valgrind的malloc(),realloc(), 等等，是8字节对齐地址的。这是大部分处理器的标准。然而，一些程序可能假定malloc()等总是返回16字节或更多对齐的内存。提供的数值必须在8和4096区间之内，并且必须是2的幂数。</p>
+<p>非通用选项：<br>这些选项可以用于所有的工具，它们影响Valgrind core的几个特性。大部分人不会用到这些选项。</p>
+<p>—run-libc-freeres=<yes|no> [default: yes]<br>   GNU C库(libc.so)，所有程序共用的，可能会分配一部分内存自已用。通常在程序退出时释放内存并不麻烦 — 这里没什么问题，因为Linux内核一个进程退出时会回收进程全部的资源，所以这只是会造成速度慢。</p>
+<p>glibc的作者认识到这样会导致内存检查器，像Valgrind，在退出时检查内存错误的报告glibc的内存泄漏问题，为了避免这个问题，他们提供了一个<code>__libc_freeres()</code>例程特别用来让glibc释放分配的所有内存。因此Memcheck在退出时尝试着去运行<code>__libc_freeres()</code>。</p>
+<p>不幸的是，在glibc的一些版本中，<strong>libc_freeres是有bug会导致段错误的。这在Red Hat 7.1上有特别声明。所以，提供这个选项来决定是否运行</strong>libc_freeres。如果你的程序看起来在Valgrind上运行得很好，但是在退出时发生段错误，你可能需要指定—run-libc-freeres=no来修正，这将可能错误的报告libc.so的内存泄漏。</p>
+<p>—sim-hints=hint1,hint2,…<br>传递杂凑的提示给Valgrind，轻微的修改模拟行为的非标准或危险方式，可能有助于模拟奇怪的特性。默认没有提示打开。小心使用！目前已知的提示有：</p>
+<ul>
+<li>lax-ioctls: 对ioctl的处理非常不严格，唯一的假定是大小是正确的。不需要在写时缓冲区完全的初始化。没有这个，用大量的奇怪的ioctl命令来使用一些设备驱动将会非常烦人。</li>
+<li>enable-inner:打开某些特殊的效果，当运行的程序是Valgrind自身时。</li>
+</ul>
+<p>—kernel-variant=variant1,variant2,…<br>处理系统调用和ioctls在这个平台的默认核心上产生不同的变量。这有助于运行在改进过的内核或者支持非标准的ioctls上。小心使用。如果你不理解这个选项做的是什么那你几乎不需要它。已经知道的变量有：</p>
+<ul>
+<li>bproc: 支持X86平台上的sys_broc系统调用。这是为了运行在BProc，它是标准Linux的一个变种，有时用来构建集群。</li>
+</ul>
+<p>—show-emwarns=<yes|no> [default: no]<br>当这个选项打开时，Valgrind在一些特定的情况下将对CPU仿真产生警告。通常这些都是不引人注意的。</p>
+<p>—smc-check=<none|stack|all> [default: stack]<br>这个选项控制Valgrind对自我修改的代码的检测。Valgrind可以不做检测，可以检测栈中自我修改的代码，或者任意地方检测自我修改的代码。注意默认选项是捕捉绝大多数情况，到目前我们了解的情况为止。使用all选项时会极大的降低速度。(但是用none选项运行极少影响速度，因为对大多数程序，非常少的代码被添加到栈中)</p>
+<p>调试VALGRIND选项：<br>还有一些选项是用来调试Valgrind自身的。在运行一般的东西时不应该需要的。如果你希望看到选项列表，使用—help-debug选项。</p>
+<p>内存检查选项：<br>—leak-check=<no|summary|yes|full> [default: summary]<br>当这个选项打开时，当客户程序结束时查找内存泄漏。内存泄漏意味着有用malloc分配内存块，但是没有用free释放，而且没有指针指向这块内存。这样的内存块永远不能被程序释放，因为没有指针指向它们。如果设置为summary，Valgrind会报告有多少内存泄漏发生了。如果设置为full或yes，Valgrind给出每一个独立的泄漏的详细信息。</p>
+<p>—show-reachable=<yes|no> [default: no]<br>当这个选项关闭时，内存泄漏检测器只显示没有指针指向的内存块，或者只能找到指向块中间的指针。当这个选项打开时，内存泄漏检测器还报告有指针指向的内存块。这些块是最有可能出现内存泄漏的地方。你的程序可能，至少在原则上，应该在退出前释放这些内存块。这些有指针指向的内存块和没有指针指向的内存块，或者只有内部指针指向的块，都可能产生内存泄漏，因为实际上没有一个指向块起始的指针可以拿来释放，即使你想去释放它。</p>
+<p>—leak-resolution=<low|med|high> [default: low]<br>在做内存泄漏检查时，确定memcheck将怎么样考虑不同的栈是相同的情况。当设置为low时，只需要前两层栈匹配就认为是相同的情况；当设置为med，必须要四层栈匹配，当设置为high时，所有层次的栈都必须匹配。</p>
+<p>对于hardcore内存泄漏检查，你很可能需要使用—leak-resolution=high和—num-callers=40或者更大的数字。注意这将产生巨量的信息，这就是为什么默认选项是四个调用者匹配和低分辨率的匹配。注意—leak-resolution= 设置并不影响memcheck查找内存泄漏的能力。它只是改变了结果如何输出。</p>
+<p>—freelist-vol=<number> [default: 5000000]<br>当客户程序使用free(C中)或者delete(C++)释放内存时，这些内存并不是马上就可以用来再分配的。这些内存将被标记为不可访问的，并被放到一个已释放内存的队列中。这样做的目的是，使释放的内存再次被利用的点尽可能的晚。这有利于memcheck在内存块释放后这段重要的时间检查对块不合法的访问。</p>
+<p>这个选项指定了队列所能容纳的内存总容量，以字节为单位。默认的值是5000000字节。增大这个数目会增加memcheck使用的内存，但同时也增加了对已释放内存的非法使用的检测概率。</p>
+<p>—workaround-gcc296-bugs=<yes|no> [default: no]<br>当这个选项打开时，假定读写栈指针以下的一小段距离是gcc 2.96的bug，并且不报告为错误。距离默认为256字节。注意gcc 2.96是一些比较老的Linux发行版(RedHat 7.X)的默认编译器，所以你可能需要使用这个选项。如果不是必要请不要使用这个选项，它可能会使一些真正的错误溜掉。一个更好的解决办法是使用较新的，修正了这个bug的gcc/g++版本。</p>
+<p>—partial-loads-ok=<yes|no> [default: no]<br>控制memcheck如何处理从地址读取时字长度，字对齐，因此哪些字节是可以寻址的，哪些是不可以寻址的。当设置为yes是，这样的读取并不抛出一个寻址错误。而是从非法地址读取的V字节显示为未定义，访问合法地址仍然是像平常一样映射到内存。</p>
+<p>设置为no时，从部分错误的地址读取与从完全错误的地址读取同样处理：抛出一个非法地址错误，结果的V字节显示为合法数据。</p>
+<p>注意这种代码行为是违背ISO C/C++标准，应该被认为是有问题的。如果可能，这种代码应该修正。这个选项应该只是做为一个最后考虑的方法。</p>
+<p>—undef-value-errors=<yes|no> [default: yes]<br>控制memcheck是否检查未定义值的危险使用。当设为yes时，Memcheck的行为像Addrcheck, 一个轻量级的内存检查工具，是Valgrind的一个部分，它并不检查未定义值的错误。使用这个选项，如果你不希望看到未定义值错误。</p>
+<p>CACHEGRIND选项：<br>手动指定I1/D1/L2缓冲配置，大小是用字节表示的。这三个必须用逗号隔开，中间没有空格，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valgrind --tool=cachegrind --I1=65535,2,64</span><br></pre></td></tr></table></figure>
+<p>你可以指定一个，两个或三个I1/D1/L2缓冲。如果没有手动指定，每个级别使用<br>普通方式(通过CPUID指令得到缓冲配置，如果失败，使用默认值)得到的配置。</p>
+<p>—I1=<size>,<associativity>,<line size><br>指定第一级指令缓冲的大小，关联度和行大小。</p>
+<p>—D1=<size>,<associativity>,<line size><br>指定第一级数据缓冲的大小，关联度和行大小。</p>
+<p>—L2=<size>,<associativity>,<line size><br>指定第二级缓冲的大小，关联度和行大小。</p>
+<p>CALLGRIND选项：</p>
+<p>—heap=<yes|no> [default: yes]<br>当这个选项打开时，详细的追踪堆的使用情况。关闭这个选项时，massif.pid.txt或massif.pid.html将会非常的简短。</p>
+<p>—heap-admin=<number> [default: 8]<br>每个块使用的管理字节数。这只能使用一个平均的估计值，因为它可能变化。glibc使用的分配器每块需要4~15字节，依赖于各方面的因素。管理已经释放的块也需要空间，尽管massif不计算这些。</p>
+<p>—stacks=<yes|no> [default: yes]<br>当打开时，在剖析信息中包含栈信息。多线程的程序可能有多个栈。</p>
+<p>—depth=<number> [default: 3]<br>详细的堆信息中调用过程的深度。增加这个值可以给出更多的信息，但是massif会更使这个程序运行得慢，使用更多的内存，并且产生一个大的massif.pid.txt或者massif.pid.hp文件。</p>
+<p>—alloc-fn=<name><br>指定一个分配内存的函数。这对于使用malloc()的包装函数是有用的，可以用它来填充原来无效的上下文信息。(这些函数会给出无用的上下文信息，并在图中给出无意义的区域)。指定的函数在上下文中被忽略，例如，像对<code>malloc()</code>一样处理。这个选项可以在命令行中重复多次，指定多个函数。</p>
+<p>—format=<text|html> [default: text]<br>产生text或者HTML格式的详细堆信息，文件的后缀名使用.txt或者.html。</p>
+<p>HELGRIND选项：</p>
+<p>—private-stacks=<yes|no> [default: no]<br>假定线程栈是私有的。</p>
+<p>—show-last-access=<yes|some|no> [default: no]<br>显示最后一次字访问出错的位置。</p>
+<p>LACKEY选项：<br>—fnname=<name> [default: _dl_runtime_resolve()]<br>对<name>函数计数。</p>
+<p>—detailed-counts=<no|yes> [default: no]<br>对读取，存储和alu操作计数。</p>
+<h1 id="利用GCC编译选项Sanitizers快速定位内存错误"><a href="#利用GCC编译选项Sanitizers快速定位内存错误" class="headerlink" title="利用GCC编译选项Sanitizers快速定位内存错误"></a>利用GCC编译选项Sanitizers快速定位内存错误</h1><p>先从一个小例子开头</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> </span>&#123;</span><br><span class="line">  <span class="type">int</span> *array = <span class="keyword">new</span> <span class="type">int</span>[<span class="number">100</span>];</span><br><span class="line">  <span class="keyword">delete</span> [] array;</span><br><span class="line">  array[argc]==<span class="number">1</span>;  <span class="comment">//can&#x27;t detected</span></span><br><span class="line">  cout&amp;lt;&amp;lt; <span class="string">&quot;passed 1st&quot;</span>&amp;lt;&amp;lt;endl;</span><br><span class="line"> </span><br><span class="line">  array[argc] = array[argc];</span><br><span class="line">  cout&amp;lt;&amp;lt; <span class="string">&quot;passed 2nd&quot;</span>&amp;lt;&amp;lt;endl;</span><br><span class="line"> </span><br><span class="line">  array[argc]=<span class="number">100</span>;  <span class="comment">// BOOM</span></span><br><span class="line">  cout&amp;lt;&amp;lt;<span class="string">&quot;passed 3rd&quot;</span>&amp;lt;&amp;lt;endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ g++ -g -O -fsanitize=address -o asan heap-use-after-free.cpp</span><br><span class="line">$ ./asan</span><br></pre></td></tr></table></figure>
+<p>重点在这个<code>-fsanitize=address</code>选项上，不加它运行这段代码基本是不会报错的。</p>
+<h1 id="Sanitizers简介"><a href="#Sanitizers简介" class="headerlink" title="Sanitizers简介"></a>Sanitizers简介</h1><p>Sanitizers是谷歌发起的开源工具集，包括了AddressSanitizer，MemorySanitizer，ThreadSanitizer，LeakSanitizer，Sanitizers项目本是LLVM项目的一部分，但GNU也将该系列工具加入到了自家的GCC编译器中。GCC从4.8版本开始支持Address和Thread Sanitizer，4.9版本开始支持Leak Sanitizer和UB Sanitizer，这些都是查找隐藏Bug的利器。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>原文</th>
+<th>不上道的翻译</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Use after free (dangling pointer dereference)</td>
+<td>为悬浮指针赋值</td>
+</tr>
+<tr>
+<td>Heap buffer overflow</td>
+<td>堆缓冲区溢出</td>
+</tr>
+<tr>
+<td>Stack buffer overflow</td>
+<td>栈缓冲区溢出</td>
+</tr>
+<tr>
+<td>Global buffer overflow</td>
+<td>全局缓冲区溢出</td>
+</tr>
+<tr>
+<td>Use after return</td>
+<td>通过返回值访问局部变量的内存</td>
+</tr>
+<tr>
+<td>Use after scope</td>
+<td>访问已经释放的局部变量的内存</td>
+</tr>
+<tr>
+<td>Initialization order bugs</td>
+<td>使用未初始化的内存</td>
+</tr>
+<tr>
+<td>Memory leaks</td>
+<td>内存泄漏</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Enable AddressSanitizer, a fast memory error detector. Memory access instructions are instrumented to detect out-of-bounds and use-after-free bugs. The option enables -fsanitize-address-use-after-scope. See <a target="_blank" rel="noopener" href="https://github.com/google/sanitizers/wiki/AddressSanitizer">https://github.com/google/sanitizers/wiki/AddressSanitizer</a> for more details. The run-time behavior can be influenced using the ASAN_OPTIONS environment variable. When set to help=1, the available options are shown at startup of the instrumented program. See <a target="_blank" rel="noopener" href="https://github.com/google/sanitizers/wiki/AddressSanitizerFlags#run-time-flags">https://github.com/google/sanitizers/wiki/AddressSanitizerFlags#run-time-flags</a> for a list of supported options. The option cannot be combined with -fsanitize=thread and/or -fcheck-pointer-bounds.</p>
+<p><strong>-fsanitize=kernel-address</strong>：<br>Enable AddressSanitizer for Linux kernel. See <a target="_blank" rel="noopener" href="https://github.com/google/kasan/wiki">https://github.com/google/kasan/wiki</a> for more details. The option cannot be combined with -fcheck-pointer-bounds.</p>
+<p><strong>-fsanitize=thread</strong>：<br>Enable ThreadSanitizer, a fast data race detector. Memory access instructions are instrumented to detect data race bugs. See <a target="_blank" rel="noopener" href="https://github.com/google/sanitizers/wiki#threadsanitizer">https://github.com/google/sanitizers/wiki#threadsanitizer</a> for more details. The run-time behavior can be influenced using the TSAN_OPTIONS environment variable; see <a target="_blank" rel="noopener" href="https://github.com/google/sanitizers/wiki/ThreadSanitizerFlags">https://github.com/google/sanitizers/wiki/ThreadSanitizerFlags</a> for a list of supported options. The option cannot be combined with -fsanitize=address, -fsanitize=leak and/or -fcheck-pointer-bounds.</p>
+<p>Note that sanitized atomic builtins cannot throw exceptions when operating on invalid memory addresses with non-call exceptions (-fnon-call-exceptions).</p>
+<p><strong>-fsanitize=leak</strong>：<br>Enable LeakSanitizer, a memory leak detector. This option only matters for linking of executables and the executable is linked against a library that overrides malloc and other allocator functions. See <a target="_blank" rel="noopener" href="https://github.com/google/sanitizers/wiki/AddressSanitizerLeakSanitizer">https://github.com/google/sanitizers/wiki/AddressSanitizerLeakSanitizer</a> for more details. The run-time behavior can be influenced using the LSAN_OPTIONS environment variable. The option cannot be combined with -fsanitize=thread.</p>
+<p><strong>-fsanitize=undefined</strong>：<br>Enable UndefinedBehaviorSanitizer, a fast undefined behavior detector. Various computations are instrumented to detect undefined behavior at runtime. Current suboptions are:</p>
+<p><strong>-fsanitize=shift</strong>：<br>This option enables checking that the result of a shift operation is not undefined. Note that what exactly is considered undefined differs slightly between C and C++, as well as between ISO C90 and C99, etc. This option has two suboptions, -fsanitize=shift-base and -fsanitize=shift-exponent.</p>
+<p><strong>-fsanitize=shift-exponent</strong>：<br>This option enables checking that the second argument of a shift operation is not negative and is smaller than the precision of the promoted first argument.</p>
+<p><strong>-fsanitize=shift-base</strong>：<br>If the second argument of a shift operation is within range, check that the result of a shift operation is not undefined. Note that what exactly is considered undefined differs slightly between C and C++, as well as between ISO C90 and C99, etc.</p>
+<p><strong>-fsanitize=integer-divide-by-zero</strong>：<br>Detect integer division by zero as well as INT_MIN / -1 division.</p>
+<p><strong>-fsanitize=unreachable</strong>：<br>With this option, the compiler turns the <strong>builtin_unreachable call into a diagnostics message call instead. When reaching the </strong>builtin_unreachable call, the behavior is undefined.</p>
+<p><strong>-fsanitize=vla-bound</strong>：<br>This option instructs the compiler to check that the size of a variable length array is positive.</p>
+<p><strong>-fsanitize=null</strong>：<br>This option enables pointer checking. Particularly, the application built with this option turned on will issue an error message when it tries to dereference a NULL pointer, or if a reference (possibly an rvalue reference) is bound to a NULL pointer, or if a method is invoked on an object pointed by a NULL pointer.</p>
+<p><strong>-fsanitize=return</strong>：<br>This option enables return statement checking. Programs built with this option turned on will issue an error message when the end of a non-void function is reached without actually returning a value. This option works in C++ only.</p>
+<p><strong>-fsanitize=signed-integer-overflow</strong>：<br>This option enables signed integer overflow checking. We check that the result of +, *, and both unary and binary – does not overflow in the signed arithmetics. Note, integer promotion rules must be taken into account. That is, the following is not an overflow:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">signed</span> <span class="type">char</span> a = SCHAR_MAX;</span><br><span class="line">a++;</span><br></pre></td></tr></table></figure></p>
+<p><strong>-fsanitize=bounds</strong>：<br>This option enables instrumentation of array bounds. Various out of bounds accesses are detected. Flexible array members, flexible array member-like arrays, and initializers of variables with static storage are not instrumented. The option cannot be combined with -fcheck-pointer-bounds.</p>
+<p><strong>-fsanitize=bounds-strict</strong>：<br>This option enables strict instrumentation of array bounds. Most out of bounds accesses are detected, including flexible array members and flexible array member-like arrays. Initializers of variables with static storage are not instrumented. The option cannot be combined with -fcheck-pointer-bounds.</p>
+<p><strong>-fsanitize=alignment</strong>：<br>This option enables checking of alignment of pointers when they are dereferenced, or when a reference is bound to insufficiently aligned target, or when a method or constructor is invoked on insufficiently aligned object.</p>
+<p><strong>-fsanitize=object-size</strong>：<br>This option enables instrumentation of memory references using the __builtin_object_size function. Various out of bounds pointer accesses are detected.</p>
+<p><strong>-fsanitize=float-divide-by-zero</strong>：<br>Detect floating-point division by zero. Unlike other similar options, -fsanitize=float-divide-by-zero is not enabled by -fsanitize=undefined, since floating-point division by zero can be a legitimate way of obtaining infinities and NaNs.</p>
+<p><strong>-fsanitize=float-cast-overflow</strong>：<br>This option enables floating-point type to integer conversion checking. We check that the result of the conversion does not overflow. Unlike other similar options, -fsanitize=float-cast-overflow is not enabled by -fsanitize=undefined. This option does not work well with FE_INVALID exceptions enabled.</p>
+<p><strong>-fsanitize=nonnull-attribute</strong>：<br>This option enables instrumentation of calls, checking whether null values are not passed to arguments marked as requiring a non-null value by the nonnull function attribute.</p>
+<p><strong>-fsanitize=returns-nonnull-attribute</strong>：<br>This option enables instrumentation of return statements in functions marked with returns_nonnull function attribute, to detect returning of null values from such functions.</p>
+<p><strong>-fsanitize=bool</strong>：<br>This option enables instrumentation of loads from bool. If a value other than 0/1 is loaded, a run-time error is issued.</p>
+<p><strong>-fsanitize=enum</strong>：<br>This option enables instrumentation of loads from an enum type. If a value outside the range of values for the enum type is loaded, a run-time error is issued.</p>
+<p><strong>-fsanitize=vptr</strong>：<br>This option enables instrumentation of C++ member function calls, member accesses and some conversions between pointers to base and derived classes, to verify the referenced object has the correct dynamic type.</p>
+<p>While -ftrapv causes traps for signed overflows to be emitted, -fsanitize=undefined gives a diagnostic message. This currently works only for the C family of languages.</p>
+<p><strong>-fno-sanitize=all</strong>：<br>This option disables all previously enabled sanitizers. -fsanitize=all is not allowed, as some sanitizers cannot be used together.</p>
+<p><strong>-fasan-shadow-offset=number</strong>：<br>This option forces GCC to use custom shadow offset in AddressSanitizer checks. It is useful for experimenting with different shadow memory layouts in Kernel AddressSanitizer.</p>
+<p><strong>-fsanitize-sections=s1,s2,…</strong>：<br>Sanitize global variables in selected user-defined sections. si may contain wildcards.</p>
+<p><strong>-fsanitize-recover[=opts]</strong>：<br>-fsanitize-recover= controls error recovery mode for sanitizers mentioned in comma-separated list of opts. Enabling this option for a sanitizer component causes it to attempt to continue running the program as if no error happened. This means multiple runtime errors can be reported in a single program run, and the exit code of the program may indicate success even when errors have been reported. The -fno-sanitize-recover= option can be used to alter this behavior: only the first detected error is reported and program then exits with a non-zero exit code.</p>
+<p>Currently this feature only works for -fsanitize=undefined (and its suboptions except for -fsanitize=unreachable and -fsanitize=return), -fsanitize=float-cast-overflow, -fsanitize=float-divide-by-zero, -fsanitize=bounds-strict, -fsanitize=kernel-address and -fsanitize=address. For these sanitizers error recovery is turned on by default, except -fsanitize=address, for which this feature is experimental. -fsanitize-recover=all and -fno-sanitize-recover=all is also accepted, the former enables recovery for all sanitizers that support it, the latter disables recovery for all sanitizers that support it.</p>
+<p>Even if a recovery mode is turned on the compiler side, it needs to be also enabled on the runtime library side, otherwise the failures are still fatal. The runtime library defaults to halt_on_error=0 for ThreadSanitizer and UndefinedBehaviorSanitizer, while default value for AddressSanitizer is halt_on_error=1. This can be overridden through setting the halt_on_error flag in the corresponding environment variable.</p>
+<p>Syntax without an explicit opts parameter is deprecated. It is equivalent to specifying an opts list of:</p>
+<p>undefined,float-cast-overflow,float-divide-by-zero,bounds-strict</p>
+<p><strong>-fsanitize-address-use-after-scope</strong>：<br>Enable sanitization of local variables to detect use-after-scope bugs. The option sets -fstack-reuse to ‘none’.</p>
+<p><strong>-fsanitize-undefined-trap-on-error</strong>：<br>The -fsanitize-undefined-trap-on-error option instructs the compiler to report undefined behavior using __builtin_trap rather than a libubsan library routine. The advantage of this is that the libubsan library is not needed and is not linked in, so this is usable even in freestanding environments.</p>
+<p><strong>-fsanitize-coverage=trace-pc</strong>：<br>Enable coverage-guided fuzzing code instrumentation. Inserts a call to __sanitizer_cov_trace_pc into every basic block</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag"># C++</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/09/23/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B02/" rel="next" title="深入理解Linux内核5-7章">
+                <i class="fa fa-chevron-left"></i> 深入理解Linux内核5-7章
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/10/02/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B03/" rel="prev" title="深入理解Linux内核8-9章">
+                深入理解Linux内核8-9章 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">什么是内存泄漏？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E6%9F%A5%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">怎么查内存泄漏？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">什么是动态内存分配器？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#new-delete%E8%B7%9Fmalloc-free%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">4.</span> <span class="nav-text">new&#x2F;delete跟malloc&#x2F;free的关系</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#chunk"><span class="nav-number">4.1.</span> <span class="nav-text">chunk</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wrap-malloc"><span class="nav-number">4.2.</span> <span class="nav-text">wrap malloc</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E5%8E%BB%E5%AE%9A%E4%BD%8D%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E5%91%A2%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">怎么去定位内存泄漏呢？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E8%B7%9F%E8%B8%AA%E5%88%B0%E6%AF%8F%E7%A7%8Dsize%E7%9A%84chunk%E6%95%B0%E9%87%8F%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">怎么跟踪到每种size的chunk数量？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%9F%A5%E9%81%93%E9%87%8A%E6%94%BE%E7%9A%84chunk%E7%9A%84size%EF%BC%9F"><span class="nav-number">7.</span> <span class="nav-text">如何知道释放的chunk的size？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%AE%B0%E5%BD%95%E8%B0%83%E7%94%A8%E9%93%BE%EF%BC%9F"><span class="nav-number">8.</span> <span class="nav-text">如何记录调用链？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%8A%8A%E7%AC%A6%E5%8F%B7%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2%E6%88%90%E7%AC%A6%E5%8F%B7%E5%90%8D%EF%BC%8C%E4%B9%9F%E5%B0%B1%E6%98%AF%E5%AF%B9%E5%BA%94%E5%88%B0%E4%BB%A3%E7%A0%81%E8%A1%8C%E5%91%A2%EF%BC%9F"><span class="nav-number">9.</span> <span class="nav-text">如何把符号地址转换成符号名，也就是对应到代码行呢？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#addr2line"><span class="nav-number">9.1.</span> <span class="nav-text">addr2line</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8valgrind"><span class="nav-number">10.</span> <span class="nav-text">使用valgrind</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#valgrind%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">10.1.</span> <span class="nav-text">valgrind是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Memcheck"><span class="nav-number">10.1.1.</span> <span class="nav-text">Memcheck</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Callgrind"><span class="nav-number">10.1.2.</span> <span class="nav-text">Callgrind</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cachegrind"><span class="nav-number">10.1.3.</span> <span class="nav-text">Cachegrind</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Helgrind"><span class="nav-number">10.1.4.</span> <span class="nav-text">Helgrind</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Massif"><span class="nav-number">10.1.5.</span> <span class="nav-text">Massif</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">10.2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E5%8E%9F%E7%90%86"><span class="nav-number">10.3.</span> <span class="nav-text">检测原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Valgrind-%E4%BD%BF%E7%94%A8"><span class="nav-number">10.4.</span> <span class="nav-text">Valgrind 使用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Valgrind-%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B%EF%BC%88%E4%B8%80%EF%BC%89"><span class="nav-number">11.</span> <span class="nav-text">Valgrind 使用举例（一）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E8%B6%8A%E7%95%8C-%E5%86%85%E5%AD%98%E6%9C%AA%E9%87%8A%E6%94%BE"><span class="nav-number">11.1.</span> <span class="nav-text">数组越界&#x2F;内存未释放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E9%87%8A%E6%94%BE%E5%90%8E%E8%AF%BB%E5%86%99"><span class="nav-number">11.2.</span> <span class="nav-text">内存释放后读写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A0%E6%95%88%E8%AF%BB%E5%86%99"><span class="nav-number">11.3.</span> <span class="nav-text">无效读写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2"><span class="nav-number">11.4.</span> <span class="nav-text">内存泄露</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%A4%9A%E6%AC%A1%E9%87%8A%E6%94%BE"><span class="nav-number">11.5.</span> <span class="nav-text">内存多次释放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%8A%A8%E6%80%81%E7%AE%A1%E7%90%86"><span class="nav-number">11.6.</span> <span class="nav-text">内存动态管理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#massif"><span class="nav-number">12.</span> <span class="nav-text">massif</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Massif-%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%80%89%E9%A1%B9"><span class="nav-number">12.1.</span> <span class="nav-text">Massif 命令行选项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E9%87%87%E9%9B%86"><span class="nav-number">12.2.</span> <span class="nav-text">开始采集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ms-print-%E5%88%86%E6%9E%90%E9%87%87%E6%A0%B7%E6%96%87%E4%BB%B6"><span class="nav-number">12.3.</span> <span class="nav-text">ms_print 分析采样文件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%8B%E5%86%8C"><span class="nav-number">13.</span> <span class="nav-text">手册</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%A9%E7%94%A8GCC%E7%BC%96%E8%AF%91%E9%80%89%E9%A1%B9Sanitizers%E5%BF%AB%E9%80%9F%E5%AE%9A%E4%BD%8D%E5%86%85%E5%AD%98%E9%94%99%E8%AF%AF"><span class="nav-number">14.</span> <span class="nav-text">利用GCC编译选项Sanitizers快速定位内存错误</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Sanitizers%E7%AE%80%E4%BB%8B"><span class="nav-number">15.</span> <span class="nav-text">Sanitizers简介</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

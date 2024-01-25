@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zn-ch">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="C++," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="让自己习惯C++视C++为一个语言联邦 C语言 面对对象：构造函数、析构函数、封装、继承、多态、virtual函数 C++模板：template metaprogramming STL容器：对容器、迭代器、算法以及函数对象的规约有极佳的紧密配合与协调  尽量以const，enum，inline替换#defineconst的好处：  define直接常量替换，出现编译错误不易定位(不知道常量是哪个变">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Effective C++笔记">
+<meta property="og:url" content="http://yoursite.com/2020/01/13/effective_cpp/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="让自己习惯C++视C++为一个语言联邦 C语言 面对对象：构造函数、析构函数、封装、继承、多态、virtual函数 C++模板：template metaprogramming STL容器：对容器、迭代器、算法以及函数对象的规约有极佳的紧密配合与协调  尽量以const，enum，inline替换#defineconst的好处：  define直接常量替换，出现编译错误不易定位(不知道常量是哪个变">
+<meta property="og:locale" content="zn_CH">
+<meta property="article:published_time" content="2020-01-13T12:13:00.000Z">
+<meta property="article:modified_time" content="2021-12-27T06:13:08.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/13/effective_cpp/"/>
+
+
+
+
+
+  <title>Effective C++笔记 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zn-ch">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hao Yu's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">The program monkey was eaten by the siege lion.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/13/effective_cpp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Effective C++笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-01-13T20:13:00+08:00">
+                2020-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="让自己习惯C"><a href="#让自己习惯C" class="headerlink" title="让自己习惯C++"></a>让自己习惯C++</h1><h2 id="视C-为一个语言联邦"><a href="#视C-为一个语言联邦" class="headerlink" title="视C++为一个语言联邦"></a>视C++为一个语言联邦</h2><ol>
+<li>C语言</li>
+<li>面对对象：构造函数、析构函数、封装、继承、多态、virtual函数</li>
+<li>C++模板：template metaprogramming</li>
+<li>STL容器：对容器、迭代器、算法以及函数对象的规约有极佳的紧密配合与协调</li>
+</ol>
+<h2 id="尽量以const，enum，inline替换-define"><a href="#尽量以const，enum，inline替换-define" class="headerlink" title="尽量以const，enum，inline替换#define"></a>尽量以const，enum，inline替换#define</h2><p>const的好处：</p>
+<ul>
+<li>define直接常量替换，出现编译错误不易定位(不知道常量是哪个变量)</li>
+<li>define盲目的将宏名替换，导致目标码出现多份</li>
+<li>define没有作用域，const有作用域提供了封装性</li>
+</ul>
+<p>定义常量指针：有必要将指针（而不只是指针所指之物）声明为const：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const char* const authorName = &quot;Scott Meyers&quot;</span><br></pre></td></tr></table></figure></p>
+<p>enum的好处：</p>
+<ul>
+<li>提供了封装性</li>
+<li>编译器肯定不会分配额外内存空间(其实const也不会)</li>
+</ul>
+<p>inline的好处：</p>
+<ul>
+<li>define宏函数容易造成误用(下面有个例子)</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> MAX(a, b) a &gt; b ? a : b</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> a = <span class="number">5</span>, b = <span class="number">0</span>;</span><br><span class="line">MAX(++a, b) <span class="comment">//a++调用2次</span></span><br><span class="line">MAX(++a, b+<span class="number">10</span>) <span class="comment">//a++调用一次</span></span><br></pre></td></tr></table></figure>
+<p>使用template inline 函数：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename T&gt;</span><br><span class="line">inline void callWithMax(const T&amp; a, const T&amp; b)</span><br><span class="line">&#123;</span><br><span class="line">	f(a &gt; b ? a : b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>对单纯常量，最好以const对象或enums替换#define</strong><br><strong>形似函数的宏，最好改用inline函数替换#define</strong></p>
+<h3 id="宏实现工厂模式"><a href="#宏实现工厂模式" class="headerlink" title="宏实现工厂模式"></a>宏实现工厂模式</h3><p>需要一个全局的map用于存储类的信息以及创建实例的函数<br>需要调用全局对象的构造函数用于注册</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">using namespace <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">void</span> *(*register_fun)();</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CCFactory</span>&#123;</span></span><br><span class="line">public:</span><br><span class="line">  <span class="type">static</span> <span class="type">void</span> *<span class="title function_">NewInstance</span><span class="params">(<span class="built_in">string</span> class_name)</span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> it = map_.find(class_name);</span><br><span class="line">    <span class="keyword">if</span>(it == map_.end())&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span></span><br><span class="line">      <span class="keyword">return</span> it-&gt;second();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="type">static</span> <span class="type">void</span> <span class="title function_">Register</span><span class="params">(<span class="built_in">string</span> class_name, register_fun func)</span>&#123;</span><br><span class="line">    map_[class_name] = func;</span><br><span class="line">  &#125;</span><br><span class="line">private:</span><br><span class="line">  <span class="type">static</span> <span class="built_in">map</span>&lt;<span class="built_in">string</span>, register_fun&gt; map_; </span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">map</span>&lt;<span class="built_in">string</span>, register_fun&gt; CCFactory::map_;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Register</span>&#123;</span></span><br><span class="line">public:</span><br><span class="line">  Register(<span class="built_in">string</span> class_name, register_fun func)&#123;</span><br><span class="line">    CCFactory::Register(class_name, func);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> REGISTER_CLASS(class_name); \</span></span><br><span class="line"><span class="meta">  const Register class_name_register(#class_name, []()-&gt;void *&#123;return new class_name;&#125;);</span></span><br></pre></td></tr></table></figure>
+<h2 id="尽可能使用const"><a href="#尽可能使用const" class="headerlink" title="尽可能使用const"></a>尽可能使用const</h2><p>const指定一个语义约束，编译器会强制实施这项约束。可以用const在class外部修饰global或namespace作用域中的常量，可以指出指针自身、指针所指物，或者两者都是const。</p>
+<ul>
+<li><code>char greeting[] = &quot;hello&quot;</code></li>
+<li><code>char* p = greeting</code>：non-const pointer，non-const data</li>
+<li><code>const char* p = greeting</code>：non-const pointer，const data</li>
+<li><code>char* const p = greeting</code>：const point，non-const data</li>
+<li><code>const char* const p = greeting</code>：const pointer，const data</li>
+</ul>
+<p>如果关键字const出现在星号左边，表示被指物是常量；如果出现在星号右边，表示指针自身是常量。<br>STL迭代器系以指针为根据塑模出来，所以迭代器的作用也像是<code>T*</code>指针，声明迭代器为const表示这个迭代器不得指向不同的东西，但它所指的东西的值是可以改动的。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const std::vector&lt;int&gt;::iterator iter = vec.begin()</span><br><span class="line">可以：*iter=10</span><br><span class="line">不可以：++iter</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>const定义接口，防止对返回值误用</li>
+<li>const成员函数，代表这个成员函数承诺不会改变对象值，可以操作const对象</li>
+<li>两个函数如果只是常量值不同，可以被重载</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">class CTextBlock &#123;</span><br><span class="line">public:</span><br><span class="line">	char&amp; operator[](std::size_t position) const</span><br><span class="line">	&#123; return pText[position]; &#125;</span><br><span class="line">private:</span><br><span class="line">	char* pText;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const CtextBlock cctb(&quot;Hello&quot;);</span><br><span class="line">char* pc = &amp;ccb[0];</span><br><span class="line">*pc = &#x27;C&#x27;</span><br></pre></td></tr></table></figure>
+<p>这个class不适当的将其operator[]声明为const成员函数，但是该函数却返回一个reference指向对象内部值。<br>上述代码调用了const成员函数，但是允许修改值。</p>
+<h3 id="const和non-const成员函数中避免重复"><a href="#const和non-const成员函数中避免重复" class="headerlink" title="const和non-const成员函数中避免重复"></a>const和non-const成员函数中避免重复</h3><p>常量性转除：将常量性消除掉，比如const operator[]实现了non-const版本的一切，唯一不同是其返回类型多了一个const资格修饰。转除的方法如下：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">char&amp; operator[] (std::size_t position) &#123;</span><br><span class="line">	return const_cast&lt;char&amp;&gt;(static_cast&lt;const TextBlock&amp;&gt;(*this)[position]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>这份代码有两个转型动作，让non_const operator[]调用其const兄弟，而且明确指出调用的是const operator[]，因此第一次为<code>*this</code>添加const，第二次从const operator[]返回值中移除const。</p>
+<p>如果在const函数中调用了non-const函数，则打破了不改变其对象的承诺。</p>
+<p>const成员只能调用const成员函数(加-fpermissive编译选项就可以了)。<br>非const成员可以调用所有成员函数</p>
+<h2 id="确定对象使用前已被初始化"><a href="#确定对象使用前已被初始化" class="headerlink" title="确定对象使用前已被初始化"></a>确定对象使用前已被初始化</h2><p>永远在使用对象之前将其初始化。<br>对于无任何成员的内置类型，需要在定义时初始化，C++不保证初始化它们。</p>
+<p>至于内置类型之外的其他，初始化责任落在构造函数上，C++规定，对象的成员变量的初始化动作发生在进入构造函数本体之前，因此最好使用初始化序列(序列顺序与声明顺序相同)，而不是在构造函数中赋值。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ABEntry::ABEntry(const std::string&amp; name, </span><br><span class="line">				const std::string&amp; address, </span><br><span class="line">				const std::list&lt;PhoneNumber&gt;&amp; phones)</span><br><span class="line">				: theName(name),</span><br><span class="line">				theAddress(address),</span><br><span class="line">				thePhones(phones),</span><br><span class="line">				numTimesConsulted(0)					</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>这个版本的构造函数效率较高，基于赋值的构造函数首先调用default构造函数为theName，theAddress等设初值，然后再对他们赋值，成员初值列的做法避免了这一问题。</p>
+<p>如果有的变量是const或static的，就一定要赋初值，使用初值列，最简单的做法是使用初值列，又比赋值更为高效。</p>
+<p>C++有着固定的成员初始化次序，base calss总是早于其derived class被初始化，而class的成员变量总是以其声明次序被初始化。</p>
+<h3 id="不同编译单元内定义的non-local-static对象的初始化次序"><a href="#不同编译单元内定义的non-local-static对象的初始化次序" class="headerlink" title="不同编译单元内定义的non-local static对象的初始化次序"></a>不同编译单元内定义的non-local static对象的初始化次序</h3><p>static对象，其寿命从被构造出来直到程序结束为止，这种对象包括global对象，定义于namespace作用域内的对象，在class内、在函数内被声明为static的对象。函数内的static对象称为local static对象，其他的是non-local static对象。</p>
+<p>编译单元是指产出同一目标文件的源码，基本上是单一源码文件加上其所含入的头文件。</p>
+<p>如果某编译单元内的某个non-local static对象的初始化动作使用了另一编译单元内的某个non-local static对象，它所用到的这个对象可能未被初始化。</p>
+<p>C++对不同编译单元内定义的non-local static对象的初始化次序并无规定。</p>
+<p>将每个non-local static对象放入一个函数，该对象在函数中被声明为static，这些函数返回一个reference指向它所含的对象，因为C++保证函数内的local static对象会在“函数被调用期间”“首次遇上该对象之定义式”时被初始化。（Singleton模式）<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Fuck&amp; fuck()&#123;</span><br><span class="line">    static Fuck f;</span><br><span class="line">    return f;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="构造-析构-赋值运算"><a href="#构造-析构-赋值运算" class="headerlink" title="构造/析构/赋值运算"></a>构造/析构/赋值运算</h1><h2 id="了解C-默默编调用了哪些函数"><a href="#了解C-默默编调用了哪些函数" class="headerlink" title="了解C++默默编调用了哪些函数"></a>了解C++默默编调用了哪些函数</h2><p>如果类中没有定义，程序却调用了，编译器会产生一些函数(public且inline)：</p>
+<ul>
+<li>一个 default 构造函数</li>
+<li>一个 copy 构造函数</li>
+<li>一个 copy assignment 操作符</li>
+<li>一个析构函数(non virtual)</li>
+</ul>
+<p>default构造函数和析构函数主要是给编译器一个地方用来放置“藏身幕后”的代码，编译器产生的析构函数时non-virtual函数。至于copy和copy assignment函数，单纯将来源对象的每一个non-static成员变量拷贝到目标对象。</p>
+<p>如果要在一个内含reference成员的class内支持赋值操作，则必须自己定义一个copy assignment操作，因为reference不能随意的重新赋值。因此，含有引用成员变量或者const成员变量不产生赋值操作符。</p>
+<p>如果自己构造了带参数的构造函数，编译器不会产生default构造函数。</p>
+<p>base class如果把拷贝构造函数或者赋值操作符设置为private，则不会产生这两个函数。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class Fuck&#123;</span><br><span class="line">private:</span><br><span class="line">    std::string&amp; str;//引用定义后不能修改绑定对象</span><br><span class="line">    const std::string con_str;//const对象定义后不能修改</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h2 id="若不想使用编译器自动生成的函数，就该明确拒绝"><a href="#若不想使用编译器自动生成的函数，就该明确拒绝" class="headerlink" title="若不想使用编译器自动生成的函数，就该明确拒绝"></a>若不想使用编译器自动生成的函数，就该明确拒绝</h2><p>将默认生成的函数声明为private，由明确声明一个成员函数，阻止编译器自动生成。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class Uncopyable&#123;</span><br><span class="line">private:</span><br><span class="line">    Uncopyable(const Uncopyable&amp;);</span><br><span class="line">    Uncopyable&amp; operator= (const Uncopyable&amp;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="为多态基类声明virtual析构函数"><a href="#为多态基类声明virtual析构函数" class="headerlink" title="为多态基类声明virtual析构函数"></a>为多态基类声明virtual析构函数</h2><p>当derived class对象经由一个base calss指针被删除，而该base class自带一个non-virtual析构函数，其结果未有定义，实际执行时通常发生的是对象的derived成分未被删除，而derived class的析构函数也未被执行。</p>
+<p>因此给多态基类应该主动声明virtual析构函数。非多态基类，没有virtual函数，不要声明virtual析构函数。</p>
+<p>欲实现出virtual函数，对象必须携带某些信息用来在运行期决定那一个virtual函数被调用，通常是由一个vptr指针指出，它指向一个由函数指针构成的数组，成为vtbl，每一个带有virtual函数的class都有一个vtbl。</p>
+<p>如果class中带有virtual函数，则对象的体积会增加，因此当class内至少一个virtual函数，才为它声明virtual析构函数。</p>
+<p>pure virtual函数导致abstract class——也就是不能被实体化的class。为希望成为抽象的那个class提供一个pure virtual析构函数，并为析构函数提供一份定义。</p>
+<p>析构函数的运作：最深层派生的那个class其析构函数最早被调用，然后是其每一个base calss的析构函数被调用。</p>
+<h2 id="别让异常逃离析构函数"><a href="#别让异常逃离析构函数" class="headerlink" title="别让异常逃离析构函数"></a>别让异常逃离析构函数</h2><p>构造函数可以抛出异常，析构函数不能抛出异常。</p>
+<p>因为析构函数有两个地方可能被调用。一是用户调用，这时抛出异常完全没问题。二是前面有异常抛出，正在清理堆栈，调用析构函数。这时如果再抛出异常，两个异常同时存在，异常处理机制只能terminate()。</p>
+<p>构造函数抛出异常，会有内存泄漏吗？<br>不会！<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">    // 第二步，调用构造函数构造对象</span><br><span class="line">    new (p)T;       // placement new: 只调用T的构造函数</span><br><span class="line">&#125;</span><br><span class="line">catch(...) &#123;</span><br><span class="line">    delete p;     // 释放第一步分配的内存</span><br><span class="line">    throw;          // 重抛异常，通知应用程序</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="绝不在构造和析构过程中调用virtual函数"><a href="#绝不在构造和析构过程中调用virtual函数" class="headerlink" title="绝不在构造和析构过程中调用virtual函数"></a>绝不在构造和析构过程中调用virtual函数</h2><p>derived calss对象的base class成分会在derived class自身成分被构造之前先妥善构造，如果在构造base class成分之后即调用virtual function，则这个virtual function指向的可能是base class中的function，不是derived class中的function，即在base class构造期间，virtual函数不是virtual函数。</p>
+<p>构造和析构过程中，虚表指针指向的虚表在变化。调用的是对应虚表指针指向的函数。</p>
+<p>一种可行的做法是：在base class中将函数改为non-virtual函数，然后要求derived class构造函数传递必要信息给base class构造函数，而后那个构造函数会安全地调用non-virtual的函数。</p>
+<h2 id="令operator-返回一个reference-to-this"><a href="#令operator-返回一个reference-to-this" class="headerlink" title="令operator= 返回一个reference to *this"></a>令operator= 返回一个reference to <code>*this</code></h2><p>连锁赋值：赋值操作符必须返回一个reference指向操作符的左侧实参。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Widget&amp; operator=(const Widget&amp; rhs) &#123;</span><br><span class="line">	return *this;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="在operator-里处理自我赋值"><a href="#在operator-里处理自我赋值" class="headerlink" title="在operator= 里处理自我赋值"></a>在operator= 里处理自我赋值</h2><p>传统做法是借由operator=最前面的一个“证同测试”达到“自我赋值”的检验目的<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Widget&amp; Widget::operator== (const Widget&amp; rhs)&#123;</span><br><span class="line">    if(this == &amp;rhs) return *this</span><br><span class="line">    </span><br><span class="line">    delete pb;</span><br><span class="line">    pb = new Bitmap(*rhs.pb);</span><br><span class="line">    return *this;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>或者使用copy and swap技术：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Widget&amp; Widget::operator== (const Widget&amp; rhs) &#123;</span><br><span class="line">	Widget temp(rsh);</span><br><span class="line">	swap(temp);   // 将this同上述复件的副本交换</span><br><span class="line">	return *this;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>其原理是某class的copy assignment操作符可能被声明为“以by value的方式接受实参”；以by value方式传递东西会生成一份复件</p>
+<h2 id="复制对象时务忘其每一个成分"><a href="#复制对象时务忘其每一个成分" class="headerlink" title="复制对象时务忘其每一个成分"></a>复制对象时务忘其每一个成分</h2><p>记得实现拷贝构造函数和赋值操作符的时候，调用base的相关函数<br>可以让拷贝构造函数和赋值操作符调用一个共同的函数，例如init()<br>如果为derived class撰写copying 函数，必须也很小心地复制其base class成分，应该让derived class的copying函数调用相应的base class。</p>
+<h1 id="资源管理"><a href="#资源管理" class="headerlink" title="资源管理"></a>资源管理</h1><h2 id="以对象管理资源"><a href="#以对象管理资源" class="headerlink" title="以对象管理资源"></a>以对象管理资源</h2><p>为了确保资源总是被释放，需要将资源放进对象内，当控制流离开函数，对象的析构函数将自动释放那些资源，这实际上是依赖了C++的“析构函数自动调用机制”。<br>auto_ptr正是用于在控制流离开函数时释放对象用的，其析构函数自动对其所指的对象调用delete。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">void f() &#123;</span><br><span class="line">	std::auto_ptr&lt;Investment&gt; pInv(createInvestment());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>获得资源后立刻放进管理管理对象，createInvestment()返回的资源被当作其管理者auto_ptr的初值，实际上“以对象管理资源”的观念被称为“资源取得时机便是初始化时机（RAII）”</li>
+<li>管理对象运用析构函数确保资源被释放。不论控制流如何离开函数，一旦对象被销毁其析构函数自然会被调用，于是资源被释放。</li>
+<li>别让多个auto_ptr同时指向同一对象，这样的话对象会被删除一次以上。所以它并不是管理动态分配资源的利器。</li>
+</ul>
+<p>auto_ptr的替代方案是“引用计数型智慧指针（RCSP）”，持续追踪共有多少对象指向某笔资源，并在无人指向它时自动删除该对象，类似垃圾回收，但是无法打破环状引用。</p>
+<p>shared_ptr是RCSP<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::tr1::shared_ptr&lt;Investment&gt; pInv(createInvestment());</span><br></pre></td></tr></table></figure></p>
+<p>auto_ptr和tr1::shared_ptr两者都在其析构函数内做delete而不是delete[]动作，在动态分配而得的array身上使用auto_ptr或tr1::shared_ptr不可以，还是使用vector或者string吧。</p>
+<h2 id="在资源管理类小心copy行为"><a href="#在资源管理类小心copy行为" class="headerlink" title="在资源管理类小心copy行为"></a>在资源管理类小心copy行为</h2><p>常见的RAII对象copy行为：</p>
+<ul>
+<li>禁止copy：可以将copying操作声明为private</li>
+<li>引用计数：保有资源直到它的最后一个使用者被销毁</li>
+</ul>
+<p>tr1::shared_ptr允许指定所谓的“删除器”，那是一个函数或函数对象，当引用次数为0时便被调用。</p>
+<ul>
+<li>深度复制：复制资源管理对象也要复制其包覆的资源</li>
+<li><p>转移底部资源拥有权：某些场景下可能希望确保永远只有一个RAII对象指向一个未加工资源，即使RAII对象被复制之后依然如此。</p>
+</li>
+<li><p>复制RAII对象必须一并赋值它所管理的资源，所以资源的copying行为决定RAII对象的copying行为。</p>
+</li>
+<li>普遍而常见的RAII class copying行为是：抑制copying，实行引用计数法。</li>
+</ul>
+<h2 id="在资源管理类中提供对原始资源的访问"><a href="#在资源管理类中提供对原始资源的访问" class="headerlink" title="在资源管理类中提供对原始资源的访问"></a>在资源管理类中提供对原始资源的访问</h2><p>如果需要一个<code>Investment*</code>指针，但是函数返回一个tr1::shared_ptr<Investment>对象，则需要一个函数将RAII class对象转换为其所含的原始资源。</p>
+<ul>
+<li>提供显示调用接口：auto_ptr和tr1::shared_ptr都提供一个get成员函数，用来执行显式转换。</li>
+<li>提供隐式转换接口(不推荐)：auto_ptr和tr1::shared_ptr也重载了指针取值操作符（<code>operator-&gt;</code>和<code>operator*</code>）</li>
+</ul>
+<h2 id="成对使用new和delete要采用相同的格式"><a href="#成对使用new和delete要采用相同的格式" class="headerlink" title="成对使用new和delete要采用相同的格式"></a>成对使用new和delete要采用相同的格式</h2><p>当使用new时，两件事发生：内存被分配出来，针对此内存会有多个构造函数被调用。当使用delete时，也有两件事发生：针对此内存会有一个或多个析构函数被调用，然后内存被释放。</p>
+<p>分清即将被释放的内存是单一对象还是对象数组？即保证new和delete对应；new []和delete []对应。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//在分配的内存块前面还分配了4个字节代表数组的个数</span><br><span class="line">int *A = new int[10];</span><br><span class="line"></span><br><span class="line">//在分配的内存块前面分配了8个字节，分别代表对象的个数和Object的大小</span><br><span class="line">Object *O = new Object[10];</span><br></pre></td></tr></table></figure></p>
+<h2 id="以独立的语句将newd对象置入智能指针"><a href="#以独立的语句将newd对象置入智能指针" class="headerlink" title="以独立的语句将newd对象置入智能指针"></a>以独立的语句将newd对象置入智能指针</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int priority();</span><br><span class="line">void processWidget(std::tr1::shared_ptr&lt;Widget&gt; pw, int priority)；</span><br></pre></td></tr></table></figure>
+<p>在<code>processWidget(new Widget, priority())</code>函数中，tr1::shared_ptr需要一个原始指针，但是该构造函数是个explicit构造函数，无法进行隐式转换，将得自new Widget的原始指针转换为processWidget所要求的tr1::shared_ptr。可以写成这样：<br><code>processWidget(std::tr1::shared_ptr&lt;Widget&gt;(new Widget), priority())</code></p>
+<p>但是在调用processWidget之前，需要做以下三件事：</p>
+<ul>
+<li>调用priority()</li>
+<li>执行new Widget</li>
+<li>调用tr1::shared_ptr构造函数</li>
+</ul>
+<p>万一对priority调用导致异常，new Widget返回的指针会遗失，因为它尚未被置入tr1::shared_ptr内。避免这类问题只需要使用分离语句：</p>
+<ul>
+<li><code>std::tr1::shared_ptr&lt;Widget&gt; pw(new Widget)</code></li>
+<li><code>processWidget(pw, priority())</code></li>
+</ul>
+<h1 id="设计与声明"><a href="#设计与声明" class="headerlink" title="设计与声明"></a>设计与声明</h1><h2 id="让接口容易被正确使用，不易被误用"><a href="#让接口容易被正确使用，不易被误用" class="headerlink" title="让接口容易被正确使用，不易被误用"></a>让接口容易被正确使用，不易被误用</h2><p>好的接口很容易被正确使用，不容易被误用。努力达成这些性质(例如 explicit关键字)<br>明智而审慎地导入新类型对预防“接口被误用”有奇效。例如，一年只有12个有效月份，因此class Month应该反应这一事实，办法之一是利用enum表现月份，或者预先定义所有有效的Month：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">class Month &#123;</span><br><span class="line">public:</span><br><span class="line">	static Month Jan() &#123; return Month(1); &#125;</span><br><span class="line">	static Month Feb() &#123; return Month(2); &#125;</span><br><span class="line">	static Month Mar() &#123; return Month(3); &#125;</span><br><span class="line">	...</span><br><span class="line">	static Month Dec() &#123; return Month(12); &#125;</span><br><span class="line">private:</span><br><span class="line">	explicit Month(int m);</span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br><span class="line">Date d(Month::Mar(), Day(30), Year(1995))</span><br></pre></td></tr></table></figure><br>tr1::shared_ptr提供地某个构造函数接受两个实参，一个是被管理的指针，一个是引用次数变为0的时候将被调用的“删除器”，这启发我们创建一个null tr1::shared_ptr并以某函数变为其删除器。</p>
+<p>“促进正确使用”的办法包括接口的一致性，以及与内置类型的行为兼容<br>“防治误用”包括建立新类型，限制类型上的操作，束缚对象值，以及消除用户的资源管理责任<br>shared_ptr支持定制deleter，需要灵活使用</p>
+<h2 id="设计class犹如设计type"><a href="#设计class犹如设计type" class="headerlink" title="设计class犹如设计type"></a>设计class犹如设计type</h2><ul>
+<li>新type的对象应该如何被创建和销毁？构造函数和析构函数应该好好设计</li>
+<li>对象的初始化和赋值应该有什么区别？</li>
+<li>新type的对象如果被pass-by-value该如何？</li>
+<li>什么是新type的合法值？维护约束条件</li>
+<li>新type需要配合某个继承图系么？如果继承自某些既有的class，就需要受到那些class设计的限制，特别是受到“他们的函数是virtual或者non-virtual的”</li>
+<li>新type需要什么样的转换？是否需要在class T1内写一个class T2的类型转换函数</li>
+</ul>
+<h2 id="宁以pass-by-refrence-to-const替换pass-by-value"><a href="#宁以pass-by-refrence-to-const替换pass-by-value" class="headerlink" title="宁以pass-by-refrence-to-const替换pass-by-value"></a>宁以pass-by-refrence-to-const替换pass-by-value</h2><p>缺省情况下C++以by-value的方式传递对象到函数，除非另外指定，否则参数都是以实际实参的复件为初值。<br>尽量以pass-by-reference-to-const替换pass-by-value，比较高效，无需调用额外的copy构造函数或者构造函数/析构函数，加入了const也避免了可能的修改。</p>
+<p>避免切割问题：当一个derived class对象以by-value的方法传递并被视为一个base class对象，调用base class的构造函数使得derived class的特性被切割，pass-by-refrence-to-const避免了这一问题。</p>
+<p>references往往以指针的形式实现，因此pass-by-refrence-to-const真正传递的是指针。pass-by-value比pass-by-refrence-to-const效率高些，尤其是对内置类型而言。</p>
+<p>以上规则并不适用内置类型，以及STL迭代器，和函数对象。它们采用pass-by-value更合适(其实采用pass-by-reference-to-const也可以)</p>
+<h2 id="必须返回对象时，别妄想返回其reference"><a href="#必须返回对象时，别妄想返回其reference" class="headerlink" title="必须返回对象时，别妄想返回其reference"></a>必须返回对象时，别妄想返回其reference</h2><p>如果定义一个local变量，就是在stack上，不要返回pointer或者reference指向一个on stack对象，在函数返回时就被析构。<br>不要返回pointer或者reference指向一个on heap对象(需要用户delete，我觉得必要的时候也不是不可以)<br>不要返回pointer或者reference指向local static对象，却需要多个这样的对象(static只能有一份)</p>
+<p>让诸如<code>operator*</code>这样的函数返回reference，只是浪费时间吧。</p>
+<p>一个必须返回新对象的函数的正确写法：让那个函数返回一个新对象，例如：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">inline const Rational operator*(const Rational &amp;lhs, const Rational &amp;rhs) &#123;</span><br><span class="line">	return Rational(lhs.n*rhs.n, lhs.d*rhs.d);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>当然，这样需要承受构造成本和析构成本。</p>
+<h2 id="将成员变量申明为private"><a href="#将成员变量申明为private" class="headerlink" title="将成员变量申明为private"></a>将成员变量申明为private</h2><p>切记将成员变量申明为private，使用getter和setter实现对private变量的操作，将成员变量隐藏在函数接口的背后。<br>protected并不比public更有封装性(用户可能继承你的base class)</p>
+<h2 id="宁以non-member，non-friend替换member"><a href="#宁以non-member，non-friend替换member" class="headerlink" title="宁以non-member，non-friend替换member"></a>宁以non-member，non-friend替换member</h2><p>作者说多一个成员函数，就多一分破坏封装性，好像有点道理，但是我们都没有这样遵守。直接写member函数方便一些。<br>面向对象守则要求，数据以及操作数据的那些函数应该捆绑在一起，这意味着建议member函数是合适的，但是提供non-member函数可允许对相关机能有更好的封装性。</p>
+<h2 id="若所有参数都需要类型转换，请为此采用non-member函数"><a href="#若所有参数都需要类型转换，请为此采用non-member函数" class="headerlink" title="若所有参数都需要类型转换，请为此采用non-member函数"></a>若所有参数都需要类型转换，请为此采用non-member函数</h2><p>如果调用member函数，就使得第一个参数的类失去一次类型转换的机会。<br>当实现一个Rational类时，（构造函数刻意不为explicit，允许int-to-Rational的隐式转换。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">class Rational &#123;</span><br><span class="line">public:</span><br><span class="line">	Rational(int numerator = 0,</span><br><span class="line">			int denominator = 1);</span><br><span class="line">	int numerator() const;</span><br><span class="line">	int denominator() const;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Rational oneEight(1, 8), oneHalf(1, 2);</span><br><span class="line">Rational result = oneHalf * oneEight; // 正确</span><br></pre></td></tr></table></figure><br>如果希望能实现混合运算，即：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">result = oneHalf * 2; // 正确</span><br><span class="line">result = 2 * oneHalf; // 错误</span><br></pre></td></tr></table></figure><br>上述两式变成：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">result = oneHalf.operator*(2);</span><br><span class="line">result = 2.operator*(oneHalf);</span><br></pre></td></tr></table></figure><br>这里第二个式子之所以会出错，是因为发生了隐式类型转换，编译器知道正在传递一个int，但是函数需要的是Rational，而且它也知道只要调用Rational的构造函数并赋予所提供的int即可，但是这样是不对的。</p>
+<p>只有当参数被列于参数列表，这个参数才是隐式类型转换的合格参与者。让<code>operator*</code>成为一个non-member函数，允许在每一个实参上执行隐式类型转换。</p>
+<h2 id="考虑写一个不抛出异常的swap函数"><a href="#考虑写一个不抛出异常的swap函数" class="headerlink" title="考虑写一个不抛出异常的swap函数"></a>考虑写一个不抛出异常的swap函数</h2><p>std::swap置换两对象值，只要类型T支持copying（通过copy构造函数和copy assignment操作符完成）缺省的swap代码就会帮你置换类型为T的对象。</p>
+<p>一种方法是“以指针指向一个对象，内含真正数据”，一旦要置换两个对象值，唯一要做的事置换其指针，但缺省的swap函数不知道这一点，将swap函数针对该类特化。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">namespace std &#123;</span><br><span class="line">	template&lt;&gt;</span><br><span class="line">	void swap&lt;Widget&gt;(Widget&amp; a, Widget&amp; b) &#123;</span><br><span class="line">		swap(a.pImpl, b.pImpl);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>函数一开始的template&lt;&gt;表示它是std::swap的一个全特化版本，函数名称后的<Widget>代表针对这一类<Widget>特化。</p>
+<p>当std::swap效率不高(std::swap调用拷贝构造函数和赋值操作符，如果是深拷贝，效率不会高)，提供一个swap成员函数，并确定不会抛出异常。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">class Obj&#123;</span><br><span class="line">    Obj(const Obj&amp;) &#123;</span><br><span class="line">    	//深拷贝</span><br><span class="line">    &#125;</span><br><span class="line">    Obj&amp; operator= (const Obj&amp;) &#123;</span><br><span class="line">    	//深拷贝</span><br><span class="line">    &#125;</span><br><span class="line">private:</span><br><span class="line">    OtherClass *p;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br>如果提供一个member swap做置换工作，然后将std::swap特化，令他调用该函数<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">class Widget &#123;</span><br><span class="line">public:</span><br><span class="line">	void swap(Widget&amp; other) &#123;</span><br><span class="line">		std::swap(pImpl, other.pImpl);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">namespace std &#123;</span><br><span class="line">	template&lt;&gt;</span><br><span class="line">	void swap&lt;Widget&gt; (Widget&amp; a, Widget b) &#123;</span><br><span class="line">		a.swap(b);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>调用swap时应该针对std::swap使用using声明式，然后调用swap不带任何”命名空间修饰”<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">void doSomething(Obj&amp; o1, Obj&amp; o2)&#123;</span><br><span class="line">    //这样可以让编译器自己决定调用哪个swap，万一用户没有实现针对Obj的swap，还能调用std::swap</span><br><span class="line">    using std::swap;</span><br><span class="line">    </span><br><span class="line">    swap(o1, o2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果swap缺省实现的效率不足，则：</p>
+<ol>
+<li>提供一个public swap成员函数，让它高效地置换那个类型的两个对象值；</li>
+<li>在你的class或namespace所在的命名空间中提供一个non-member swap，并令它调用上述swap成员函数；</li>
+<li>如果正在编写一个class，为class特化一个std::swap，并令他调用你的swap成员函数；</li>
+<li>如果调用swap，请确定包含一个using声明式，以便让std::swap在你的函数内曝光可见，然后不加任何namespace修饰符，赤裸裸的调用swap；</li>
+<li>成员版swap不可抛出异常。</li>
+</ol>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><h2 id="尽可能延后变量定义式出现的时间"><a href="#尽可能延后变量定义式出现的时间" class="headerlink" title="尽可能延后变量定义式出现的时间"></a>尽可能延后变量定义式出现的时间</h2><p>C语言推荐在函数开始的时候定义所有变量(最开始的C语言编译器要求，现在并不需要)，C++推荐在使用对象前才定义对象，尽量延后变量的定义，直到确实需要它，避免没有用到这个变量但是却承担了构造和析构成本。<br>不止延后到真正使用这个变量，而且要延后到能够给这个变量一个初值实参为止，如果这样，不仅能避免构造和析构非必要对象，还能避免无意义的default构造行为。</p>
+<h2 id="尽量少做转型动作"><a href="#尽量少做转型动作" class="headerlink" title="尽量少做转型动作"></a>尽量少做转型动作</h2><p>转型的语法:</p>
+<p>旧式转型：</p>
+<ul>
+<li>(T)expression</li>
+<li>T(expression)</li>
+</ul>
+<p>新式转型：</p>
+<ul>
+<li>const_cast<T> (expression)：用来将对象的常量性移除；</li>
+<li>dynamic_cast<T> (expression)：执行安全向下转型，用来决定对象是不是归属继承体系的某个类型；</li>
+<li>reinterpret_cast<T> (expression)：低级转型，例如将一个pointer to int转型为一个int；</li>
+<li>static_cast<T> (expression)：强迫隐式转换，例如将non-const转为const，将int转为double等，但无法将const转为non-const。</li>
+</ul>
+<p>例子：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Derived d;</span><br><span class="line">Base* pb = &amp;d;</span><br></pre></td></tr></table></figure><br>这里建立一个base calss指针指向一个derived class对象，但是有时候上述两个指针并不相同，这时会有一个偏移量在运行期被施加到Derived指针上，用以取得正确的Base指针。因此，单一对象可能拥有一个以上的指针。</p>
+<p>如果想要在子类中执行父类的函数，可以如下:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">class SpecialWindow : public Window &#123;</span><br><span class="line">public:</span><br><span class="line">	virtual void onResize() &#123;</span><br><span class="line">		Window::onResize();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>如果可以，尽量避免转型，特别是在注重效率的代码中避免dynamic_cast。<br>之所以需要dynamic_cast是因为想要在一个你认为是derived class对象身上执行derived class操作函数，但是你手上只有一个指向base的pointer，有两个一般的方法可以解决这个问题：</p>
+<ol>
+<li>使用容器并在其中直接存储指向derived class对象的指针，如此便消除了通过base class接口处理对象的需要。</li>
+<li>在base class中提供virtual函数做你想对各个派生类做的事。</li>
+</ol>
+<ul>
+<li>如果转型是必要的，试着将它隐藏于某个函数后。客户可以随时调用该函数，而不需要将转型放入自己的代码。</li>
+<li>使用C++风格的转型。</li>
+</ul>
+<h2 id="避免返回handles指向对象内部成分"><a href="#避免返回handles指向对象内部成分" class="headerlink" title="避免返回handles指向对象内部成分"></a>避免返回handles指向对象内部成分</h2><p>成员变量的封装性最多等于“返回其reference的函数”的访问级别。<br>如果const成员函数传出一个reference，后者所指数据与对象自身有关联，而它又被存储于对象之外，那么这个函数的调用者可以修改那笔数据。<br>简单说，就是成员函数返回指针或者非const引用不要指向成员变量，这样会破坏封装性</p>
+<h2 id="为“异常安全”而努力是值得的"><a href="#为“异常安全”而努力是值得的" class="headerlink" title="为“异常安全”而努力是值得的"></a>为“异常安全”而努力是值得的</h2><p>当异常被抛出时，异常安全性函数会：</p>
+<ul>
+<li>不泄露任何资源</li>
+<li>不允许数据破坏</li>
+</ul>
+<p>“异常安全函数”承诺即使发生异常也不会有资源泄漏。在这个基础下，它有3个级别</p>
+<ul>
+<li>基本保证：抛出异常，程序内的任何事物仍然保持在有效状态下，没有对象或数据结构会被破坏，所有对象处于一种内部前后一致的状态。需要用户处理程序状态改变(自己写代码保证这个级别就行了把)</li>
+<li>强烈保证：抛出异常，程序状态不改变，如果函数失败，程序状态恢复到调用前；</li>
+<li>不抛异常：承诺绝不抛出异常，因为他们总是能完成原先承诺的任务。内置类型的操作就绝不会抛出异常</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">class PrettyMenu &#123;</span><br><span class="line">	std::tr1::shared_ptr&lt;Image&gt; bgImage;</span><br><span class="line">&#125;;</span><br><span class="line">void PrettyMenu::changeBackground(std::istream&amp; imgSrc) &#123;</span><br><span class="line">	Lock ml(&amp;mutex);</span><br><span class="line">	bgImage.reset(new Image(imgSrc));</span><br><span class="line">	++imageChange;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码使用一个用于资源管理的智能指针，重新排列了changeBackground的语句次序，使得在更换图像之后才累加imageChanges，一般而言这是个好策略，不要为了表示某件事发生而改变对象状态，除非这件事真的发生了。</p>
+<p>另外，使用了Lock使得不需要在末尾手动unlock，在析构函数中已经自动unlock。使用智能指针也不需要再手动delete旧图像。</p>
+<p>“强烈保证”往往可以通过copy-and-swap实现，为你打算修改的对象原件做一份副本，然后在那份副本上做修改，若有任何修改动作抛出异常，原对象仍保持未修改状态，待所有修改完成后再将修改后的副本和原对象在一个不抛出异常的操作中置换。</p>
+<p>但是”强烈保证”并非对所有函数都具有实现意义<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">void doSomething(Object&amp; obj)&#123;</span><br><span class="line">    Object new_obj(obj);</span><br><span class="line">    new_obj++;</span><br><span class="line">    swap(obj, new_obj);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="透彻了解inline函数的里里外外"><a href="#透彻了解inline函数的里里外外" class="headerlink" title="透彻了解inline函数的里里外外"></a>透彻了解inline函数的里里外外</h2><p>“免除函数调用成本”<br>当你inline某个函数，编译器或许可以对函数本体执行语境相关最优化，大部分编译器绝不会对着一个outline函数调用动作执行如此优化。<br>inline函数将“对此函数的每一个调用都用函数本体替换之”，这样做可能增加目标码的大小，即使拥有虚内存，inline造成的代码膨胀亦会造成额外的<strong>换页</strong>行为，降低指令高速缓存的命中率，以及伴随而来的效率损失。</p>
+<p>inline只是对编译器的一个申请而不是强制命令。这项申请可以隐喻指出，也可以明确提出。隐喻方式是将函数定义于class定义式内：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">class Person &#123;</span><br><span class="line">public:</span><br><span class="line">	int age() const &#123;return theAge; &#125;</span><br><span class="line">private:</span><br><span class="line">	int theAge;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>明确声明inline的做法则是在其定义式前加上关键字inline：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename T&gt;</span><br><span class="line">inline const T&amp; std::max(const T&amp; a, const T&amp; b) &#123;</span><br><span class="line">	return a &lt; b ? a : b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>inline函数通常被定义在头文件中，因为大多数build环境在编译过程中进行inlining，而为了将一个“函数调用”替换为“被调用函数本体”，编译器必须知道那个函数长啥样，某些build环境可以在链接的时候完成inline。<br>大部分编译器拒绝将太过复杂的函数inlining，而所有对virtual函数的调用都会使inline落空。<br>一个表面上看似inline的函数是否真的inline，取决于你的编译环境，主要取决于编译器。<br>构造函数和析构函数如果inline的话很麻烦。<br>inline无法随着程序库的升级而升级，换句话说如果f是程序库内的一个inline函数，客户将f函数本体编译进代码，一旦程序库改变，所有用到f的函数都需要重新编译。如果f是non-inline函数，则只需要重新编译f就好。</p>
+<p>这里插播一个C++处理定义的重要原则，一处定义原则：</p>
+<p>全局变量，静态数据成员，非内联函数和成员函数只能整个程序定义一次<br>类类型(class，struct,union)，内联函数可以每个翻译单元定义一次</p>
+<h2 id="将文件的编译依存关系降到最低"><a href="#将文件的编译依存关系降到最低" class="headerlink" title="将文件的编译依存关系降到最低"></a>将文件的编译依存关系降到最低</h2><p>C++并没有将接口从实现中分离。在定义文件和其含入文件之间形成了一种编译依存关系。如果头文件中有任何一个被改变或者这些头文件依赖的任何一个头文件改变，则任何使用这个类的文件都需要重新编译。</p>
+<p>当编译器看到一个定义式时，它必须知道要给这个定义式分配多少内存才够维持一个对象，这个问题在Java里并不存在，因为Java编译器只分配一个足够指向该对象的指针那么大的空间。</p>
+<p>支持”编译依存最小化”的一般构想是：相依于声明式，不要相依于定义式；现实中要让头文件尽可能地自我满足，万一做不到则让它与其他文件中的声明式相依。基于此构想的两个手段是Handle classes(impl对象提供服务)和Interface classes。<br>其实就是使用前置声明，在main class中只有一个指针指向其实现类，这样的设计使得那些classes的修改都不需要main class重新编译。</p>
+<ul>
+<li>如果使用object reference或者object pointer可以完成任务，则就不要使用object</li>
+<li>如果能够，尽量以class声明式替换class定义式</li>
+<li>为声明式和定义式提供不同的头文件，当然这些文件要保持一致性。</li>
+</ul>
+<p>制作handler class的办法是，令基函数成为abstract baseclass， 称为interface class，这种函数的目的是详细叙述derived class的接口，因此它通常不带成员变量，只有一个virtual析构函数和一组pure virtual函数。一个针对Person而写的interface class也许是这样的：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">class Person &#123;</span><br><span class="line">public:</span><br><span class="line">	virtual ~Persion();</span><br><span class="line">	virtual std::string name() const = 0;</span><br><span class="line">	virtual std::string date() const = 0;</span><br><span class="line">	virtual std::string address() const = 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>不可能针对“内含pure virtual函数”的Person class具现出实例。</p>
+<p>interface class的客户必须有办法为这种class创建新对象。他们调用一个特殊函数，此函数扮演真正将被具现化的derived class的构造函数的角色，这样的函数通常称为“工厂函数”。他们返回指针，指向动态分配所得对象，而该对象支持interface class的接口，这样的函数又往往在interface class中被声明为static：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">class Persion &#123;</span><br><span class="line">public:</span><br><span class="line">	static std::tr1::shared_ptr&lt;Person&gt; create(const std::string&amp; name, const Date&amp; birthday, const Address&amp; addr);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">std::string name;</span><br><span class="line">Date dateOfBirth;</span><br><span class="line">Address address;</span><br><span class="line"></span><br><span class="line">std::tr1::shared_ptr&lt;Person&gt; pp(Person::create(name, dateOfBirth, address));</span><br></pre></td></tr></table></figure><br>支持interface class接口的那个具象类必须被定义出来，而且真正的构造函数必须被调用。一切都在virtual构造函数实现码所在的文件内秘密发生。假设interface class Person有个具象的derived class RealPerson，后者提供继承而来的virtual函数的实现。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">class RealPerson: public Person &#123;</span><br><span class="line">public:</span><br><span class="line">	RealPerson(const std::string&amp; name, const Date&amp; birthday, const Address&amp; addr) : theName(name), theBirthDate(birthday), theAddress(addr) &#123;&#125;</span><br><span class="line">	virtual ~RealPerson();</span><br><span class="line">	std::string name();</span><br><span class="line">	std::string date();</span><br><span class="line">	std::string address();</span><br><span class="line">private:</span><br><span class="line">	std::string theName;</span><br><span class="line">	Date theBirthDate;</span><br><span class="line">	Address theAddress;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>有了RealPerson后，写出Person::create就顺理成章了。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">std::tr1::shared_ptr&lt;Person&gt; Person::create(onst std::string&amp; name, const Date&amp; birthday, const Address&amp; addr) &#123;</span><br><span class="line">	return std::tr1::shared_ptr&lt;Person&gt;(new RealPerson(name, birthday, addr));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>在handler class上，成员函数必须通过implementation pointer取得对象数据，那会为每一次访问增加一层间接性，而每一个对象消耗的内存数量必须增加。至于interface class，由于每一个函数都是virtual，必须为每次函数调用付出一个间接跳跃的成本。</p>
+<p>下面有个需要注意的点<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//Obj.h</span><br><span class="line">class ObjImpl;</span><br><span class="line">class Obj&#123;</span><br><span class="line">public:</span><br><span class="line">private:</span><br><span class="line">    std::shared_ptr&lt;ObjImpl&gt; pObjImpl;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br>上面的写法会报错，因为编译器会再.h文件里面产生默认的析构函数，<br>析构函数要调用ObjImpl的析构函数，然后我们现在只有声明式，不能调用ObjImpl的实现。<br>下面的实现才是正确的<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">//Obj.h</span><br><span class="line">class ObjImpl;</span><br><span class="line">class Obj&#123;</span><br><span class="line">public:</span><br><span class="line">    //声明</span><br><span class="line">    ~Obj();</span><br><span class="line">private:</span><br><span class="line">    std::shared_ptr&lt;ObjImpl&gt; pObjImpl;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//Obj.cpp</span><br><span class="line">//现在可以看到ObjImpl的实现</span><br><span class="line">#include&lt;ObjImpl&gt;</span><br><span class="line">	Obj::~Obj()&#123;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="继承与面对对象设计"><a href="#继承与面对对象设计" class="headerlink" title="继承与面对对象设计"></a>继承与面对对象设计</h1><h2 id="确定你的public继承塑模出is-a模型"><a href="#确定你的public继承塑模出is-a模型" class="headerlink" title="确定你的public继承塑模出is-a模型"></a>确定你的public继承塑模出is-a模型</h2><p>public继承意味着is-a。适用于base class身上的每一个函数也一定适用于derived class。<br>令class D以public形式继承class B，便是告诉C++编译器每一个类型为D的对象同时也是一个类型为B的对象，反之不成立。</p>
+<h2 id="避免遮掩继承而来的名称"><a href="#避免遮掩继承而来的名称" class="headerlink" title="避免遮掩继承而来的名称"></a>避免遮掩继承而来的名称</h2><p>当位于一个derived class成员函数内指涉base class内的某物的时候，编译器可以找到我们所指涉的东西，因为derived class继承了声明于base class的所有东西。实际运作方式是derived class作用域被嵌套进base class作用域内。</p>
+<p>如果继承base class并加上重载函数，而你又希望重新定义或覆写其中一部分，那么你必须为那些原本会被遮掩的每个名称引入一个using声明式，否则某些你希望继承的名称会被遮掩。    </p>
+<p>子作用域会遮掩父作用域的名称。一般来讲，我们可以有以下几层作用域</p>
+<ul>
+<li>global作用域</li>
+<li>namespace作用域</li>
+<li>Base class作用域</li>
+<li>Derived class作用域</li>
+<li>成员函数</li>
+<li>控制块作用域</li>
+</ul>
+<p>注意：遮掩的是上一层作用域的名称，重载(不同参数)的函数也会直接遮掩<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">class Base&#123;</span><br><span class="line">public:</span><br><span class="line">    void f1();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class Drive&#123;</span><br><span class="line">public:</span><br><span class="line">    //会遮掩f1()，子类并没有继承f1()</span><br><span class="line">    void f1(int);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Drive d;</span><br><span class="line">d.f1();  //错误</span><br><span class="line">d.f1(3); //正确</span><br></pre></td></tr></table></figure><br>可以通过using声明式或者inline转交解决这一问题<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">class Base&#123;</span><br><span class="line">public:</span><br><span class="line">    void f1();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//using 声明式</span><br><span class="line">class Drive&#123;</span><br><span class="line">public:</span><br><span class="line">    using Base::f1;</span><br><span class="line">    void f1(int);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//inline转交</span><br><span class="line">class Drive&#123;</span><br><span class="line">public:</span><br><span class="line">    void f1()&#123;</span><br><span class="line">        Base::f1();</span><br><span class="line">    &#125;</span><br><span class="line">    void f1(int);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="区分接口继承和实现继承"><a href="#区分接口继承和实现继承" class="headerlink" title="区分接口继承和实现继承"></a>区分接口继承和实现继承</h2><p>public继承由两部分组成，一个是函数接口继承，一个是函数实现继承。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">class Shape &#123;</span><br><span class="line">	public:</span><br><span class="line">	virtual void draw() const = 0;</span><br><span class="line">	virtual void error(const std::string&amp; msg);</span><br><span class="line">	int objectID() const;</span><br><span class="line">&#125;;</span><br><span class="line">class Rectangle: public Shape &#123; ... &#125;;</span><br><span class="line">class Ellipse: public Shape &#123; ... &#125;;</span><br></pre></td></tr></table></figure><br>Shape是个抽象类，它的pure virtual函数draw使它成为一个抽象类，所以只能创建其derived class的对象。draw是个纯虚函数，error是个impure virtual函数，objectID是个non-virtual函数。</p>
+<p>pure函数必须被任何“继承了它们”的class重新声明，且它们在抽象类中没有定义，所以声明一个纯虚函数的目的是让derived class只继承函数接口。竟然可以为纯虚函数提供定义，只是在调用时要指明。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Shape* ps = new Shape;</span><br><span class="line">shape* ps1 = new Rectangle;</span><br><span class="line">ps1-&gt;draw();</span><br><span class="line">ps1-&gt;Shape::draw();</span><br></pre></td></tr></table></figure><br>虚函数会提供一份定义代码，derived class可以覆写它，声明虚函数的目的是让derived class继承该函数的接口和缺省实现。<br>继承non-virtual函数的目的是让derived class继承函数的接口和一份强制实现。</p>
+<p>纯虚函数：提供接口继承<br>Drived class必须实现纯虚函数<br>不能构造含有纯虚函数的类</p>
+<h2 id="考虑virtual函数以外的选择"><a href="#考虑virtual函数以外的选择" class="headerlink" title="考虑virtual函数以外的选择"></a>考虑virtual函数以外的选择</h2><h3 id="借由non-virtual-interface实现template-method模式"><a href="#借由non-virtual-interface实现template-method模式" class="headerlink" title="借由non-virtual interface实现template method模式"></a>借由non-virtual interface实现template method模式</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">class Object&#123;</span><br><span class="line">public:</span><br><span class="line">    void Interface()&#123;</span><br><span class="line">        ···</span><br><span class="line">        doInterface()；</span><br><span class="line">        ···</span><br><span class="line">    &#125;</span><br><span class="line">private/protected:</span><br><span class="line">    virtual doInterface()&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>让用户通过调用public non-virtual成员函数间接调用private virtual函数。<br>优点：</p>
+<ul>
+<li>可以在调用虚函数的前后，做一些准备工作(抽出一段重复代码)</li>
+<li>提供良好的ABI兼容性</li>
+<li>没有必要让这个函数一定是private</li>
+</ul>
+<h3 id="借由Function-Pointer实现Strategy模式"><a href="#借由Function-Pointer实现Strategy模式" class="headerlink" title="借由Function Pointer实现Strategy模式"></a>借由Function Pointer实现Strategy模式</h3><p>某个实体的某个功能函数可以在运行期变更，且同一个类的不同实体可以有不同的功能函数。</p>
+<h3 id="借由tr1-function完成Strategy模式"><a href="#借由tr1-function完成Strategy模式" class="headerlink" title="借由tr1::function完成Strategy模式"></a>借由tr1::function完成Strategy模式</h3><p>可以不再使用函数指针而是使用类型为tr1::function的对象。</p>
+<h3 id="聊一聊ABI兼容性"><a href="#聊一聊ABI兼容性" class="headerlink" title="聊一聊ABI兼容性"></a>聊一聊ABI兼容性</h3><p>我们知道，程序库的优势之一是库版本升级，只要保证接口的一致性，用户不用修改任何代码。一般一个设计完好的程序库都会提供一份C语言接口，为什么呢，我们来看看C++ ABI有哪些脆弱性。</p>
+<p>虚函数的调用方式，通常是 vptr/vtbl 加偏移量调用<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">//Object.h</span><br><span class="line">class Object&#123;</span><br><span class="line">public:</span><br><span class="line">···</span><br><span class="line">    virtual print()&#123;&#125;//第3个虚函数</span><br><span class="line">···</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//用户代码</span><br><span class="line">int main()&#123;</span><br><span class="line">    Object *p = new Object;</span><br><span class="line">    p-&gt;print();                    //编译器：vptr[3]()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//如果加了虚函数，用户代码根据偏移量找到的是newfun函数</span><br><span class="line">//Object.h</span><br><span class="line">class Object&#123;</span><br><span class="line">public:</span><br><span class="line">···</span><br><span class="line">    virtual newfun()//第3个虚函数</span><br><span class="line">    virtual print()&#123;&#125;//第4个虚函数</span><br><span class="line">···</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="name-mangling-名字粉碎实现重载"><a href="#name-mangling-名字粉碎实现重载" class="headerlink" title="name mangling 名字粉碎实现重载"></a>name mangling 名字粉碎实现重载</h3><p>C++没有为name mangling制定标准。例如void fun(int)，有的编译器定为fun<em>int</em>，有的编译器指定为fun%int%。</p>
+<p>因此，C++接口的库要求用户必须和自己使用同样的编译器(这个要求好过分)</p>
+<p>其实C语言接口也不完美<br>例如struct和class。编译阶段，编译器将struct或class的对象对成员的访问通过偏移量来实现</p>
+<h3 id="古典策略模式"><a href="#古典策略模式" class="headerlink" title="古典策略模式"></a>古典策略模式</h3><p>用另外一个继承体系替代<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class Object&#123;</span><br><span class="line">public:</span><br><span class="line">    void Interface()&#123;</span><br><span class="line">        ···</span><br><span class="line">        p-&gt;doInterface()；</span><br><span class="line">        ···</span><br><span class="line">    &#125;</span><br><span class="line">private/protected:</span><br><span class="line">    BaseInterface *p;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class BaseInterface&#123;</span><br><span class="line">public:</span><br><span class="line">    virtual void doInterface()&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="绝不重新定义继承而来的non-virtual函数"><a href="#绝不重新定义继承而来的non-virtual函数" class="headerlink" title="绝不重新定义继承而来的non-virtual函数"></a>绝不重新定义继承而来的non-virtual函数</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class B &#123;</span><br><span class="line">public:</span><br><span class="line">	void mf();</span><br><span class="line">&#125;</span><br><span class="line">class D: public B &#123;</span><br><span class="line">public:</span><br><span class="line">	void mf();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">D x;</span><br><span class="line">B* pb = &amp;x;</span><br><span class="line">D* pd = &amp;x;</span><br><span class="line"></span><br><span class="line">pb-&gt;mf();</span><br><span class="line">pd-&gt;mf(); </span><br></pre></td></tr></table></figure>
+<p>上边调用的一个是B的mf()，一个是D的mf()，因为mf是在两个类中都有定义的，所以尽管都是x的指针，但是两个调用的mf不一样。non-virtual函数如B::mf()和D::mf()是静态绑定的，由于pb是一个B类的指针，通过pb调用的non-virtual函数永远是B所定义的版本。</p>
+<p>virtual函数却是动态绑定的，所以它们不受这个问题困扰，如果mf是个virtual函数，则通过pb还是pd调用到的都是D的mf()。</p>
+<h2 id="绝不重新定义继承而来的缺省参数值"><a href="#绝不重新定义继承而来的缺省参数值" class="headerlink" title="绝不重新定义继承而来的缺省参数值"></a>绝不重新定义继承而来的缺省参数值</h2><p>virtual函数是动态绑定，而缺省参数值是静态绑定</p>
+<p>静态类型是它在程序中被声明时所采用的类型。有缺省参数值的成员函数，不可以在子类中赋予不同的缺省参数值，但是如果在子类中实现这个函数时未赋予缺省参数，则当调用时要指定参数。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">class Shape &#123;</span><br><span class="line">public:</span><br><span class="line">	virtual void draw(Shapecolor color = Red) const = 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class Circle : public Shape &#123;</span><br><span class="line">public:</span><br><span class="line">	virtual void draw(Shapecolor color) const;</span><br><span class="line">&#125;</span><br><span class="line">这么写的话当客户调用此函数，一定要指定参数。</span><br><span class="line">因为静态绑定下这个函数并不从其base中继承缺省参数。</span><br></pre></td></tr></table></figure><br>缺省参数值是静态绑定<br>虚函数是动态绑定<br>遵守这条规定防止出错</p>
+<p>动态类型指的是目前所指对象的类型，也就是说这个对象将会有什么行为。动态类型可以在程序执行过程中改变。<br>我们可能在调用一个定义于derived class中的virtual函数时，使用了base class中为它指定的缺省参数值。</p>
+<h2 id="通过复合塑模出has-a或者”根据某物实现出”"><a href="#通过复合塑模出has-a或者”根据某物实现出”" class="headerlink" title="通过复合塑模出has-a或者”根据某物实现出”"></a>通过复合塑模出has-a或者”根据某物实现出”</h2><p>复合是当某种类型的对象内含它种类型的对象，如，Person类中有Address类和PhoneNumber类，意味着has-a的关系。<br>根据某物实现出和is-a的区别：<br>这个也是什么时候使用继承，什么时候使用复合。复合代表使用了这个对象的某些方法，但是却不想它的接口入侵。</p>
+<h2 id="明智而审慎地使用private继承"><a href="#明智而审慎地使用private继承" class="headerlink" title="明智而审慎地使用private继承"></a>明智而审慎地使用private继承</h2><p>private继承是<strong>根据某物实现出</strong>，如果继承关系是private的，则编译器不会自动将一个derived class对象转换为一个base class对象。<br>由private继承来的所有成员在derived class中都会变成private的，而不管它在base class中是何种。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class Empty &#123;&#125;</span><br><span class="line">class HoldInt &#123;</span><br><span class="line">	int x;</span><br><span class="line">	Empty e;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>C++ 设计者在设计这门语言要求所有的对象必须要有不同的地址(C语言没有这个要求)。C++编译器的实现方式是给让空类占据一个字节。</p>
+<p>C++裁定凡是独立的对象都要有非0的大小，所以<code>sizeof(HoldInt) &gt; sizeof(int)</code>，一个Empty成员竟然要一些空间。实际上这个Empty类可能会被编译器默默加上一个char，然后由于对齐的缘故要再加上一些内存成为一个int。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">class Base&#123;</span><br><span class="line">public:</span><br><span class="line">    void fun()&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//8个字节</span><br><span class="line">class Object&#123;</span><br><span class="line">private:</span><br><span class="line">    int a;</span><br><span class="line">    Base b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">//4个字节</span><br><span class="line">class　Object : private Base&#123;</span><br><span class="line">private:</span><br><span class="line">    int a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>唯一一个使用private继承的理由就是，可以使用空白基类优化技术，节约内存空间<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">class HoldInt : private Empty &#123;</span><br><span class="line">	int x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>这样的话<code>sizeof(HoldInt) == sizeof(int)</code>，这就是所谓的<strong>空白基类最优化</strong>。</p>
+<h2 id="明智而审慎地使用多重继承"><a href="#明智而审慎地使用多重继承" class="headerlink" title="明智而审慎地使用多重继承"></a>明智而审慎地使用多重继承</h2><p>程序有可能从一个以上的基类中继承相同名字（函数，typedef等）需要明确的指出调用哪一个基类中的函数，如<code>a.B::bbb()</code>。<br>首先我们来了解一下多重继承的内存布局。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">//包含A对象</span><br><span class="line">class A&#123;</span><br><span class="line">    </span><br><span class="line">&#125;;</span><br><span class="line">//包含A,B对象</span><br><span class="line">class B:public A&#123;</span><br><span class="line">    </span><br><span class="line">&#125;;</span><br><span class="line">//包含A,C对象</span><br><span class="line">class C:public A&#123;</span><br><span class="line">    </span><br><span class="line">&#125;;</span><br><span class="line">//包含A,A,B,C,D对象</span><br><span class="line">class D:public B, public C&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>由于菱形继承，基类被构造了两次。其实，C++也提供了针对菱形继承的解决方案的<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">//包含A对象</span><br><span class="line">class A&#123;</span><br><span class="line">    </span><br><span class="line">&#125;;</span><br><span class="line">//包含A,B对象</span><br><span class="line">class B:virtual public A&#123;</span><br><span class="line">    </span><br><span class="line">&#125;;</span><br><span class="line">//包含A,C对象</span><br><span class="line">class C:virtual public A&#123;</span><br><span class="line">    </span><br><span class="line">&#125;;</span><br><span class="line">//包含A,B,C,D对象</span><br><span class="line">class D:public B, public C&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>使用虚继承，B,C对象里面会产生一个指针指向唯一一份A对象。这样付出的代价是必须再运行期根据这个指针的偏移量寻找A对象。</p>
+<p>从正确行为的观点看，public继承应该总是virtual的。规则很简单：任何时候当你使用public继承，请改用virtual public继承。但是正确性并不是唯一观点。为避免继承得来的成员变量重复，编译器必须提供若干幕后戏法，而其后果是：</p>
+<ul>
+<li>使用 virtual继承的那些 classes所产生的对象往往比使用 non-virtual继承的兄弟们体积大；</li>
+<li>访问 virtual base classes的成员变量时，也比访问 non-virtual base classes的成员变量速度慢；</li>
+</ul>
+<p>种种细节因编译器不同而异，但基本重点很清楚：你得为 virtual继承付出代价</p>
+<p>virtual继承的成本还包括其他方面。支配“virtual base classes初始化”的规则比起 non-virtual bases的情况远为复杂且不直观。 virtual base的初始化责任是由继承体系中的最低层（ most derived） class负责，这暗示：</p>
+<ol>
+<li>classes若派生自 virtual bases而需要初始化，必须认知其 virtual bases-不论那些 bases距离多远；</li>
+<li>当一个新的 derived class加入继承体系中，它必须承担其 virtual bases（不论直接或间接）的初始化责任。</li>
+<li>如果必须使用virtual，则尽可能避免在其中放置数据</li>
+</ol>
+<h1 id="模板与泛型编程"><a href="#模板与泛型编程" class="headerlink" title="模板与泛型编程"></a>模板与泛型编程</h1><h2 id="了解隐式接口和编译期多态"><a href="#了解隐式接口和编译期多态" class="headerlink" title="了解隐式接口和编译期多态"></a>了解隐式接口和编译期多态</h2><p>接口：强制用户实现某些函数<br>多态：相同的函数名，却有不同的实现<br>继承和模板都支持接口和多态<br>对继承而言，接口是显式的，以函数为中心，多态发生在运行期；显式接口由函数的签名式（函数名、参数类型、返回类型）构成，<br>对模板而言，接口是隐式的，多态表现在template具象化和函数重载，隐式接口基于“有效表达式”组成。如：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//这里接口要求T必须实现operator &gt;</span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">void doProcessing(T&amp; w)&#123;</span><br><span class="line">	if (w.size() &gt; 10 &amp;&amp; w != someNastyWidget) &#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>T的隐式接口提供一下约束：</p>
+<ul>
+<li>它必须提供一个名为size的函数，该函数返回一个数字</li>
+<li>它必须支持一个operator!=函数，用来比较两个T类型的对象。</li>
+</ul>
+<p>加诸于template上的隐式接口，就像加诸于class对象身上的显式接口一样真实，而且二者都在编译期完成检查。</p>
+<h2 id="了解typename的双重意义"><a href="#了解typename的双重意义" class="headerlink" title="了解typename的双重意义"></a>了解typename的双重意义</h2><p>声明template参数时，前缀关键字class和typename可以互换<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">template&lt;class T&gt; class Widget;</span><br><span class="line">template&lt;typename T&gt; class Widget;</span><br><span class="line">一致</span><br></pre></td></tr></table></figure><br>然而C++并不总是把class和typename看作等价，<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename C&gt;</span><br><span class="line">void print2nd(const C&amp; container) &#123;</span><br><span class="line">	if (container.size() &gt; 2) &#123;</span><br><span class="line">		C::const_iterator iter(container.begin());</span><br><span class="line">		++iter;</span><br><span class="line">		int value = *iter;</span><br><span class="line">		std::cout&lt;&lt;value;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>iter的类型是C::const_iterator，它的类型取决于template参数C。template内出现的名称如果相依于某个参数，则称之为从属参数；如果从属名在class内成嵌套状，则称为嵌套从属名称。如iter。</p>
+<p>嵌套从属名称可能造成解析困难。如果C命名空间中有一个变量叫做const_iterator，则就奇怪了。因此上述代码可能会造成错误。iter声明式只在C::const_iterator是个类型时才合理，我们必须告诉C++说C::const_iterator是个类型，只要加上typename即可：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if (container.size() &gt; 2) &#123;</span><br><span class="line">	typename C::const_iterator iter(container.begin());</span><br></pre></td></tr></table></figure><br>任何时候如果想要在template中指涉一个嵌套从属类型名称，就必须在紧邻它的前一个位置放上关键字<strong>typename</strong><br>typename只被用来验明嵌套从属类型名称。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typaname C&gt;</span><br><span class="line">void f(const C&amp; container,		// 不用使用typename</span><br><span class="line">	typename C::iterator iter); // 需要使用typename</span><br></pre></td></tr></table></figure><br>使用typename表明嵌套类型(防止产生歧义)</p>
+<h2 id="学习处理模板化基类内的名称"><a href="#学习处理模板化基类内的名称" class="headerlink" title="学习处理模板化基类内的名称"></a>学习处理模板化基类内的名称</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">class A &#123;</span><br><span class="line">public:</span><br><span class="line">	void sendclear(const std::string&amp; msg);</span><br><span class="line">	void sendencrypted(const std::string&amp; msg);</span><br><span class="line">&#125;;</span><br><span class="line">class B &#123;</span><br><span class="line">public:</span><br><span class="line">	void sendclear(const std::string&amp; msg);</span><br><span class="line">	void sendencrypted(const std::string&amp; msg);</span><br><span class="line">&#125;;</span><br><span class="line">class MsgInfo &#123; ... &#125;;</span><br><span class="line"></span><br><span class="line">template&lt;typename Company&gt;</span><br><span class="line">class MsgSender &#123;</span><br><span class="line">public:</span><br><span class="line">	void sendclear(const MsgInfo&amp; info) &#123;</span><br><span class="line">		std::string msg;</span><br><span class="line">		Company c;</span><br><span class="line">		c.sendclear(msg);</span><br><span class="line">	&#125;</span><br><span class="line">	void sendencryted(const MsgInfo&amp; info) &#123;</span><br><span class="line">	... &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename Company&gt;</span><br><span class="line">class LoggingMsgSender: public MsgSender&lt;Company&gt; &#123;</span><br><span class="line">public:</span><br><span class="line">	void sendclear(const MsgInfo&amp; info) &#123;</span><br><span class="line">		sendClearMsg(info);</span><br><span class="line">	&#125;</span><br><span class="line">	void sendencryted(const MsgInfo&amp; info) &#123;</span><br><span class="line">	... &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>derived class的信息传送函数有一个不同的名称，避免了遮掩继承而来的名称。问题是，当编译器遭遇class LoggingMsgSender: public MsgSender<Company>时，不知道继承的是哪个类，不到LoggingMsgSender具现化的时候，无法确切知道它是什么。</p>
+<p>如果有个类Z，<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">class Z &#123;</span><br><span class="line">public:</span><br><span class="line">	void sendEncrypted(const std::string&amp; msg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>针对Z产生一个特化版，这既不是template也不是class，而是特化版的MsgSender template。在template实参是Z时被使用，这就是所谓的模板全特化。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">template&lt;&gt;</span><br><span class="line">class MsgSender&lt;Z&gt; &#123;</span><br><span class="line">public:</span><br><span class="line">	void sendSecret(const MsgInfo&amp; info);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>考虑derived class LoggingMsgSender，如果在derived class中调用了MsgSender<Z>中因为被特化而不存在的函数（sendclear），则可以使用如下两种方法：</p>
+<ul>
+<li>在base class函数调用前加上<code>this-&gt;</code></li>
+<li>使用using声明式，将被掩盖的base class名称带入一个derived class中。</li>
+<li>明白指出被调用的函数在哪：<code>MsgSender&lt;company&gt;::sendclear</code></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">template &lt;typename T&gt;</span><br><span class="line">class Base&#123;                                                                      </span><br><span class="line">  public:                                                                          </span><br><span class="line">    void print(T a) &#123;cout &lt;&lt;&quot;Base &quot;&lt;&lt; a &lt;&lt;endl;&#125;;                                  </span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">template&lt;typename T&gt;                                                             </span><br><span class="line">class Drive : public Base&lt;T&gt;&#123;                                                    </span><br><span class="line">public:                                                                          </span><br><span class="line">  void printf(T a)&#123;                                                          </span><br><span class="line">  </span><br><span class="line">  //error 编译器不知道基类有print函数</span><br><span class="line">    print(a);  </span><br><span class="line">  &#125; </span><br><span class="line">&#125;;</span><br><span class="line">//解决方案</span><br><span class="line">//this-&gt;print();</span><br><span class="line">//using Base&lt;T&gt;::print</span><br><span class="line">//base&lt;T&gt;::print直接调用</span><br></pre></td></tr></table></figure>
+<h2 id="将参数无关代码抽离template"><a href="#将参数无关代码抽离template" class="headerlink" title="将参数无关代码抽离template"></a>将参数无关代码抽离template</h2><p>避免使用template导致的代码膨胀问题，其二进制代码带着几乎重复的代码、数据，结果可能使源码看起来合身或整齐，但是目标码却不是那么回事，使用“共性与变形分析”</p>
+<p>编写template时，把共同部分抽离。<br>比如：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename T, std::size_t n&gt;</span><br><span class="line">class SquareMatrix &#123;</span><br><span class="line">public:</span><br><span class="line">	void invert();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>这个template接受一个类型参数T，还接受一个类型为size_t的参数，那个是个非类型参数，这种参数和类型参数不一样，考虑：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SquareMatrix&lt;double, 5&gt; sm1;</span><br><span class="line">SquareMatrix&lt;double, 10&gt; sm2;</span><br></pre></td></tr></table></figure><br>这会具现两份代码，可以将参数5和10抽象出来：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename T&gt;</span><br><span class="line">class SquareMatrixBase &#123;</span><br><span class="line">protected:</span><br><span class="line">	void invert(std::size_t n);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">template&lt;tempname T, std::size_t n&gt;</span><br><span class="line">class SquareMatrix: private SquareMatrixBase&lt;T&gt; &#123;</span><br><span class="line">private:</span><br><span class="line">	using SquareMatrixBase&lt;T&gt;::invert;</span><br><span class="line">public:</span><br><span class="line">	void invert() &#123; this-&gt;invert(n); &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>SquareMatrixBase只对矩阵元素对象的类型进行具象化，不对矩阵的尺寸参数化。derived class的invert调用base class版本时用的inline调用，这些函数使用<code>this-&gt;</code>，因为如果若不这样做，模板化基类内的函数名会被derived class掩盖。</p>
+<p>如何知道怎么得到数据？令SquareMatrixBase贮存一个指针，指向矩阵数值所在的内存：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename T&gt;</span><br><span class="line">class SquareMatrixBase &#123;</span><br><span class="line">protected:</span><br><span class="line">	SquareMatrixBase(std::size_t n, T* pMem) : size(n), pData(pMem) &#123; &#125;</span><br><span class="line">	void setDataPtr(T* ptr) &#123; pData = ptr; &#125;</span><br><span class="line">private:</span><br><span class="line">	std::size_t size;</span><br><span class="line">	T* pData;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>现在可以用inline的方式调用base class的函数，后者由持有同型元素的所有矩阵共享。不同大小的矩阵只拥有单一版本的invert，可减少执行文件大小，也就因此降低程序的working set，并强化指令高速缓存区的引用集中化。</p>
+<p>在大多数平台上，所有指针类型都有相同的二进制表述，因此凡templates持有指针者（例如<code>list&lt;int*&gt;</code>，<code>list&lt;const int*&gt;</code>, <code>list&lt;SquareMatrix&lt;long, 3&gt;*&gt;</code>等等）往往应该对每一个成员函数使用唯一一份底层实现。这很具代表性地意味，如果你实现某些成员函数而它们操作强型指针（ strongly yped pointers，即<code>T*</code>），你应该令它们调用另一个操作无类型指针（<code>void*</code>）的函数，由后者完成实际工作。<br>某些C+标准程序库实现版本的确为 vector、deque和1ist等 templates做了这件事。如果你关心你的 templates可能出现代码膨胀，也许你会想让你的 templates也做相同的事情。</p>
+<p>非类型模板参数造成的代码膨胀：以函数参数或者成员变量替换<br>类型模板参数造成的代码膨胀：特化它们，让含义相近的类型模板参数使用同一份底层代码。例如int，long, const int</p>
+<h2 id="运用成员函数模版接收所有兼容类型"><a href="#运用成员函数模版接收所有兼容类型" class="headerlink" title="运用成员函数模版接收所有兼容类型"></a>运用成员函数模版接收所有兼容类型</h2><p>真实指针做得好的一件事是支持隐式转换：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">class Top &#123; ... &#125;;</span><br><span class="line">class Middle: public Top &#123;... &#125;;</span><br><span class="line">class Bottom: public Middle &#123; ... &#125;;</span><br><span class="line"></span><br><span class="line">Top* ptl = new Middle</span><br><span class="line">//将 Middle*转换为Top*</span><br><span class="line">Top* pt2 = new Bottom;</span><br><span class="line">//将 Bottom*转换为Top</span><br><span class="line">const Top* pct2= ptl</span><br><span class="line">//将Top*转换为 const Top*</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>但如果想在用户自定的智能指针中模拟上述转换，稍稍有点麻烦。我们希望以下代码通过编译：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename T&gt;</span><br><span class="line">class SmartPtr</span><br><span class="line">public:</span><br><span class="line">	explicit SmartPtr(T* reality); //智能指针通常以内置（原始）指针完成初始化</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Smartptr&lt;Top&gt; ptl = SmartPtr&lt;Middle&gt;(new Middle);</span><br><span class="line">//将 SmartPtr&lt;Middle&gt;转换为SmartPtr&lt;Top&gt;</span><br><span class="line">SmartPtr&lt;Top&gt; pt2 = SmartPtr&lt;Bottom&gt;(new Bottom);</span><br><span class="line">//将 SmartPtr&lt;Bottom&gt;转换为SmartPtr&lt;Top&gt;</span><br><span class="line">SmartPtr&lt;const Top&gt; pct= ptl</span><br><span class="line">//将 Smartptr&lt;Top&gt;转换为Smartptr&lt;const Top&gt;</span><br></pre></td></tr></table></figure><br>但是，同一个 template 的不同具现体之间并不存在什么与生俱来的固有关系。</p>
+<h3 id="Template和泛型编程"><a href="#Template和泛型编程" class="headerlink" title="Template和泛型编程"></a>Template和泛型编程</h3><p>我们来考虑一下智能指针的拷贝构造函数和赋值操作符怎么实现。它需要子类的智能指针能够隐式转型为父类智能指针.<br>写一个构造模板，叫做member function template，其作用是为class生成函数。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename T&gt;</span><br><span class="line">class shared_ptr&#123;</span><br><span class="line">public:</span><br><span class="line">    //拷贝构造函数，接受所有能够从U*隐式转换到T*的参数</span><br><span class="line">    template&lt;typename U&gt;</span><br><span class="line">    shared_ptr(shared_ptr&lt;U&gt; const &amp;rh):p(rh.get())&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    //赋值操作符，接受所有能够从U*隐式转换到T*的参数</span><br><span class="line">    template&lt;typename U&gt;</span><br><span class="line">    shared_ptr&amp; operator= (shared_ptr&lt;U&gt; const &amp;rh):p(rh.get())&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    //声明正常的拷贝构造函数</span><br><span class="line">    shared_ptr(shared_ptr const &amp;rh)；</span><br><span class="line">    shared_ptr&amp; operator= (shared_ptr const &amp;rh);</span><br><span class="line">private:</span><br><span class="line">    T *p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>以上对任何类型T和U，这里可以根据类型U生成一个类型T的shared_ptr，因为<code>shared_ptr&lt;T&gt;</code>有一个构造函数可以接受一个<code>shared_ptr&lt;U&gt;</code>的参数，根据对象u创建对象t，有时称为泛化copy构造函数。</p>
+<p>member function template也常用于赋值操作，例如TR1的shared_ptr支持所有来自兼容之内置指针、tr1::shared_ptr、auto_ptr和tr1::weak_ptr的构造行为，以及所有来自上述各对象的赋值操作。</p>
+<p>使用成员函数模版生成“可接受所有兼容类型”的函数<br>即使有了“泛化拷贝构造函数”和“泛化的赋值操作符”，仍然需要声明正常的拷贝构造函数和赋值操作符<br>在一个类模版内，template名称可被用来作为作为“template和其参数”的简略表达式</p>
+<h2 id="所有参数需要类型转换的时候请为模版定义非成员函数"><a href="#所有参数需要类型转换的时候请为模版定义非成员函数" class="headerlink" title="所有参数需要类型转换的时候请为模版定义非成员函数"></a>所有参数需要类型转换的时候请为模版定义非成员函数</h2><p>当我们编写一个模版类，某个相关函数都需要类型转换，需要把这个函数定义为非成员函数<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">template &lt;class T&gt;</span><br><span class="line">class Rational</span><br><span class="line">&#123;</span><br><span class="line">	public:</span><br><span class="line">	Rational(const T&amp; numerator = 0,</span><br><span class="line">		const T&amp; denominator = 1);</span><br><span class="line">	const T numerator() const;</span><br><span class="line">	const T denominator() const;</span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">const Rational&lt;T&gt; operator* (const Rational&lt;T&gt;&amp; lhs,</span><br><span class="line">							 const Rational&lt;T&gt;&amp; rhs)</span><br><span class="line">&#123; ... &#125;</span><br><span class="line"></span><br><span class="line">Rational&lt;int&gt; oneHalf(1,2);</span><br><span class="line">Rational&lt;int&gt; result = oneHalf * 2;</span><br></pre></td></tr></table></figure><br>但是模版的类型推导遇见了问题，以oneHalf进行推导，并不困难，<code>operator*</code>的第一参数被声明为<code>Rational&lt;T&gt;</code>，而传递给<code>operator*</code>的第一实参的类型是<code>Rational&lt;int&gt;</code>，所以T一定是int，<code>operator*</code>的第二参数被声明为<code>Rational&lt;T&gt;</code>，而传递给<code>operator*</code>的第二实参的类型是<code>int</code>，无法通过隐式类型转换将2转换成<code>Rational&lt;int&gt;</code>，需要把这个函数声明为友元函数帮助推导。</p>
+<p>class Rational<T>声明<code>operator*</code>为friend，模版函数只有声明，编译器不会帮忙具现化，所以我们需要实现的是友元模版函数。friend函数作为一个函数而非函数模板，编译器可以在调用它的时候使用隐式类型转换。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">template &lt;class T&gt;</span><br><span class="line">class Rational</span><br><span class="line">&#123;</span><br><span class="line">    …</span><br><span class="line">    friend Rational operator* (const Rational&amp; a, const Rational&amp; b)</span><br><span class="line">    &#123;</span><br><span class="line">        return Rational (a.GetNumerator() * b.GetNumerator(),</span><br><span class="line">            a.GetDenominator() * b.GetDenominator());</span><br><span class="line">    &#125;</span><br><span class="line">    …</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>这项技术的一个趣味点是，我们虽然使用friend，却与friend的传统用途“访问class的non-public成分”亳不相干。为了让类型转换可能发生于所有实参身上，我们需要一个 non-member函数；为了令这个函数被自动具现化，我们需要将它声明在class内部；而在class内部声明 non-member函数的唯一办法就是令它成为一个 friend。因此我们就这样做了。</p>
+<p>当我们编写一个class template，而它所提供的与此template相关的函数支持<strong>所有参数之隐式类型转换</strong>时，将那些函数定义为class template内部的friend函数。</p>
+<h2 id="请使用traits-classes表现类型信息"><a href="#请使用traits-classes表现类型信息" class="headerlink" title="请使用traits classes表现类型信息"></a>请使用traits classes表现类型信息</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename T, typename DistT&gt;</span><br><span class="line">void advance(IterT&amp; iter, DistT d);</span><br></pre></td></tr></table></figure>
+<p>advance只做<code>iter+=d</code>的操作，但是只有随机访问的迭代器才支持+=操作。面对其他威力不那么强大的迭代器种类， advance必须反复施行++或—，共d次。</p>
+<p>STL共有5种选代器分类，对应于它们支持的操作。</p>
+<ul>
+<li>Input送代器只能向前移动，一次一步，客户只可读取（不能涂写）它们所指的东西，而且只能读取一次。它们模仿指向输入文件的阅读指针（ read pointer）；C++程序库中的istream Iterators是这一分类的代表。</li>
+<li>Output迭代器情况类似，但一切只为输出，它们只向前移动，一次一步，客户只可涂写它们所指的东西，而且只能涂写一次。<br>它们模仿指向输出文件的涂写指针（ write pointer）； ostream iterators是这一分类的代表。这是威力最小的两个迭代器分类。由于这两类都只能向前移动，而且只能读或写其所指物最多一次，所以它们只适合“一次性操作算法”（one-passalgorithms）。</li>
+<li>另一个威力比较强大的分类是forward迭代器。这种迭代器可以做前述两种分类所能做的每一件事，而且可以读或写其所指物一次以上。这使得它们可施行于多次性操作算法（muli-pass algorithms）。</li>
+<li>Bidirectional迭代器比上一个分类威力更大：它除了可以向前移动，还可以向后移动。STL的list迭代器就属于这一分类，set， multiset，map和 multimap的迭代器也都是这一分类；</li>
+<li>最有威力的迭代器当属 random access迭代器。它可以执行“迭代器算术”，也就是它可以在常量时间内向前或向后跳跃任意距离。这样的算术很类似指针算术，那并不令人惊讶，因为 random access迭代器正是以内置（原始）指针为榜样，而内置指针也可被当做 random access迭代器使用。 vector，deque和string提供的选代器都是这一分类<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">struct input_iterator_tag &#123;&#125;</span><br><span class="line">struct output_iterator_tag &#123;&#125;</span><br><span class="line">struct forward_iterator_tag: public input_iterator_tag &#123;&#125;</span><br><span class="line">struct bidirectional_iterator_tag: public forward_iterator_tag &#123;&#125;</span><br><span class="line">struct random_access_iterator_tag: public bidirectional_iterator_tag &#123;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>我们希望以这种方式实现advance函数：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename T, typename DistT&gt;</span><br><span class="line">void advance(IterT&amp; iter, DistT d) &#123;</span><br><span class="line">	if (iter is a random access iterator) &#123;</span><br><span class="line">		iter += d;</span><br><span class="line">	&#125; </span><br><span class="line">	else &#123;</span><br><span class="line">		if (d &gt;=0) &#123; while (d--) ++iter;&#125;</span><br><span class="line">		else &#123; while (d++) --iter;&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>这种方法必须事先知道iter是否为random access迭代器，这就是traits让你得以进行的事，允许你在编译期间读取某些类型信息。<br>标准技术是把traits信息放入一个template及其一个或多个特化版本中，这样的templates有多个，其中针对迭代器的被命名为iterator_traits：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename IterT&gt;</span><br><span class="line">struct iterator_traits;</span><br></pre></td></tr></table></figure><br>iterator_traits的运作方式是，针对每一个类型IterT，在<code>struct iterator_traits&lt;IterT&gt;</code>内一定声明某个typedef名为iterator_category，用来确认IterT的迭代器分类。用户自定义的迭代器类型都要嵌套一个typedef，名为iterator_category。例如：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">template&lt; ... &gt;</span><br><span class="line">class deque &#123;</span><br><span class="line">	public:</span><br><span class="line">	class iterator &#123;</span><br><span class="line">		public:</span><br><span class="line">		typedef random_access_iterator_tag iterator_category;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br>为了支持指针迭代器，iterator_traits特别针对指针类型提供了一个偏特化版本：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename IterT&gt;</span><br><span class="line">struct iterator_traits&lt;IterT*&gt; &#123;</span><br><span class="line">	typedef random_access_iterator_tag iterator_category;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>有了iterator_traits，可以对advance实现之前的伪代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename T, typename DistT&gt;</span><br><span class="line">void advance(IterT&amp; iter, DistT d) &#123;</span><br><span class="line">	if (typeid(typename std::iterator_traits&lt;IterT&gt;::iterator_category) == typeid(std::random_access_iterator_tag)) &#123;</span><br><span class="line">		iter += d;</span><br><span class="line">	&#125; </span><br><span class="line">	else &#123;</span><br><span class="line">		if (d &gt;=0) &#123; while (d--) ++iter;&#125;</span><br><span class="line">		else &#123; while (d++) --iter;&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>利用重载实现编译器核定成功类型：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename T, typename DistT&gt;</span><br><span class="line">void doadvance(IterT&amp; iter, DistT d, std::random_access_iterator_tag) &#123;</span><br><span class="line">	iter += d;</span><br><span class="line">&#125;</span><br><span class="line">template&lt;typename T, typename DistT&gt;</span><br><span class="line">void doadvance(IterT&amp; iter, DistT d, std::biredirectional_iterator_tag) &#123;</span><br><span class="line">	if (d &gt;=0) &#123; while (d--) ++iter;&#125;</span><br><span class="line">	else &#123; while (d++) --iter;&#125;</span><br><span class="line">&#125;</span><br><span class="line">template&lt;typename T, typename DistT&gt;</span><br><span class="line">void advance(IterT&amp; iter, DistT d) &#123;</span><br><span class="line">	doadvance(iter, d, typename std::iterator_traits&lt;IterT&gt;::iterator_category());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>建立一组重载函数（身份像劳工）或函数模板（例如 doAdvance），彼此间的差异只在于各自的traits参数。令每个函数实现码与其接受之 traits信息相应和。<br>建立一个控制函数（身份像工头）或函数模板（例如 advance），它调用上述那些“劳工函数”并传递 traits class所提供的信息。</p>
+<h2 id="模版元编程"><a href="#模版元编程" class="headerlink" title="模版元编程"></a>模版元编程</h2><p>本质上就是函数式编程<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//上楼梯，每次上一步或者两步，有多少种</span><br><span class="line">int climb(int n)&#123;</span><br><span class="line">    if(n == 1)</span><br><span class="line">        return 1;</span><br><span class="line">    if(n == 2)</span><br><span class="line">        return 2;</span><br><span class="line">    return climb(n - 1) + climb(n - 2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">//元编程，采用类模版</span><br><span class="line">template&lt;int N&gt;</span><br><span class="line">class Climb&#123;</span><br><span class="line">public:</span><br><span class="line">  const static int n = Climb&lt;N-1&gt;::n + Climb&lt;N-2&gt;::n;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">template&lt;&gt;</span><br><span class="line">class Climb&lt;2&gt;&#123;</span><br><span class="line">public:</span><br><span class="line">  const static int n = 2;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">template&lt;&gt;</span><br><span class="line">class Climb&lt;1&gt;&#123;</span><br><span class="line">public:</span><br><span class="line">  const static int n = 1;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br>C++元编程可以将计算转移到编译期，执行速度迅速(缺陷？)</p>
+<h1 id="定制new和delete"><a href="#定制new和delete" class="headerlink" title="定制new和delete"></a>定制new和delete</h1><h2 id="了解new-handler的行为"><a href="#了解new-handler的行为" class="headerlink" title="了解new-handler的行为"></a>了解new-handler的行为</h2><p>STL容器使用的heap内存是由容器所拥有的分配器对象管理，不是被new和delete管理。<br>new和malloc对比：</p>
+<ul>
+<li>new构造对象，malloc不会</li>
+<li>new分配不出内存会抛异常，malloc返回NULL</li>
+<li>new分配不出内存可以调用用户设置的new-handler，malloc没有。可以为每个类设置专属new handler</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">namespace std&#123;</span><br><span class="line">    typedef void (*new_handler)();</span><br><span class="line">    //返回旧的handler</span><br><span class="line">    new_handler set_new_handler(new_handler p) throw();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>new_handler是个typedef，定义出一个指针指向函数，该函数没有参数也不返回任何东西；set_new_handler则是获得一个new_handler并返回一个new_handler的函数。set_new_handler的参数是个指针，指向operator new无法分配足够内存时该被调用的函数，其返回值也是个指针，指向set_new_handler被调用前正在执行的那个new_handler函数。</p>
+<p>当operator new无法满足内存申请时，就会不断调用new_handler函数直到找到足够的内存。<br>C++不支持class专属new-handler，只需令每个class提供自己的set_new_handler和operator new即可。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">class Widget &#123;</span><br><span class="line">public:</span><br><span class="line">	static std::new_handler set_new_handler(std::new_handler p) throw();</span><br><span class="line">	stativ void* operator new(std::size_t size) throw(std::bad_alloc);</span><br><span class="line">private:</span><br><span class="line">	static std::new_handler currentHandler;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>Widget内的set_new_handler将它获得的指针存储起来，然后返回之前存储的指针：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">std::new_handler Widget::set_new_handler(std::new_handler p) throw() &#123;</span><br><span class="line">	std::new_handler oldHandler = currentHandler;</span><br><span class="line">	currentHandler = p;</span><br><span class="line">	return oldHandler;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>operator new做以下事情：</p>
+<ol>
+<li>调用标准set_new_handler告知类的错误处理函数；</li>
+<li>调用global operator new执行实际的内存分配，如果分配失败则调用类的new handler，如果global new handler最终无法分配足够内存，会抛出一个bad_alloc异常；</li>
+<li>如果global operator new能够分配足够一个类对象所用的内存，类的operator new则会返回一个指针，指向分配所得。</li>
+</ol>
+<h2 id="了解new和delete合理的替换时机"><a href="#了解new和delete合理的替换时机" class="headerlink" title="了解new和delete合理的替换时机"></a>了解new和delete合理的替换时机</h2><p>为何要替换编译器提供的operator new和operator delete：</p>
+<ul>
+<li>用来检测运用上的错误。如果将new的对象delete掉却不幸失败，会导致内存泄漏，以及其他的写入错误等；</li>
+<li>强化效能。对特定应用的内存分配进行优化</li>
+<li>收集使用上的统计数据。</li>
+<li>增加分配和归还的速度。泛用性分配器比定制性分配器慢。</li>
+<li>为了降低缺省内存管理器带来的空间额外开销。泛用性分配器在每一个分配区块上招引某些开销。</li>
+<li>为了弥补缺省分配器中的非最佳齐位，编译器自带的operator new并不保证对动态分配而得的double采取8-bytes对齐。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">static const int signature = OxDEADBEEF;</span><br><span class="line">typedef unsigned char Byte;</span><br><span class="line">// 这段代码还有若干小错误，详下。</span><br><span class="line">void* operator new(std::size_t size) throw(std::bad_alloc) &#123;</span><br><span class="line">	using namespace std;</span><br><span class="line">	size_t realSize = size + 2 * sizeof(int);</span><br><span class="line">	//增加大小，使能够塞入两个size</span><br><span class="line">	</span><br><span class="line">	void* pMem = malloc(realSize);</span><br><span class="line">	//调用 malloc取得内存</span><br><span class="line">	if (!pMem) throw bad_alloc();</span><br><span class="line"></span><br><span class="line">	//将signature写入内存的最前段落和最后段落</span><br><span class="line">	*(static_cast&lt;int*&gt;(pMem)) = signature;</span><br><span class="line">	*(reinterpret_cast&lt;int*&gt;(static_cast&lt;Byte*&gt;(pMem)+ realSize-sizeof(int)))= signature;</span><br><span class="line">	//返回指针，指向恰位于第一个 signature之后的内存位置</span><br><span class="line">	return static_cast&lt;Byte*&gt;(pMem) + sizeof(int);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个operator new的缺点主要在于它疏忽了身为这个特殊函数所应该具备的“坚持c++规矩”的态度。<br>举个例子，条款51说所有operator news都应该内含一个循环，反复调用某个new-handling函数，这里却没有。专注于一个比较微妙的主题：齐位。</p>
+<p>许多计算机体系结构要求特定的类型必须放在特定的内存地址上。例如它可能会要求指针的地址必须是4倍数或doubles的地址必须是8倍数。如果没有奉行这个约束条件可能导致运行期硬件异常。<br>例如 Intel x86体系结构上的doubles可被对齐于任何byte边界，但如果它是8bye齐位，其访问速度会快许多。<br>C++要求所有operator news返回的指针都有适当的对齐（取决于数据类型）。malloc就是在这样的要求下工作，所以令 operator返回一个得自malloc的指针是安全的。</p>
+<p>operator new, operator delete：分配和释放内存<br>调用构造函数，调用析构函数<br>替换new和delete的理由，就是需要收集分配内存的资源信息</p>
+<p>编写符合常规的new和delete<br>operator new应该内含一个无穷循环尝试分配内存，如果无法满足，就调用new-handler。class版本要处理“比正确大小更大的(错误)申请”<br>operator deleter应该处理Null。classz专属版本还要处理“比正确大小更小的(错误)申请”<br>写了operator new也要写相应的operator delete<br>我们知道，new一个对象要经历两步。如果在调用构造函数失败，编译器会寻找一个“带相同额外参数”的operator delete，否则就不调用，造成资源泄漏</p>
+<h2 id="编写new和delete时需要固守常规"><a href="#编写new和delete时需要固守常规" class="headerlink" title="编写new和delete时需要固守常规"></a>编写new和delete时需要固守常规</h2><p>operator new的返回值十分单纯。如果它有能力供应客户申请的内存，就返回一个指针指向那块内存。如果没有那个能力，就遵循条款49描述的规则，并抛出个bad_alloc异常。<br>然而其实也不是非常单纯，因为operator new实际上不只一次尝试分配内存，并在每次失败后调用new-handling函数。这里假设new- handling函数也许能够做某些动作将某些内存释放出来。只有当指向 new-handling函数的指针是 null， operatornew才会抛出异常。</p>
+<p>即使客户要求分配0byte的内存，operator也要返回一个合法指针。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">void* operator new(std::size_t size) throw (std::bad_alloc) &#123;</span><br><span class="line">	//你的 operator new可能接受额外参数</span><br><span class="line">	using namespace std;</span><br><span class="line">	if (size == 0) &#123;</span><br><span class="line">	//处理0-byte申请</span><br><span class="line">		size = 1;</span><br><span class="line">	//将它视为1-byte申请</span><br><span class="line">	&#125;</span><br><span class="line">	while (true)</span><br><span class="line">		// 尝试分配</span><br><span class="line">		if (分配成功) </span><br><span class="line">			return;</span><br><span class="line">	// 分配失败，找出目前的new_handling函数</span><br><span class="line">	new_handler globalHandler = set_new_handler(0);</span><br><span class="line">	set_new_handler(globanHandler);</span><br><span class="line"></span><br><span class="line">	if (globalHandler) (*globalHandler)();</span><br><span class="line">	else throw std::bad_alloc();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>operator new内含一个无穷循环，而上述伪码明白表明出这个循环；”while(true)”就是那个无穷循环。退出此循环的唯一办法是内存成功分配或new- handling函数做了一件描述于条款49的事情：让更多内存可用、安装另一个 new-handler、卸除new-handler、抛出bad_a1oc异常（或其派生物），或是承认失败而直接 return。</p>
+<p>operator new成员函数会被derived classes继承,这会导致某些有趣的复杂度。上述operator伪码中，函数尝试分配size bytes（除是0）。那非常合理，因为size是函数接受的实参。然而就像条款50所言，写出定制型内存管理器的一个最常见理由是为针对某特定class对象分配提供最优化，却不是为了其derived class，base class的operator new用于derived class时会有问题。</p>
+<p>如果你决定写个operator new[]，唯一要做的一件事就是分配一块未加工内存，因为你无法对array之内迄今尚未存在的元素对象做任何事情。实际上你甚至无法计算这个array将含多少个元素对象。首先你不知道每个对象多大，毕竟base class的operator new有可能经由继承被调用，将内存分配给“元素为 derived class对象”的array使用。</p>
+<p>operator delete的情况更简单，C++保证删除null指针永远安全，所以我们必须兑现这个要求。</p>
+<h2 id="写了placement-new也要写placement-delete"><a href="#写了placement-new也要写placement-delete" class="headerlink" title="写了placement new也要写placement delete"></a>写了placement new也要写placement delete</h2><p>举个例子，假设你写了一个class专属的operator new，要求接受一个ostream，用来志记（logged）相关分配信息，同时又写了一个正常形式的class专属operator delete：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">class Widget &#123;</span><br><span class="line">public:</span><br><span class="line">	static void* operator new (std::size_t size, std::ostream&amp; logstream) throw(std::bad_alloc);</span><br><span class="line">	//非正常形式的new</span><br><span class="line">	static void operator delete(void* pMemory, std::size_t size) throw();</span><br><span class="line">	//正常的 class专属 delete</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br>这个设计有问题，但在探讨原因之前，我们需要先绕道，扼要讨论若干术语。<br>如果operator new接受的参数除了一定会有的那个size_t之外还有其他，这便是个所谓的<strong>placement new</strong>。因此，上述的operator new是个 placement版本。<br>众多placement new版本中特别有用的一个是“接受一个指针指向对象该被构造之处”，那样的operator new如下：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">void* operator new(std::size_t, void* pMemory) throw();</span><br><span class="line">//placement new</span><br></pre></td></tr></table></figure><br>这个版本的new已被纳入C++标准程序库，你只要<code>#include&lt;new&gt;</code>就可以取用它。这个new的用途之一是负责在vector的末使用空间上创建对象。<br>实际上它正是这个函数的命名根据：一个特定位置上的new。<br>大多数时候他们谈的是此一特定版本，也就是“唯一额外实参是个<code>void*</code>”，少数时候才是指接受任意额外实参之operator new。</p>
+<p>类似于new的placement版本，operator delete如果接受额外参数，便称为placement delete。</p>
+<p>规则很简单：如果一个带额外参数的operator new没有“带相同额外参数”的对应版operator delete，那么当new的内存分配动作需要取消并恢复旧观时就没有任何operator delete会被调用。因此，为了消弭稍早代码中的内存泄漏，Widget有必要声明一个placement delete，对应于那个有志记功能的placement new：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">class Widget&#123;</span><br><span class="line">public:</span><br><span class="line">	static void* operator new(std::size_t size, std::ostream&amp; logstream) throw(std::bad_alloc);</span><br><span class="line">	static void operator delete(void* pMemory) throw();</span><br><span class="line">	static void operator delete(void* pMemory, std::ostream&amp; logStream) throw();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>如果以下语句引发异常，则placement delete自动调用，保证不泄露内存：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Widget* pw = new (std::cerr) Widget;</span><br></pre></td></tr></table></figure><br>placement delete只有在伴随placement new调用而触发的构造函数出现异常时才会调用。</p>
+<p>如果要对所有与placement new相关的内存泄漏宣战，必须同时提供一个正常的operator delete和一个placement delete分别用于构造时有/无异常抛出的情况。</p>
+<h2 id="STL使用小细节"><a href="#STL使用小细节" class="headerlink" title="STL使用小细节"></a>STL使用小细节</h2><p>为不同的容器选择不同删除方式：<br>删除连续容器(vector,deque,string)的元素<br>当c是vector、string，删除value<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c.erase(remove(c.begin(), c.end(), value), c.end());</span><br></pre></td></tr></table></figure><br>判断value是否满足某个条件，删除<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bool assertFun(valuetype);</span><br><span class="line">c.erase(remove_if(c.begin(), c.end(), assertFun), c.end());</span><br></pre></td></tr></table></figure><br>有时候我们不得不遍历去完成，并删除<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">for(auto it = c.begin(); it != c.end(); )&#123;</span><br><span class="line">    if(assertFun(*it))&#123;</span><br><span class="line">        ···</span><br><span class="line">        it = c.erase(it);</span><br><span class="line">    &#125;</span><br><span class="line">    else</span><br><span class="line">        ++it;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>删除list中某个元素<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c.remove(value);</span><br></pre></td></tr></table></figure><br>判断value是否满足某个条件，删除<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c.remove(assertFun);</span><br></pre></td></tr></table></figure><br>删除关联容器(set,map)中某个元素<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">c.erase(value)</span><br><span class="line">    </span><br><span class="line">for(auto it = c.begin(); it != c.end(); )&#123;</span><br><span class="line">    if(assertFun(*it))&#123;</span><br><span class="line">        ···</span><br><span class="line">        c.erase(it++);</span><br><span class="line">    &#125;</span><br><span class="line">    else</span><br><span class="line">        ++it;</span><br><span class="line">&#125;    </span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag"># C++</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/06/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E6%96%87%E7%AB%A0/" rel="next" title="动态规划">
+                <i class="fa fa-chevron-left"></i> 动态规划
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/01/28/cpp11%E7%89%B9%E6%80%A7/" rel="prev" title="C++11特性笔记">
+                C++11特性笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%A9%E8%87%AA%E5%B7%B1%E4%B9%A0%E6%83%AFC"><span class="nav-number">1.</span> <span class="nav-text">让自己习惯C++</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%86C-%E4%B8%BA%E4%B8%80%E4%B8%AA%E8%AF%AD%E8%A8%80%E8%81%94%E9%82%A6"><span class="nav-number">1.1.</span> <span class="nav-text">视C++为一个语言联邦</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%BD%E9%87%8F%E4%BB%A5const%EF%BC%8Cenum%EF%BC%8Cinline%E6%9B%BF%E6%8D%A2-define"><span class="nav-number">1.2.</span> <span class="nav-text">尽量以const，enum，inline替换#define</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8F%E5%AE%9E%E7%8E%B0%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.2.1.</span> <span class="nav-text">宏实现工厂模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%BD%E5%8F%AF%E8%83%BD%E4%BD%BF%E7%94%A8const"><span class="nav-number">1.3.</span> <span class="nav-text">尽可能使用const</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#const%E5%92%8Cnon-const%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E4%B8%AD%E9%81%BF%E5%85%8D%E9%87%8D%E5%A4%8D"><span class="nav-number">1.3.1.</span> <span class="nav-text">const和non-const成员函数中避免重复</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AE%E5%AE%9A%E5%AF%B9%E8%B1%A1%E4%BD%BF%E7%94%A8%E5%89%8D%E5%B7%B2%E8%A2%AB%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.4.</span> <span class="nav-text">确定对象使用前已被初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E7%BC%96%E8%AF%91%E5%8D%95%E5%85%83%E5%86%85%E5%AE%9A%E4%B9%89%E7%9A%84non-local-static%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E6%AC%A1%E5%BA%8F"><span class="nav-number">1.4.1.</span> <span class="nav-text">不同编译单元内定义的non-local static对象的初始化次序</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%84%E9%80%A0-%E6%9E%90%E6%9E%84-%E8%B5%8B%E5%80%BC%E8%BF%90%E7%AE%97"><span class="nav-number">2.</span> <span class="nav-text">构造&#x2F;析构&#x2F;赋值运算</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%86%E8%A7%A3C-%E9%BB%98%E9%BB%98%E7%BC%96%E8%B0%83%E7%94%A8%E4%BA%86%E5%93%AA%E4%BA%9B%E5%87%BD%E6%95%B0"><span class="nav-number">2.1.</span> <span class="nav-text">了解C++默默编调用了哪些函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8B%A5%E4%B8%8D%E6%83%B3%E4%BD%BF%E7%94%A8%E7%BC%96%E8%AF%91%E5%99%A8%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E7%9A%84%E5%87%BD%E6%95%B0%EF%BC%8C%E5%B0%B1%E8%AF%A5%E6%98%8E%E7%A1%AE%E6%8B%92%E7%BB%9D"><span class="nav-number">2.2.</span> <span class="nav-text">若不想使用编译器自动生成的函数，就该明确拒绝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E5%A4%9A%E6%80%81%E5%9F%BA%E7%B1%BB%E5%A3%B0%E6%98%8Evirtual%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0"><span class="nav-number">2.3.</span> <span class="nav-text">为多态基类声明virtual析构函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%AB%E8%AE%A9%E5%BC%82%E5%B8%B8%E9%80%83%E7%A6%BB%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0"><span class="nav-number">2.4.</span> <span class="nav-text">别让异常逃离析构函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%9D%E4%B8%8D%E5%9C%A8%E6%9E%84%E9%80%A0%E5%92%8C%E6%9E%90%E6%9E%84%E8%BF%87%E7%A8%8B%E4%B8%AD%E8%B0%83%E7%94%A8virtual%E5%87%BD%E6%95%B0"><span class="nav-number">2.5.</span> <span class="nav-text">绝不在构造和析构过程中调用virtual函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A4operator-%E8%BF%94%E5%9B%9E%E4%B8%80%E4%B8%AAreference-to-this"><span class="nav-number">2.6.</span> <span class="nav-text">令operator&#x3D; 返回一个reference to *this</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8operator-%E9%87%8C%E5%A4%84%E7%90%86%E8%87%AA%E6%88%91%E8%B5%8B%E5%80%BC"><span class="nav-number">2.7.</span> <span class="nav-text">在operator&#x3D; 里处理自我赋值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E5%AF%B9%E8%B1%A1%E6%97%B6%E5%8A%A1%E5%BF%98%E5%85%B6%E6%AF%8F%E4%B8%80%E4%B8%AA%E6%88%90%E5%88%86"><span class="nav-number">2.8.</span> <span class="nav-text">复制对象时务忘其每一个成分</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">资源管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A5%E5%AF%B9%E8%B1%A1%E7%AE%A1%E7%90%86%E8%B5%84%E6%BA%90"><span class="nav-number">3.1.</span> <span class="nav-text">以对象管理资源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E7%B1%BB%E5%B0%8F%E5%BF%83copy%E8%A1%8C%E4%B8%BA"><span class="nav-number">3.2.</span> <span class="nav-text">在资源管理类小心copy行为</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E7%B1%BB%E4%B8%AD%E6%8F%90%E4%BE%9B%E5%AF%B9%E5%8E%9F%E5%A7%8B%E8%B5%84%E6%BA%90%E7%9A%84%E8%AE%BF%E9%97%AE"><span class="nav-number">3.3.</span> <span class="nav-text">在资源管理类中提供对原始资源的访问</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%88%90%E5%AF%B9%E4%BD%BF%E7%94%A8new%E5%92%8Cdelete%E8%A6%81%E9%87%87%E7%94%A8%E7%9B%B8%E5%90%8C%E7%9A%84%E6%A0%BC%E5%BC%8F"><span class="nav-number">3.4.</span> <span class="nav-text">成对使用new和delete要采用相同的格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A5%E7%8B%AC%E7%AB%8B%E7%9A%84%E8%AF%AD%E5%8F%A5%E5%B0%86newd%E5%AF%B9%E8%B1%A1%E7%BD%AE%E5%85%A5%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88"><span class="nav-number">3.5.</span> <span class="nav-text">以独立的语句将newd对象置入智能指针</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%A3%B0%E6%98%8E"><span class="nav-number">4.</span> <span class="nav-text">设计与声明</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A9%E6%8E%A5%E5%8F%A3%E5%AE%B9%E6%98%93%E8%A2%AB%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8%EF%BC%8C%E4%B8%8D%E6%98%93%E8%A2%AB%E8%AF%AF%E7%94%A8"><span class="nav-number">4.1.</span> <span class="nav-text">让接口容易被正确使用，不易被误用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1class%E7%8A%B9%E5%A6%82%E8%AE%BE%E8%AE%A1type"><span class="nav-number">4.2.</span> <span class="nav-text">设计class犹如设计type</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%81%E4%BB%A5pass-by-refrence-to-const%E6%9B%BF%E6%8D%A2pass-by-value"><span class="nav-number">4.3.</span> <span class="nav-text">宁以pass-by-refrence-to-const替换pass-by-value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%85%E9%A1%BB%E8%BF%94%E5%9B%9E%E5%AF%B9%E8%B1%A1%E6%97%B6%EF%BC%8C%E5%88%AB%E5%A6%84%E6%83%B3%E8%BF%94%E5%9B%9E%E5%85%B6reference"><span class="nav-number">4.4.</span> <span class="nav-text">必须返回对象时，别妄想返回其reference</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F%E7%94%B3%E6%98%8E%E4%B8%BAprivate"><span class="nav-number">4.5.</span> <span class="nav-text">将成员变量申明为private</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%81%E4%BB%A5non-member%EF%BC%8Cnon-friend%E6%9B%BF%E6%8D%A2member"><span class="nav-number">4.6.</span> <span class="nav-text">宁以non-member，non-friend替换member</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8B%A5%E6%89%80%E6%9C%89%E5%8F%82%E6%95%B0%E9%83%BD%E9%9C%80%E8%A6%81%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%EF%BC%8C%E8%AF%B7%E4%B8%BA%E6%AD%A4%E9%87%87%E7%94%A8non-member%E5%87%BD%E6%95%B0"><span class="nav-number">4.7.</span> <span class="nav-text">若所有参数都需要类型转换，请为此采用non-member函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%80%83%E8%99%91%E5%86%99%E4%B8%80%E4%B8%AA%E4%B8%8D%E6%8A%9B%E5%87%BA%E5%BC%82%E5%B8%B8%E7%9A%84swap%E5%87%BD%E6%95%B0"><span class="nav-number">4.8.</span> <span class="nav-text">考虑写一个不抛出异常的swap函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%BD%E5%8F%AF%E8%83%BD%E5%BB%B6%E5%90%8E%E5%8F%98%E9%87%8F%E5%AE%9A%E4%B9%89%E5%BC%8F%E5%87%BA%E7%8E%B0%E7%9A%84%E6%97%B6%E9%97%B4"><span class="nav-number">5.1.</span> <span class="nav-text">尽可能延后变量定义式出现的时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%BD%E9%87%8F%E5%B0%91%E5%81%9A%E8%BD%AC%E5%9E%8B%E5%8A%A8%E4%BD%9C"><span class="nav-number">5.2.</span> <span class="nav-text">尽量少做转型动作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%BF%E5%85%8D%E8%BF%94%E5%9B%9Ehandles%E6%8C%87%E5%90%91%E5%AF%B9%E8%B1%A1%E5%86%85%E9%83%A8%E6%88%90%E5%88%86"><span class="nav-number">5.3.</span> <span class="nav-text">避免返回handles指向对象内部成分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E2%80%9C%E5%BC%82%E5%B8%B8%E5%AE%89%E5%85%A8%E2%80%9D%E8%80%8C%E5%8A%AA%E5%8A%9B%E6%98%AF%E5%80%BC%E5%BE%97%E7%9A%84"><span class="nav-number">5.4.</span> <span class="nav-text">为“异常安全”而努力是值得的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%8F%E5%BD%BB%E4%BA%86%E8%A7%A3inline%E5%87%BD%E6%95%B0%E7%9A%84%E9%87%8C%E9%87%8C%E5%A4%96%E5%A4%96"><span class="nav-number">5.5.</span> <span class="nav-text">透彻了解inline函数的里里外外</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86%E6%96%87%E4%BB%B6%E7%9A%84%E7%BC%96%E8%AF%91%E4%BE%9D%E5%AD%98%E5%85%B3%E7%B3%BB%E9%99%8D%E5%88%B0%E6%9C%80%E4%BD%8E"><span class="nav-number">5.6.</span> <span class="nav-text">将文件的编译依存关系降到最低</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%A7%E6%89%BF%E4%B8%8E%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1"><span class="nav-number">6.</span> <span class="nav-text">继承与面对对象设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AE%E5%AE%9A%E4%BD%A0%E7%9A%84public%E7%BB%A7%E6%89%BF%E5%A1%91%E6%A8%A1%E5%87%BAis-a%E6%A8%A1%E5%9E%8B"><span class="nav-number">6.1.</span> <span class="nav-text">确定你的public继承塑模出is-a模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%BF%E5%85%8D%E9%81%AE%E6%8E%A9%E7%BB%A7%E6%89%BF%E8%80%8C%E6%9D%A5%E7%9A%84%E5%90%8D%E7%A7%B0"><span class="nav-number">6.2.</span> <span class="nav-text">避免遮掩继承而来的名称</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8C%BA%E5%88%86%E6%8E%A5%E5%8F%A3%E7%BB%A7%E6%89%BF%E5%92%8C%E5%AE%9E%E7%8E%B0%E7%BB%A7%E6%89%BF"><span class="nav-number">6.3.</span> <span class="nav-text">区分接口继承和实现继承</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%80%83%E8%99%91virtual%E5%87%BD%E6%95%B0%E4%BB%A5%E5%A4%96%E7%9A%84%E9%80%89%E6%8B%A9"><span class="nav-number">6.4.</span> <span class="nav-text">考虑virtual函数以外的选择</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%9F%E7%94%B1non-virtual-interface%E5%AE%9E%E7%8E%B0template-method%E6%A8%A1%E5%BC%8F"><span class="nav-number">6.4.1.</span> <span class="nav-text">借由non-virtual interface实现template method模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%9F%E7%94%B1Function-Pointer%E5%AE%9E%E7%8E%B0Strategy%E6%A8%A1%E5%BC%8F"><span class="nav-number">6.4.2.</span> <span class="nav-text">借由Function Pointer实现Strategy模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%9F%E7%94%B1tr1-function%E5%AE%8C%E6%88%90Strategy%E6%A8%A1%E5%BC%8F"><span class="nav-number">6.4.3.</span> <span class="nav-text">借由tr1::function完成Strategy模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%8A%E4%B8%80%E8%81%8AABI%E5%85%BC%E5%AE%B9%E6%80%A7"><span class="nav-number">6.4.4.</span> <span class="nav-text">聊一聊ABI兼容性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#name-mangling-%E5%90%8D%E5%AD%97%E7%B2%89%E7%A2%8E%E5%AE%9E%E7%8E%B0%E9%87%8D%E8%BD%BD"><span class="nav-number">6.4.5.</span> <span class="nav-text">name mangling 名字粉碎实现重载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%A4%E5%85%B8%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F"><span class="nav-number">6.4.6.</span> <span class="nav-text">古典策略模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%9D%E4%B8%8D%E9%87%8D%E6%96%B0%E5%AE%9A%E4%B9%89%E7%BB%A7%E6%89%BF%E8%80%8C%E6%9D%A5%E7%9A%84non-virtual%E5%87%BD%E6%95%B0"><span class="nav-number">6.5.</span> <span class="nav-text">绝不重新定义继承而来的non-virtual函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%9D%E4%B8%8D%E9%87%8D%E6%96%B0%E5%AE%9A%E4%B9%89%E7%BB%A7%E6%89%BF%E8%80%8C%E6%9D%A5%E7%9A%84%E7%BC%BA%E7%9C%81%E5%8F%82%E6%95%B0%E5%80%BC"><span class="nav-number">6.6.</span> <span class="nav-text">绝不重新定义继承而来的缺省参数值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%A4%8D%E5%90%88%E5%A1%91%E6%A8%A1%E5%87%BAhas-a%E6%88%96%E8%80%85%E2%80%9D%E6%A0%B9%E6%8D%AE%E6%9F%90%E7%89%A9%E5%AE%9E%E7%8E%B0%E5%87%BA%E2%80%9D"><span class="nav-number">6.7.</span> <span class="nav-text">通过复合塑模出has-a或者”根据某物实现出”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%8E%E6%99%BA%E8%80%8C%E5%AE%A1%E6%85%8E%E5%9C%B0%E4%BD%BF%E7%94%A8private%E7%BB%A7%E6%89%BF"><span class="nav-number">6.8.</span> <span class="nav-text">明智而审慎地使用private继承</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%8E%E6%99%BA%E8%80%8C%E5%AE%A1%E6%85%8E%E5%9C%B0%E4%BD%BF%E7%94%A8%E5%A4%9A%E9%87%8D%E7%BB%A7%E6%89%BF"><span class="nav-number">6.9.</span> <span class="nav-text">明智而审慎地使用多重继承</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E6%9D%BF%E4%B8%8E%E6%B3%9B%E5%9E%8B%E7%BC%96%E7%A8%8B"><span class="nav-number">7.</span> <span class="nav-text">模板与泛型编程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%86%E8%A7%A3%E9%9A%90%E5%BC%8F%E6%8E%A5%E5%8F%A3%E5%92%8C%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81"><span class="nav-number">7.1.</span> <span class="nav-text">了解隐式接口和编译期多态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%86%E8%A7%A3typename%E7%9A%84%E5%8F%8C%E9%87%8D%E6%84%8F%E4%B9%89"><span class="nav-number">7.2.</span> <span class="nav-text">了解typename的双重意义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E5%A4%84%E7%90%86%E6%A8%A1%E6%9D%BF%E5%8C%96%E5%9F%BA%E7%B1%BB%E5%86%85%E7%9A%84%E5%90%8D%E7%A7%B0"><span class="nav-number">7.3.</span> <span class="nav-text">学习处理模板化基类内的名称</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86%E5%8F%82%E6%95%B0%E6%97%A0%E5%85%B3%E4%BB%A3%E7%A0%81%E6%8A%BD%E7%A6%BBtemplate"><span class="nav-number">7.4.</span> <span class="nav-text">将参数无关代码抽离template</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E7%94%A8%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E6%A8%A1%E7%89%88%E6%8E%A5%E6%94%B6%E6%89%80%E6%9C%89%E5%85%BC%E5%AE%B9%E7%B1%BB%E5%9E%8B"><span class="nav-number">7.5.</span> <span class="nav-text">运用成员函数模版接收所有兼容类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Template%E5%92%8C%E6%B3%9B%E5%9E%8B%E7%BC%96%E7%A8%8B"><span class="nav-number">7.5.1.</span> <span class="nav-text">Template和泛型编程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%80%E6%9C%89%E5%8F%82%E6%95%B0%E9%9C%80%E8%A6%81%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E7%9A%84%E6%97%B6%E5%80%99%E8%AF%B7%E4%B8%BA%E6%A8%A1%E7%89%88%E5%AE%9A%E4%B9%89%E9%9D%9E%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0"><span class="nav-number">7.6.</span> <span class="nav-text">所有参数需要类型转换的时候请为模版定义非成员函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E4%BD%BF%E7%94%A8traits-classes%E8%A1%A8%E7%8E%B0%E7%B1%BB%E5%9E%8B%E4%BF%A1%E6%81%AF"><span class="nav-number">7.7.</span> <span class="nav-text">请使用traits classes表现类型信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E7%89%88%E5%85%83%E7%BC%96%E7%A8%8B"><span class="nav-number">7.8.</span> <span class="nav-text">模版元编程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9A%E5%88%B6new%E5%92%8Cdelete"><span class="nav-number">8.</span> <span class="nav-text">定制new和delete</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%86%E8%A7%A3new-handler%E7%9A%84%E8%A1%8C%E4%B8%BA"><span class="nav-number">8.1.</span> <span class="nav-text">了解new-handler的行为</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%86%E8%A7%A3new%E5%92%8Cdelete%E5%90%88%E7%90%86%E7%9A%84%E6%9B%BF%E6%8D%A2%E6%97%B6%E6%9C%BA"><span class="nav-number">8.2.</span> <span class="nav-text">了解new和delete合理的替换时机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E5%86%99new%E5%92%8Cdelete%E6%97%B6%E9%9C%80%E8%A6%81%E5%9B%BA%E5%AE%88%E5%B8%B8%E8%A7%84"><span class="nav-number">8.3.</span> <span class="nav-text">编写new和delete时需要固守常规</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E4%BA%86placement-new%E4%B9%9F%E8%A6%81%E5%86%99placement-delete"><span class="nav-number">8.4.</span> <span class="nav-text">写了placement new也要写placement delete</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#STL%E4%BD%BF%E7%94%A8%E5%B0%8F%E7%BB%86%E8%8A%82"><span class="nav-number">8.5.</span> <span class="nav-text">STL使用小细节</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

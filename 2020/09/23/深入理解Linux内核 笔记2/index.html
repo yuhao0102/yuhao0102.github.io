@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zn-ch">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Linux," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="内核同步内核为不同的请求服务内核抢占如果进程正在执行内核函数时，即在内核态运行，允许发生内核切换，这个内核就是抢占的。 无论在抢占还是非抢占内核中，运行在内核态的进程都可以自动放弃CPU，这叫做计划性进程切换。抢占式内核在响应引起进程切换的异步事件的方式上与非抢占内核有差别，叫做强制性进程切换。所有的切换都是由宏switch_to实现的。 抢占式内核的特点是一个在内核态运行的进程，可能在执行内核函">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Linux内核5-7章">
+<meta property="og:url" content="http://yoursite.com/2020/09/23/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B02/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="内核同步内核为不同的请求服务内核抢占如果进程正在执行内核函数时，即在内核态运行，允许发生内核切换，这个内核就是抢占的。 无论在抢占还是非抢占内核中，运行在内核态的进程都可以自动放弃CPU，这叫做计划性进程切换。抢占式内核在响应引起进程切换的异步事件的方式上与非抢占内核有差别，叫做强制性进程切换。所有的切换都是由宏switch_to实现的。 抢占式内核的特点是一个在内核态运行的进程，可能在执行内核函">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/img/202009261101.png">
+<meta property="og:image" content="http://yoursite.com/img/1601090195.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601090417.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601091519.png">
+<meta property="og:image" content="http://yoursite.com/img/202009261102.png">
+<meta property="og:image" content="http://yoursite.com/img/1601092016.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601093109.jpg">
+<meta property="og:image" content="http://yoursite.com/img/202009261103.png">
+<meta property="og:image" content="http://yoursite.com/img/1601301691.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601301835.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601378147.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601379242.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601379737.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601380173.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601383433.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601470801.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601534750.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601535244.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601614171.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601614251.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601614932.jpg">
+<meta property="og:image" content="http://yoursite.com/img/202009261104.png">
+<meta property="og:image" content="http://yoursite.com/img/1601617537.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601617873.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601704898.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1601731939.png">
+<meta property="article:published_time" content="2020-09-23T08:00:00.000Z">
+<meta property="article:modified_time" content="2020-10-05T01:28:32.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/202009261101.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/09/23/深入理解Linux内核 笔记2/"/>
+
+
+
+
+
+  <title>深入理解Linux内核5-7章 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zn-ch">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hao Yu's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">The program monkey was eaten by the siege lion.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/23/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B02/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入理解Linux内核5-7章</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-09-23T16:00:00+08:00">
+                2020-09-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="内核同步"><a href="#内核同步" class="headerlink" title="内核同步"></a>内核同步</h1><h2 id="内核为不同的请求服务"><a href="#内核为不同的请求服务" class="headerlink" title="内核为不同的请求服务"></a>内核为不同的请求服务</h2><h3 id="内核抢占"><a href="#内核抢占" class="headerlink" title="内核抢占"></a>内核抢占</h3><p>如果进程正在执行内核函数时，即<strong>在内核态运行，允许发生内核切换</strong>，这个内核就是<strong>抢占</strong>的。</p>
+<p>无论在抢占还是非抢占内核中，运行在内核态的进程都可以自动放弃CPU，这叫做<strong>计划性进程切换</strong>。抢占式内核在响应引起进程切换的异步事件的方式上与非抢占内核有差别，叫做<strong>强制性进程切换</strong>。所有的切换都是由宏<code>switch_to</code>实现的。</p>
+<p>抢占式内核的特点是<strong>一个在内核态运行的进程，可能在执行内核函数期间被另一个进程取代</strong>。使内核可抢占的目的是<strong>减少用户态进程的分派延迟</strong>，即<strong>从进程变为可执行状态到他实际开始运行之间的时间间隔</strong>。当被<code>current_thread_info()</code>宏所引用的<code>thread_info</code>描述符的<code>preempt_count</code>字段大于0的时候就禁止内核抢占，该字段的编码对应三个不同的计数器，因此它在如下几种情况时都大于0：</p>
+<ul>
+<li>内核正在执行中断服务例程</li>
+<li>可延迟函数被禁止</li>
+<li>通过把抢占计数器设置为正数而显式的禁用内核调用</li>
+</ul>
+<p>因此只有当内核正在执行异常处理程序，而且内核抢占没有被显式禁用，才可能抢占内核。表中列出了一些简单的宏，它们处理<code>preempt_count</code>字段的抢占计数器。<br><img src="/img/202009261101.png" alt=""></p>
+<p><code>preempt_enable()</code>宏递减抢占计数器，检查<code>TIF_NEED_RESCHED</code>是否被设置。此时，进程切换请求是挂起的，因此调用<code>preempt_schedule()</code>函数：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 检查 preempt_count 是否为0，以及是否允许本地中断</span></span><br><span class="line"><span class="keyword">if</span>(!current_thread_info-&gt;preempt_count &amp;&amp; !irqs_disabled())&#123;</span><br><span class="line">	current_thread_info-&gt;preempt_count = PREMPT_ACTIVE;</span><br><span class="line">	schedule();   <span class="comment">// 选择另外一个进程运行</span></span><br><span class="line">	current_thread_info-&gt;preempt_count = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>该函数检查是否允许本地中断，以及当前进程的<code>preempt_count</code>字段是否为0，如果两个条件都为真，就调用<code>schedule()</code>选择另一个进程来运行。内核抢占可能在结束内核控制路径时发生，也可能在异常处理程序调用<code>preempt_enable()</code>时发生。</p>
+<h3 id="什么时候同步是必需的"><a href="#什么时候同步是必需的" class="headerlink" title="什么时候同步是必需的"></a>什么时候同步是必需的</h3><p>当计算结果依赖于两个或两个以上的交叉内核控制路径的嵌套方式时，可能出现竞争条件。临界区是一段代码，在其他的内核控制路径能进入临界区前，进入临界区的内核控制路径必须执行完这段代码。</p>
+<h3 id="什么时候同步是不必要的"><a href="#什么时候同步是不必要的" class="headerlink" title="什么时候同步是不必要的"></a>什么时候同步是不必要的</h3><ul>
+<li>中断处理程序和 tasklet 不必编写成可重入的函数。</li>
+<li>仅被软中断和 tasklet 访问的 每 CPU 变量不需要同步。</li>
+<li>仅被一种 tasklet 访问发数据结构不需要同步。</li>
+</ul>
+<h2 id="同步原语"><a href="#同步原语" class="headerlink" title="同步原语"></a>同步原语</h2><p>表中列出了Linux内核使用的同步技术。<br><img src="/img/1601090195.jpg" alt=""></p>
+<h3 id="每-CPU-变量"><a href="#每-CPU-变量" class="headerlink" title="每 CPU 变量"></a>每 CPU 变量</h3><p>最简单的同步技术包括把内核变量声明为<strong>每CPU变量</strong>，主要是一个数组，系统中的每个 CPU 对应数组的一个元素。<strong>一个 CPU 不应访问其他 CPU 对应的数组元素</strong>，另外，它可以随意修改它自己的元素而不用担心出现竞争条件。这意味着它只能在确定系统的CPU上的数据在逻辑上是独立的时候才能使用。</p>
+<p>虽然每 CPU 变量为来自不同 CPU 的并发访问提供包含，但对来自异步函数（中断处理程序和可延迟函数）的访问不提供保护，这需要另外的同步原语。此外，在单处理器和多处理器系统中内核抢占都可能使每CPU变量产生竞争条件。总的原则是内核控制路径应该在禁用抢占的情况下访问每CPU变量。<br><img src="/img/1601090417.jpg" alt=""></p>
+<h3 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a>原子操作</h3><p>避免由于“读——修改——写”指令引起的竞争条件的最容易的办法，就是<strong>确保这样的操作在芯片级是原子的</strong>。<strong>任何一个这样的操作都必须以单个指令执行，中间不能中断，且避免其他的CPU访问同一存储器单元</strong>。这些很小的<strong>原子操作</strong>（atomic operations）可以建立在其他更灵活机制的基础之上以创建临界区。</p>
+<p>回顾一下80x86的指令；</p>
+<ul>
+<li>进行零次或一次对齐内存访问的汇编指令是原子的</li>
+<li>如果在读操作之后、写操作之前没有其他处理器占用内存总线，那么从内存中读取数据、更新数据并把更新后的数据写回内存中的这些“读——修改——写”汇编语言指令（例如inc或dec)是原子的。当然，在单处理器系统中，永远都不会发生内存总线窃用的情况。</li>
+<li>操作码前缀是lock字节(0xf0)的“读——修改——写”汇编语言指令即使在多处理器系统中也是原子的。当控制单元检测到这个前缀时，就“锁定”内存总线，直到这条指令执行完成为止。因此，当加锁的指令执行时，其他处理器不能访问这个内存单元。</li>
+<li>操作码前缀是一个rep字节（0xf2，0xf3)的汇编语言指令不是原子的，这条指令强行让控制单元多次重复执行相同的指令。控制单元在执行新的循环之前要检查挂起的中断。</li>
+</ul>
+<p>Linux提供了<code>atmoic_t</code>类型和专门的函数和宏，作用于<code>atmoic_t</code>变量，并当作单独的原子的汇编指令来使用。<br><img src="/img/1601091519.png" alt=""></p>
+<p>另一类原子函数操作作用于位掩码<br><img src="/img/202009261102.png" alt=""></p>
+<h3 id="优化和内存屏障"><a href="#优化和内存屏障" class="headerlink" title="优化和内存屏障"></a>优化和内存屏障</h3><p>编译器可能重新安排汇编语言指令以使寄存器以最优方式使用，此外现代CPU通常并行地执行若干条指令，且可重新安排内存访问。<strong>优化屏障原语保证编译程序不会混淆放在原语操作之前的汇编指令和放在原语操作之后的汇编语言指令</strong>。Linux 中，优化屏障是<code>barrier()</code>宏，展开为<code>asm volatile(&quot;&quot;:::“memory”)</code>。<code>volatile</code>禁止编译器把asm指令与程序中的其他指令重新组合，memory关键字强制编译器假定RAM中的所有内存单元已被汇编指令修改，因此编译器不能使用存放在CPU寄存器中的内存单元来优化asm指令前的代码。</p>
+<p><strong>内存屏障原语确保在原语执行之后的操作执行之前，原语前的操作已经完成</strong>。下列指令是串行的，因为它们起内存屏障的作用：</p>
+<ul>
+<li>对IO端口进行操作的指令</li>
+<li>有lock前缀的所有指令</li>
+<li>写控制寄存器、系统寄存器或调试寄存器的所有指令（例如cli和sti，用于修改eflags寄存器的IF标志的状态）</li>
+<li>引入的汇编语言指令lfence、sfence和mfence，它们分别有效地实现读内存屏障、写内存屏障和读写内存屏障。</li>
+</ul>
+<p>Linux使用6个内存屏障原语：<br><img src="/img/1601092016.jpg" alt=""></p>
+<p>内存屏障原语的实现依赖于体系结构，如果CPU支持lfence指令，就把<code>rmb()</code>展开为<code>asm volatile(&quot;lfence&quot;)</code>，否则展开为<code>asm volatile(&quot;lock;addl $0,0(%%esp)&quot;:::&quot;memory&quot;)</code>。asm告诉编译器插入一些汇编指令并起到优化屏障的作用，<code>lock;addl $0,0(%%esp)</code>把0加到栈顶的内存单元，这条指令本身没有价值，但是lock前缀使得这条指令成为CPU的内存屏障。</p>
+<p>Intel的<code>wmb()</code>宏更简单，因为它展开为<code>barrier()</code>，因为Intel从不对写内存访问重新排序。</p>
+<h3 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h3><p>当内核控制路径必须访问共享数据结构或进入临界区时，就需要为自己获取一把“锁”。自旋锁时用来在多处理器环境中工作的一种特殊的锁。如果内核控制路径发现锁被运行在另一个 CPU 上的内核控制路径“锁着”，就会在周围“旋转”，反复执行一条紧凑的循环指令（“忙等”），直到锁被释放。自旋锁的循环指令表示<strong>忙等</strong>，即使等待的CPU无事可做也会占用CPU。</p>
+<p>一般来说，有自旋锁保护的每个临界区都是禁止内核抢占的。在单处理器上自旋锁本身不起作用，只是禁止或启用内核抢占。<strong>等待自旋锁释放的进程可能被更高优先级的进程替代</strong>。</p>
+<p>Linux中的自旋锁用<code>spinlock_t</code>表示：</p>
+<ul>
+<li><code>slock</code>，自旋锁的状态，1：未加锁；&lt;=0：加锁。</li>
+<li><code>break_slock</code>，进程正在忙等自旋锁。</li>
+</ul>
+<p>六个宏用于初始化、设置、测试自旋锁，所有的宏都是基于原子操作的，保证自旋锁在多个CPU都想修改自旋锁时也能正确更新。<br><img src="/img/1601093109.jpg" alt=""></p>
+<h3 id="具有内核抢占的-spin-lock-宏"><a href="#具有内核抢占的-spin-lock-宏" class="headerlink" title="具有内核抢占的 spin_lock 宏"></a>具有内核抢占的 spin_lock 宏</h3><p>用于请求自旋锁的<code>spin_lock</code>宏：</p>
+<ul>
+<li>调用<code>preempt_disable()</code>禁用内核抢占</li>
+<li><p><code>_raw_spin_trylock()</code>对自旋锁的 slock 字段执行原子性的测试和设置操作。</p>
+<ul>
+<li>函数首先执行指令如下，<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">movb $0, %al</span><br><span class="line">xchgb %al, slp-&gt;slock  // xchg 原子性地交换 8 位寄存器 %al 和 slp-&gt;slock</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>如果自旋锁中的旧值是正数，宏结束：内核控制路径已经获得自旋锁</p>
+</li>
+<li>否则，内核控制路径无法获得自旋锁，宏必须执行循环一直到在其他CPU上运行的内核控制路径释放自旋锁。调用<code>preempt_enable()</code>递减在第 1 步 递增了的抢占计数器。忙等期间可被其他进程抢占。</li>
+<li>如果<code>break_lock</code>字段等于 0，则设置为 1。通过检测该字段，拥有锁且在别的 CPU 上运行的进程就能知道是否有其他进程在等待该锁。如果进程持有某个自旋锁的时间过长，该进程可提前释放锁。</li>
+<li><p>执行等待循环：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(spin_is_locked(slp) &amp;&amp; slp-&gt;break_lock)</span><br><span class="line">	cpu_relax();  <span class="comment">// 宏 cpu_relax() 简化为一条 pause 汇编指令，引入很短的延迟，加快了紧跟在锁后边的代码的执行并减少了能源消耗。</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>回到第 1 步，再次试图获取自旋锁。</p>
+</li>
+</ul>
+<h3 id="非抢占式内核中的-spin-lock-宏"><a href="#非抢占式内核中的-spin-lock-宏" class="headerlink" title="非抢占式内核中的 spin_lock 宏"></a>非抢占式内核中的 spin_lock 宏</h3><p>如果在内核编译时没有旋转内核抢占选项，spin_lock 宏本质上为：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>: lock; decb slp-&gt;slock  <span class="comment">// decb 递减自旋锁的值，该指令是原子的，因为带有 lock 前缀</span></span><br><span class="line">   jns <span class="number">3f</span>  <span class="comment">// 检测符号标志，如果被清 0，说明自旋锁被设置为 1（未锁），从 3 处继续执行，f：forward</span></span><br><span class="line"><span class="number">2</span>: pause   <span class="comment">// 否则，在 2 处执行紧凑的循环，直到自旋锁出现正值</span></span><br><span class="line">   cmpb $<span class="number">0</span>, slp-&gt;slock</span><br><span class="line">   jle <span class="number">2b</span></span><br><span class="line">   jmp <span class="number">1b</span>  <span class="comment">// 然后从 1 处重新执行，检查是否其他的处理器抢占了锁</span></span><br><span class="line"><span class="number">3</span>: </span><br></pre></td></tr></table></figure></p>
+<h3 id="spin-unlock-宏"><a href="#spin-unlock-宏" class="headerlink" title="spin_unlock 宏"></a>spin_unlock 宏</h3><p><code>spin_unlock</code>宏释放以前获得的自旋锁，本质上是：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">movb $1, slp-&gt;slock</span><br></pre></td></tr></table></figure><br>随后调用<code>preempt_enable()</code>（如果不支持内核抢占，什么也不做）。</p>
+<h2 id="读-写自旋锁"><a href="#读-写自旋锁" class="headerlink" title="读/写自旋锁"></a>读/写自旋锁</h2><p>读/写自旋锁是<strong>为了增加内核的并发能力</strong>。<strong>只要没有内核控制路径对数据结构修改，读/写自旋锁就允许多个内核控制路径同时读同一个数据结构</strong>。如果一个内核控制路径想对数据结构进行写操作，必须首先获得读/写锁的写锁，写锁授权独占访问这个资源。</p>
+<p>读/写锁是一个<code>rwlock_t</code>结构，<code>lock</code>字段是一个 32 位的字段，分两部分：</p>
+<ul>
+<li>0~23 位，计数器，对受保护的数据结构并发进行读操作的内核控制路径的数目。</li>
+<li>第 24 位，“未锁”标志字段，当没有内核控制路径在读或写时设置该位，否则清 0。</li>
+</ul>
+<p>lock 值：</p>
+<ul>
+<li>0x01000000：自旋锁为空（设置了“未锁”标志，且无读者）。</li>
+<li>0x00000000：写者获得了自旋锁（“未锁”标志清 0，且无读者）。</li>
+<li>0x00ffffff，0x00fffffe 等：一个或多个读者获得了自旋锁（“未锁”标志清 0，读者个数的二进制补码在 0~23 位上）。</li>
+</ul>
+<p><code>rwlock_t</code>结构也包括<code>break_lock</code>字段。<code>rwlock_init</code>宏把读/写自旋锁的<code>lock</code>字段初始化为 0x01000000（“未锁”)，把<code>break_lock</code>初始化为 0。</p>
+<h3 id="读自旋锁"><a href="#读自旋锁" class="headerlink" title="读自旋锁"></a>读自旋锁</h3><p><code>read_lock</code>宏，作用于读/写自旋锁的地址<code>rwlp</code>，与<code>spin_lock</code>相似。如果编译内核时选择了内核抢占选项，<code>read_lock</code>与<code>spin_lock</code>只有一点不同：执行<code>_raw_read_trylock()</code>，在第 2 步获得读/写自旋锁。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> _raw_read_trylock(<span class="type">rwlock_t</span>  *lock)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">atomic_t</span> *count = (<span class="type">atomic_t</span> *)lock-&gt;lock;</span><br><span class="line">	<span class="type">atomic_dec</span>(count);</span><br><span class="line">	<span class="keyword">if</span>(<span class="type">atomic_read</span>(count) &gt;= <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">	<span class="type">atomic_inc</span>(count);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>读写锁计数器<code>lock</code>是通过原子操作来访问的，但整个函数对计数器的操作并不是原子性的。</p>
+<p>如果编译内核时没有选择内核抢占选项，<code>read_lock</code>宏产生如下汇编代码<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">	movl $rwlp-&gt;lock, %eax</span><br><span class="line">	lock; subl $1, (%eax)    // 将自旋锁原子减 1，增加读者个数</span><br><span class="line">	jns 1f                   // 如果递减操作结果非负，就获得自旋锁    </span><br><span class="line">	call __read_lock_failed  // 否则，调用 __read_lock_failed()</span><br><span class="line">1: </span><br></pre></td></tr></table></figure></p>
+<p>这里<code>__read_lock_failed()</code>是下列汇编语言函数：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 试图获取自旋锁</span></span><br><span class="line">__read_lock_failed:</span><br><span class="line">	lock; incl (%eax)   <span class="comment">// 原子增加 lock 字段，以取消 read_lock 宏执行的递减操作</span></span><br><span class="line"><span class="number">1</span>: 	pause   </span><br><span class="line">	cmpl $<span class="number">1</span>, (%eax)     <span class="comment">// 循环，直到 lock 字段 &gt;= 0</span></span><br><span class="line">	js <span class="number">1b</span></span><br><span class="line">	lock; decl (%eax)</span><br><span class="line">	js __read_lock_failed</span><br><span class="line">	ret</span><br></pre></td></tr></table></figure></p>
+<p><code>read_lock</code>宏原子地把自旋锁的值减一，由此增加读者的个数，如果递减操作产生一个非负值，则获得自旋锁，否则调用<code>__read_lock_failed()</code>，该函数原子性地增加lock字段以取消由<code>read_lock</code>宏执行的递减操作，然后循环直到lock字段变为正数。</p>
+<p><code>read_unlock</code>释放读自旋锁：增加lock字段的计数器，以减少读者的计数，然后调用<code>preempt_enable()</code>重新启用内核抢占。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lock; incl rwlp-&gt;lock    <span class="comment">// 减少读者计数</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="写自旋锁"><a href="#写自旋锁" class="headerlink" title="写自旋锁"></a>写自旋锁</h3><p><code>write_lock</code>宏与<code>spin_lock()</code>和<code>read_lock()</code>相似。如果支持内核抢占，则禁用内核抢占并调用<code>_raw_write_trylock()</code>获得锁。如果函数返回0，说明锁已被占用，因此忙等待循环。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> _raw_write_trylock(<span class="type">rwlock_t</span> *lock)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">atomic_t</span> *count = (<span class="type">atomic_t</span> *)lock-&gt;lock;</span><br><span class="line">	<span class="keyword">if</span>(<span class="built_in">atomic_sub_and_test</span>(<span class="number">0x01000000</span>, count))  <span class="comment">// 从读/写自旋锁中减去 0x01000000，清除未上锁标志并返回 1</span></span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">	<span class="built_in">atomic_add</span>(<span class="number">0x01000000</span>, count);  <span class="comment">// 原子地在自旋锁值上增加 0x0100000，以抵消减操作。</span></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;                       <span class="comment">// 锁已经被占用，需重新启用内核抢占并开始忙等待</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>write_unlock</code>宏释放写锁:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lock; addl $0x0100000, rwlp  // 把 lock 字段中的“未锁”标识置位</span><br></pre></td></tr></table></figure><br>再调用<code>preempt_enable()</code></p>
+<h3 id="顺序锁"><a href="#顺序锁" class="headerlink" title="顺序锁"></a>顺序锁</h3><p>顺序锁与读/写锁相似，只是<strong>为写者赋予了较高的优先级</strong>：读者读的时候允许写者运行。好处是写者永远不会等待（除非另一个写者在写），缺点是读者有时需多次读相同的数据直到获得有效的副本。</p>
+<p><code>seqlock_t</code>包括两个字段：</p>
+<ul>
+<li>类型为<code>spinlock_t</code>的<code>lock</code>字段。</li>
+<li>整型的<code>sequence</code>字段，是一个顺序计数器。每个读者都必须在读数据前后两次读顺序计数器，如果两次读到的值不同，说明新的写者开始写并增加了顺序计数器，读取的数据无效。</li>
+</ul>
+<p>将<code>SEQLOCK_UNLOCKED</code>赋给变量<code>seqlock_t</code>，或执行<code>seqlock_init</code>宏，将<code>seqlock_t</code>初始化为未上锁。写者通过调用<code>write_seqlock()</code>和<code>write_sequnlock()</code>获取和释放顺序锁。<code>write_seqlock()</code>获取<code>seqlock_t</code>中的自旋锁，然后使顺序计数器加 1。<code>write_sequnlock()</code>再次增加顺序计数器，然后释放自旋锁。可保证有写者写时，计数器值为奇数，没有写者时，计数器值是偶数。</p>
+<p>读者执行下面临界区代码：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">unsigned</span> <span class="type">int</span> seq;</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">&#123;</span><br><span class="line">	seq = <span class="built_in">read_seqbegin</span>(&amp;seqlock);    <span class="comment">// 返回顺序锁的当前序号。如果是奇数，或 seq 的值与顺序锁的顺序计数器值不匹配，read_deqretry() 返回 1</span></span><br><span class="line">	<span class="comment">/* ... 临界区 ... */</span></span><br><span class="line">&#125;<span class="keyword">while</span>(<span class="built_in">read_deqretry</span>(&amp;seqlock, seq));</span><br></pre></td></tr></table></figure><br><code>read_seqbegin()</code>返回顺序锁的当前顺序号，如果局部变量<code>seq</code>的值是奇数，或<code>seq</code>的值与顺序锁的顺序计数器的当前值不匹配，<code>read_seqretry()</code>就返回1。</p>
+<p>读者进入临界区，不必禁用内核抢占。由于写者获取自旋锁，它进入临界区时自动禁用内核抢占。</p>
+<p>使用顺序锁的条件：</p>
+<ul>
+<li>被保护的数据结构不包括被写者修改和被读者间接引用的指针。</li>
+<li>读者的临界区代码没有副作用。</li>
+<li>另外：<ul>
+<li>读者的临界区代码应该简短。</li>
+<li>写者不应常获取顺序锁。</li>
+</ul>
+</li>
+</ul>
+<p>典型例子：保护与系统时间处理相关的数据结构。</p>
+<h2 id="读-拷贝-更新（RCU"><a href="#读-拷贝-更新（RCU" class="headerlink" title="读-拷贝-更新（RCU)"></a>读-拷贝-更新（RCU)</h2><p>是为了<strong>保护在多数情况下被多个 CPU 读的数据结构</strong>而设计的一种同步技术。<strong>RCU 允许多个读者和写者并发执行，且不使用锁，相比读/写自旋锁、顺序锁有更大的优势</strong>。通过限制 RCP 的范围，可不使用共享数据结构而实现多个 CPU 同步：</p>
+<ul>
+<li><strong>RCU 只包含被动态分配并通过引用指针引用的数据结构</strong>。</li>
+<li><strong>在被 RCU 保护的临界区中，任何内核控制路径不能睡眠</strong>。</li>
+</ul>
+<p>内核控制路径读取被 RCU 保护的数据结构流程：</p>
+<ul>
+<li>执行<code>rcu_read_lock()</code>等同于<code>preempt_disable()</code>。</li>
+<li>读者间接引用该数据结构指针所对应的内存单元，并开始读该数据结构。读者在完成读操作前，不能睡眠。</li>
+<li><code>rcu_read_unlock()</code>等同于<code>preempt_enable()</code>，标记临界区的结束。</li>
+</ul>
+<p>内核控制路径写被 RCU 保护的数据结构时，需要做一些事情防止竞争条件的出现。</p>
+<ul>
+<li>写者要更新数据结构时，<strong>间接引用指针并生成整个数据结构的副本</strong>。</li>
+<li>写者修改该副本。</li>
+<li>修改完毕，<strong>写者改变指向数据结构的指针</strong>，使其指向被修改后的副本。<ul>
+<li>修改指针的操作是一个原子操作。</li>
+<li>需要内存屏障保证：只有数结构被修改后，已更新的指针对其他 CPU 才是可见的。如果把自旋锁与 RCU 结合以禁止写者的并发执行，就隐含地引入了内存屏障。</li>
+</ul>
+</li>
+</ul>
+<p>使用 RCU 技术的困难：<strong>写者修改指针时不能立即释放数据结构的旧副本</strong>。写着开始修改时，正在访问数据结构的读者可能还在读旧副本。只有 CPU 上所有的读者都执行完宏<code>rcu_read_unlock()</code>后，才能释放旧副本。内核要求每个读者在执行以下操作前执行<code>rcu_read_unlock()</code>宏：</p>
+<ul>
+<li>CPU 执行进程切换。</li>
+<li>CPU 开始在用户态执行。</li>
+<li>CPU 执行空循环。</li>
+</ul>
+<p>对于以上任何情况中，认为 CPU 经过了<strong>静止状态</strong>。</p>
+<p>写者调用<code>call_rcu()</code>释放数据结构的旧副本。当所有的CPU都通过静止状态之后，<code>call_rcu()</code>接受<code>rcu_head</code>描述符的地址和将要调用的回调函数的地址作为参数。一旦回调函数被执行，它通常释放数据结构的旧副本。</p>
+<p>函数<code>call_rcu()</code>把回调函数和其参数的地址存放在<code>rcu_head</code>描述符中，然<strong>后把描述符插入回调函数的每 CPU 链表中</strong>，内核每经过一个时钟滴答检查本地 CPU 是否经历了一个静止状态。如果所有 CPU 都经历了静止状态，本地 tasklet 执行链表中的所有回调函数。</p>
+<h3 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h3><p>实现了一个加锁原语，即让等待者睡眠，直到等待的资源变为空闲。</p>
+<p>Linux 提供两种信号量：</p>
+<ul>
+<li>内核信号量，由内核控制路径使用。</li>
+<li>System V IPC 信号量，由用户态进程使用。</li>
+</ul>
+<p>内核信号量类似自旋锁，当锁关闭时，不允许内核控制路径继续进行。内核控制路径试图获取内核信号量保护的资源时，相应的资源会被挂起，直到资源被释放。因此，只有可睡眠的函数才能获取内核信号量，中断处理程序和可延迟函数不能使用内核信号量。</p>
+<p>内核信号量数据结构<code>struct semaphore</code>，包含的字段：</p>
+<ul>
+<li><code>count</code>，存放<code>atomic_t</code>类型的值。&gt; 0，资源空闲；= 0，信号量忙，但没有进程等待；&lt; 0，资源不可用，至少一个进程等待资源。</li>
+<li><code>wait</code>，存放等待队列链表的地址，等待该资源的所有睡眠进程都在这个链表中。</li>
+<li><code>sleepers</code>，表示是否有一些进程在信号量上睡眠。</li>
+</ul>
+<p>初始化信号量的几种情形：<code>init_MUTEX()</code>将 count 字段设置为 1（资源空闲），<code>init_MUTEX_LOCKED()</code>将 count 字段设置为 0。宏<code>DECLARE_MUTEX</code>和<code>DECLARE_MUTEX_LOCKED</code>完成同样的功能，但它们也静态分配<code>semaphore</code>结构的变量。将 count 初始化为任意的正整数 n 时，最多有 n 个进程可以并发地访问该资源。</p>
+<h3 id="释放信号量"><a href="#释放信号量" class="headerlink" title="释放信号量"></a>释放信号量</h3><p>释放内核信号量时，调用<code>up()</code>函数，等价于：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">	movl $sem-&gt;count, %ecx  </span><br><span class="line">	lock; incl (%ecx)</span><br><span class="line">	jg 1f</span><br><span class="line">	lea %ecx, %eax</span><br><span class="line">	pushl %edx</span><br><span class="line">	pushl %ecx</span><br><span class="line">	call __up   // 从 eax 寄存器接收参数</span><br><span class="line">	popl %ecx</span><br><span class="line">	popl %edx</span><br><span class="line">1: </span><br></pre></td></tr></table></figure></p>
+<p><code>up()</code>增加<code>*sem</code>信号量 count 字段的值，然后检查它的值是否大于0。如果大于 0，说明没有进程在等待队列上睡眠，什么也不做，否则，调用 <code>__up()</code> 唤醒睡眠的进程。注意<code>__up()</code>从eax寄存器接收参数。<code>__up()</code>是：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">__attribute_((regparm(<span class="number">3</span>))) <span class="type">void</span> __up(<span class="keyword">struct</span> semaphore *sem)</span><br><span class="line">&#123;</span><br><span class="line">	wake_up(&amp;sem-&gt;wait);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>获取信号量时需要调用<code>down()</code>函数，等价于：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">down:</span><br><span class="line">	movl $sem-&gt;count, %ecx</span><br><span class="line">	lock; decl (%ecx);</span><br><span class="line">	jns 1f</span><br><span class="line">	lea %ecx, %eax</span><br><span class="line">	pushl %edx</span><br><span class="line">	pushl %ecx</span><br><span class="line">	call __down</span><br><span class="line">	popl %ecx</span><br><span class="line">	popl %edx</span><br><span class="line">1:</span><br></pre></td></tr></table></figure></p>
+<p><code>down()</code>函数减少<code>*sem</code>信号量的 count 值，然后检查该值是否为负。该值的减少和检查过程必须是原子的。如果count大于等于0，当前进程获得资源并继续正常执行。否则，当前进程必须挂起，将一些寄存器内容压栈后，调用 <code>__down()</code>。这里<code>__down()</code>是下列C函数<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 挂起当前进程，直到信号量被释放</span></span><br><span class="line">__attribute__((regparam(<span class="number">3</span>))) <span class="type">void</span> __down(<span class="keyword">struct</span> semaphore *sem)</span><br><span class="line">&#123;</span><br><span class="line">	DECLARE_WAITQUEUE(wait, current);</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> flags;</span><br><span class="line">	current-&gt;state = TASK_UNINTERRUPTIBLE;</span><br><span class="line">	spin_lock_irqsave(&amp;sem-&gt;wait.lock, flags);</span><br><span class="line">	add_wait_queue_exclusive_locked(&amp;sem-&gt;wait, &amp;wait);</span><br><span class="line">	sem-&gt;sleepers++;</span><br><span class="line">	<span class="keyword">for</span>(;;)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(!atomic_add_negative(sem-&gt;sleepers<span class="number">-1</span>, &amp;sem-&gt;count))  <span class="comment">// count -= 1</span></span><br><span class="line">		&#123;</span><br><span class="line">			sem-&gt;sleepers = <span class="number">0</span>;   <span class="comment">// 如果 count 字段 &gt;= 0，将 sleepers 置 0，表示没有进程在信号量等待队列上睡眠</span></span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	    <span class="comment">// 如果 count &lt; 0</span></span><br><span class="line">		sem-&gt;seleepers = <span class="number">1</span>; </span><br><span class="line">		spin_unlock_irqrestore(&amp;sem-&gt;wait.lock, flags);</span><br><span class="line">		schedule();               <span class="comment">// 调用 schedule() 挂起当前进程</span></span><br><span class="line">		spin_lock_irqsave(&amp;sem-&gt;wait.lock, flags);</span><br><span class="line">		current-&gt;state = TASK_UNINTERRUPTTIBLE;</span><br><span class="line">	&#125;</span><br><span class="line">	remove_wait_queue_locked(&amp;sem-&gt;wait, &amp;wait);</span><br><span class="line">	wake_up_locked(&amp;sem-&gt;wait);   <span class="comment">// 试图唤醒信号量等待队列中的另一个进程，并终止保持的信号量</span></span><br><span class="line">	spin_unlock_irqrestore(&amp;sem-&gt;wait.lock, flags);</span><br><span class="line">	current-&gt;state = TASK_RUNNTING;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>__down()</code>将当前进程的状态从<code>TASK_RUNNGING</code>变为<code>TASK_UNINTERRUPTIBLE</code>，并把进程放在信号量的等待队列。该函数在访问信号量数据结构的字段前，获得保护信号量等待队列自旋锁<code>sem-&gt;wait.lock</code>，并禁止本地中断。当插入和删除元素时，等待队列函数根据需要获取和释放等待队列的自旋锁。<code>__down()</code>的主要任务是<strong>挂起当前进程直到信号量被释放</strong>。如果没有进程在信号量等待队列上睡眠，则信号量的sleepers字段通常被置为0，否则被置为1。考虑以下几种典型的情况：</p>
+<ul>
+<li>MUTEX信号量打开（count=1，sleepers=0）<ul>
+<li>down宏仅仅把count字段置为0，并跳到主程序的下一条指令；因此，<code>__down()</code>函数根本不执行。</li>
+</ul>
+</li>
+<li>MUTEX信号量关闭，没有睡眠进程（count=0，sleepers=0）<ul>
+<li>down宏减count并将count字段置为-1 且sleepers字段置为0来调用<code>__down()</code>函数。在循环体的每次循环中，该函数检查count字段是否为负。<ul>
+<li>如果count字段为负，<code>__down()</code>就调用<code>schedule()</code>挂起当前进程。count字段仍然设置为-1，而sleepers字段置为1,。随后，进程在这个循环内核恢复自己的运行并又进行测试。</li>
+<li>如果count字段不为负，则把sleepers置为0，并从循环退出。<code>__down()</code>试图唤醒信号量等待队列中的另一个进程，并终止保持的信号量。在退出时，count字段和sleepers字段都置为0，这表示信号量关闭且没有进程等待信号量。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>MUTEX信号量关闭，有其他睡眠进程（count=-1，sleepers=1）<ul>
+<li>down宏减count并将count字段置为-2且sleepers字段置为1来调用<code>__down()</code>函数。该函数暂时把sleepers置为2，然后通过把sleepers - 1 加到count来取消down宏执行的减操作。同时，该函数检查count是否依然为负。<ul>
+<li>如果count字段为负，<code>__down()</code>函数把sleepers重新设置为1，并调用schedule()函数挂起当前进程。count字段还是置为-1，而sleepers字段置为1.</li>
+<li>如果count字段不为负，<code>__down()</code>函数吧sleepers置为0，试图唤醒信号量等待队列上的另一个进程，并退出持有的信号量。在退出时，count字段置为0且sleepers字段置为0。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><code>down_trylock()</code>函数：适用于异步处理程序。该函数和down()函数除了对资源繁忙情况的处理有所不同之外，其他都是相同的。在资源繁忙时，该函数会立即返回，而不是让进程去睡眠。</p>
+<p><code>down_interruptible()</code>函数：该函数广泛使用在设备驱动程序中，因为如果进程接收了一个信号但在信号量上被阻塞，就允许进程放弃“down”操作。</p>
+<p>另外，因为进程通常发现信号量处于打开状态，因此，就可以优化信号量函数。尤其是，如果信号量等待队列为空，<code>up()</code>函数就不执行跳转指令。同样，如果信号量是打开的，<code>down()</code>函数就不执行跳转指令。信号量实现的复杂性是由于极力在执行流的主分支上避免费时的指令而造成的。</p>
+<h2 id="读写信号量"><a href="#读写信号量" class="headerlink" title="读写信号量"></a>读写信号量</h2><p>类似于读/写自旋锁，不同之处：<strong>信号量再次变为打开之前，等待进程挂起而不是自旋转</strong>。只有在内核控制路径不持有读信号量和写信号量时，才能获取写信号量。</p>
+<p>内核以严格的FIFO顺序处理等待读写信号量的所有进程。<strong>如果读者或写者进程发现信号量关闭，这些进程就被插入到信号量等待队列链表的末尾</strong>。当信号量被释放时，就检查处于等待队列链表第一个位置的进程。第一个进程常被唤醒。如果是一个写者进程，等待队列上其他的进程就继续睡眠。如果是一个读者进程，那么紧跟第一个进程的其他所有读者进程也被唤醒并获得锁。不过，在写者进程之后排队的读者进程继续睡眠。</p>
+<p>数据结构为<code>rw_semaphore</code>：</p>
+<ul>
+<li><code>count</code>，两个 16 位计数器。高 16 位以二进制补码形式存放非等待写者进程的总数（0 或 1）和等待的写内核控制路径数。低 16 位存放非等待的读者和写者总数。</li>
+<li><code>wait_list</code>，等待进程的链表。链表中的每个元素是<code>rwsem_waiter</code>结构，包含一个指针和一个标志，指针指向睡眠进程的描述符，标志表示进程为读信号量还是写信号量。</li>
+<li><code>wait_lock</code>，自旋锁，保护等待队列链表和<code>rw_semaphore</code>结构。</li>
+</ul>
+<p>函数：</p>
+<ul>
+<li><code>init_rwsem()</code>初始化<code>rw_semaphore</code>结构，把<code>count</code>置为0，<code>wait_lock</code>置为未锁，wait_list 置为空链表。</li>
+<li><code>dwon_read()</code>、<code>down_write()</code>获取读或写信号量。</li>
+<li><code>up_read()</code>、<code>up_write()</code>释放读或写信号量。</li>
+<li><code>down_read_trylock()</code>、<code>down_write_trylock()</code>类似于<code>down_read()</code>、<code>down_write()</code>，但在信号量忙的情况下，不阻塞进程。</li>
+<li><code>downgrade_write()</code>自动将写锁转换为读锁。</li>
+</ul>
+<h3 id="补充原语"><a href="#补充原语" class="headerlink" title="补充原语"></a>补充原语</h3><p>为了解决多处理器系统上发生的一种微妙的竞争关系，当进程 A 分配了一个临时信号变量，并将其初始化为关闭的 MUTEX，然后将其地址传递给进程 B。A 调用<code>down()</code>，打算一旦被唤醒旧撤销该信号量，而运行在不同 CPU 上的 B 在该信号量上调用<code>up()</code>，结果，<code>up()</code>可能访问一个不存在的数据结构。</p>
+<p>上述现象的原因：<strong><code>up()</code>和<code>down()</code>可在同一信号量上并发执行</strong>。补充是专门设计来解决以上问题的同步原语。<code>completion</code>包含一个等待队列头和一个标志。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">completion</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> done;   </span><br><span class="line">	<span class="type">wait_queue_head_t</span> wait;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>与<code>up()</code>对应的叫做<code>complete()</code>，<code>complete()</code>接收<code>completion</code>的地址作为参数，在补充等待队列的自旋锁上调用<code>spin_lock_irqsave()</code>递增 done 字段，唤醒在 wait 等待队列上睡眠的互斥进程，调用<code>spin_unlock_irqrestore()</code>。</p>
+<p>与<code>down()</code>对应的叫做<code>wait_for_completion()</code>，接收<code>completion</code>的地址作为参数，并检查done标志，如果 done &gt; 0，说明<code>complete()</code>已在另一个<code>CPU</code>上运行，<code>wait_for_completion()</code>终止。否则<code>wait_for_completion()</code>把<code>current</code>作为一个互斥进程加到等待队列的末尾，将<code>current</code>置为<code>TASK_UNINTERRUPTIBLE</code>状态并让其睡眠。一旦<code>current</code>被唤醒，将其从等待队列中删除。然后函数检查done标志的值，如果<code>done = 0</code>，结束；否则，再次挂起<code>current</code>。</p>
+<p>补充原语和信号量之间的真正差别：<strong>如何使用等待队列中包含的自旋锁</strong>。补充原语中，自旋锁确保<code>complete()</code>和<code>wait_for_completion()</code>不会并发执行。信号量中，自旋锁用于避免并发执行的<code>down()</code>函数弄乱信号量的数据结构。</p>
+<h3 id="禁止本地中断"><a href="#禁止本地中断" class="headerlink" title="禁止本地中断"></a>禁止本地中断</h3><p>​<strong>确保一组内核语句被当做一个临界区处理的主要机制之一就是中断禁止</strong>。即使当硬件设备产生了一个IRQ信号时，中断禁止也让内核控制路径继续执行。因此，这就提供了一种有效的方式，<strong>确保中断处理程序访问的数据结构也受到保护</strong>。然而，禁止本地中断并不保护运行在另一个CPU上的中断处理程序对数据结构的并发访问，因此，在多处理器系统上，禁止本地中断通常与自旋锁结合使用。</p>
+<p>宏<code>local_irq_disable()</code>使用<code>cli</code>汇编语言指令关闭本地CPU上的中断，宏<code>local_irq_enable()</code>函数使用<code>sti</code>汇编语言指令打开被关闭的中断。汇编语言指令<code>cli</code>和<code>sti</code>分别清除和设置eflags控制寄存器的IF标志。如果eflags寄存器的IF标志被清零，宏<code>irqs_disabled()</code>产生等于1的值；如果IF标志被设置，该宏也产生为1的值。</p>
+<p>中断可以以嵌套方式执行，因此内核在临界区末尾不能简单设置 IF 标志。控制路径必须保存先前赋给 IF 标志的置，并在执行结束时恢复它。</p>
+<p>保存和恢复eflags的内容是分别通过宏<code>local_irq_save()</code>和<code>local_irq_restore()</code>宏来实现的。<code>local_irq_save</code>宏把eflags寄存器的内容拷贝到一个局部变量中，随后用<code>cli</code>汇编语言指令把IF标志清零。在临界区的末尾，宏<code>local_irq_restore</code>恢复eflags原来的内容。因此，只有在这个控制路径发出<code>cli</code>汇编指令之前，中断被激活的情况下，中断才处于打开状态。</p>
+<h3 id="禁止和激活可延迟函数"><a href="#禁止和激活可延迟函数" class="headerlink" title="禁止和激活可延迟函数"></a>禁止和激活可延迟函数</h3><p>禁止可延迟函数在一个 CPU 上执行的一种简单方式是<strong>禁止在那个 CPU 上的中断，使得软中断不能异步开始</strong>。另一种方式是禁止可延迟函数而不禁止中断，通过操作当前<code>thread_info</code>描述符<code>preempt_count</code>字段中存放的软中断计数器即可。</p>
+<p>如果软中断计数器是正数，<code>do_softirq()</code> 函数就不会执行。<code>tasklet</code> 会在软中断之前被执行，并将该计数器设置为大于 0 的值。</p>
+<p>宏<code>local_bh_disable</code>给本地 CPU 的软中断计数器加 1。<code>local_bh_enable()</code>函数从本地 CPU 的软中断计数器中减 1。内核因此能使用几个嵌套的<code>local_bh_disable</code>调用，只有宏<code>local_bj_enable</code>与第一个<code>local_bh_disable</code>调用相匹配，可延迟函数才再次被激活。</p>
+<p>递减软中断计数器后，<code>local_bh_enable</code>执行两个重要操作以有助于保证适时执行长时间等待的进程：</p>
+<ul>
+<li>如果本地 CPU 的<code>preempt_count</code>字段中硬中断计数器和软中断计数器的值都等于 0，且有挂起的软终端，就调用<code>do_softirq()</code>激活这些软中断。</li>
+<li>如果本地 CPU 的<code>TIF_NEED_RESCHED</code>标志被设置，说明进程切换请求时挂起的，调用<code>preempt_schedule()</code>。</li>
+</ul>
+<h2 id="对内核数据结构的同步访问"><a href="#对内核数据结构的同步访问" class="headerlink" title="对内核数据结构的同步访问"></a>对内核数据结构的同步访问</h2><p>系统性能可能随所选择的同步原语种类的不同而有很大变化。通常情况下，内核开发者采用下述由经验得到的法则：<strong>把系统中的并发度保持在尽可能高的程度</strong>。系统中的并发度取决于两个主要因素：</p>
+<ul>
+<li>同时运转的I/O设备数；</li>
+<li>进行有效工作的CPU数。</li>
+</ul>
+<p>为了使I/O吞吐量最大化，应该使中断禁止保持在很短的时间。当中断被禁止时，由I/O设备产生的IRQ被PIC暂时忽略，因此，就没有新的活动在这种设备上开始。</p>
+<p>为了有效地利用CPU，应该<strong>尽可能避免使用基于自旋锁的同步原语</strong>。当一个CPU执行紧指令循环等待自旋锁打开时，是在浪费宝贵的机器周期。同时，由于自旋锁对硬件高速缓存的影响而使其对系统的整体性能产生不利影响。</p>
+<h3 id="在自旋锁、信号量及中断禁止之间选择"><a href="#在自旋锁、信号量及中断禁止之间选择" class="headerlink" title="在自旋锁、信号量及中断禁止之间选择"></a>在自旋锁、信号量及中断禁止之间选择</h3><p>只要内核控制路径获得自旋锁（还有读/写锁、顺序锁或 RCU“读锁”），就禁用本地中断或本地软中断，自动禁用内核抢占。<br><img src="/img/202009261103.png" alt=""></p>
+<h3 id="保护异常所访问的数据结构"><a href="#保护异常所访问的数据结构" class="headerlink" title="保护异常所访问的数据结构"></a>保护异常所访问的数据结构</h3><p>当一个数据结构仅由异常处理程序访问时，最常见的产生同步问题的异常就是<strong>系统调用服务例程</strong>，在这种情况下，CPU运行在内核态而为用户态程序提供服务。因此，<strong>仅由异常访问的数据结构通常表示一种资源，可以分配给一个或多个进程</strong>。竞争条件可以通过<strong>信号量</strong>避免，因为信号量原语允许进程陲眠到资源变为可用。</p>
+<h3 id="保护中断所访问的数据结构"><a href="#保护中断所访问的数据结构" class="headerlink" title="保护中断所访问的数据结构"></a>保护中断所访问的数据结构</h3><p><strong>中断处理程序本身不能同时多次运行</strong>。因此，访问数据结构就无需任何同步原语。但是，如果多个中断处理程序访问一个数据结构，情况就有所不同了。一个处理程序可以中断另一个处理程序，不同的中断处理程序可以在多处理器系统上同时运行。没有同步，共享的数据结构就很容易被破坏。</p>
+<p>单处理器系统中，必须<strong>在中断处理程序的所有临界区上禁止中断来避免竞争条件</strong>，其他同步原语都不行。因为信号量能阻塞进程，自旋锁可能使系统冻结。多处理器系统中，避免竞争条件最简单的方法是<strong>禁止本地中断，并获取保护数据结构的自旋锁或读/写自旋锁</strong>。</p>
+<p>Linux内核使用了几个宏，把本地终端激活/禁止与自旋锁结合。<br><img src="/img/1601301691.jpg" alt=""></p>
+<h3 id="保护被可延迟函数所访问的数据结构"><a href="#保护被可延迟函数所访问的数据结构" class="headerlink" title="保护被可延迟函数所访问的数据结构"></a>保护被可延迟函数所访问的数据结构</h3><p>单处理器系统上不存在竞争条件，因为可延迟函数的执行总是在一个 CPU 上串行执行，不需要同步原语。多处理器系统上存在竞争条件，因为几个可延迟函数可以并发执行。<br><img src="/img/1601301835.jpg" alt=""></p>
+<p><strong>由软中断访问的数据结构必须受到保护</strong>，通常使用自旋锁，因为同一个软中断可在多个 CPU 上并发运行。仅由一种 tasklet 访问的数据结构不需要保护，因为同种 tasklet 不能并发执行。由几种 tasklet 访问，必须对数据结构进行保护。</p>
+<h3 id="保护由异常和中断访问的数据结构"><a href="#保护由异常和中断访问的数据结构" class="headerlink" title="保护由异常和中断访问的数据结构"></a>保护由异常和中断访问的数据结构</h3><p>单处理系统上，因为中断处理程序是不是可重入的且不能被异常中断，只要内核以本地中断禁止访问数据结构，内核在访问数据结构的过程中就不会被中断。如果数据结构被一种中断处理程序访问，中断处理程序不用禁止本地中断就可访问数据结构。多处理器系统上，必须关注异常和中断在其他CPU上的并发执行。<strong>本地中断禁止必须外加自旋锁，强制并发的内核控制路径等待</strong>，直到访问数据结构的处理程序完成自己的工作。</p>
+<p>有时使用信号量代替自旋锁可能更好。因为中断处理程序不能被挂起，必须用<strong>紧循环</strong>和<code>down_trylock()</code>函数获得信号量，在这里，信号量的作用与自旋锁一样。系统调用服务例程可在信号量忙时挂起调用进程，提高系统并发度。</p>
+<h3 id="保护由异常和可延迟函数访问的数据结构"><a href="#保护由异常和可延迟函数访问的数据结构" class="headerlink" title="保护由异常和可延迟函数访问的数据结构"></a>保护由异常和可延迟函数访问的数据结构</h3><p>保护由异常和可延迟函数访问的数据结构与异常和中断处理程序访问的数据结构处理方式类似。可延迟函数本质上是由中断的出现激活的，而可延迟函数执行时不可能产生异常。因此，<strong>把本地中断禁止与自旋锁结合起来即可</strong>。</p>
+<p>异常处理程序可通过使用<code>local_bh_disable()</code>宏禁止可延迟函数，而不禁止本地中断。在每 CPU 上可延迟函数的执行都被串行化，不存在竞争条件。多处理器系统上，使用自旋锁可确保任何时候只有一个内核控制路径访问数据结构。</p>
+<h3 id="保护由中断和可延迟函数访问的数据结构"><a href="#保护由中断和可延迟函数访问的数据结构" class="headerlink" title="保护由中断和可延迟函数访问的数据结构"></a>保护由中断和可延迟函数访问的数据结构</h3><p>类似于中断和异常访问的数据结构。可延迟函数执行期间禁用本地中断。没有其他的中断处理程序访问数据结构时，中断处理程序可随意访问被可延迟函数访问的数据结构而不用关中断。多处理器系统上，需要自旋锁禁止对多个 CPU 上数据结构的并发访问。</p>
+<h3 id="保护由异常、中断和可延迟函数访问的数据结构"><a href="#保护由异常、中断和可延迟函数访问的数据结构" class="headerlink" title="保护由异常、中断和可延迟函数访问的数据结构"></a>保护由异常、中断和可延迟函数访问的数据结构</h3><p>禁止本地中断和获取自旋锁几乎总是避免竞争条件所必须的，但没有必要显式禁止可延迟函数。</p>
+<h2 id="避免竞争条件的实例"><a href="#避免竞争条件的实例" class="headerlink" title="避免竞争条件的实例"></a>避免竞争条件的实例</h2><h3 id="引用计数器"><a href="#引用计数器" class="headerlink" title="引用计数器"></a>引用计数器</h3><p>引用计数器广泛应用于内核中以避免由于资源的并发分配和释放而产生的竞争条件。它是一个<code>atomic_t</code>计数器，与特定的资源，如内存页、模块或文件相关。当内核控制路径开始使用资源，原子地减少计数器值；当内核控制路径用完资源，原子地增加计数器值。原子计数器变为 0，说明资源未被使用，如果必要，释放该资源。</p>
+<h3 id="大内核锁"><a href="#大内核锁" class="headerlink" title="大内核锁"></a>大内核锁</h3><p>大内核锁是<strong>相对粗粒度的自旋锁，确保每次只有一个进程运行在内核态</strong>。在2.2和2.4版本中具有极大的灵活性，不再依赖一个单独的自旋锁，而是由许多不同的自旋锁保护大量的内核数据结构。从2.6.11开始，用叫<code>kernel_sem</code>的信号量实现大内核锁，但比信号量复杂。每个进程描述符含有<code>lock_depth</code>字段，允许同一个进程几次获得大内核锁。对大内核锁两个连续的请求不挂起处理器。字段为-1表示，进程未获得过锁；字段为正数，表示请求了多少次锁。<code>lock_depth</code>对中断处理程序、异常处理程序以及可延迟函数获取大内核锁都是至关重要的，如果没有这个字段，那么在当前进程已经有大内核锁的情况下，任何试图获得这个锁的异步函数都可能产生死锁。</p>
+<p><code>lock_kernel()</code>获得大内核锁：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">depth = current-&gt;lock_depth + <span class="number">1</span>;</span><br><span class="line"><span class="keyword">if</span>(depth == <span class="number">0</span>)</span><br><span class="line">	down(&amp;kernel_sem);</span><br><span class="line">current-&gt;lock_depth = depth;</span><br></pre></td></tr></table></figure></p>
+<p><code>unlock_kernel()</code>释放大内核锁：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(--current-&gt;lock_depth &lt; <span class="number">0</span>)</span><br><span class="line">	up(&amp;kernel_sem);</span><br></pre></td></tr></table></figure></p>
+<p>持有大内核锁的进程可调用<code>schedule()</code>放弃 CPU。不过<code>schedule()</code>检查被替换进程的<code>lock_depth</code>字段，如果它的值是正数或0，则自动释放<code>kernel_sem</code>信号量。因此不会有显式调用<code>schedule()</code>的进程在进程切换前后都保持大内核锁。</p>
+<p>当一个持有大内核锁的进程被强占时，<code>schedule()</code>一定不能释放信号量，因为在临界区内执行代码的进程没有主动触发进程切换。</p>
+<p>为避免被强占的进程事情大内核锁，<code>preempt_schedule_irq()</code>临时把进程的<code>lock_depth</code>字段设置为 -1，这样<code>schedule()</code>假定被替换的进程不拥有 <code>kernel_sem</code>信号量，也就不能释放它。一旦该进程再次被调度程序选中，<code>preempt_schedule_irq()</code>函数就恢复<code>lock_depth</code>原来的值，并让进程在被大内核锁保护的临界区中继续执行。</p>
+<h3 id="内存描述符读-写信号量"><a href="#内存描述符读-写信号量" class="headerlink" title="内存描述符读/写信号量"></a>内存描述符读/写信号量</h3><p><code>mm_struct</code>类型的每个内存描述符在<code>mmap_sem</code>字段中都包含了信号量。因为几个轻量级进程之间可以共享一个内存描述符，因此信号量可保护该描述符，以避免可能产生的竞争条件。这种信号量为以读/写信号量方式实现，因为一些内核函数，如缺页异常处理程序只需要扫描内存描述符。</p>
+<h3 id="slab-高速缓存链表的信号量"><a href="#slab-高速缓存链表的信号量" class="headerlink" title="slab 高速缓存链表的信号量"></a>slab 高速缓存链表的信号量</h3><p>slab 高速缓存描述符链表是通过<code>cache_chain_sem</code>信号量保护的，<strong>允许互斥地访问和修改该链表</strong>。当<code>kmem_cache_create()</code>在链表中增加一个新元素，而<code>kmem_cache_shrink()</code>和<code>kmem_cache_reap()</code>顺序地扫描整个链表时，可能产生竞争条件。</p>
+<h3 id="索引节点的信号量"><a href="#索引节点的信号量" class="headerlink" title="索引节点的信号量"></a>索引节点的信号量</h3><p>Linux 把磁盘文件的信息存放在一种叫做索引节点的内存对象中。相应的数据结构包括自己的信号量，存放在<code>i_sem</code>字段中。在文件系统的处理过程中会出现很多竞争条件。<strong>竞争条件都可以通过用索引节点信号量保护目录文件来避免</strong>。只要一个程序使用了两个或多个信号量，就存在死锁的可能，因为两个不同的控制路径可能互相死等着释放信号量。在有些情况下，内核必须获得两个或更多的信号量锁。索引节点信号量倾向于这种情况，例如，在rename()系统调用的服务例程中就会发生这种情况。在这种情况下，操作涉及两个不同的索引节点，因此，必须采用两个信号量。为了避免这样的死锁，信号量的请求按预先确定的地址顺序进行。</p>
+<h1 id="定时测量"><a href="#定时测量" class="headerlink" title="定时测量"></a>定时测量</h1><p>很多计算机化的活动都是由<strong>定时测量</strong>（timing measurement）来驱动的，这常常对用户是不可见的。Linux内核必需完成两种主要的定时测量，我们可以对此加以区别：</p>
+<ul>
+<li>保存当前时间和日期，以便能通过<code>time()</code>，<code>ftime()</code>，<code>gettimeofday()</code>系统调用把它们返回给用户程序，也可以由内核本身把当前时间作为文件和网络包的时间戳。</li>
+<li>维持定时器，这个机制能够告诉内核或用户程序某一时间间隔已经过去了。</li>
+</ul>
+<p>定时测量是由基于固定频率振荡器和计数器的几个硬件电路完成的。</p>
+<h2 id="时钟和定时器电路"><a href="#时钟和定时器电路" class="headerlink" title="时钟和定时器电路"></a>时钟和定时器电路</h2><p>在80x86体系结构上，内核必须显式地与集中时钟和定时器电路打交道。时钟电路同时用于跟踪当前时间和产生精确的事件量度。</p>
+<h3 id="实时时钟（RTC）"><a href="#实时时钟（RTC）" class="headerlink" title="实时时钟（RTC）"></a>实时时钟（RTC）</h3><p>所有PC都包含一个叫<strong>实时时钟</strong>（real Time Clock RTC）的时钟，它独立于CPU和所有其他芯片的。即使当PC被切断电源，RTC还继续工作，因为它靠一个小电池或蓄电池供电。RTC能在IRQ8上周期性的发出中断，频率在2~8192Hz之间。也可以对RTC进行编程以使当RTC到达某个特定的值是激活IRQ8线，也就是作为一个闹钟来工作。Linux只用RTC来获取事件和日期，不过，通过对/dev/rtc设备文件进行操作，也允许进程对RTC编程。</p>
+<h3 id="时间戳计数器（TSC）"><a href="#时间戳计数器（TSC）" class="headerlink" title="时间戳计数器（TSC）"></a>时间戳计数器（TSC）</h3><p>所有的80x86微处理器都包含一条CLK输入引线，它接受外部振荡器的时钟信号。计数器在每个时钟信号到来时加1，该计数器利用时间戳计数器TSC寄存器来实现，通过指令<code>rdtsc</code>访问。Linux利用这个寄存器能获得更精确的时间测量，为了做到这点Linux必须在初始化时确定时钟信号的频率。算出CPU实际频率的任务是在系统初始化期间完成的。<code>calibrate_tsc()</code>通过计算一个大约在5ms的时间间隔内所产生的时钟信号的个数来计算CPU的实际频率。</p>
+<h3 id="可编程间隔定时器（PIT）"><a href="#可编程间隔定时器（PIT）" class="headerlink" title="可编程间隔定时器（PIT）"></a>可编程间隔定时器（PIT）</h3><p>PIT的作用类似于微波炉的闹钟，即让用户意识到烹调的时间间隔已经过去了。所不同的是，这个设备不是通过振铃，而是发出一个特殊的中断，叫做时钟中断来通知内核又一个时间间隔过去了。</p>
+<p>时钟中断的频率取决于体系结构，较慢的机器其节拍大概为10ms，而较快的机器的节拍大概1ms。在Linux中有几个宏产生决定时钟中断频率的常量：</p>
+<ul>
+<li><code>HZ</code>产生每秒时钟中断的近似个数，也就是时钟中断的频率。</li>
+<li><code>CLOCK_TICK_RATE</code>产生的值为1193182，这个是是振荡器频率。</li>
+<li><code>LATCH</code>产生<code>CLOCK_TICK_RATE</code>和<code>HZ</code>的比值再四舍五入后的整数值。这个值用来对PIT编程。</li>
+</ul>
+<p>PIT由setup_pit_timer()进行初始化<br><img src="/img/1601378147.jpg" alt=""></p>
+<p><code>outb()</code>等价于outb汇编指令，把第一个操作数拷贝到第二个操作数指定的IO端口。<code>outb_p()</code>类似于<code>outb()</code>，不过，它会通过一个空操作而产生一个暂停，以避免使硬件难以分辨。<code>udelay()</code>宏函数引入一个更短的延迟。第一条<code>outb_p()</code>让PIT以新的频率产生中断。接下来的两条<code>outb_p()</code>和<code>outb()</code>为设备提供新的中断频率。把16位LATCH常量作为两个连续的字节发送到设备的8位IO端口0x40，结果，PIT将以1000Hz的频率产生时钟中断。</p>
+<h3 id="CPU本地定时器"><a href="#CPU本地定时器" class="headerlink" title="CPU本地定时器"></a>CPU本地定时器</h3><p>CPU本地定时器是一种能够产生单步中断或周期性中断的设备，它类似于可编程间隔定时器APIC，区别：</p>
+<ul>
+<li>APIC计数器是32位，而PIC计数器是16位； 因此，可以对本地定时器编程来产生很低频率的中断</li>
+<li>本地APIC定时器把中断只发送给自己的处理器，而PIT产生一个全局性中断，系统中的任一CPU都可以对其处理。</li>
+<li>APIC定时器是基于总线时钟信号的。每隔1,2,4,8,16,32,64或128总线时钟信号到来时对该定时器进行递减可以实现对其编程的目的。相反，PIT有其自己的内部时钟振荡器，可以更灵活地编程。</li>
+</ul>
+<h3 id="高精度事件定时器-HPET"><a href="#高精度事件定时器-HPET" class="headerlink" title="高精度事件定时器(HPET)"></a>高精度事件定时器(HPET)</h3><p>高精度事件定时器是由Intel和Microsoft联合开发的一种新型定时器芯片。尽管这种定时器在终端用户机器上还并不普遍，但Linux2.6已经能够支持它们。</p>
+<h3 id="ACPI电源管理定时器"><a href="#ACPI电源管理定时器" class="headerlink" title="ACPI电源管理定时器"></a>ACPI电源管理定时器</h3><p>ACPI电源管理定时器（或称ACPI PMT）是另一种时钟设备，包含在几乎所有基于ACPI的主板上。它的时钟信号拥有大约为3.58MHz的固定频率。该设备实际上是一个<strong>简单的计数器</strong>， 它在每个时钟节拍到来时增加一次。为了读取计数器的当前值，内核需要访问某个I/O端口，该I/O端口的地址由BIOS在初始化阶段确定。</p>
+<p>如果操作系统或者BIOS可以通过动态降低CPU的工作频率或者工作电压来节省电池的电能，那么ACPI电源管理定时器就比TSC更优越。当发生ACPI PMT的频率不会改变。而另一方面，TSC计数器的高频率非常便于测量特别小的时间间隔。</p>
+<h2 id="Linux计时体系结构"><a href="#Linux计时体系结构" class="headerlink" title="Linux计时体系结构"></a>Linux计时体系结构</h2><p>Linux必定执行与定时相关的操作。例如，内核周期性地：</p>
+<ul>
+<li>更新自系统启动以来所经过的时间</li>
+<li>更新时间和日期</li>
+<li>确定当前进程在每个CPU上已运行了多长时间，如果已经超过了分配给它的时间，则抢占它。时间片（也叫时限）</li>
+<li>更新资源使用统计数</li>
+<li>检查每个软定时器的时间间隔是否已到。</li>
+</ul>
+<p>Linux的计时体系结构(time keeping architecture)是一组与时间流相关的内核数据结构和函数，</p>
+<ul>
+<li>在单处理器系统上，所有的计时活动都是由<strong>全局定时器</strong>（可以是可编程间隔定时器也可以是高精度事件定时器）产生的中断触发的</li>
+<li>在多处理器系统上，所有普通的活动（像软定时器的处理）都是由<strong>全局定时器产生的中断</strong>触发的，而具体CPU的活动是由本地APIC定时器产生的中断触发的。</li>
+</ul>
+<h3 id="计时体系机构的数据结构"><a href="#计时体系机构的数据结构" class="headerlink" title="计时体系机构的数据结构"></a>计时体系机构的数据结构</h3><h4 id="定时器对象"><a href="#定时器对象" class="headerlink" title="定时器对象"></a>定时器对象</h4><p>为了使用一种统一的方法来处理可能存在的定时器资源，内核使用了<strong>定时器对象</strong>，它是<code>timer_opts</code>类型的一个描述符，该类型由定时器名称和四个标准的方法组成，如表6-1所示：<br><img src="/img/1601379242.jpg" alt=""></p>
+<p>定时器对象中最重要的方法是<code>mark_offset</code>和<code>get_offset</code>。<code>mark_offset</code>方法<strong>由时间中断处理程序调用，并以适当的数据结构记录每个节拍到来时的准确时间</strong>。<code>get_offset</code>方法使用已记录的值来<strong>计算自上一次时钟中断(节拍)以来经过的时间(us为单位)</strong>。由于这两种方法，使得Linux计时体系结构能够达到子节拍的分辨度，也就是说，内核能够以比节拍周期更高的精度来测定当前的时间，这种操作被称作<strong>定时插补(timerinterpolation)</strong>。</p>
+<p>变量<code>cur_timer</code>存放了某个定时器对象的地址，该定时器是系统可利用的定时器资源中“最好的”，内核初始化期间，<code>select_timer()</code>设置<code>cur_timer</code>指向适当定时器对象的地址。表6-2以优先级顺序列出了80x86体系结构中最常用的定时器对象。定时插补一列列出了定时器对象的<code>mark_offset</code>和<code>get_offset</code>使用的定时器源，<br><img src="/img/1601379737.jpg" alt=""></p>
+<h4 id="jiffies变量"><a href="#jiffies变量" class="headerlink" title="jiffies变量"></a>jiffies变量</h4><p><code>jiffies</code>变量是一个计数器，用来<strong>记录自系统启动以来产生的节拍总数</strong>。每次时钟中断发生时（每个节拍）它便加1.在80x86体系结构中，<code>jiffies</code>是一个32位的变量，因此每隔大约50天它的值会<strong>回绕</strong>(wraparound)到0，这对Linux服务器来说是一个相对较短的时间间隔。不过，由于使用了<code>time_after</code>、<code>time_afer_eq</code>、<code>time_before</code>和<code>time_before_eq</code>四个宏，内核干净利索地处理了jiffies变量的益出。</p>
+<p><code>jiffies</code>被初始化为0xfffb6c20，它是一个32位有符号值，正好等于-300000。因此计数器将会在系统启动5分钟内处于溢出状态，使得那些不对jiffies做溢出检查的有缺陷代码在开发阶段被及时发现。</p>
+<p>但是内核需要自系统启动以来产生的系统节拍的真实数目。在80x86系统中，jiffies变量通过连接器被换算成一个64位计数器的低32位，这个64位的计数器被称作<code>jiffies_64</code>。在1ms为一个节拍的情况下，<code>jiffies_64</code>变量将会在数十亿年后才发生回绕，所以我们可以放心地假定它不会溢出。</p>
+<p><strong>在32位系统中不能自动对64位变量进行访问</strong>，因此需要一些同步机制当两个32位计数器（由这两个32位计数器组织为64位计数器）的值在被读取时这个64位的计数器不会被更新，结果是每个64位的读操作明显比32位的读操作更慢。</p>
+<p><code>get_jiffies_64()</code>用来读取<code>jiffies_64</code>的值并返回该值。<br><img src="/img/1601380173.jpg" alt=""></p>
+<p><code>xtime_lock()</code>顺序锁用来保护64位的读操作：该函数一直读<code>jiffies_64</code>直到确认该变量并没有同时被其他内核控制路径更新才读取<code>jiffies_64</code>。当在临界区增加<code>jiffies_64</code>的值时必须用<code>write_seqlock(&amp;xtime_lock)</code>和<code>write_sequnlock(&amp;xtime_lock)</code>进行保护。</p>
+<h4 id="xtime变量"><a href="#xtime变量" class="headerlink" title="xtime变量"></a>xtime变量</h4><p><code>xtime</code>变量存放<strong>当前时间和日期</strong>；它是一个<code>timespec</code>类型的数据结构，该结构有两个字段：</p>
+<ul>
+<li><code>tv_sec</code>：存放自1970年1月1日(UTC)午夜以来经过的秒数</li>
+<li><code>tv_nsec</code>:存放自上一秒开始经过的纳秒数</li>
+</ul>
+<p><code>xtime</code>变量通常是每个节拍更新一次，也就是说，大约每秒更新1000次。用户程序从xtime变量获得当前时间和日期。内核也经常引用它。<code>xtime</code>顺序锁消除了对<code>xtime</code>的同时访问而可能发生的竞争条件。</p>
+<h3 id="单处理器系统上的计时体系结构"><a href="#单处理器系统上的计时体系结构" class="headerlink" title="单处理器系统上的计时体系结构"></a>单处理器系统上的计时体系结构</h3><p>在单处理器系统上，所有与定时有关的活动都是由<strong>IRQ线0上的可编程间隔定时器产生的中断</strong>触发的。</p>
+<h4 id="初始化阶段"><a href="#初始化阶段" class="headerlink" title="初始化阶段"></a>初始化阶段</h4><p>在内核初始化期间，<code>time_init()</code>函数被用来建立计时体系结构，它通常执行如下操作：</p>
+<ol>
+<li>初始化<code>xtime</code>变量。利用<code>get_cmos_time()</code>函数从实时时钟上读取自1970年1月1日(UTC)午夜以来经过的秒数。设置<code>xtime</code>的<code>tv_nsec</code>字段，使得即将发生的<code>jiffies</code>变量溢出与<code>tv_sec</code>字段保持一致，也就说，它将落到秒的范围内。</li>
+<li>初始化<code>wall_to_monotonic</code>变量，它存放将被加到<code>xtime</code>上的秒数和纳秒数。</li>
+<li>如果内核支持HPET，它将调用<code>hpet_enable()</code>函数来确认ACPI固件是否探测到了该芯片并将它的寄存器映射到了内存地址空间中。</li>
+<li>调用<code>select_timer()</code>来挑选系统中可利用的最好的定时器资源，并设置<code>cur_timer</code>变量指向该定时器资源对应的定时器对象的地址。</li>
+<li>调用<code>setup_irq(0, &amp;irq0)</code>来创建与IRQ0相应的中断门，IRQ0引脚线连接着系统时钟中断源(PIT或HPET)。irq0变量被静态定义如下：<code>struct irqaction irq0 = &#123;timer_interrupt, SA_INTERRUPT, 0, &quot;timer&quot;, NULL, NULL);</code>。从现在起，<code>timer_interrupt()</code>函数将会在每个节拍到来时被调用，而中断被禁止，因为IRQ0主描述符的状态字段中的<code>SA_INTERRUPT</code>标志被置位。</li>
+</ol>
+<h4 id="时钟中断处理程序"><a href="#时钟中断处理程序" class="headerlink" title="时钟中断处理程序"></a>时钟中断处理程序</h4><p><code>timer_interrupt()</code>函数是PIT或HPET的中断服务例程，它执行以下步骤：</p>
+<ul>
+<li>在<code>xtime_lock</code>顺序锁上产生一个<code>write_seqlock()</code>来保护与定时相关的内核变量。</li>
+<li>执行<code>cur_timer</code>定时器对象的<code>mark_offset</code>方法。正如前面的”计时体系结构的数据结构”一节解释的那样，有四种可能的情况：<ul>
+<li><code>cur_timer</code>指向<code>timer_hpet</code>对象；这种情况下，HPET芯片作为时钟中断源。<code>mark_offset</code>方法检查自上一个节拍以来是否丢失时钟中断，在这种不太可能发生的情况下，它会相应地更新<code>jiffies_64</code>。接着，该方法记录下HPET周期计数器的当前值。</li>
+<li><code>cur_time</code>指向<code>timer_pmtmr</code>对象；在这种情况下PIT芯片作为时钟中断源，但是内核使用APIC电源管理定时器以更高的分辨度来测量时间。<code>mark_offset</code>方法检查自上一个节拍以来是否丢失时钟中断，如果丢失则更新<code>jiffies_64</code>。然后，它记录APIC电源管理定时器计数器的当前值。</li>
+<li><code>cur_time</code>指向<code>timer_tsc</code>对象；在这种情况下，PIT芯片作为时钟中断源，但是内核使用时间戳计数器以更高的分辨度来测量时间。<code>mark_offset</code>方法执行与上一种情况相同的操作。</li>
+<li><code>cur_timer</code>指向<code>timer_pit</code>对象；这种情况下，PIT芯片作为时钟中断源，除此之外没有别的定时器电路。<code>mark_offset</code>方法什么也不做。</li>
+</ul>
+</li>
+<li>调用<code>do_timer_interrupt()</code>函数，<code>do_timer_interupt()</code>函数执行以下操作：<ul>
+<li>使<code>jiffies_64</code>的值增加1。注意，这样做是安全的，因为内核控制路径仍然为写操作保持着<code>xtime_lock</code>顺序锁。</li>
+<li>调用<code>update_times()</code>函数来更新系统日期和时间，并计算当前系统负载。</li>
+<li>调用<code>update_process_times()</code>函数为本地CPU执行几个与定时相关的计数操作。</li>
+<li>调用<code>profile_tick()</code>函数。</li>
+<li>如果使用外部时钟来同步系统时钟，则每隔660秒调用一次<code>set_rtc_mmss()</code>函数来调整实时时钟。这个特性用来帮助网络中的系统同步它们的时钟。</li>
+</ul>
+</li>
+<li>调用<code>write_sequnlock()</code>释放<code>xtime_lock</code>顺序锁。</li>
+<li>返回值1，报告中断已经被有效地处理了。</li>
+</ul>
+<h3 id="多处理器系统上的计时体系结构"><a href="#多处理器系统上的计时体系结构" class="headerlink" title="多处理器系统上的计时体系结构"></a>多处理器系统上的计时体系结构</h3><p>多处理器系统可以依赖两种不同的时钟中断源：<strong>可编程间隔定时器或高精度事件定时器产生的中断</strong>，以及<strong>CPU本地定时器产生的中断</strong>。在linux2.6中，PIT或HPET产生的全局时钟中断触发不涉及具体CPU的活动，比如处理器软定时器和保持系统时间的更新。相反，一个CPU本地时间中断触发涉及本地CPU的计时活动，例如监视当前进程的运行时间和更新资源使用统计数。</p>
+<h4 id="初始化阶段-1"><a href="#初始化阶段-1" class="headerlink" title="初始化阶段"></a>初始化阶段</h4><p>全局时钟中断处理程序由<code>time_imit()</code>函数初始化。Linux内核为本地时钟中断保留第239号中断向量。初始化阶段，函数<code>apic_intr_init()</code>根据239号向量和低级中断处理程序<code>apic_timer_interrupt()</code>的地址设置IDT的中断门。函数<code>calibrate_APIC_clock()</code>通过正在启动的CPU的本地APIC来计算在一个节拍内收到了多少个总线时钟信号。这个确切的值被用来对本地所有APIC编程，并由此在每个节拍产生一次本地时钟中断。这是由<code>setup_APIC_timer()</code>完成，该函数被系统中的每个CPU执行一次。</p>
+<h4 id="全局时钟中断处理程序"><a href="#全局时钟中断处理程序" class="headerlink" title="全局时钟中断处理程序"></a>全局时钟中断处理程序</h4><p>SMP版本的<code>timer_interrupt()</code>处理程序与UP版本的该处理程序在几个地方有差异：</p>
+<ul>
+<li><code>timer_interrupt()</code>调用函数<code>do_timer_interrupt()</code>向IO APIC芯片的一个端口写入，以应答定时器的中断。</li>
+<li><code>update_process_times()</code>函数不被调用，因为该函数执行与特定CPU相关的操作</li>
+<li><code>profile_tick()</code>不被调用，因为该函数同样执行与特定CPU相关的操作。</li>
+</ul>
+<h4 id="本地时钟中断处理程序"><a href="#本地时钟中断处理程序" class="headerlink" title="本地时钟中断处理程序"></a>本地时钟中断处理程序</h4><p>处理程序执行系统中与特定CPU相关的计时活动，即监管内核代码并检测当前进程在特定CPU上已经运行了多长时间。<code>apic_timer_interrupt()</code>等价于：<br><img src="/img/1601383433.jpg" alt=""></p>
+<p>该低级处理函数与其他低级中断处理函数相似，被称作<code>smp_apic_timer_interrupt()</code>的高级中断处理函数执行如下步骤：</p>
+<ul>
+<li>获得CPU逻辑号</li>
+<li>使<code>irq_stat</code>数组中第n项的<code>apic_timer_irqs</code>字段加一</li>
+<li>应答本地APIC上的中断</li>
+<li>调用<code>irq_enter()</code>函数</li>
+<li>调用<code>smp_local_timer_interrupt()</code>函数</li>
+<li>调用<code>irq_exit()</code>函数</li>
+</ul>
+<p><code>smp_local_timer_interrupt()</code>函数执行每个CPU的计时活动，执行下边的主要步骤。</p>
+<ul>
+<li>调用<code>profile_tick()</code>函数</li>
+<li>调用<code>update_process_times()</code>函数检查当前进程运行的时间并更新一些本地CPU统计数</li>
+</ul>
+<h2 id="更新时间和日期"><a href="#更新时间和日期" class="headerlink" title="更新时间和日期"></a>更新时间和日期</h2><p>用户程序从<code>xtime</code>变量中获得当前时间和日期。内核必须周期性地更新该变量，才能使它的值保持相当的精确。全局时钟中断处理程序调用<code>update_times()</code>函数更新<code>xtime</code>变量的值。</p>
+<p>全局时钟中断处理程序调用<code>update_time()</code>函数更新<code>xtime()</code>的值：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">update_times</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> ticks;</span><br><span class="line">	ticks = jiffies - wall_jiffies;</span><br><span class="line">	<span class="keyword">if</span>(ticks) &#123;</span><br><span class="line">		wall_jiffies += ticks;</span><br><span class="line">		update_wall_time(ticks);</span><br><span class="line">	&#125;</span><br><span class="line">	calc_load(ticks);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>wall_jiffies</code>变量存放<code>xtime</code>变量最后更新的时间。内核不必每个时钟节拍更新<code>xtime</code>变量。然而最后不会有时钟节拍丢失。因此，<code>xtime</code>最终存放正确的系统时间。<code>update_wall_time()</code>函数连续调用<code>update_wall_time_one_tick()</code>函数ticks次，每次调用都给<code>xtime.tv_nsec</code>字段加上1000000。如果<code>xtime.tv_nsec</code>大于999999999，那么<code>update_wall_time()</code>函数还会更新<code>xtime</code>的<code>tv_sec</code>字段。如果系统发出<code>adjtimex()</code>系统调用，那么函数可能会稍微调整1000000这个值使时钟稍快或稍慢一点。</p>
+<h2 id="更新系统统计数"><a href="#更新系统统计数" class="headerlink" title="更新系统统计数"></a>更新系统统计数</h2><p>内核在与定时相关的其他任务中必须周期性地收集若干数据用于：</p>
+<ul>
+<li>检查运行进程的CPU资源限制</li>
+<li>更新与本地CPU工作负载有关的统计数</li>
+<li>计算平均系统负载</li>
+<li>监管内核代码</li>
+</ul>
+<h3 id="更新本地CPU统计数"><a href="#更新本地CPU统计数" class="headerlink" title="更新本地CPU统计数"></a>更新本地CPU统计数</h3><p><strong>单处理器系统上的全局时钟中断处理程序或多处理器系统上的本地时钟中断处理程序调用<code>update_process_times()</code>函数来更新一些内核统计数</strong>。该函数执行以下步骤：</p>
+<ul>
+<li><strong>检查当前进程运行了多长时间</strong>。当时钟中断发生时，根据当前进程运行在用户态还是内核态，选择调用<code>account_user_time()</code>还是<code>account_system_time()</code>。每个函数基本上执行如下步骤。<ul>
+<li>更新当前进程描述符的<code>utime</code>字段或<code>stime</code>字段。在进程描述符中提供两个被称作<code>cutime</code>和<code>cstime</code>的附加字段，分别用来统计子进程在用户态和内核态下所经过的CPU节拍数。由于效率的原因，<code>update_process_times()</code>并不更新这些字段，而只是当父进程询问它的其中一个子进程的状态时才对其进行更新。</li>
+<li>检查是否已达到总的CPU时限，如果是，向<code>current</code>进程发送<code>SIGXCPU</code>和<code>SIGKILL</code>信号</li>
+<li>调用<code>account_it_virt()</code>和<code>account_it_prof()</code>来检查进程定时器。</li>
+<li>更新一些内核统计数，这些统计数存放在每CPU变量kstat中。</li>
+</ul>
+</li>
+<li>调用<code>raise_softirq()</code>来激活本地CPU上的<code>TIMER_SOFTIRQ</code>任务队列。</li>
+<li>如果必须回收一些老版本的，受RCU保护的数据结构，那么检查本地CPU是否经历了静止状态并调用<code>tasklet_schedule()</code>来激活本地CPU的<code>rcu_tasklet</code>任务队列。</li>
+<li>调用<code>scheduler_tick()</code>函数，该函数使当前进程的时间片计数器减1，并检查计数器是否已减到0</li>
+</ul>
+<h3 id="记录系统负载"><a href="#记录系统负载" class="headerlink" title="记录系统负载"></a>记录系统负载</h3><p>用户输入uptime命令后可以看到一些统计数据：如相对于最后1分钟，5分钟，15分钟的”平均负载”。在单处理器系统上，值0意味着没有活跃的进程在运行，而值1意味着一个单独的进程100％占有CPU，值大于1说明几个运行着的进程共享CPU。</p>
+<p><code>update_times()</code>在每个节拍都要调用<code>calc_load()</code>函数来计算处于<code>TASK_RUNNING</code>或<code>TASK_UNINTERRUPTIBLE</code>状态的进程数，并用这个数据更新平均系统负载。</p>
+<h3 id="监管内核代码"><a href="#监管内核代码" class="headerlink" title="监管内核代码"></a>监管内核代码</h3><p>Linux包含一个被称作<code>readprofiler</code>的最低要求的代码监管器，检测在内核态的什么地方花费时间。监管器确定内核的<strong>热点</strong>——执行最频繁的内核代码片段。它基于非常简单的<strong>蒙特卡洛算法</strong>；<strong>在每次时钟中断发生时，内核确定该中断是否发生在内核态；如果是，内核从堆栈取回中断发生前的eip寄存器的值。并用这个值揭示中断发生前内核正在做什么</strong>。最后，采样数据积聚在“热点”上。</p>
+<p><code>profile_tick()</code>函数为代码监管器采集数据。这个函数在单处理器系统上是由<code>do_timer_interrup()</code>调用的，在多处理器系统上是由<code>smp_local_timer_interrup()</code>函数调用的。</p>
+<p>为了激活代码监管器，在Linux内核启动时必须传递字符串参数<code>profile=N</code>，这里2的N的次方表示要监管的代码段的大小，采集的数据可以从<code>/proc/profile</code>文件中读取。可以通过修改这个文件来重置计数器；在多处理器系统上，修改这个文件还可以改变抽样频率。不过，内核开发者并不直接访问<code>/proc/profile</code>文件，而是用<code>readprofile</code>系统命令。</p>
+<p>Linux2.6内核还包含了另一个监管器，叫做<code>oprofile</code>，<code>oprofile</code>除了更灵活，更可定制外，还能用于发现内核代码，用户态应用程序及系统库中的热点。当使用<code>ofrofile</code>时，<code>profile_tick()</code>调用<code>timer_notify()</code>函数来收集这个新监管器所使用的数据。</p>
+<h3 id="检查非屏蔽中断监视器"><a href="#检查非屏蔽中断监视器" class="headerlink" title="检查非屏蔽中断监视器"></a>检查非屏蔽中断监视器</h3><p>Linux提供了<strong>看门狗系统</strong>，这对于探测引起系统冻结的内核bug可能相当有用。为了激活这样的看门狗，必须在内核启动时传递<code>nmi_watchdog</code>参数。</p>
+<p>看门狗基于本地和I/O APIC一个巧妙的硬件特性；<strong>它们能在每个CPU上产生周期性的NMI中断，因为NMI中断是不能用汇编语言指令cli屏蔽的，所以，即使禁止中断，看门狗也能检测到死锁</strong>。</p>
+<p>因而，一旦每个时钟节拍到来，所有的CPU，不管其正在做什么，都开始执行NMI中断处理程序；该中断处理程序又调用<code>do_nmi()</code>。这个函数获得CPU的逻辑号n，然后检查<code>irq_stat</code>数组第n项的<code>apic_timer_irqs</code>字段。如果该CPU字段工作正常，那么，第n项的值必定不同于在前一个NMI中断中读出的值。当CPU正常运行时，第n项的<code>apic_timer_irq</code>字段就会被本地时钟中断处理程序增加，如果计数器没有增加，说明本地时钟中断处理程序在整个时钟节拍期间根本就没有被执行。</p>
+<p>当NMI中断处理程序检测到一个CPU冻结时，就会敲响所有的钟：它把引起恐慌的信息记录在系统日志文件中，转储该CPU寄存器的内容和内核栈的内容。最后杀死当前进程，这就为内核开发者提供了发现错误的机会。</p>
+<h2 id="软定时器和延迟函数"><a href="#软定时器和延迟函数" class="headerlink" title="软定时器和延迟函数"></a>软定时器和延迟函数</h2><p>定时器<strong>允许在将来的某个时刻，函数在给定的时间间隔用完时被调用</strong>。超时（time-out）表示与定时器相关的时间间隔已经用完的那个时刻。</p>
+<p>每个定时器都包含一个字段，表示定时器将需要多长时间才能到期。这个字段的初值就是<code>jiffies</code>的当前值加上合适的节拍数。这个字段的值不再改变，当jiffies大于或等于这个字段存放的值时，定时器到期。</p>
+<p>Linux考虑两种类型的定时器， 即<strong>动态定时器</strong> (dynamic timer)和<strong>间隔定时器</strong> (internal timer).第一种类型由内核使用，而间隔定时器可以由进程的用户态创建。</p>
+<p>因为对定时器函数的检查总是由可延迟函数进行，而可延迟函数被激活以后很长时间才能被执行，因此，<strong>内核不能确保定时器函数正好在定时期间开始执行，而只能保证在适当的时间执行它们，或者假定延迟到几百毫秒之后执行它们</strong>。</p>
+<h3 id="动态定时器"><a href="#动态定时器" class="headerlink" title="动态定时器"></a>动态定时器</h3><p>动态定时器被动态的创建和撤销，对当前活动的动态定时器的个数没有限制。动态定时器存放在下列<code>timer_list</code>结构中：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timer_list</span>&#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">entry</span>;</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> expires;</span><br><span class="line">	<span class="type">spinlock_t</span> lock;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> magic;</span><br><span class="line">	<span class="type">void</span> (*function)(<span class="type">unsigned</span> <span class="type">long</span>);</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> data;</span><br><span class="line">	<span class="type">tvec_base_t</span> *base;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br><code>function</code>字段包含<strong>定时器到期时执行函数的地址</strong>。<code>data</code>字段指定传递给定时器函数的参数。正是由于data字段，就可以定义一个单独的通用函数来处理多个设备驱动程序的超时问题，在<code>data</code>字段可以存放设备ID，或其它有意义的数据，定时器函数可以用这些数据区分不同的设备。<code>expires</code>字段给出定时器到期时间，时间用节拍数表示，其值为系统启动以来所经历过的节拍数。当<code>expries</code>的值小于或等于<code>jiffies</code>的值时，就说明计时器到期或终止。<code>entry</code>字段用于将软定时器插入双向循环链表队列中，该链表根据定时器<code>expires</code>字段的值将它们分组存放。</p>
+<p>为了创建并激活一个动态定时器，内核必须：</p>
+<ul>
+<li>如果需要，创建一个新的<code>timer_list</code>对象，比如说设为t。这可以通过以下几种方式来进行：<ul>
+<li>在代码中定义一个静态全局变量</li>
+<li>在函数内定义一个局部变量；在这情况下，这个对象存放在内核堆栈中。</li>
+<li>在动态分配的描述符中包含这个对象。</li>
+</ul>
+</li>
+<li>调用<code>init_timer(&amp;t)</code>函数初始化这个对象。实际上是把<code>t.base</code>指针字段置为NULL并把<code>t.lock</code>自旋锁设为”打开”.</li>
+<li>把定时器到期时激活函数的地址存入<code>funciton</code>字段。如果需要，把传递给函数的参数值存入<code>data</code>字段。</li>
+<li>如果动态定时器还没有被插入到链表中，给<code>expires</code>字赋一个合适的值并调用<code>add_timer(&amp;t)</code>函数把t元素插入到合适的链表中。</li>
+<li>否则，如果动态定时器已经插入到链表中，则调用<code>mod_timer()</code>函数来更新<code>expires</code>字段，这样也能将对象插入到合适的链表中。</li>
+</ul>
+<p>一旦定时器到期，内核就自动把元素t从它的链表中删除。不过，有时进程应该用<code>del_timer()</code>、<code>del_timer_sync()</code>或<code>del_singleshot_timer_syn()</code>函数显式地从定时器链表中删除一个定时器。事实上，在定时器到时期之前，睡眠的进程可能被唤醒，在这种情况下，唤醒的进程就可以选定撤消某个定时器。虽然从链表中已删除的定时器上调用<code>del_timer()</code>没什么害处。不过，在定时器函数内删除定时器是一种的习惯做法。</p>
+<p>在linux2.6中，动态定时器需要CPU来激活，也就是说，定时器函数总会在每一个执行<code>add_timer()</code>或稍后执行<code>mod_timer()</code>函数的那同一个CPU上运行。不过，<code>del_timer()</code>及与其类似的函数能使所有动态定时器无效，即使该定时器并不依赖于本地CPU激活。</p>
+<h3 id="动态定时器与竞争条件"><a href="#动态定时器与竞争条件" class="headerlink" title="动态定时器与竞争条件"></a>动态定时器与竞争条件</h3><p>被异步激活的的动态定时器有参与竞争条件的倾向。例如，考虑一个动态定时器，它的函数作用于可丢弃的资源。如果在定时器函数被激活时资源不存在，那么不停止定时器就释放资源势必导致数据结构的崩溃。因此，一种凭经验的做法就是在释放资源前停止定时器:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">del_timer(&amp;t);</span><br><span class="line">X_release_Resources();</span><br></pre></td></tr></table></figure></p>
+<p>然后，在多处理器系统上，这段代码是不安全的，因为当调用<code>del_timer()</code>函数时，定时器函数可能已经在其它CPU上运行了。结果，当定时器函数还作用在资源上时，资源可能被释放。为了避免这种竞争条件，内核提供了<code>del_timer_sync()</code>函数。这个函数从链表中删除定时器，然后检查定时器函数是否还在其它CPU上运行；如果是，<code>del_timer_sync()</code>就等待，直到定时器函数结束。</p>
+<p><code>del_timer_sync()</code>函数相当复杂，而且执行速度慢，因为它必须小心考虑这种情况：定时函数重新激活它自己。如果内核开发者知道定时器从不重新激活定时器，她就能使用更简单更快速的<code>del_singleshot_timer_sync()</code>函数来使定时器无效，并等直到定时器函数结束。</p>
+<p>当然，也存在其它种类的竞争条件。例如，修改已激活定时器<code>expires</code>字段的正确方法是调用<code>mod_timer()</code>，而不是删除定时器随后又创建它。在后一种方法中，要修改同一定时器<code>expires</code>字段的两个内核控制路径可能糟糕地交错在一起。定时器函数在SMP上的安全实现是通过每个<code>timer_list</code>对象包含的lock自旋锁达到的：每当内核必须访问动态定时器的链表时，就禁止中断并猎取这个自旋锁。</p>
+<h3 id="动态定时器的数据结构"><a href="#动态定时器的数据结构" class="headerlink" title="动态定时器的数据结构"></a>动态定时器的数据结构</h3><p>基于一种巧妙的数据结构，即<strong>把<code>expires</code>值划分成不同的大小，并允许动态定时器从大<code>expires</code>值的链表效率到小<code>expires</code>值的链表进行有效的过滤</strong>。此外，在多处理器系统中活动的动态定时器集合被分配到各个不同的CPU中。</p>
+<p>动态定时器的主要数据结构是一个叫做<code>tvec_bases</code>的每CPU变量；它包括<code>NR_CPUS</code>个元素，系统中每个CPU各有一个。每个元素是一个<code>tvec_base_t</code>类型的数据结构，它包含相应CPU中处理动态定时器需要的所有数据。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">typedef struct tvec_t_base_s&#123;</span><br><span class="line">	spinlock_t lock;</span><br><span class="line">	unsigned long timer_jiffies;</span><br><span class="line">	struct timer_list *running_timer;</span><br><span class="line">	tvec_root_t tvl</span><br><span class="line">	tvec_t tv2;</span><br><span class="line">	tvec_t tv3;</span><br><span class="line">	tvec_t tv4;</span><br><span class="line">	tvec_t tv5;</span><br><span class="line">&#125; tver_base_t;</span><br></pre></td></tr></table></figure><br>字段<code>tv1</code>的数据结构为<code>tvec_root_t</code>类型，它包含一个vec数组，这个数组由256个<code>list_head</code>元素组成。这个结构包含了在紧接着到来的255个节拍内将要到期的所有动态定时器。</p>
+<p>字段<code>tv2</code>、<code>tv3</code>和<code>tv4</code>的数据结构都是<code>tvec_t</code>类型，该类型有一个数组vec。这些链表包含在紧接着到来的2的14次减1等几个节拍内将要到期的所有动态定时器。</p>
+<p>字段<code>tv5</code>与前面的字段几乎相同，但唯一区别就是vec数组的最后一项是一个大<code>expires</code>字段值的动态定时器链表。<code>tv5</code>从不需要从其它的数组补充。图6-1用图例说明了5个链表组。<br><img src="/img/1601470801.jpg" alt=""></p>
+<p><code>timer_jiffies</code>字段的值表示需要检查的动态定时器的最早到期时间；如果这个值与<code>jiffies</code>的值一样，说明可延迟函数没有积压；如果这个值小于<code>jiffies</code>，说明前几个节拍相关的可延迟函数必须处理。该字段在系统启动时被设置成<code>jiffies</code>的值，且只能由<code>run_timer_softirq()</code>函数增加它的值。注意当处理动态定时器的可延迟函数在很长一段时间内都没有被执行时，<code>timer_jiffies</code>字段的值表示需要检查的动态定时器的最早到期时间；如果这个值与<code>jiffies</code>的值一样，说明可延迟函数没有积压；如果这个值小于<code>jiffies</code>,说明前几个节拍相关的可延迟函数必须处理。该字段在系统启动时被设置成<code>jiffies</code>的值，且只能由<code>run_timer_softirq()</code>函数增加它的值。注意当处理动态定时器的可延迟函数在很长一段时间内都没有被执行时，<code>timer_jiffies</code>字段可能会落后<code>jiffies</code>许多。</p>
+<p>在多处理器系统中，字段<code>running_timer</code>指向由本地CPU当前正处理的动态定时器<code>timer_list</code>数据结构。</p>
+<h3 id="动态定时器处理"><a href="#动态定时器处理" class="headerlink" title="动态定时器处理"></a>动态定时器处理</h3><p>尽管软定时器具有巧妙的数据结构，但是对其处理是一种耗时的活动，所以不应该被时钟中断处理程序执行。在Linux2.6中该活动由延迟函数来执行，也就是由<code>TIMER_SOFTIRQ</code>软中断行。</p>
+<p><code>run_timer_softirq()</code>函数是与<code>TIMER_SOFTIRQ</code>软中断请求相关的可延迟函数。它实质上执行如下操作：</p>
+<ul>
+<li>把与本地CPU相关的<code>tvec_base_t</code>数据结构的地址存放到base本地变量中。</li>
+<li>获得<code>base-&gt;lock</code>自旋锁并禁止本地中断</li>
+<li>开始执行一个while循环，当<code>base-&gt;timer_jiffies</code>大于<code>jiffies</code>的值时终止，在每一次循环过程中，执行下列子步骤：<ul>
+<li>计算<code>base-&gt;tv1</code>中链表的索引，该索引保存着下一次将要处理的定时器：<code>index =base-&gt;timer_jiffies &amp;255</code></li>
+<li>如果索引值为0，说明<code>base-&gt;tv1</code>中的所有链表已经被检查过了，所以为空；于是该函数通过调用<code>cascade()</code>来过滤动态定时器<ul>
+<li><code>if(!index &amp;&amp; (!cascade(base, &amp;base-&gt;tv2, (base-&gt;timer_jiffies&gt;&gt;8)&amp;63)) &amp;&amp; (!cascade(base, &amp;base-&gt;tv3, (base-&gt;timer_jiffies&gt;&gt;14)&amp;63)) &amp;&amp; (!cascade(base, &amp;base-&gt;tv4, (base-&gt;timer_jiffies&gt;&gt;20)&amp;63)) &amp;&amp; (!cascade(base, &amp;base-&gt;tv4, (base-&gt;timer_jiffies&gt;&gt;26)&amp;63)) )</code></li>
+<li>考虑每一次调用<code>cascade</code>函数的情况：它接收<code>base</code>的地址、<code>base-&gt;tv2</code>的地址、<code>base-&gt;tv2</code>中链表的索引作为参数。该索引值是通过观察<code>base-&gt;timer_jiffies</code>的特殊位上的值决定的。<code>cascade()</code>函数将<code>base-&gt;tv2</code>中链表上的所有动态定时器移动<code>base-&gt;tv1</code>的适当链表上。然后，如果所有<code>base-&gt;tv2</code>中链表不为空，它返回一个正值。如<code>base-&gt;tv2</code>中的链表为空，<code>cascade()</code>将再次被调用，把<code>base-&gt;tv3</code>中的某个链表上包含的定时器填充到<code>base-&gt;tv2</code>上，如此等等。</li>
+</ul>
+</li>
+<li>使<code>base-&gt;timer_jiffies</code>的值加1。</li>
+<li>对于<code>base-&gt;tv1.vec[index]</code>链表上的每一个定时器，执行它所对应的定时器函数。特别说明的时，链表上的每个<code>timer_list</code>元素t实质上执行以下步骤。<ul>
+<li>t从<code>base-&gt;tv1</code>的链表中删除</li>
+<li>在多处理器系统上，将<code>base-&gt;running_timer</code>设置为<code>&amp;t</code></li>
+<li>设置<code>t.base</code>为NULL</li>
+<li>释放<code>base-&gt;lock</code>自旋锁，并允许本地中断</li>
+<li>传递<code>t.data</code>作为参数，执行定时器函数t.function</li>
+<li>获得<code>base-&gt;lock</code>自旋锁，禁止本地中断</li>
+<li>如果有其他定时器，则继续执行</li>
+</ul>
+</li>
+<li>链表上的所有定时器已经被处理。继续执行最外层while循环的下一次循环。</li>
+</ul>
+</li>
+<li>最外层的while循环结束，这就意味着所有到期的定时器已经被处理了。在多处器系统中，设置<code>base-&gt;running_timer</code>为NULL</li>
+<li>释放<code>base-&gt;lock</code>自旋锁并允许本地中断。</li>
+</ul>
+<p>由于<code>jiffies</code>和<code>timer_jiffies</code>的值经常是一样的，所以最外层的while循环常常只执行一次。一般情况下，最外层循环会连续执行<code>jiffies-base-&gt;timer_jiffies+1</code>次。此外，如果在<code>run_timer_softirq()</code>正在执行时发生了时钟中断，那么也得考虑在这个节拍所出现的到期动态定时器，因为jiffies变量的值是由全局时钟中断处理程序异步增加的。</p>
+<p>请注意，就在进入最外层循环前，<code>run_timer_softirq()</code>要禁止中断并获取<code>base-&gt;lock</code>自旋锁；调用每个动态定时器函数前，激活中断并释放自旋锁，直到函数执行结束，这就保证了动态定时器的数据结构不被交错执行的内核控制路径所破坏。</p>
+<p>综上所述可知，这种相当复杂的算法确保了极好的性能。让我们来看看为什么，为了简单起见，假定<code>TIMER_SOFTIRQ</code>软中断正好在相应的时钟中断发生后执行。那么，在256次中出现的255次时钟中断，<code>run_imter_softirq()</code>仅仅运行到期定时器的函数，为了周期性地补充<code>base-&gt;tv1.vec</code>，在64次补充当中，63次足以把<code>base-&gt;tv2</code>指向的链表分成<code>base-&gt;tv1</code>指向的256个链表。依次地，<code>base-&gt;tv2.vec</code>数组必须在0.006%的情况下得到补充，即使16.4秒一次。类似地，每17分28秒补充一次<code>base-&gt;tv3.vec</code>，每18小时38分补充一次<code>base-&gt;tv4.vec</code>，而<code>base-&gt;tv5.vec</code>不需要补充。</p>
+<h2 id="动态定时器应用之一：nanosleep-系统调用"><a href="#动态定时器应用之一：nanosleep-系统调用" class="headerlink" title="动态定时器应用之一：nanosleep()系统调用"></a>动态定时器应用之一：<code>nanosleep()</code>系统调用</h2><p>让我们考虑<code>nanosleep()</code>系统调用的服务例程，即<code>sys_nanosleep()</code>，它接收一个指向<code>timespec</code>结构的指针作为参数，并将调用进程挂起直到特定的时间间隔用完。服务例程首先调用<code>copy_from_user()</code>将包含在<code>timespec</code>结构中的值复制到局部变量t中，接着函数执行：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">current-&gt;state = TASK_INTERRUPTIBLE;</span><br><span class="line">remaining = schedule_timeout(timespec_to_jiffies(&amp;t) + <span class="number">1</span>);</span><br></pre></td></tr></table></figure></p>
+<p><code>timespec_to_jiffies()</code>函数将存放在<code>timespec</code>结构中的时间间隔转换成节拍数。内核使用动态定时器实现进程的延时。他们出现在<code>schedule_timeout()</code>中，执行：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timer_list</span> <span class="title">timer</span>;</span></span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> expire = timeout + jiffies;</span><br><span class="line">init_timer(&amp;timer);</span><br><span class="line">timer.expires = expire;</span><br><span class="line">timer.data = (<span class="type">unsigned</span> <span class="type">long</span>) current;</span><br><span class="line">timer.function = process_timeout;</span><br><span class="line">add_timer(&amp;timer);</span><br><span class="line">schedule(); <span class="comment">//进程挂起直到定时器到时</span></span><br><span class="line">del_singleshot_timer_sync(&amp;timer);</span><br><span class="line">timeout = expire - jiffies;</span><br><span class="line"><span class="keyword">return</span> (timeout &lt; <span class="number">0</span> ? <span class="number">0</span> : timeout);</span><br></pre></td></tr></table></figure></p>
+<p>当schedule()被调用时，选择另一个进程执行；当前一个进程恢复执行时，该函数就删除这个动态定时器。最后的返回值有两种可能，0表示延迟到期，timeout表示如果进程因某些其他原因被唤醒，到延时到期还剩余的节拍数，延时到期时执行下列函数：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">process_timeout</span><span class="params">(<span class="type">unsigned</span> <span class="type">long</span> __data)</span> &#123;</span><br><span class="line">	wake_up_process((<span class="type">task_t</span> *)__data);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>process_timeout()</code>接收进程描述符指针作为参数，挂起的进程被唤醒。进程被唤醒就继续执行<code>sys_nanosleep()</code>，如果<code>schedule_timeout()</code>返回值表明进程延时到期，系统调用结束。</p>
+<h3 id="延迟函数"><a href="#延迟函数" class="headerlink" title="延迟函数"></a>延迟函数</h3><p>动态定时器有很大的设置开销和一个相当大的最小等待时间（1ms），所以使用很不方便，在这种情况下内核使用<code>udelay()</code>和<code>ndelay()</code>，前者接收一个微秒级时间间隔作为参数，并在指定的延迟结束后返回，后者与前者类似，但是指定延迟的参数时纳秒级的。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">udelay</span><span class="params">(<span class="type">unsigned</span> <span class="type">long</span> usecs)</span> &#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> loops;</span><br><span class="line">	loops = (usecs*HZ*current_cpu_data.loops_per_jiffy)/<span class="number">1000000</span>;</span><br><span class="line">	cur_time-&gt;delay(loops);</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> <span class="title function_">ndelay</span><span class="params">(<span class="type">unsigned</span> <span class="type">long</span> nsecs)</span> &#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> loops;</span><br><span class="line">	loops = (nsecs*HZ*current_cpu_data.loops_per_jiffy)/<span class="number">1000000000</span>;</span><br><span class="line">	cur_time-&gt;delay(loops);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>两个函数都依赖于<code>cur_timer</code>定时器对象的delay方法，它接收<code>loops</code>中的时间间隔作为参数。不过每一次<code>loop</code>精确的持续时间取决于<code>cur_timer</code>涉及的定时器对象。</p>
+<ul>
+<li>如果<code>cur_timer</code>指向<code>timer_hpet</code>，<code>timer_pmtmr</code>和<code>timer_tsc</code>对象，那么一次<code>loop</code>对应于一个CPU循环，也就是两个连续CPU时钟信号间的时间间隔；</li>
+<li>如果<code>cur_timer</code>指向对象，那么一次<code>loop</code>对应于一条紧凑指令循环在一次单独的循环中所花费的时间；</li>
+</ul>
+<p>在初始化阶段，<code>select_timer()</code>设置好<code>cur_timer</code>后，内核通过执行<code>calibrate_delay()</code>函数来决定一个节拍里有多少次<code>loop</code>。这个值被保存在<code>current_cpu_data.loops_per_jiffy</code>变量中，这样<code>udelay()</code>和<code>ndelay()</code>就能根据它来把微秒和纳秒转换成<code>loops</code>。</p>
+<p>当然，如果可以利用HPET或TSC硬件电路，那么<code>cur_timer-&gt;delay()</code>方法使用它们来获得精确的时间测量。否则，该方法执行一个紧凑指令循环的loops次循环。</p>
+<h2 id="与定时测量相关的系统调用"><a href="#与定时测量相关的系统调用" class="headerlink" title="与定时测量相关的系统调用"></a>与定时测量相关的系统调用</h2><h3 id="time-和-gettimeofday-系统调用"><a href="#time-和-gettimeofday-系统调用" class="headerlink" title="time() 和 gettimeofday() 系统调用"></a>time() 和 gettimeofday() 系统调用</h3><p>用户态下的进程通过以下几个系统调用获得当前的时间和日期。</p>
+<ul>
+<li><code>time()</code>返回从1970年1月1日午夜（UTC）开始走过的秒数。</li>
+<li><code>gettimeofday()</code>返回从 UTC 开始所走过的秒数及在前 1 秒内走过的微妙数，存放于<code>timeval</code>中。</li>
+</ul>
+<p><code>gettimeofday()</code>由<code>sys_gettimeofday()</code>实现，该函数调用<code>do_gettimeofday()</code>，它执行下列动作：</p>
+<ul>
+<li>为读操作获取<code>xtime_lock</code>顺序锁。</li>
+<li><code>usec = cur_timer-&gt;getoffset();</code>确定自上一次时钟中断以来走过的微妙数。<ul>
+<li><code>cur_timer</code>可能指向对象<code>timer_hpet</code>、<code>timer_pmtmr</code>、<code>timer_tsc</code>、<code>timer_pit</code>，分别获取相应计数器的当前值与上一次时钟中断处理程序时的值比较。</li>
+</ul>
+</li>
+<li>如果某定时器中断丢失，<code>usec += (jiffies - wall_jiffies) * 1000;</code>，<code>usec</code>加上相应的延迟。</li>
+<li><code>usec += (xtime.tv_nsec / 1000);</code>为 usec 加上前 1 秒内走过的微妙数。</li>
+<li>将<code>xtime</code>的内容复制到系统调用参数<code>tv</code>指定的用户空间缓冲区中，并给微秒字段的值加上<code>usec</code>：<code>tv-&gt;tv_sec = xtime-&gt;tv_sec; tv-&gt;tv_usec = usec;</code></li>
+<li>在<code>xtime_lock</code>顺序锁上调用<code>read_seqretry()</code>，如果另一条内核控制路径同时为写操作获得了<code>xtime_lock</code>，跳回步骤 1。</li>
+<li>检查微秒字段是否溢出，如果有必要调整该字段和秒字段：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(tv-&gt;tv_usec &gt;= <span class="number">1000000</span>)&#123;</span><br><span class="line">	tv-&gt;tv_usec -= <span class="number">1000000</span>;</span><br><span class="line">	tv-&gt;tv_sec++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="adjtimex-系统调用"><a href="#adjtimex-系统调用" class="headerlink" title="adjtimex() 系统调用"></a>adjtimex() 系统调用</h3><p><strong>通常把系统配置成能在常规基准上运行时间同步协议</strong>，如网络定时协议（NTP），在每个节拍逐渐调整时间。这依赖于<code>adjtimex()</code>。<code>adjtimex()</code>接收指向<code>timex</code>结构的指针作为参数，用<code>timex</code>自动中的值更新内核参数，并返回具有当前内核值的同一结构。<code>update_wall_time_one_tick()</code>使用这以内核值对每个节拍中加到`xtime.tv_usec``的微秒进行微调。</p>
+<h3 id="setitimer-和-alarm-系统调用"><a href="#setitimer-和-alarm-系统调用" class="headerlink" title="setitimer() 和 alarm() 系统调用"></a>setitimer() 和 alarm() 系统调用</h3><p>Linux允许用户态的进程激活一种叫做<strong>间隔定时器</strong>的特殊定时器。它引起 Unix 信号被周期性地发送到进程，也可能在指定的延时后仅发送一个信号，它由以下两个方面来刻画：</p>
+<ul>
+<li>发送信号所需要的频率</li>
+<li>在下一个信号被产生以前所剩余的时间</li>
+</ul>
+<p><code>setitimer()</code>可激活间隔定时器，第一个参数指定应当采取下面哪一个策略：</p>
+<ul>
+<li><code>ITIMER_REAL</code>，真正过去的时间，进程接收<code>SIGALRM</code>信号。</li>
+<li><code>ITIMER_VIRTUAL</code>，进程在用户态下花费的时间，进程接收<code>SIGVTALRM</code>信号。</li>
+<li><code>ITIMER_PROF</code>，进程既在用户态下又在内核态下所花费的时间，进程接收<code>SIGPROF</code>信号。</li>
+</ul>
+<p>间隔定时器既能一次执行，也能周期循环。<code>setitimer()</code>的第二个参数指向一个<code>itimerval</code>类型的结构，它<strong>指定了定时器初始的持续时间以及定时器被重新激活后使用的持续时间</strong>。<code>setitimer()</code>的第三个参数是一个指针，可选，指向一个<code>itimerval</code>类型的结构，系统调用将先前定时器的参数填充到该结构中。</p>
+<p>为分别实现前述每种策略的定时器，进程描述符包含 3 对字段：</p>
+<ul>
+<li><code>it_real_incr</code>、<code>it_real_value</code></li>
+<li><code>it_virt_incr</code>、<code>it_virt_value</code></li>
+<li><code>it_prof_incr</code>、<code>it_prof_value</code></li>
+</ul>
+<p>每对中的第一个字段存放两个信号之间以节拍为单位的间隔，第二个字段存放定时器当前值。</p>
+<p><code>ITIMER_REAL</code>间隔定时器利用动态定时器实现，因为即使进程不运行，内核也能向其发送信号。每个进程描述符包含一个叫<code>real_timer</code>的动态定时器对象。</p>
+<p><code>setitimer()</code>过程：</p>
+<ul>
+<li>初始化<code>real_timer</code>字段</li>
+<li>调用<code>add_timer()</code>将动态定时器插入到合适的链表中</li>
+<li>定时器到期时，内核执行<code>it_real_fn()</code>函数，并由<code>it_real_fn()</code>函数向进程发送一个<code>SIGALRM</code>信号</li>
+<li>如果<code>it_real_incr</code>不为空，再次设置<code>expires</code>字段，并重新激活定时器</li>
+</ul>
+<p><code>ITIMER_VIRTUAL</code>、<code>ITIMER_PROF</code>间隔定时器不需要动态定时器，因只有进程运行时才会被更新。<code>account_it_virt()</code>、<code>account_it_prof()</code>被<code>update_process_times()</code>调用，而<code>update_process_times()</code>在单处理器系统上被 PIT 的时钟中断处理程序调用，在多处理器上被本地时钟中断处理程序调用。因此，每个节拍中，这两个间隔定时器都会被更新一次，如果到期，就给当前进程发送一个合适的信号。</p>
+<p><code>alarm()</code>会在一个指定的时间间隔用完时向调用的进程发送一个<code>SIGALRM</code>信号，参数为<code>ITIMER_REAL</code>时类似于<code>setitimer()</code>。</p>
+<h3 id="与-POSIX-定时器相关的系统调用"><a href="#与-POSIX-定时器相关的系统调用" class="headerlink" title="与 POSIX 定时器相关的系统调用"></a>与 POSIX 定时器相关的系统调用</h3><p>引入一种新型软定时器，尤其是针对多线程和实时应用程序。这些定时器被称为<strong>POSIX定时器</strong>。执行POSIX定时器必须向用户态程序提供一些POSIX时钟，也就是说虚拟时间源预定义了分辨度和属性。只要想使用POSIX定时器，就创建一个新的定时器资源并指定一个现存的POSIX时钟来作为定时基准。<br><img src="/img/1601534750.jpg" alt=""></p>
+<p>Linux 2.6 内核提供两种类型的 POSIX 时钟：</p>
+<ul>
+<li><code>CLOCK_REALTIME</code>，该虚拟时钟表示系统的实时时钟，本质上是<code>xtime</code>变量的值。<code>clock_getres()</code>系统调用返回的分辨度为 999 848ns，1s 内更新 xtime 约 1000 次。</li>
+<li><code>CLOCK_MONOTONIC</code>，该虚拟时钟表示由于与外部时间源的同步，每次回到初值的系统实时时钟。实际上，该虚拟时钟由<code>xtime</code>和<code>wal_to_monotonic</code>两个变量的和表示。分辨度由<code>clock_getres()</code>返回，为 999 848ns。</li>
+</ul>
+<p>Linux 内核使用动态定时器实现 POSIX 定时器，与<code>ITIMER_REAL</code>间隔定时器相似，但更灵活、可靠，区别如下：</p>
+<ul>
+<li>一个 POSIX 定时器到期时，内核可以发送各种信号给整个多线程应用程序，也可发送给单个指定线程。</li>
+<li>对于 POSIX 定时器，进程可调用<code>timer_getoverrun()</code>系统调用来得到自第一个信号产生以来定时器到期的次数。</li>
+</ul>
+<h1 id="进程调度"><a href="#进程调度" class="headerlink" title="进程调度"></a>进程调度</h1><h2 id="调度策略"><a href="#调度策略" class="headerlink" title="调度策略"></a>调度策略</h2><p>传统 Unix 操作系统的调度必须实现几个冲突的目标：<strong>进程响应时间尽可能快</strong>，<strong>后台作业的吞吐量尽可能高</strong>，<strong>尽可能避免进程的饥饿现象</strong>，<strong>低优先级和高优先级的进程需要尽可能调和</strong>等等。<strong>调度策略</strong>是决定什么时候以怎样的方式为一个新进程选择运行的规则。</p>
+<p>Linux 的调度基于<strong>分时技术</strong>，多个进程以<strong>时间多路复用</strong>方式运行，CPU的时间被分成片，给每个可运行进程分配一片。如果片到期，进程切换就可以执行。调度策略也根据进程的优先级对它们进行分类。<strong>Linux 中，进程的优先级是动态的</strong>。</p>
+<ul>
+<li>进程分类方式一：<ul>
+<li>I/O 受限。频繁使用 I/O 设备，并花费很多时间等待 I/O 操作的完成。</li>
+<li>CPU 受限。需要大量 CPU 时间的数值计算应用程序。</li>
+</ul>
+</li>
+<li>进程分类方式二：<ul>
+<li>交互式进程。如命令 shell，文本编辑程序及图形应用程序。</li>
+<li>批处理进程。如程序设计语言的编译程序。</li>
+<li>实时进程。如视频和音频应用程序、机器人控制程序及从物理传感器收集数据的程序。</li>
+</ul>
+</li>
+</ul>
+<p>一个批处理进程可能是 I/O 受限的（如数据库服务器），或 CPU 受限的（如图像绘制程序）。Linux 中，调度程序可确认实时程序，通过基于进程过去行为的启发式算法（平均睡眠时间）区分交互式程序和批处理程序。通过下表中的系统调用改变调度优先级：<br><img src="/img/1601535244.jpg" alt=""></p>
+<h2 id="进程的抢占"><a href="#进程的抢占" class="headerlink" title="进程的抢占"></a>进程的抢占</h2><p>如果进程进入<code>TASK_RUNNING</code>状态，内核检查到它的动态优先级大于当前正在运行进程的优先级，<code>current</code>的执行被中断，调度程序选择另一个进程运行（通常为刚刚变为可运行的进程）。</p>
+<p>进程当前的时间片到期也可以被抢占。此时，当前进程<code>thread_info</code>结构中的<code>TIF_NEED_RESCHED</code>标志被设置，以便时钟中断处理程序终止时调度程序被调用。被抢占的进程没有被挂起，因为还处于<code>TASK_RUNNING</code>状态，只不过不再使用 CPU。</p>
+<h2 id="一个时间片必须持续多长？"><a href="#一个时间片必须持续多长？" class="headerlink" title="一个时间片必须持续多长？"></a>一个时间片必须持续多长？</h2><p>如果平均时间片太短，进程切换引起的系统额外开销就变得非常高。如果平均时间片太长，进程看起来就不再是并发执行，也会降低系统的响应能力。Linux 单凭经验的方法，即选择尽可能长、同时能保持良好响应时机的一个时间片。</p>
+<h2 id="调度算法"><a href="#调度算法" class="headerlink" title="调度算法"></a>调度算法</h2><p>Linux 2.6 的调度算法较好的解决了与可运行进程数量的比例关系，因为它在固定的时间内（与可运行的进程数量无关）选中要运行的队列，也很好地处理了与处理器数量的比例关系，因为每个CPU都拥有自己的可运行进程队列，较好的解决了区分交互式进程和批处理进程的问题。</p>
+<p>总是至少有个一个可运行进程，即swapper进程，它的PID为0，只有在没有其他进程执行时运行。</p>
+<p>每个 Linux 进程总是按照如下调度类型被调度：</p>
+<ul>
+<li><code>SHED_FIFO</code>，先进先出的实时进程。当调度程序把CPU分配给进程的时候，它把该进程描述符保留在运行队列链表的当前位置。如果没有更高优先级的实时进程，则进程继续使用CPU。</li>
+<li><code>SCHED_RR</code>，时间片轮转的实时进程。把该进程的描述符放在运行队列链表的末尾。</li>
+<li><code>SCHED_NORMAL</code>，普通的分时进程。</li>
+</ul>
+<h3 id="普通进程的调度"><a href="#普通进程的调度" class="headerlink" title="普通进程的调度"></a>普通进程的调度</h3><p>每个普通进程都有静态优先级：100（最高）~ 139（最低）。值越大静态优先级越低。<strong>新进程继承父进程的静态优先级</strong>，但可通过将某些<strong>nice值</strong>传递给<code>nice()</code>和<code>setpriority()</code>改变。</p>
+<h3 id="基本时间片"><a href="#基本时间片" class="headerlink" title="基本时间片"></a>基本时间片</h3><p>静态优先级本质上决定了进程的基本时间片，即进程用完了以前的时间片，系统分配给进程的时间片长度。静态优先级和基本时间片的关系如下：<br><img src="/img/1601614171.jpg" alt=""></p>
+<p>静态优先级越小，基本时间片就越长，通常优先级越高的进程获得更长的CPU时间片。<br><img src="/img/1601614251.jpg" alt=""></p>
+<h3 id="动态优先级和平均睡眠时间"><a href="#动态优先级和平均睡眠时间" class="headerlink" title="动态优先级和平均睡眠时间"></a>动态优先级和平均睡眠时间</h3><p>动态优先级的范围为：100（最高）~ 139（最低），它是调度程序在选择新进程来运行的时候使用的优先级：<code>动态优先级 = max(100, min( 静态优先级 - bonus + 5, 139))</code>。<strong>bonus的值与进程的平均睡眠时间相关，范围0~10，小于5表示降低动态优先级以示惩罚，大于5表示增加动态优先级以示奖赏</strong>。</p>
+<p>粗略地将，平均睡眠时间是进程在睡眠状态所消耗的平均纳秒数，进程在运行的过程中平均睡眠时间递减，不会大于 1s。<br><img src="/img/1601614932.jpg" alt=""></p>
+<p>平均睡眠时间也被调度程序用来判断一个给定进程是交互进程还是批处理进程。如果一个进程满足下式，则被看作交互式进程：<code>动态优先级 ≤ 3 × 静态优先级 / 4 + 28</code>，相当于下面的：<code>bonus - 5 ≥ 静态优先级 / 4 - 28</code>。</p>
+<p>表达式：<code>静态优先级/4-28</code>被称为交互式的δ。应该注意，<strong>高优先级进程比低优先级进程更容易成为交互式进程</strong>。例如，具有最高静态优先级（100）的进程，当它的bonus值超过2，即睡眠时间超过200ms时，就被看作是交互式进程。相反，具有最低静态优先级（139）的进程决不会被当作交互式进程，因<br>为bonus值总是小于11，相应地需要交互式δ等于6。一个具有缺省静态优先级（120）的进程，一但其平均睡眠时间超过700ms，就成为交互式进程。</p>
+<h3 id="活动和过期进程"><a href="#活动和过期进程" class="headerlink" title="活动和过期进程"></a>活动和过期进程</h3><p>当一个较高优先级的进程用完其时间片，应该被还没有用完时间片的低优先级进程取代，为此，调度程序维持两个不相交的可运行进程的集合。</p>
+<ul>
+<li>活动进程：还没有用完时间片的进程，允许运行。</li>
+<li>过期进程：用完了时间片，被禁止运行，直到所有活动进程过期。</li>
+</ul>
+<p>总体方案要稍复杂一些：</p>
+<ul>
+<li>用完时间片的活动批处理进程总是变成过期进程。</li>
+<li>用完时间片的交互式进程仍是活动进程：<strong>调度重新重填其时间片并把它留在活动进程集合中</strong>。</li>
+<li>当最老的过期进程等待了很久，或过期进程比交互式进程的静态优先级高，调度程序把用完时间片的交互式进程移到过期进程集合。</li>
+<li>活动进程集合最终会变为空，过期进程将有机会运行。</li>
+</ul>
+<h3 id="实时进程的调度"><a href="#实时进程的调度" class="headerlink" title="实时进程的调度"></a>实时进程的调度</h3><p>每个实时进程都有实时优先级，范围 1（最高）~ 99（最低）。调度程序总是让优先级高的进程运行，实时进程运行的过程中禁止低优先级进程的运行。<strong>实时进程总是被当成活动进程</strong>。用户可通过<code>sched_setparam()</code>和<code>sched_setscheduler()</code>改变进程的实时优先级。</p>
+<p>只有如下事情发生，实时进程才会被另一个进程取代：</p>
+<ul>
+<li>进程被另外一个具有更高优先级的实时进程抢占。</li>
+<li>进程执行了阻塞操作并进入睡眠（处于<code>TASK_INTERRUPTIBLE</code>或<code>TASK_UNINTERRUPTIBLE</code>状态）。</li>
+<li>进程停止（处于<code>TASK_STOPPED</code>或<code>TASK_TRACED</code>状态）或被杀死（处于<code>EXIT_ZOMBIE</code>或<code>EXIT_DEAD</code>状态）。</li>
+<li>进程通过调用<code>sched_yield()</code>自愿放弃 CPU。</li>
+<li>进程是基于时间片轮转的实时进程（<code>SCHED_RR</code>)，且用完了时间片。</li>
+</ul>
+<p>当系统调用<code>nice()</code>和<code>setpriority()</code>用于基于时间片轮转的实时进程时，<strong>不改变实时进程的优先级而会改变其基本时间片的长度</strong>。</p>
+<h2 id="调度程序所使用的数据结构"><a href="#调度程序所使用的数据结构" class="headerlink" title="调度程序所使用的数据结构"></a>调度程序所使用的数据结构</h2><p>进程链表链接所有的进程描述符，运行队列链表链接所有的可运行进程（处于<code>TASK_RUNNING</code>状态的进程）的进程描述符，swapper 进程（idle 进程）除外。</p>
+<h3 id="数据结构-runqueue"><a href="#数据结构-runqueue" class="headerlink" title="数据结构 runqueue"></a>数据结构 runqueue</h3><p><code>runqueue</code>结构存放在<code>runqueues</code>每 CPU 变量中。宏<code>this_rq()</code>产生本地 CPU 运行队列的地址，宏<code>cpu_rq(n)</code>产生索引为n的 CPU 运行队列的地址。<br><img src="/img/202009261104.png" alt=""></p>
+<p>最重要的字段是与可运行进程的链表相关的字段。系统中的每个可运行进程属于且只属于一个运行队列。只要可运行进程保持在同一个运行队列，它就只可能在拥有该运行队列的CPU上执行。</p>
+<p><code>arrays</code>是一个包含两个<code>prio_array_t</code>的数组，每个数据结构都表示一个可运行进程的集合。两个数据结构的作用会发生周期性的变化：活动进程突然变成过期进程，过期进程变为活动进程。调度程序简单地交换运行队列的 active 和 expired 字段的内容完成这种变化。<br><img src="/img/1601617537.jpg" alt=""></p>
+<h3 id="进程描述符"><a href="#进程描述符" class="headerlink" title="进程描述符"></a>进程描述符</h3><p>每个进程描述符都包含几个与调度相关的字段。<br><img src="/img/1601617873.jpg" alt=""></p>
+<p>新进程被创建时，<code>copy_process()</code>调用<code>sched_fork()</code>用下述方法设置<code>current</code>父进程和<code>p</code>子进程的<code>time_slice</code>字段：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">p-&gt;time_slice = (current-&gt;time_slice + <span class="number">1</span>) &gt;&gt; <span class="number">1</span>;</span><br><span class="line">current-&gt;time_slice &gt;&gt; = <span class="number">1</span>;</span><br></pre></td></tr></table></figure></p>
+<p>父进程剩余的节拍数被划分成两等份：一份给自己，另一份给子进程。避免因为创建过多子进程而占用太多时间片，一个进程不能通过创建多个后代来霸占资源。</p>
+<p>如果父进程的时间片只剩下一个时钟节拍，则<code>current-&gt;time_slice</code>置为0。<code>copy_process()</code>把<code>current-time_slice</code>重新置为 1，然后调用<code>scheduler_tick()</code>递减该字段。</p>
+<p><code>copy_process()</code>也初始化子进程描述符中与进程调度相关的字段：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">p-&gt;first_time_slice = <span class="number">1</span>;       <span class="comment">// 因为子进程没有用完它的时间片，所以设置为 1</span></span><br><span class="line">p-&gt;timestamp = sched_clock();  <span class="comment">// 返回被转换成纳秒的 64 位仅存去 TSC 的内容</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="调度程序所使用的函数"><a href="#调度程序所使用的函数" class="headerlink" title="调度程序所使用的函数"></a>调度程序所使用的函数</h2><p>调度程序依靠几个函数完成调度工作</p>
+<ul>
+<li><code>scheduler_tick()</code>：维持当前最新的<code>time_slice</code>计数器</li>
+<li><code>try_to_wake_up()</code>：唤醒睡眠进程</li>
+<li><code>recalc_task_prio()</code>：更新进程的动态优先级</li>
+<li><code>schedule()</code>：选择要被执行的新进程</li>
+<li><code>load_balance()</code>：维持多处理器系统中运行队列的平衡</li>
+</ul>
+<h3 id="scheduler-tick"><a href="#scheduler-tick" class="headerlink" title="scheduler_tick()"></a>scheduler_tick()</h3><p>主要步骤如下：</p>
+<ul>
+<li>将转换为纳秒的 TSC 值存入本地运行队列的<code>timestamp_last_tick</code>字段。TSC值从<code>sched_clock()</code>获得。</li>
+<li>如果进程是本地 CPU 的 swapper 进程，执行下列步骤：<ul>
+<li>如果本地运行队列还包括另外一个可运行的进程，就设置当前进程的<code>TIF_NEED_RESCHED</code>字段，强制重新调度。</li>
+<li>跳到第 7 步（没必要更新 swapper 进程的时间片计数器）。</li>
+</ul>
+</li>
+<li>如果<code>current-&gt;array</code>没有指向本地运行队列的活动链表，说明进程已经过期但还没有被替换，则设置<code>TIF_NEED_RESCHED</code>标志，强制重新调度，跳到第 7 步。</li>
+<li>获得<code>this_rq()-&gt;lock</code>自旋锁。</li>
+<li>递减当前进程的时间片计数器，如果已经用完时间片，则根据进程的调度类型进行相应操作，稍后讨论。</li>
+<li>释放<code>this_rq()-&gt;lock</code>自旋锁。</li>
+<li>调用<code>reabalance_tick()</code>，保证不同 CPU 的运行队列的可运行进程数量基本相同。</li>
+</ul>
+<h3 id="更新实时进程的时间片"><a href="#更新实时进程的时间片" class="headerlink" title="更新实时进程的时间片"></a>更新实时进程的时间片</h3><p>对于先进先出的实时进程，<code>scheduler_tick()</code>什么也不做，因为<code>current</code>不可能被其他低优先级或等优先级的进程抢占，维持最新时间片计数器没有意义。</p>
+<p>对于基于时间片轮转的实时进程，<code>scheduler_tick()</code>递减其时间片计数器，如果时间片被用完，执行一系列操作以达到抢占当前进程的目的：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(current-&gt;policy == SCHED_RR &amp;&amp; !--current-&gt;time_slice)&#123;</span><br><span class="line">	current-&gt;time_slice = task_timeslice(current);</span><br><span class="line">	current-&gt;first_time_slice = <span class="number">0</span>;</span><br><span class="line">	set_tsk_need_resched(current);</span><br><span class="line">	list_del(&amp;current-&gt;run_list);</span><br><span class="line">	list_add_tail(&amp;current-&gt;run_list, this_rq()-&gt;active-&gt;<span class="built_in">queue</span>+current-&gt;prio); <span class="comment">// 然后把进程重新插入到同一个活动链表的尾部</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>第一步操作包括调用<code>task_timeslice()</code>来重填进程的时间片计数器，根据进程的静态优先级返回相应的基本时间片。此外，<code>current</code>的<code>first_time_slice</code>字段被清零，该标志被<code>fork()</code>中的<code>copy_process()</code>设置，并在进程的第一个时间片刚一用完立即清0。</p>
+<p>第二步，<code>scheduler_tick()</code>调用函数<code>set_tsk_need_resched()</code>设置进程的<code>TIF_NEED_RESCHED</code>标志，强制调用<code>schedule()</code>函数，使<code>current</code>被另一个具有相同或更高优先级的实时进程取代。</p>
+<p><code>scheduler_tick()</code>最后一步把进程描述符移到与当前进程优先级相对应的运行队列活动链表尾部。把<code>current</code>指向的进程放到链表尾部，保证在每个优先级与它相同的可运行实时进程获得CPU时间片以前，它不会再次运行。这是基于时间片的轮转，进程描述符的移动首先调用<code>list_del()</code>把进程从运行队列的活动链表中删除，之后调用<code>list_add_tail()</code>把进程重新插入到同一个活动链表尾部。</p>
+<h3 id="更新普通进程的时间片"><a href="#更新普通进程的时间片" class="headerlink" title="更新普通进程的时间片"></a>更新普通进程的时间片</h3><p>如果当前进程是普通进程，<code>scheduler_tick()</code>执行如下操作：</p>
+<ul>
+<li>递减时间片计数器（<code>current-&gt;time_slice</code>)</li>
+<li>如果时间片用完，执行下列操作：<ul>
+<li><code>dequeue_task()</code>从可运行进程的<code>this_rq()-&gt;active</code>集合中删除<code>current</code></li>
+<li><code>set_tsk_need_resched()</code>设置<code>TIF_NEED_RESCHED</code>标志。</li>
+<li>更新<code>current</code>的动态优先级：<code>current-&gt;prio = effective_prio(current);</code><ul>
+<li><code>effective_prio()</code>读<code>current</code>的<code>static_prio</code>和<code>sleep_avg</code>字段，计算进程的动态优先级。</li>
+</ul>
+</li>
+<li>重填进程的时间片：<code>current-&gt;time_slice = task_timeslice(current);</code>和<code>current-&gt;first_time_slice = 0;</code></li>
+<li>如果本地运行队列的数据结构的<code>expired_timestamp</code>字段等于0（过期进程集合为空），把当前时钟节拍的值赋给<code>expired_timestamp</code>：<ul>
+<li><code>if(!this_rq()-&gt;expired_timestamp) this_rq()-&gt;expired_timestamp = jiffies;</code></li>
+</ul>
+</li>
+<li>把当前进程插入活动进程集合或过期进程集合：</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 如果进程是一个非交互式进程，TASK_INTERACTIVE 宏产生值 0</span><br><span class="line">// EXPIRED_STARVING 宏检查到运行队列中的第一个过期进程的等待时间已经超过 1000 个时钟节拍乘以运行队列中的可运行进程数加1，产生值 1</span><br><span class="line">// 如果当前进程的静态优先级大于一个过期进程的静态优先级，EXPIRED_STARVING 宏也产生值 1</span><br><span class="line">if(!TASK_INTERACTIVE(current) || EXPIRED_STARVING(this_rq())&#123;  </span><br><span class="line">	enqueue_task(current, this_rq()-&gt;expired);  // 插入过期进程集合</span><br><span class="line">	if(current-&gt;static_prio &lt; this_rq()-&gt;best_expired_prio)</span><br><span class="line">		this_rq()-&gt;best_expired_prio = current-&gt;static_prio;</span><br><span class="line">&#125;</span><br><span class="line">else</span><br><span class="line">	enqueue_task(current, this_rq()-&gt;active);   // 插入活动进程集合</span><br></pre></td></tr></table></figure>
+<ul>
+<li>否则，时间片没有用完（<code>current-&gt;time_slice</code>不等于 0），检查当前进程的剩余时间片是否太长：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// bonus = TIMESLICE_GRANULARIT 宏产生的 CPU 的数量 * 比例常量 的乘积</span><br><span class="line">// 具有高静态优先级的交互式进程，其时间片被分成大小为 TIMESLICE_GRANULARITY 的几个片段，以使这些进程不会独占 CPU</span><br><span class="line">if(TASK_INTERACTIVE(p) &amp;&amp; !((task_timeslice(p) - p-&gt;time_slice) % TIMESLICE_GRANULARIT(p)) &amp;&amp; </span><br><span class="line">	(p-&gt;time_slice &gt;= TIMESLICE_GRANULARITY(p)) &amp;&amp; (p-&gt;array == rq-&gt;active)) &#123;</span><br><span class="line">	list_del(&amp;current-&gt;run_list);</span><br><span class="line">	list_add_tail(&amp;current-&gt;run_list, this_rq()-&gt;active-&gt;queue+current-&gt;prio);</span><br><span class="line">	set_tsk_need_resched(p);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="try-to-wake-up"><a href="#try-to-wake-up" class="headerlink" title="try_to_wake_up()"></a>try_to_wake_up()</h3><p>通过将进程状态设置为<code>TASK_RUNNING</code>，并把该进程插入本地 CPU 的运行队列来唤醒睡眠或停止的进程。参数：</p>
+<ul>
+<li>被唤醒进程的进程描述符<code>p</code></li>
+<li>可被唤醒的进程状态掩码<code>state</code></li>
+<li>标志<code>sync</code>，禁止被唤醒的进程抢占本地 CPU 上正在运行的进程</li>
+</ul>
+<p>执行下列操作：</p>
+<ol>
+<li><code>task_rq_lock()</code>禁用本地中断，获得最后执行进程的 CPU 所拥有的运行队列<code>rq</code>的锁。CPU的逻辑号存储在<code>p-&gt;thread_info-&gt;cpu</code>字段。</li>
+<li>如果进程的状态<code>p-&gt;state</code>不属于参数<code>state</code>（状态掩码），跳到第 9 步，终止函数。</li>
+<li>如果<code>p-&gt;array != NULL</code>，那么进程已经属于某个运行队列，跳到第 8 步。</li>
+<li>多处理器系统中，检查要被唤醒的进程是否应该迁移到另一个 CPU 的运行队列，根据以下启发式规则选择一个目标运行队列：<ol>
+<li>空闲 CPU 的运行队列。</li>
+<li>先前工作量较小的 CPU 运行队列。</li>
+<li>如果进程最近被执行过，选择老的运行队列 。</li>
+<li>工作量较小的本地 CPU 运行队列。</li>
+</ol>
+</li>
+<li>如果进程处于<code>TASK_UNINTERRUPTIBLE</code>状态，递减目标运行队列的<code>nr_uninterruptible</code>字段，<code>p-&gt;activeted = -1</code>。</li>
+<li>调用<code>activate_task()</code>，执行下列步骤：<ol>
+<li><code>sched_clock()</code>获得以纳秒为单位的当前时间戳。如果目标 CPU 不是本地 CPU，补偿本地时钟中断的偏差：<code>now = (sched_clock() - this_rq()-&gt;timestamp_last_tick) + rq-&gt;timestamp_last_tick;</code></li>
+<li><code>recalc_task_prio()</code>，参数为进程描述符指针、上一步计算出的时间戳now</li>
+<li>根据情况设置<code>p-&gt;activated</code>字段。</li>
+<li><code>p-&gt;timestamp = now;</code></li>
+<li>把进程描述符插入活动进程集合：<code>enqueue_task(p, rq-&gt;active); rq-&gt;nr_running++;</code></li>
+</ol>
+</li>
+<li>如果目标 CPU 不是本地 CPU，或没有设置<code>sync</code>标志，就检查可运行的新进程的动态优先级是否比<code>rq</code>运行队列中当前进程的动态优先级高，如果<code>p-&gt;prio &lt; rq-&gt;curr-&gt;prio</code>，调用<code>resched_task()</code>抢占<code>rq-&gt;curr</code>。<ol>
+<li>单处理器系统中，<code>resched_task()</code>仅执行<code>set_tsk_need_resched()</code>设置<code>rq-&gt;curr</code>的<code>TIF_NEED_RESCHED</code>标志；</li>
+<li>多处理器系统中，<code>resched_task()</code>如果发现<code>TIF_NEED_RESCHED</code>的旧值为0、目标CPU与本地CPU不同、<code>rq-&gt;curr</code>进程的<code>TIF_POLLING_NRFLAG</code>的标志清0，调用<code>smp_send_reschedule()</code>产生 IPI，强制目标 CPU 重新调度。</li>
+</ol>
+</li>
+<li>把进程的<code>p-&gt;state</code>置为<code>TASK_RUNNING</code>。</li>
+<li><code>task_rq_unlock()</code>打开<code>rq</code>运行队列的锁并打开本地中断。</li>
+<li>成功唤醒进程返回 1，否则返回 0。</li>
+</ol>
+<h3 id="recalc-task-prio"><a href="#recalc-task-prio" class="headerlink" title="recalc_task_prio()"></a>recalc_task_prio()</h3><p>更新进程的平均睡眠时间<code>p-&gt;sleep_avg</code>和动态优先级<code>p-&gt;prio</code>。参数：</p>
+<ul>
+<li>进程描述符的指针<code>p</code></li>
+<li>由<code>sched_clock()</code>计算出的当前时间戳<code>now</code></li>
+</ul>
+<p>执行下述操作：</p>
+<ol>
+<li>把<code>min(now - p-&gt;timestamp, 10^9);</code>的结果赋值给<code>sleep_time</code>。<code>p-&gt;timestamp</code>包含导致进程进入睡眠状态的进程切换的时间。因此<code>sleep_time</code>是进程从最后一次执行开始，消耗在睡眠状态的纳秒数</li>
+<li>如果<code>sleep_time</code>不大于0，不需要更新进程的平均睡眠时间，跳到第 8 步。</li>
+<li>如果进程不是内核线程、从<code>TASK_UNINTERRUPTIBLE</code>状态被唤醒（<code>p-&gt;activated等于-1</code>）、连续睡眠的时间超过睡眠极限，则<code>p-&gt;sleep_avg</code>设置为相当于900时钟节拍的值，然后跳到第 8 步。</li>
+<li>执行<code>CURRENT_BONUS</code>宏计算进程原来的平均睡眠时间的<code>bonus</code>值，如果<code>10 - bonus</code>大于0，函数用这个值与<code>sleep_time</code>相乘。因为将要把<code>sleep_time</code>加到进程的平均睡眠时间上，所以当前平均睡眠时间越短，它增加的就越快。</li>
+<li>如果进程处于<code>TASK_UNINTERRUPTIBLE</code>状态但不是内核线程，执行下述步骤：<ol>
+<li>如果平均睡眠时间<code>p-&gt;sleep_avg</code>大于睡眠时间极限，<code>sleep_time</code>置为0，不用调整平均睡眠时间，跳到第 6 步。</li>
+<li>如果<code>sleep_time + p-&gt;sleep_avg</code>大于等于睡眠时间极限，<code>p-&gt;sleep_avg</code>置为睡眠时间极限并把<code>sleep_time</code>置为0。</li>
+<li>通过对进程平均睡眠时间的轻微限制，函数不会对睡眠时间长的批处理进程给予过多奖赏。</li>
+</ol>
+</li>
+<li>把<code>sleep_time</code>加到平均睡眠时间<code>p-&gt;sleep_avg</code>上。</li>
+<li>检查<code>p-&gt;sleep_avg</code>是否超过1000个以纳秒为单位的时钟节拍，如果是，函数就把<code>p-&gt;sleep_avg</code>减到1000个时钟节拍。</li>
+<li>更新进程的动态优先级：<code>p-&gt;prio = effective_prio(p)</code></li>
+</ol>
+<h3 id="schedule"><a href="#schedule" class="headerlink" title="schedule()"></a>schedule()</h3><p><code>schedule()</code>实现调度程序。从运行队列链表中找到一个进程，并随后将 CPU 分配给这个进程。<code>schedule()</code>可由几个内核控制路径调用，可采取直接调用或延迟调用的方式。</p>
+<h4 id="直接调用"><a href="#直接调用" class="headerlink" title="直接调用"></a>直接调用</h4><p>如果<code>current</code>进程未获得必需的资源而阻塞，就直接调用调度程序。要阻塞的内核路径执行下述步骤：</p>
+<ol>
+<li>把<code>current</code>进程插入适当的等待队列。</li>
+<li>把<code>current</code>进程的状态改为<code>TASK_INTERRUPTIBLE</code>或<code>TASK_UNINTERRUPTIBLE</code>。</li>
+<li>调用<code>schedule()</code>。</li>
+<li>如果资源不可用，跳到第 2 步；否则，从等待队列中删除<code>current</code>进程。</li>
+<li>一旦资源可用，就从等待队列中删除<code>current</code>进程</li>
+</ol>
+<h4 id="延迟调用"><a href="#延迟调用" class="headerlink" title="延迟调用"></a>延迟调用</h4><p>也可以把<code>current</code>进程的<code>TIF_NEED_RESCHED</code>标志置为1，而以延迟方式调用调度程序。每次在恢复用户进程的执行之前会检查该标志。延迟调用调度程序的例子：</p>
+<ul>
+<li><code>current</code>进程用完时间片，由<code>scheduler_tick()</code>完成<code>schedule()</code>的延迟调用。</li>
+<li>被唤醒进程的优先级高于当前进程，<code>try_to_wake_up()</code>完成<code>schedule()</code>的延迟调用。</li>
+<li>发出系统调用<code>sched_setscheduler()</code>时。</li>
+</ul>
+<h4 id="进程切换前schedule-所执行的操作"><a href="#进程切换前schedule-所执行的操作" class="headerlink" title="进程切换前schedule()所执行的操作"></a>进程切换前<code>schedule()</code>所执行的操作</h4><p><code>schedule()</code>的任务是用另一个进程来替换当前正在执行的进程，关键是设置一个叫做<code>next</code>的变量，它指向被选中的进程，以取代<code>current</code>进程。<br>如果系统中没有优先级高于<code>current</code>进程的可运行进程，那么<code>next</code>与<code>current</code>相等，不发生进程切换。</p>
+<p><code>schedule()</code>首先禁用内核抢占，初始化一些局部变量：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">need_resched:</span><br><span class="line">preempt_disable();</span><br><span class="line">prev = current;    </span><br><span class="line">rq = this_rq();</span><br></pre></td></tr></table></figure></p>
+<p>把<code>current</code>返回的指针赋给<code>prev</code>，并把与本地 CPU 对应的运行队列赋给rq。</p>
+<p>下一步<code>current()</code>保证<code>prev</code>不占用大内核锁：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(prev-&gt;lock_depth &gt;= <span class="number">0</span>)</span><br><span class="line">	up(&amp;kernel_sem);</span><br></pre></td></tr></table></figure></p>
+<p>调用<code>sched_clock()</code>获取TSC，将其值转换为纳秒，存放在<code>now</code>中。然后计算<code>prev</code>所用的CPU时间片长度。通常使用限制在1s内的时间。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">now = sched_clock();</span><br><span class="line">run_time = now - prev-&gt;timestamp;</span><br><span class="line"><span class="keyword">if</span>(run_time &gt; <span class="number">1000000000</span>)</span><br><span class="line">	run_time = <span class="number">1000000000</span>;  <span class="comment">// 限制在 1s</span></span><br></pre></td></tr></table></figure></p>
+<p>优待有较长平均睡眠时间的进程：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run_time /= (CURRENT_BONUS(pre) ? : 1);</span><br></pre></td></tr></table></figure><br><code>CURRENT_BONUS</code>返回 0~10 之间的值，它与进程的平均睡眠时间成正比。</p>
+<p>寻找可运行进程前，<code>schedule()</code>必须关掉本地中断，并获得所要保护的运行队列的自旋锁：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spin_lock_irq(&amp;rq-&gt;lock);</span><br></pre></td></tr></table></figure></p>
+<p><code>prev</code>可能是一个正在被终止的进程，<code>schedule()</code>通过检查<code>PF_EDAD</code>标志验证：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if(prev-&gt;flags &amp; PF_DEAD)</span><br><span class="line">	prev-&gt;state = EXIT_DEAD;</span><br></pre></td></tr></table></figure></p>
+<p>接下来<code>schedule()</code>检查<code>prev</code>的状态。如果不是可运行状态，且没有在内核态被抢占，就从运行队列删除<code>prev</code>进程。但是，如果它有非阻塞挂起信号，且状态为<code>TASK_INTERRUPTIBLE</code>，将该进程的状态设置为<code>TASK_RUNNING</code>，并插入运行队列，给<code>prev</code>一次被选中执行的机会：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(prev-&gt;state != TASK_RUNNING &amp;&amp; !(preempt_count() &amp; PREEMPT_ACTIVE))</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(prev-&gt;state == TASK_INTERRUPTIBLE &amp;&amp; signal_pending(prev))</span><br><span class="line">		prev-&gt;state = TASK_RUNNING;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">if</span>(prev-&gt;state == TASK_UNINTERRUPTIBLE)</span><br><span class="line">			rq-&gt;nr_uninterruptible++;</span><br><span class="line">		deactivate_task(prev, rq);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>deactivate_task()</code>从运行队列中删除该进程：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rq-&gt;nr_running--;</span><br><span class="line">dequeue_task(p, p-&gt;<span class="built_in">array</span>);</span><br><span class="line">p-&gt;<span class="built_in">array</span> = <span class="literal">NULL</span>;</span><br></pre></td></tr></table></figure></p>
+<p>现在，<code>schedule()</code>检查运行队列中剩余的可运行进程数。如果有可运行的进程，就调用<code>dependent_sleeper()</code>，绝大多数情况下，该函数立即返回 0。但是，如果内核支持超线程技术，如果被选中执行的进程优先级比已经在相同物理 CPU 的某个逻辑 CPU 上运行的兄弟进程低，则<code>schedule()</code>拒绝选择该进程，而执行<code>swapper</code>进程：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(rq-&gt;nr_running)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(dependent_sleeper(smp_processor_id(), rq))</span><br><span class="line">	&#123;</span><br><span class="line">		next = rq-&gt;idle;</span><br><span class="line">		<span class="keyword">goto</span> switch_tasks;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果运行队列中没有可运行的进程，则调用<code>idle_balance()</code>从另外一个运行队列迁移一些可运行进程过来。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">if</span>(!rq-&gt;nr_running)</span><br><span class="line">&#123;</span><br><span class="line">	idle_balance(smp_processor_id(), rq);</span><br><span class="line">	<span class="keyword">if</span>(!rq-&gt;nr_running)</span><br><span class="line">	&#123;</span><br><span class="line">		next = rq-&gt;idle;</span><br><span class="line">		rq-&gt;expired_timestamp = <span class="number">0</span>;</span><br><span class="line">		wake_sleeping_dependent(smp_processor_id(), rq);</span><br><span class="line">		<span class="keyword">if</span>(!rq-&gt;nr_running)</span><br><span class="line">			<span class="keyword">goto</span> switch_tasks;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果<code>idle_balance()</code>没有迁移成功，当内核支持超线程技术时，<code>schedule()</code>调用<code>wake_sleeping_dependent()</code>重新调度空闲CPU的可运行进程。然而，在单处理器系统中，迁移失败时，将<code>swapper</code>进程作为<code>next</code>进程。</p>
+<p>假设运行队列中有可运行进程，<strong>现在检查这些可运行进程中是否至少有一个进程是活动的</strong>。如果没有，则交换运行队列结构的<code>active</code>和<code>expired</code>字段。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">array</span> = rq-&gt;active;</span><br><span class="line"><span class="keyword">if</span>(!<span class="built_in">array</span>-&gt;nr_active)</span><br><span class="line">&#123;</span><br><span class="line">	rq-&gt;active = rq-&gt;expired;</span><br><span class="line">	rq-&gt;expired = <span class="built_in">array</span>;</span><br><span class="line">	<span class="built_in">array</span> = rq-&gt;active;</span><br><span class="line">	rq-&gt;expired_timestamp = <span class="number">0</span>;</span><br><span class="line">	rq-&gt;best_expired_prio = <span class="number">140</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>现在可在活动<code>prio_array_t</code>中搜索一个可运行的进程了。首先<code>schedule()</code>搜索进程集合掩码的第一个非0位，其下标对应包含最佳运行进程的链表。随后，返回该链表的第一个进程描述符：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">idx = sched_find_first_bit(<span class="built_in">array</span>-&gt;bitmap);</span><br><span class="line">next = list_entry(<span class="built_in">array</span>-&gt;<span class="built_in">queue</span>[idx].next, <span class="type">task_t</span>, run_list); </span><br></pre></td></tr></table></figure></p>
+<p><code>sched_find_first_bit()</code>基于<code>bsfl</code>汇编指令，返回 32 位数组中被设置为 1 的最低位的位下标。<code>next</code>存放将取代<code>prev</code>的进程描述符指针。</p>
+<p><code>schedule()</code>检查<code>next-&gt;activated</code>字段，表示进程被唤醒时的状态。<br><img src="/img/1601704898.jpg" alt=""></p>
+<p>如果<code>next</code>是一个普通进程，正在从<code>TASK_INTERRUPTIBLE</code>或<code>TASK_STOPPED</code>状态被唤醒，调度程序就把自从进程插入运行队列开始所经过的纳秒数加到进程的平均睡眠时间中。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(next-&gt;prio &gt;= <span class="number">100</span> &amp;&amp; next-&gt;activated &gt; <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> delta = now - next-&gt;timestamp;</span><br><span class="line">	<span class="keyword">if</span>(next-&gt;activated == <span class="number">1</span>)</span><br><span class="line">		delta = (delta * <span class="number">38</span>) / <span class="number">128</span>;</span><br><span class="line">	<span class="built_in">array</span> = next-&gt;<span class="built_in">array</span>;</span><br><span class="line">	dequeue_task(next, <span class="built_in">array</span>);</span><br><span class="line">	recalc_task_prio(next, next-&gt;timestamp + delta);</span><br><span class="line">	enqueue_task(next, <span class="built_in">array</span>);</span><br><span class="line">&#125;</span><br><span class="line">next-&gt;activated = <span class="number">0</span>;</span><br></pre></td></tr></table></figure></p>
+<h4 id="schedule-进行进程切换时所执行的操作"><a href="#schedule-进行进程切换时所执行的操作" class="headerlink" title="schedule()进行进程切换时所执行的操作"></a>schedule()进行进程切换时所执行的操作</h4><p><code>schedule()</code>已经要让<code>next</code>进程运行，内核将立刻访问<code>next</code>进程的<code>thread_info</code>，其地址存放在<code>next</code>进程描述符接近顶部的位置。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">switch_tasks:</span><br><span class="line">prefetch(next);</span><br></pre></td></tr></table></figure><br><code>prefetch()</code>提示CPU把<code>next</code>进程的描述符第一部分字段装入硬件高速缓存。</p>
+<p>在替代 prev 前，调度程序应该完成一些管理的工作，以防以延迟方式调用<code>schedule()</code>，<code>clear_tsk_need_resched()</code>清除<code>prev</code>的<code>TIF_NEED_RESCHED</code>标志。然后函数记录CPU正在经历静止状态。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">clear_tsk_need_resched(prev);</span><br><span class="line">rcu_qsctr_inc(prev-&gt;thread_info-&gt;cpu);  // CPU 正在经历静止状态</span><br></pre></td></tr></table></figure></p>
+<p><code>schedule()</code>必须减少<code>prev</code>的平均睡眠时间，并把它补充给进程所使用的CPU时间片，随后更新进程的时间戳：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">prev-&gt;sleep_avg -= run_time;</span><br><span class="line"><span class="keyword">if</span>((<span class="type">long</span>)prev-&gt;sleep_avg &lt;= <span class="number">0</span>)</span><br><span class="line">	prev-&gt;sleep_avg = <span class="number">0</span>;</span><br><span class="line">prev-&gt;timestamp = prev-&gt;last_ran = now;</span><br></pre></td></tr></table></figure></p>
+<p><code>prev</code>和<code>next</code>可能是同一个进程，这时函数不作进程切换：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(prev == next)</span><br><span class="line">&#123;</span><br><span class="line">	spin_unlock_irq(&amp;rq-&gt;lock);</span><br><span class="line">	<span class="keyword">goto</span> finish_schedule;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>否则，进程切换：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">next-&gt;timestamp = now;</span><br><span class="line">rq-&gt;nr_switches++;</span><br><span class="line">rq-&gt;curr = next;</span><br><span class="line">prev = context_switch(rq, prev, next);</span><br></pre></td></tr></table></figure></p>
+<p><code>context_switch()</code>建立<code>next</code>的地址空间。进程描述符的<code>active_mm</code>字段指向进程所使用的内存描述符，而<code>mm</code>字段指向进程所拥有的内存描述符。对于一般进程，这两个字段地址相同；而内核线程没有自己的地址空间，<code>mm</code>总是被置为 NULL。<code>context_switch()</code>确保，如果<code>next</code>是一个内核线程，使用<code>prev</code>所使用的地址空间：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!next-&gt;mm)  <span class="comment">// 内核线程</span></span><br><span class="line">&#123;</span><br><span class="line">	next-&gt;active_mm = prev-&gt;active_mm;</span><br><span class="line">	<span class="type">atomic_inc</span>(&amp;prev-&gt;active_mm-&gt;mm_count);</span><br><span class="line">	enter_lazy_tlb(prev-&gt;active_mm, next);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>如果内核线程都有自己的地址空间，当调度程序选择一个新进程运行时，需改变页表</strong>，因为内核线程仅使用线性地址空间的第 4 个 GB，该空间的映射对系统的所有进程都是相同的。甚至在最坏情况下，<strong>写<code>cr3</code>寄存器会使所有TLB表项无效</strong>，导致极大的性能损失。现在的Linux中，如果<code>next</code>是内核线程，就不触及页表，进一步优化，<code>schedule()</code>将进程设置为懒惰TLB模式。而如果<code>next</code>是一个普通进程，<code>context_switch()</code>用<code>next</code>的地址空间替换<code>prev</code>的地址空间：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(next-&gt;mm)  <span class="comment">// 普通进程</span></span><br><span class="line">	switch_mm(prev-&gt;active_mm, next-&gt;mm, next);</span><br></pre></td></tr></table></figure></p>
+<p>如果<code>prev</code>是内核线程或正在退出的进程，<code>context_switch()</code>把<code>prev</code>内存描述符的指针保存到运行队列的<code>prev_mm</code>字段中：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!prev-&gt;mm)</span><br><span class="line">&#123;</span><br><span class="line">	rq-&gt;prev_mm = prev-&gt;active_mm;</span><br><span class="line">	prev-&gt;active_mm = <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>现在，<code>context_switch()</code>可调用<code>switch_to()</code>执行<code>prev</code>和<code>next</code>之间的进程切换了：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">switch_to(prev, next, prev);</span><br><span class="line">return prev;</span><br></pre></td></tr></table></figure></p>
+<p>总结：更新<code>prev</code>的时间片、时间戳，根据<code>prev</code>是内核线程还是普通线程，进行相应的内存描述符替换。</p>
+<h4 id="进程切换后-schedule-所执行的动作"><a href="#进程切换后-schedule-所执行的动作" class="headerlink" title="进程切换后 schedule() 所执行的动作"></a>进程切换后 schedule() 所执行的动作</h4><p><code>sechedule()</code>函数中在<code>switch_to</code>宏后紧接着的指令不是让<code>next</code>进程立即执行，而是如果稍后调度程序又选择<code>prev</code>时由<code>prev</code>执行。到那时，<code>prev</code>不指向<code>schedule()</code>开始时所替换出的进程，而是指向被调度时被<code>prev</code>替换出的进程。</p>
+<p>进程切换后的第一部分指令：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">barrier();  <span class="comment">// 代码优化屏障</span></span><br><span class="line">finish_task_switch(prev);</span><br></pre></td></tr></table></figure><br>在<code>schedule()</code>中，紧接着<code>context_switch()</code>函数调用之后，宏<code>barrier()</code>产生一个代码优化屏障。然后执行<code>finish_task_switch()</code>：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mm = this_rq()-&gt;prev_mm;</span><br><span class="line">this_rq()-&gt;prev_mm = <span class="literal">NULL</span>;</span><br><span class="line">prev_task_flags = prev-&gt;flags;</span><br><span class="line">spin_unlock_irq(&amp;this_rq()-&gt;lock);</span><br><span class="line"><span class="keyword">if</span>(mm)</span><br><span class="line">	mmdrop(mm);</span><br><span class="line"><span class="keyword">if</span>(prev_task_flags &amp; PF_DEAD)</span><br><span class="line">	put_task_struct(prev);</span><br></pre></td></tr></table></figure><br>如果<code>prev</code>是一个内核线程，运行队列的<code>prev_mm</code>存放<code>prev</code>的内存描述符地址。<code>finish_task_switch()</code>还要释放运行队列的自旋锁并打开本地中断。然后检查<code>prev</code>是否是一个正在从系统中被删除的僵死任务，如果是，则调用<code>put_task_struct()</code>释放进程描述符的引用计数，并撤销所有其余对该进程的引用。</p>
+<p><code>schedule()</code>的最后一部分指令：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">finish_schedule:</span><br><span class="line"></span><br><span class="line">prev = current;</span><br><span class="line"><span class="keyword">if</span>(prev-&gt;lock_depth &gt;= <span class="number">0</span>)</span><br><span class="line">	__reacquire_kernel_lock();</span><br><span class="line">preempt_enable_no_resched();</span><br><span class="line"><span class="keyword">if</span>(test_bit(TIF_NEED_RESCHED, &amp;current_thread_info()-&gt;flags)</span><br><span class="line">	<span class="keyword">goto</span> need_resched;</span><br><span class="line"><span class="keyword">return</span>;  </span><br></pre></td></tr></table></figure><br><code>schedule()</code>在需要的时候重新获得大内核锁，重新启用内核抢占，并检查是否一些其他的进程设置了当前进程的<code>TIF_NEED_RESECED</code>，如果是，则<code>schedule()</code>重新开始执行，否则结束。</p>
+<h2 id="多处理器系统中运行队列的平衡"><a href="#多处理器系统中运行队列的平衡" class="headerlink" title="多处理器系统中运行队列的平衡"></a>多处理器系统中运行队列的平衡</h2><p>关注三种不同类型的多处理机器：</p>
+<ul>
+<li>标准的多处理器体系结构：所共有的RAM被所有CPU共享</li>
+<li>超线程：超线程芯片是一个立刻执行几个执行线程的微处理器，它包括几个内部寄存器的拷贝，并快速在它们之间切换。当前线程在访问内存的间隙，处理器可以执行另一个线程</li>
+<li>NUMA：把CPU和RAM以本地节点分组。CPU访问与它在同一个节点的本地RAM时几乎没有竞争，但是访问远程RAM时，芯片就非常慢。</li>
+</ul>
+<p>一个保持可运行状态的进程通常被限制在一个固定的CPU上，这样可以填满CPU的硬件高速缓存，但是这可能引起严重的性能损失。内核应周期性地检查运行队列的工作量是否平衡，需要时，把一些进程从一个运行队列迁移到另一个运行队列。为适应各种已有的多处理器体系结构，Linux 提出一种基于<strong>调度域</strong>概念的复杂的运行队列平衡算法。</p>
+<h3 id="调度域"><a href="#调度域" class="headerlink" title="调度域"></a>调度域</h3><p>调度域实际上是一个<strong>CPU集合</strong>，<strong>它们的工作量由内核保持平衡</strong>。调度域采取<strong>分层组织</strong>的形式：<strong>最上层的调度域包括多个子调度域，每个子调度域包括一个CPU子集</strong>。每个调度域被划分为一个或多个组，每个组代表调度域的一个CPU子集，<strong>工作量的平衡在调度域的组之间完成</strong>。只有在一个组的工作量远远大于另一个组时才把进程从一个CPU调度到另一个CPU。<br><img src="/img/1601731939.png" alt=""></p>
+<p>每个调度域由<code>sched_domain</code>描述符表示，调度域中的每个组由<code>sched_group</code>描述符表示。<code>sched_domain</code>的<code>groups</code>字段指向<strong>组描述符链表中的第一个元素</strong>。<code>sched_domain</code>的<code>parent</code>字段指向父调度域的描述符。</p>
+<p>所有物理CPU的<code>sched_domain</code>描述符存放在每CPU变量<code>phys_domains</code>中。</p>
+<ul>
+<li>如果内核不支持超线程技术，这些域在域层次结构的最底层，运行队列描述符的<code>sd</code>字段指向它们。</li>
+<li>如果内核支持超线程技术，底层调度域存放在每CPU变量<code>cpu_domains</code>中。</li>
+</ul>
+<h4 id="rebalance-tick"><a href="#rebalance-tick" class="headerlink" title="rebalance_tick()"></a>rebalance_tick()</h4><p>为了保持系统中运行队列的平衡，每经过一次时钟节拍，<code>scheduler_tick()</code>调用<code>rebalance_tick()</code>。参数有：</p>
+<ul>
+<li>本地CPU的下标<code>this_cpu</code></li>
+<li>本地运行队列的地址<code>this_rq</code></li>
+<li><p>标志<code>idle</code></p>
+<ul>
+<li><code>SCHED_IDLE</code>，CPU当前空闲，即<code>current</code>是<code>swapper</code>进程</li>
+<li><code>NOT_IDLE</code>CPU当前不空闲，即<code>current</code>不是<code>swapper</code>进程</li>
+</ul>
+</li>
+<li><p>首先，访问运行队列描述符的<code>nr_running</code>和<code>cpu_load</code>字段，确定运行队列中的进程数，更新运行队列的平均工作量。</p>
+</li>
+<li>然后，从基本域到最上层的调度域循环，每次循环确定是否已到调用<code>load_balance()</code>的时间，从而在调度域上指向重新平衡的操作。<ul>
+<li><code>sched_domain</code>的<code>idle</code>值决定调用<code>load_balance()</code>的频率。</li>
+<li>如果<code>idle</code>等于<code>SCHED_IDLE</code>，那么运行队列为空，<code>load_balance()</code>被调用频率高。</li>
+<li>反之，如果<code>idle</code>等于<code>NOT_IDLE</code>，<code>load_balance()</code>被调用频率低。</li>
+</ul>
+</li>
+</ul>
+<h4 id="load-balance"><a href="#load-balance" class="headerlink" title="load_balance()"></a>load_balance()</h4><p>检查调度域是否处于严重的不平衡状态，如果是，从最繁忙的的组中迁移一些进程到本地CPU的运行队列。参数有：</p>
+<ul>
+<li><code>this_cpu</code>，本地 CPU 的下标</li>
+<li><code>this_rq</code>，本地运行队列的描述符的地址</li>
+<li><code>sd</code>，指向被检查的调度域的描述符</li>
+<li><code>idle</code>，取值为<code>SCHED_IDLE</code>或<code>NOT_IDLE</code></li>
+</ul>
+<p>函数执行下面的操作：</p>
+<ol>
+<li>获取<code>this_rq-&gt;lock</code>自旋锁。</li>
+<li><code>find_busiest_group()</code>分析调度域中各组的工作量。返回最繁忙的<code>sched_group</code>描述符的地址，假设该组不包括本地CPU，在这种情况下，还返回为恢复平衡而被迁移到本地运行队列中的进程数。如果最繁忙的组包括本地CPU，或所有的组本来就是平衡的，返回NULL。需过滤统计工作量中的波动。</li>
+<li>如果<code>find_busiest_group()</code>在调度域中没有没有找到既不包括本地CPU又非常繁忙的组，就释放<code>this_rq-&gt;lock</code>自旋锁，调整调度域描述符的参数，以延迟本地CPU下一次对<code>load_balance()</code>的调度，然后函数终止。</li>
+<li><code>find_busiest_queue()</code>查找第2步中找到的组中最繁忙的CPU，返回相应运行队列的描述符地址<code>busiest</code>。</li>
+<li>获取另一个自旋锁<code>busiest-&gt;lock</code>。为避免死锁，首先释放<code>this_rq-&gt;lock</code>，然后通过增加CPU下标获得这两个锁。</li>
+<li><code>move_tasks()</code>从最繁忙的运行队列把一些进程迁移到本地运行队列<code>this_rq</code>中。</li>
+<li>如果<code>move_tasks()</code>没有迁移成功，则调度域不平衡，<code>busiest-&gt;active_balance = 1</code>，并唤醒<code>migration</code>线程，其描述符存放在<code>busiest-&gt;migration_thread</code>中。<code>migration</code>内核下次<strong>顺着调度域的链搜索</strong>：<strong>从最繁忙运行队列的基本域到最上层域搜索空闲CPU</strong>，如果找到一个空闲CPU，就调用<code>move_tasks()</code>把一个进程迁移到空闲运行队列。</li>
+<li>释放<code>busiest-&gt;lock</code>和<code>this_rq-&gt;lock</code>自旋锁。</li>
+<li>函数结束。</li>
+</ol>
+<h4 id="move-tasks"><a href="#move-tasks" class="headerlink" title="move_tasks()"></a>move_tasks()</h4><p>把进程从源运行队列迁移到本地运行队列。接收参数有：</p>
+<ul>
+<li><code>this_rq</code>，本地运行队列描述符</li>
+<li><code>this_cpu</code>，本地 CPU 下标</li>
+<li><code>busiest</code>，源运行队列描述符</li>
+<li><code>max_nr_move</code>，被迁移进程的最大数</li>
+<li><code>sd</code>，在其中执行平衡操作的调度域的描述符地址</li>
+<li><code>idle</code>标志，可被设置为<code>SCHED_IDLE</code>、<code>NOT_IDLE</code>、<code>NEWLY_IDLE</code></li>
+</ul>
+<p>函数首先分析<code>busiest</code>运行队列的过期进程，从优先级高的进程开始。扫描完所有的过期进程后，扫描<code>busiest</code>运行队列的活动进程，对所有后续进程调用<code>can_migrate_task()</code>，如果下列条件都满足，<code>can_migrate_task()</code>返回1：</p>
+<ul>
+<li>进程当前没有在远程CPU上执行</li>
+<li>本地CPU包含在进程描述符的<code>cpus_allowed</code>位掩码中</li>
+<li>至少满足下列条件之一：<ul>
+<li>本地 CPU 空闲。如果内核支持超线程技术，所有本地物理芯片中的逻辑 CPU 必须空闲。</li>
+<li>内核在平衡调度域是因反复迁移进程失败而现如困境。</li>
+<li>被迁移的进程不是“高速缓存命中”。</li>
+</ul>
+</li>
+</ul>
+<p>如果<code>can_migrate_task()</code>返回1，调用<code>pull_task()</code>将后续进程迁移到本地运行队列。<code>pull_task()</code>先执行<code>dequeue_task()</code>从远程运行队列删除进程，然后执行<code>enqueue_task()</code>把进程插入本地运行队列，如果刚被迁移的进程比当前进程拥有更高的动态优先级，调用<code>resched_task()</code>抢占本地CPU的当前进程。</p>
+<h2 id="与调度相关的系统调用"><a href="#与调度相关的系统调用" class="headerlink" title="与调度相关的系统调用"></a>与调度相关的系统调用</h2><h3 id="nice"><a href="#nice" class="headerlink" title="nice()"></a>nice()</h3><p><code>nice()</code>允许进程改变自己的基本优先级。包含在<code>increment</code>参数中的整数值用来<strong>修改进程描述符的nice字段</strong>。<code>nice()</code>已被<code>setpriority()</code>取代。</p>
+<h3 id="getpriority-和-setpriority"><a href="#getpriority-和-setpriority" class="headerlink" title="getpriority() 和 setpriority()"></a>getpriority() 和 setpriority()</h3><p><code>nice()</code>只影响调用它的进程，而<code>getpriority()</code>和<code>setpriority()</code>作用于给定组中所有进程的基本优先级。<code>getpriority()</code>返回20减去给定组中所有进程中最低<code>nice</code>字段的值，即最高优先级。<code>setpriority()</code>把给定组中所有进程的基本优先级设置为一个给定的值。</p>
+<p>内核对这两个系统调用的实现基于<code>sys_getpriority()</code>和<code>sys_setpriority()</code>服务例程，参数有：</p>
+<ul>
+<li><code>which</code>：指定进程组的值，采用以下值:<ul>
+<li><code>PRIO_PROCESS</code>：根据进程ID选择进程（<code>pid</code>）</li>
+<li><code>PRIO_PGRP</code>：根据组ID先择进程（<code>pgrp</code>）</li>
+<li><code>PRIO_USER</code>：根据用户ID选择进程（<code>uid</code>）</li>
+</ul>
+</li>
+<li><code>who</code>：用<code>pid</code>、<code>pgrp</code>、<code>uid</code>的值选择进程</li>
+<li><code>niceval</code>：新的基本优先级值</li>
+</ul>
+<h3 id="sched-getaffinity-和sched-setaffinity"><a href="#sched-getaffinity-和sched-setaffinity" class="headerlink" title="sched_getaffinity()和sched_setaffinity()"></a>sched_getaffinity()和sched_setaffinity()</h3><p><strong>分别返回和设置CPU进程亲和力掩码</strong>，即允许执行进程的CPU的位掩码。该掩码存放在进程描述符的<code>cpus_allowed</code>字段中。</p>
+<h3 id="与实时进程相关的系统调用"><a href="#与实时进程相关的系统调用" class="headerlink" title="与实时进程相关的系统调用"></a>与实时进程相关的系统调用</h3><h4 id="sched-getscheduler-和sched-setscheduler"><a href="#sched-getscheduler-和sched-setscheduler" class="headerlink" title="sched_getscheduler()和sched_setscheduler()"></a>sched_getscheduler()和sched_setscheduler()</h4><p><code>sched_getscheduler()</code>查询参数<code>pid</code>表示的进程当前使用的调度策略。如果<code>pid</code>等于0，检索调用进程的策略。如果成功，为进程返回策略：<code>SCHED_FIFO</code>、<code>SCHED_RR</code>或<code>SCHED_NORMAL</code>。</p>
+<p><code>sched_setscheduler()</code>既设置调度策略，也设置由参数<code>pid</code>表示的进程的相关参数。如果<code>pid</code>等于0，调用进程的调度程序参数将被设置。</p>
+<h4 id="sched-getparam-和sched-setparam"><a href="#sched-getparam-和sched-setparam" class="headerlink" title="sched_getparam()和sched_setparam()"></a>sched_getparam()和sched_setparam()</h4><p><code>sched_getparam()</code>检索参数<code>pid</code>表示的进程的调度参数。如果<code>pid</code>是0，current`进程的参数被检索。</p>
+<p><code>sched_setparam()</code>类似于<code>sched_setscheduler()</code>，不同之处在于不让调用者设置<code>policy</code>字段。</p>
+<h4 id="sched-yield"><a href="#sched-yield" class="headerlink" title="sched_yield()"></a>sched_yield()</h4><p>允许进程在不被挂起的情况下自愿放弃CPU，进程仍然处于<code>TASK_RUNNING</code>状态，但调度程序把它放在运行队列的过期进程集合中，或运行队列链表的末尾。</p>
+<h4 id="sched-get-priority-min-和sched-get-priority-max"><a href="#sched-get-priority-min-和sched-get-priority-max" class="headerlink" title="sched_get_priority_min()和sched_get_priority_max()"></a>sched_get_priority_min()和sched_get_priority_max()</h4><p><code>sched_get_priority_min()</code>和<code>sched_get_priority_max()</code>分别返回最小和最大实时静态优先级的值，该值由<code>policy</code>参数标识的调度策略使用。</p>
+<h4 id="sched-rr-get-interval"><a href="#sched-rr-get-interval" class="headerlink" title="sched_rr_get_interval()"></a>sched_rr_get_interval()</h4><p>把参数<code>pid</code>标识的实时进程的轮转时间片写入用户地址空间的一个结构中。如果<code>pid</code>等于 0，系统调用就写当前进程的时间片。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/09/09/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B01/" rel="next" title="深入理解Linux内核 1-4章">
+                <i class="fa fa-chevron-left"></i> 深入理解Linux内核 1-4章
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/10/02/%E5%AE%9A%E4%BD%8Dcpp%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E9%97%AE%E9%A2%98/" rel="prev" title="通过wrap malloc定位CC++的内存泄漏问题">
+                通过wrap malloc定位CC++的内存泄漏问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5"><span class="nav-number">1.</span> <span class="nav-text">内核同步</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E4%B8%BA%E4%B8%8D%E5%90%8C%E7%9A%84%E8%AF%B7%E6%B1%82%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.1.</span> <span class="nav-text">内核为不同的请求服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E6%8A%A2%E5%8D%A0"><span class="nav-number">1.1.1.</span> <span class="nav-text">内核抢占</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%90%8C%E6%AD%A5%E6%98%AF%E5%BF%85%E9%9C%80%E7%9A%84"><span class="nav-number">1.1.2.</span> <span class="nav-text">什么时候同步是必需的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%90%8C%E6%AD%A5%E6%98%AF%E4%B8%8D%E5%BF%85%E8%A6%81%E7%9A%84"><span class="nav-number">1.1.3.</span> <span class="nav-text">什么时候同步是不必要的</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD"><span class="nav-number">1.2.</span> <span class="nav-text">同步原语</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8F-CPU-%E5%8F%98%E9%87%8F"><span class="nav-number">1.2.1.</span> <span class="nav-text">每 CPU 变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.2.</span> <span class="nav-text">原子操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%92%8C%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C"><span class="nav-number">1.2.3.</span> <span class="nav-text">优化和内存屏障</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-number">1.2.4.</span> <span class="nav-text">自旋锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B7%E6%9C%89%E5%86%85%E6%A0%B8%E6%8A%A2%E5%8D%A0%E7%9A%84-spin-lock-%E5%AE%8F"><span class="nav-number">1.2.5.</span> <span class="nav-text">具有内核抢占的 spin_lock 宏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E6%8A%A2%E5%8D%A0%E5%BC%8F%E5%86%85%E6%A0%B8%E4%B8%AD%E7%9A%84-spin-lock-%E5%AE%8F"><span class="nav-number">1.2.6.</span> <span class="nav-text">非抢占式内核中的 spin_lock 宏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spin-unlock-%E5%AE%8F"><span class="nav-number">1.2.7.</span> <span class="nav-text">spin_unlock 宏</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB-%E5%86%99%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-number">1.3.</span> <span class="nav-text">读&#x2F;写自旋锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-number">1.3.1.</span> <span class="nav-text">读自旋锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-number">1.3.2.</span> <span class="nav-text">写自旋锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E9%94%81"><span class="nav-number">1.3.3.</span> <span class="nav-text">顺序锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB-%E6%8B%B7%E8%B4%9D-%E6%9B%B4%E6%96%B0%EF%BC%88RCU"><span class="nav-number">1.4.</span> <span class="nav-text">读-拷贝-更新（RCU)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">1.4.1.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8A%E6%94%BE%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">1.4.2.</span> <span class="nav-text">释放信号量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">1.5.</span> <span class="nav-text">读写信号量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%E5%8E%9F%E8%AF%AD"><span class="nav-number">1.5.1.</span> <span class="nav-text">补充原语</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2%E6%9C%AC%E5%9C%B0%E4%B8%AD%E6%96%AD"><span class="nav-number">1.5.2.</span> <span class="nav-text">禁止本地中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2%E5%92%8C%E6%BF%80%E6%B4%BB%E5%8F%AF%E5%BB%B6%E8%BF%9F%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.3.</span> <span class="nav-text">禁止和激活可延迟函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%9A%84%E5%90%8C%E6%AD%A5%E8%AE%BF%E9%97%AE"><span class="nav-number">1.6.</span> <span class="nav-text">对内核数据结构的同步访问</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E8%87%AA%E6%97%8B%E9%94%81%E3%80%81%E4%BF%A1%E5%8F%B7%E9%87%8F%E5%8F%8A%E4%B8%AD%E6%96%AD%E7%A6%81%E6%AD%A2%E4%B9%8B%E9%97%B4%E9%80%89%E6%8B%A9"><span class="nav-number">1.6.1.</span> <span class="nav-text">在自旋锁、信号量及中断禁止之间选择</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E5%BC%82%E5%B8%B8%E6%89%80%E8%AE%BF%E9%97%AE%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.6.2.</span> <span class="nav-text">保护异常所访问的数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E4%B8%AD%E6%96%AD%E6%89%80%E8%AE%BF%E9%97%AE%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.6.3.</span> <span class="nav-text">保护中断所访问的数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E8%A2%AB%E5%8F%AF%E5%BB%B6%E8%BF%9F%E5%87%BD%E6%95%B0%E6%89%80%E8%AE%BF%E9%97%AE%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.6.4.</span> <span class="nav-text">保护被可延迟函数所访问的数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E7%94%B1%E5%BC%82%E5%B8%B8%E5%92%8C%E4%B8%AD%E6%96%AD%E8%AE%BF%E9%97%AE%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.6.5.</span> <span class="nav-text">保护由异常和中断访问的数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E7%94%B1%E5%BC%82%E5%B8%B8%E5%92%8C%E5%8F%AF%E5%BB%B6%E8%BF%9F%E5%87%BD%E6%95%B0%E8%AE%BF%E9%97%AE%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.6.6.</span> <span class="nav-text">保护由异常和可延迟函数访问的数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E7%94%B1%E4%B8%AD%E6%96%AD%E5%92%8C%E5%8F%AF%E5%BB%B6%E8%BF%9F%E5%87%BD%E6%95%B0%E8%AE%BF%E9%97%AE%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.6.7.</span> <span class="nav-text">保护由中断和可延迟函数访问的数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E7%94%B1%E5%BC%82%E5%B8%B8%E3%80%81%E4%B8%AD%E6%96%AD%E5%92%8C%E5%8F%AF%E5%BB%B6%E8%BF%9F%E5%87%BD%E6%95%B0%E8%AE%BF%E9%97%AE%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.6.8.</span> <span class="nav-text">保护由异常、中断和可延迟函数访问的数据结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%BF%E5%85%8D%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E7%9A%84%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.7.</span> <span class="nav-text">避免竞争条件的实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">1.7.1.</span> <span class="nav-text">引用计数器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7%E5%86%85%E6%A0%B8%E9%94%81"><span class="nav-number">1.7.2.</span> <span class="nav-text">大内核锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%AF%BB-%E5%86%99%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">1.7.3.</span> <span class="nav-text">内存描述符读&#x2F;写信号量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#slab-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E9%93%BE%E8%A1%A8%E7%9A%84%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">1.7.4.</span> <span class="nav-text">slab 高速缓存链表的信号量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9%E7%9A%84%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">1.7.5.</span> <span class="nav-text">索引节点的信号量</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9A%E6%97%B6%E6%B5%8B%E9%87%8F"><span class="nav-number">2.</span> <span class="nav-text">定时测量</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%92%9F%E5%92%8C%E5%AE%9A%E6%97%B6%E5%99%A8%E7%94%B5%E8%B7%AF"><span class="nav-number">2.1.</span> <span class="nav-text">时钟和定时器电路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E6%97%B6%E9%92%9F%EF%BC%88RTC%EF%BC%89"><span class="nav-number">2.1.1.</span> <span class="nav-text">实时时钟（RTC）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E6%88%B3%E8%AE%A1%E6%95%B0%E5%99%A8%EF%BC%88TSC%EF%BC%89"><span class="nav-number">2.1.2.</span> <span class="nav-text">时间戳计数器（TSC）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E7%BC%96%E7%A8%8B%E9%97%B4%E9%9A%94%E5%AE%9A%E6%97%B6%E5%99%A8%EF%BC%88PIT%EF%BC%89"><span class="nav-number">2.1.3.</span> <span class="nav-text">可编程间隔定时器（PIT）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU%E6%9C%AC%E5%9C%B0%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">2.1.4.</span> <span class="nav-text">CPU本地定时器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E7%B2%BE%E5%BA%A6%E4%BA%8B%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8-HPET"><span class="nav-number">2.1.5.</span> <span class="nav-text">高精度事件定时器(HPET)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ACPI%E7%94%B5%E6%BA%90%E7%AE%A1%E7%90%86%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">2.1.6.</span> <span class="nav-text">ACPI电源管理定时器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E8%AE%A1%E6%97%B6%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-number">2.2.</span> <span class="nav-text">Linux计时体系结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E6%97%B6%E4%BD%93%E7%B3%BB%E6%9C%BA%E6%9E%84%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.2.1.</span> <span class="nav-text">计时体系机构的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E6%97%B6%E5%99%A8%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">定时器对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jiffies%E5%8F%98%E9%87%8F"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">jiffies变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#xtime%E5%8F%98%E9%87%8F"><span class="nav-number">2.2.1.3.</span> <span class="nav-text">xtime变量</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E5%A4%84%E7%90%86%E5%99%A8%E7%B3%BB%E7%BB%9F%E4%B8%8A%E7%9A%84%E8%AE%A1%E6%97%B6%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-number">2.2.2.</span> <span class="nav-text">单处理器系统上的计时体系结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%98%B6%E6%AE%B5"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">初始化阶段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E9%92%9F%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">时钟中断处理程序</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%B3%BB%E7%BB%9F%E4%B8%8A%E7%9A%84%E8%AE%A1%E6%97%B6%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-number">2.2.3.</span> <span class="nav-text">多处理器系统上的计时体系结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%98%B6%E6%AE%B5-1"><span class="nav-number">2.2.3.1.</span> <span class="nav-text">初始化阶段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E6%97%B6%E9%92%9F%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.2.3.2.</span> <span class="nav-text">全局时钟中断处理程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E6%97%B6%E9%92%9F%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.2.3.3.</span> <span class="nav-text">本地时钟中断处理程序</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E6%97%B6%E9%97%B4%E5%92%8C%E6%97%A5%E6%9C%9F"><span class="nav-number">2.3.</span> <span class="nav-text">更新时间和日期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E7%B3%BB%E7%BB%9F%E7%BB%9F%E8%AE%A1%E6%95%B0"><span class="nav-number">2.4.</span> <span class="nav-text">更新系统统计数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E6%9C%AC%E5%9C%B0CPU%E7%BB%9F%E8%AE%A1%E6%95%B0"><span class="nav-number">2.4.1.</span> <span class="nav-text">更新本地CPU统计数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%B0%E5%BD%95%E7%B3%BB%E7%BB%9F%E8%B4%9F%E8%BD%BD"><span class="nav-number">2.4.2.</span> <span class="nav-text">记录系统负载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%91%E7%AE%A1%E5%86%85%E6%A0%B8%E4%BB%A3%E7%A0%81"><span class="nav-number">2.4.3.</span> <span class="nav-text">监管内核代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E9%9D%9E%E5%B1%8F%E8%94%BD%E4%B8%AD%E6%96%AD%E7%9B%91%E8%A7%86%E5%99%A8"><span class="nav-number">2.4.4.</span> <span class="nav-text">检查非屏蔽中断监视器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E5%AE%9A%E6%97%B6%E5%99%A8%E5%92%8C%E5%BB%B6%E8%BF%9F%E5%87%BD%E6%95%B0"><span class="nav-number">2.5.</span> <span class="nav-text">软定时器和延迟函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">2.5.1.</span> <span class="nav-text">动态定时器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%AE%9A%E6%97%B6%E5%99%A8%E4%B8%8E%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6"><span class="nav-number">2.5.2.</span> <span class="nav-text">动态定时器与竞争条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.5.3.</span> <span class="nav-text">动态定时器的数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%AE%9A%E6%97%B6%E5%99%A8%E5%A4%84%E7%90%86"><span class="nav-number">2.5.4.</span> <span class="nav-text">动态定时器处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%AE%9A%E6%97%B6%E5%99%A8%E5%BA%94%E7%94%A8%E4%B9%8B%E4%B8%80%EF%BC%9Ananosleep-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">2.6.</span> <span class="nav-text">动态定时器应用之一：nanosleep()系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%B6%E8%BF%9F%E5%87%BD%E6%95%B0"><span class="nav-number">2.6.1.</span> <span class="nav-text">延迟函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8E%E5%AE%9A%E6%97%B6%E6%B5%8B%E9%87%8F%E7%9B%B8%E5%85%B3%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">2.7.</span> <span class="nav-text">与定时测量相关的系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#time-%E5%92%8C-gettimeofday-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">2.7.1.</span> <span class="nav-text">time() 和 gettimeofday() 系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#adjtimex-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">2.7.2.</span> <span class="nav-text">adjtimex() 系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setitimer-%E5%92%8C-alarm-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">2.7.3.</span> <span class="nav-text">setitimer() 和 alarm() 系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E-POSIX-%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9B%B8%E5%85%B3%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">2.7.4.</span> <span class="nav-text">与 POSIX 定时器相关的系统调用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6"><span class="nav-number">3.</span> <span class="nav-text">进程调度</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E7%AD%96%E7%95%A5"><span class="nav-number">3.1.</span> <span class="nav-text">调度策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%8A%A2%E5%8D%A0"><span class="nav-number">3.2.</span> <span class="nav-text">进程的抢占</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E6%97%B6%E9%97%B4%E7%89%87%E5%BF%85%E9%A1%BB%E6%8C%81%E7%BB%AD%E5%A4%9A%E9%95%BF%EF%BC%9F"><span class="nav-number">3.3.</span> <span class="nav-text">一个时间片必须持续多长？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="nav-number">3.4.</span> <span class="nav-text">调度算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E8%B0%83%E5%BA%A6"><span class="nav-number">3.4.1.</span> <span class="nav-text">普通进程的调度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%97%B6%E9%97%B4%E7%89%87"><span class="nav-number">3.4.2.</span> <span class="nav-text">基本时间片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E5%B9%B3%E5%9D%87%E7%9D%A1%E7%9C%A0%E6%97%B6%E9%97%B4"><span class="nav-number">3.4.3.</span> <span class="nav-text">动态优先级和平均睡眠时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B4%BB%E5%8A%A8%E5%92%8C%E8%BF%87%E6%9C%9F%E8%BF%9B%E7%A8%8B"><span class="nav-number">3.4.4.</span> <span class="nav-text">活动和过期进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E8%BF%9B%E7%A8%8B%E7%9A%84%E8%B0%83%E5%BA%A6"><span class="nav-number">3.4.5.</span> <span class="nav-text">实时进程的调度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E7%A8%8B%E5%BA%8F%E6%89%80%E4%BD%BF%E7%94%A8%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.5.</span> <span class="nav-text">调度程序所使用的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-runqueue"><span class="nav-number">3.5.1.</span> <span class="nav-text">数据结构 runqueue</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">3.5.2.</span> <span class="nav-text">进程描述符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E7%A8%8B%E5%BA%8F%E6%89%80%E4%BD%BF%E7%94%A8%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">3.6.</span> <span class="nav-text">调度程序所使用的函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scheduler-tick"><span class="nav-number">3.6.1.</span> <span class="nav-text">scheduler_tick()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E5%AE%9E%E6%97%B6%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%97%B6%E9%97%B4%E7%89%87"><span class="nav-number">3.6.2.</span> <span class="nav-text">更新实时进程的时间片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E6%99%AE%E9%80%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%97%B6%E9%97%B4%E7%89%87"><span class="nav-number">3.6.3.</span> <span class="nav-text">更新普通进程的时间片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#try-to-wake-up"><span class="nav-number">3.6.4.</span> <span class="nav-text">try_to_wake_up()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#recalc-task-prio"><span class="nav-number">3.6.5.</span> <span class="nav-text">recalc_task_prio()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#schedule"><span class="nav-number">3.6.6.</span> <span class="nav-text">schedule()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E8%B0%83%E7%94%A8"><span class="nav-number">3.6.6.1.</span> <span class="nav-text">直接调用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BB%B6%E8%BF%9F%E8%B0%83%E7%94%A8"><span class="nav-number">3.6.6.2.</span> <span class="nav-text">延迟调用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%88%87%E6%8D%A2%E5%89%8Dschedule-%E6%89%80%E6%89%A7%E8%A1%8C%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="nav-number">3.6.6.3.</span> <span class="nav-text">进程切换前schedule()所执行的操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#schedule-%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E5%88%87%E6%8D%A2%E6%97%B6%E6%89%80%E6%89%A7%E8%A1%8C%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="nav-number">3.6.6.4.</span> <span class="nav-text">schedule()进行进程切换时所执行的操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%88%87%E6%8D%A2%E5%90%8E-schedule-%E6%89%80%E6%89%A7%E8%A1%8C%E7%9A%84%E5%8A%A8%E4%BD%9C"><span class="nav-number">3.6.6.5.</span> <span class="nav-text">进程切换后 schedule() 所执行的动作</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%B3%BB%E7%BB%9F%E4%B8%AD%E8%BF%90%E8%A1%8C%E9%98%9F%E5%88%97%E7%9A%84%E5%B9%B3%E8%A1%A1"><span class="nav-number">3.7.</span> <span class="nav-text">多处理器系统中运行队列的平衡</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E5%9F%9F"><span class="nav-number">3.7.1.</span> <span class="nav-text">调度域</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#rebalance-tick"><span class="nav-number">3.7.1.1.</span> <span class="nav-text">rebalance_tick()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#load-balance"><span class="nav-number">3.7.1.2.</span> <span class="nav-text">load_balance()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#move-tasks"><span class="nav-number">3.7.1.3.</span> <span class="nav-text">move_tasks()</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8E%E8%B0%83%E5%BA%A6%E7%9B%B8%E5%85%B3%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">3.8.</span> <span class="nav-text">与调度相关的系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#nice"><span class="nav-number">3.8.1.</span> <span class="nav-text">nice()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#getpriority-%E5%92%8C-setpriority"><span class="nav-number">3.8.2.</span> <span class="nav-text">getpriority() 和 setpriority()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sched-getaffinity-%E5%92%8Csched-setaffinity"><span class="nav-number">3.8.3.</span> <span class="nav-text">sched_getaffinity()和sched_setaffinity()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E5%AE%9E%E6%97%B6%E8%BF%9B%E7%A8%8B%E7%9B%B8%E5%85%B3%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">3.8.4.</span> <span class="nav-text">与实时进程相关的系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#sched-getscheduler-%E5%92%8Csched-setscheduler"><span class="nav-number">3.8.4.1.</span> <span class="nav-text">sched_getscheduler()和sched_setscheduler()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sched-getparam-%E5%92%8Csched-setparam"><span class="nav-number">3.8.4.2.</span> <span class="nav-text">sched_getparam()和sched_setparam()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sched-yield"><span class="nav-number">3.8.4.3.</span> <span class="nav-text">sched_yield()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sched-get-priority-min-%E5%92%8Csched-get-priority-max"><span class="nav-number">3.8.4.4.</span> <span class="nav-text">sched_get_priority_min()和sched_get_priority_max()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sched-rr-get-interval"><span class="nav-number">3.8.4.5.</span> <span class="nav-text">sched_rr_get_interval()</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

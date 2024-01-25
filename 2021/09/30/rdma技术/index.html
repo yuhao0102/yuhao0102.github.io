@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zn-ch">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="积累," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="背景介绍 传统TCP&#x2F;IP通信模式传统的TCP&#x2F;IP网络通信，数据需要通过用户空间发送到远程机器的用户空间。数据发送方需要讲数据从用户应用空间Buffer复制到内核空间的Socket Buffer中。然后Kernel空间中添加数据包头，进行数据封装。通过一系列多层网络协议的数据包处理工作，这些协议包括传输控制协议（TCP）、用户数据报协议（UDP）、互联网协议（IP）以及互联网控制消息协议（ICM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RDMA技术详解">
+<meta property="og:url" content="http://yoursite.com/2021/09/30/rdma%E6%8A%80%E6%9C%AF/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="背景介绍 传统TCP&#x2F;IP通信模式传统的TCP&#x2F;IP网络通信，数据需要通过用户空间发送到远程机器的用户空间。数据发送方需要讲数据从用户应用空间Buffer复制到内核空间的Socket Buffer中。然后Kernel空间中添加数据包头，进行数据封装。通过一系列多层网络协议的数据包处理工作，这些协议包括传输控制协议（TCP）、用户数据报协议（UDP）、互联网协议（IP）以及互联网控制消息协议（ICM">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/img/20190411001.png">
+<meta property="og:image" content="http://yoursite.com/img/20190411002.png">
+<meta property="og:image" content="http://yoursite.com/img/v2-d359453c9269146cd93de5eed43993c8_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-f081e8fce13d8b00e5a786399d20ca06_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20190411003.png">
+<meta property="og:image" content="http://yoursite.com/img/v2-2ec811510b13787ec81a3490e4233f60_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-e854577d2b1fb56889c95d76999d6583_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20190411004.png">
+<meta property="og:image" content="http://yoursite.com/img/20190411005.png">
+<meta property="og:image" content="http://yoursite.com/img/20190411006.png">
+<meta property="og:image" content="http://yoursite.com/img/20190411007.png">
+<meta property="og:image" content="http://yoursite.com/img/201904110085.png">
+<meta property="og:image" content="http://yoursite.com/img/v2-ea7615096a651042d6ff0758d85ad698_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20190411008.png">
+<meta property="og:image" content="http://yoursite.com/img/v2-f434f07e79221b59cd82e731cd62285d_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-55fa92d979172cd69a027a1401f535c2_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-1282960e29ec7042ffec89dcc4f5577e_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-9dcb687ffaee99730313270214b327e6_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-397f08428eaee59f9908dcb0ea2b1b56_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-a45f31b55c22ca8aad8a139be0eb8d99_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-4e72a802e022d5742de169921c185cd8_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-dec6f454affdc07019b8729c6c13fc96_720w.jpg">
+<meta property="article:published_time" content="2021-09-30T01:38:00.000Z">
+<meta property="article:modified_time" content="2022-12-27T06:21:42.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="积累">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/20190411001.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/09/30/rdma技术/"/>
+
+
+
+
+
+  <title>RDMA技术详解 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zn-ch">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hao Yu's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">The program monkey was eaten by the siege lion.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/09/30/rdma%E6%8A%80%E6%9C%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RDMA技术详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-09-30T09:38:00+08:00">
+                2021-09-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h1><p><img src="/img/20190411001.png" alt=""></p>
+<h2 id="传统TCP-IP通信模式"><a href="#传统TCP-IP通信模式" class="headerlink" title="传统TCP/IP通信模式"></a>传统TCP/IP通信模式</h2><p>传统的TCP/IP网络通信，数据需要通过用户空间发送到远程机器的用户空间。数据发送方需要讲数据从用户应用空间Buffer复制到内核空间的Socket Buffer中。然后Kernel空间中添加数据包头，进行数据封装。通过一系列多层网络协议的数据包处理工作，这些协议包括传输控制协议（TCP）、用户数据报协议（UDP）、互联网协议（IP）以及互联网控制消息协议（ICMP）等。数据才被Push到NIC网卡中的Buffer进行网络传输。消息接受方接受从远程机器发送的数据包后，要将数据包从NIC buffer中复制数据到Socket Buffer。然后经过一些列的多层网络协议进行数据包的解析工作。解析后的数据被复制到相应位置的用户应用空间Buffer。这个时候再进行系统上下文切换，用户应用程序才被调用。以上就是传统的TCP/IP协议层的工作。</p>
+<h2 id="通信网络定义"><a href="#通信网络定义" class="headerlink" title="通信网络定义"></a>通信网络定义</h2><p>计算机网络通信中最重要两个衡量指标主要是指高带宽和低延迟。通信延迟主要是指：处理延迟和网络传输延迟。处理延迟开销指的就是消息在发送和接收阶段的处理时间。网络传输延迟指的就是消息在发送和接收方的网络传输时延。如果网络通信状况很好的情况下，网络基本上可以 达到高带宽和低延迟。</p>
+<h2 id="当今网络现状"><a href="#当今网络现状" class="headerlink" title="当今网络现状"></a>当今网络现状</h2><p>当今随着计算机网络的发展。消息通信主要分为两类消息，一类是Large messages，在这类消息通信中，网络传输延迟占整个通信中的主导位置。还有一类消息是Small messages，在这类消息通信中，消息发送端和接受端的处理开销占整个通信的主导地位。然而在现实计算机网络中的通信场景中，主要是以发送小消息为主。所有说发送消息和接受消息的处理开销占整个通信的主导的地位。具体来说，处理开销指的是buffer管理、在不同内存空间中消息复制、以及消息发送完成后的系统中断。</p>
+<h2 id="传统TCP-IP存在的问题"><a href="#传统TCP-IP存在的问题" class="headerlink" title="传统TCP/IP存在的问题"></a>传统TCP/IP存在的问题</h2><p>传统的TPC/IP存在的问题主要是指I/O bottleneck瓶颈问题。在高速网络条件下与网络I/O相关的主机处理的高开销限制了可以在机器之间发送的带宽。这里感兴趣的高额开销是数据移动操作和复制操作。具体来讲，主要是传统的TCP/IP网络通信是通过内核发送消息。Messaging passing through kernel这种方式会导致很低的性能和很低的灵活性。性能低下的原因主要是由于网络通信通过内核传递，这种通信方式存在的很高的数据移动和数据复制的开销。并且现如今内存带宽性相较如CPU带宽和网络带宽有着很大的差异。很低的灵活性的原因主要是所有网络通信协议通过内核传递，这种方式很难去支持新的网络协议和新的消息通信协议以及发送和接收接口。</p>
+<h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><p>高性能网络通信历史发展主要有以下四个方面：TCP Offloading Engine（TOE）、User-Net Networking(U-Net)、Virtual interface Architecture（VIA）、Remote Direct Memroy Access(RDMA)。U-Net是第一个跨过内核网络通信的模式之一。VIA首次提出了标准化user-level的网络通信模式，其次它组合了U-Net接口和远程DMA设备。RDMA就是现代化高性能网络通信技术。</p>
+<h2 id="TCP-Offloading-Engine"><a href="#TCP-Offloading-Engine" class="headerlink" title="TCP Offloading Engine"></a>TCP Offloading Engine</h2><p>在主机通过网络进行通信的过程中，主机处理器需要耗费大量资源进行多层网络协议的数据包处理工作，这些协议包括传输控制协议（TCP）、用户数据报协议（UDP）、互联网协议（IP）以及互联网控制消息协议（ICMP）等。由于CPU需要进行繁重的封装网络数据包协议，为了将占用的这部分主机处理器资源解放出来专注于其他应用，人们发明了TOE（TCP/IP Offloading Engine）技术，将上述主机处理器的工作转移到网卡上。</p>
+<p>这种技术需要特定网络接口-网卡支持这种Offloading操作。这种特定网卡能够支持封装多层网络协议的数据包，这个功能常见于高速以太网接口上，如吉比特以太网（GbE）或10吉比特以太网（10GbE）。</p>
+<h2 id="User-Net-Networking-U-Net"><a href="#User-Net-Networking-U-Net" class="headerlink" title="User-Net Networking(U-Net)"></a>User-Net Networking(U-Net)</h2><p>U-Net的设计目标是将协议处理部分移动到用户空间去处理。这种方式避免了用户空间将数据移动和复制到内核空间的开销。它的设计宗旨就是移动整个协议栈到用户空间中去，并且从数据通信路径中彻底删除内核。这种设计带来了高性能的提升和高灵活性的提升。</p>
+<p><img src="/img/20190411002.png" alt=""></p>
+<p>U-Net的virtual NI 为每个进程提供了一种拥有网络接口的错觉，内核接口只涉及到连接步骤。传统上的网络，内核控制整个网络通信，所有的通信都需要通过内核来传递。U-Net应用程序可以通过MUX直接访问网络，应用程序通过MUX直接访问内核，而不需要将数据移动和复制到内核空间中去。</p>
+<h1 id="DMA"><a href="#DMA" class="headerlink" title="DMA"></a>DMA</h1><p>DMA(直接内存访问)是一种能力，允许在计算机主板上的设备直接把数据发送到内存中去，数据搬运不需要CPU的参与。</p>
+<p>传统内存访问需要通过CPU进行数据copy来移动数据，通过CPU将内存中的Buffer1移动到Buffer2中。DMA模式：可以同DMA Engine之间通过硬件将数据从Buffer1移动到Buffer2,而不需要操作系统CPU的参与，大大降低了CPU Copy的开销。</p>
+<p><img src="/img/v2-d359453c9269146cd93de5eed43993c8_720w.jpg" alt=""></p>
+<h1 id="RDMA"><a href="#RDMA" class="headerlink" title="RDMA"></a>RDMA</h1><p>RDMA是一种概念，在两个或者多个计算机进行通讯的时候使用DMA， 从一个主机的内存直接访问另一个主机的内存。</p>
+<p><img src="/img/v2-f081e8fce13d8b00e5a786399d20ca06_720w.jpg" alt=""></p>
+<p>RDMA(Remote Direct Memory Access)技术全称远程直接内存访问，就是为了解决网络传输中服务器端数据处理的延迟而产生的。RDMA通过网络把资料直接传入计算机的存储区，将数据从一个系统快速移动到远程系统存储器中，而不对操作系统造成任何影响，这样就不需要用到多少计算机的处理功能。它消除了外部存储器复制和上下文切换的开销，因而能解放内存带宽和CPU周期用于改进应用系统性能。</p>
+<p><img src="/img/20190411003.png" alt=""></p>
+<p>RDMA主要有以下三个特性：1.Low-Latency 2.Low CPU overhead 3. high bandwidth</p>
+<p>RDMA是一种host-offload, host-bypass技术，允许应用程序(包括存储)在它们的内存空间之间直接做数据传输。具有RDMA引擎的以太网卡(RNIC)—而不是host—负责管理源和目标之间的可靠连接。使用RNIC的应用程序之间使用专注的QP和CQ进行通讯：</p>
+<ul>
+<li>每一个应用程序可以有很多QP和CQ</li>
+<li>每一个QP包括一个SQ和RQ</li>
+<li>每一个CQ可以跟多个SQ或者RQ相关联</li>
+</ul>
+<p><img src="/img/v2-2ec811510b13787ec81a3490e4233f60_720w.jpg" alt=""></p>
+<h2 id="RDMA的优势"><a href="#RDMA的优势" class="headerlink" title="RDMA的优势"></a>RDMA的优势</h2><p>传统的TCP/IP技术在数据包处理过程中，要经过操作系统及其他软件层，需要占用大量的服务器资源和内存总线带宽，数据在系统内存、处理器缓存和网络控制器缓存之间来回进行复制移动，给服务器的CPU和内存造成了沉重负担。尤其是网络带宽、处理器速度与内存带宽三者的严重”不匹配性”，更加剧了网络延迟效应。</p>
+<p>RDMA是一种新的直接内存访问技术，RDMA让计算机可以直接存取其他计算机的内存，而不需要经过处理器的处理。RDMA将数据从一个系统快速移动到远程系统的内存中，而不对操作系统造成任何影响。</p>
+<p>在实现上，RDMA实际上是一种智能网卡与软件架构充分优化的远端内存直接高速访问技术，通过将RDMA协议固化于硬件(即网卡)上，以及支持Zero-copy和Kernel bypass这两种途径来达到其高性能的远程直接数据存取的目标。 使用RDMA的优势如下：</p>
+<ul>
+<li>零拷贝(Zero-copy) - 应用程序能够直接执行数据传输，在不涉及到网络软件栈的情况下。数据能够被直接发送到缓冲区或者能够直接从缓冲区里接收，而不需要被复制到网络层。</li>
+<li>内核旁路(Kernel bypass) - 应用程序可以直接在用户态执行数据传输，不需要在内核态与用户态之间做上下文切换。</li>
+<li>不需要CPU干预(No CPU involvement) - 应用程序可以访问远程主机内存而不消耗远程主机中的任何CPU。远程主机内存能够被读取而不需要远程主机上的进程（或CPU)参与。远程主机的CPU的缓存(cache)不会被访问的内存内容所填充。</li>
+<li>消息基于事务(Message based transactions) - 数据被处理为离散消息而不是流，消除了应用程序将流切割为不同消息/事务的需求。</li>
+<li>支持分散/聚合条目(Scatter/gather entries support) - RDMA原生态支持分散/聚合。也就是说，读取多个内存缓冲区然后作为一个流发出去或者接收一个流然后写入到多个内存缓冲区里去。</li>
+</ul>
+<p>在具体的远程内存读写中，RDMA操作用于读写操作的远程虚拟内存地址包含在RDMA消息中传送，远程应用程序要做的只是在其本地网卡中注册相应的内存缓冲区。远程节点的CPU除在连接建立、注册调用等之外，在整个RDMA数据传输过程中并不提供服务，因此没有带来任何负载。</p>
+<h2 id="RDMA-三种不同的硬件实现"><a href="#RDMA-三种不同的硬件实现" class="headerlink" title="RDMA 三种不同的硬件实现"></a>RDMA 三种不同的硬件实现</h2><p>RDMA作为一种host-offload, host-bypass技术，使低延迟、高带宽的直接的内存到内存的数据通信成为了可能。目前支持RDMA的网络协议有：</p>
+<ol>
+<li>InfiniBand(IB): 从一开始就支持RDMA的新一代网络协议。由于这是一种新的网络技术，因此需要支持该技术的网卡和交换机。</li>
+<li>RDMA过融合以太网(RoCE): 即RDMA over Ethernet, 允许通过以太网执行RDMA的网络协议。这允许在标准以太网基础架构(交换机)上使用RDMA，只不过网卡必须是支持RoCE的特殊的NIC。</li>
+<li>互联网广域RDMA协议(iWARP): 即RDMA over TCP, 允许通过TCP执行RDMA的网络协议。这允许在标准以太网基础架构(交换机)上使用RDMA，只不过网卡要求是支持iWARP(如果使用CPU offload的话)的NIC。否则，所有iWARP栈都可以在软件中实现，但是失去了大部分的RDMA性能优势。</li>
+</ol>
+<p><img src="/img/v2-e854577d2b1fb56889c95d76999d6583_720w.jpg" alt=""></p>
+<p>在三种主流的RDMA技术中，可以划分为两大阵营。一个是IB技术, 另一个是支持RDMA的以太网技术(RoCE和iWARP)。其中, IBTA力挺的技术自然是IB和RoCE, Mellanox公司（一个以色列人搞的小公司）是这方面的急先锋。而iWARP则是IEEE/IETF力挺的技术，主要是Chelsio公司在推进。RoCE和iWARP的争论，请参考Mellanox和Chelsio这两家公司发布的白皮书。</p>
+<p>在存储领域，支持RDMA的技术早就存在，比如SRP(SCSI RDMA Protocol)和iSER(iSCSI Extensions for RDMA)。 如今兴起的NVMe over Fabrics如果使用的不是FC网络的话，本质上就是NVMe over RDMA。 换句话说，NVMe over InfiniBand, NVMe over RoCE和NVMe over iWARP都是NVMe over RDMA。</p>
+<h2 id="RDMA基本术语"><a href="#RDMA基本术语" class="headerlink" title="RDMA基本术语"></a>RDMA基本术语</h2><p>Remote：数据通过网络与远程机器间进行数据传输</p>
+<p>Direct：没有内核的参与，有关发送传输的所有内容都卸载到网卡上</p>
+<p>Memory：在用户空间虚拟内存与RNIC网卡直接进行数据传输不涉及到系统内核，没有额外的数据移动和复制</p>
+<p>Access：send、receive、read、write、atomic操作</p>
+<h2 id="RDMA基本概念"><a href="#RDMA基本概念" class="headerlink" title="RDMA基本概念"></a>RDMA基本概念</h2><p>RDMA有两种基本操作。</p>
+<ol>
+<li>Memory verbs: 包括RDMA read、write和atomic操作。这些操作指定远程地址进行操作并且绕过接收者的CPU。</li>
+<li>Messaging verbs:包括RDMA send、receive操作。这些动作涉及响应者的CPU，发送的数据被写入由响应者的CPU先前发布的接受所指定的地址。</li>
+</ol>
+<p>RDMA传输分为可靠和不可靠的，并且可以连接和不连接的（数据报）。凭借可靠的传输，NIC使用确认来保证消息的按序传送。不可靠的传输不提供这样的保证。然而，像InfiniBand这样的现代RDMA实现使用了一个无损链路层，它可以防止使用链路层流量控制的基于拥塞的损失，以及使用链路层重传的基于位错误的损失。因此，不可靠的传输很少会丢弃数据包。 </p>
+<p>目前的RDMA硬件提供一种数据报传输：不可靠的数据报（UD），并且不支持memory verbs。<br><img src="/img/20190411004.png" alt=""></p>
+<h3 id="RDMA三种不同的硬件实现"><a href="#RDMA三种不同的硬件实现" class="headerlink" title="RDMA三种不同的硬件实现"></a>RDMA三种不同的硬件实现</h3><p>目前RDMA有三种不同的硬件实现。分别是InfiniBand、iWarp（internet Wide Area RDMA Protocol）、RoCE(RDMA over Converged Ethernet)。</p>
+<p><img src="/img/20190411005.png" alt=""></p>
+<p>目前，大致有三类RDMA网络，分别是Infiniband、RoCE、iWARP。其中，Infiniband是一种专为RDMA设计的网络，从硬件级别保证可靠传输 ， 而RoCE 和 iWARP都是基于以太网的RDMA技术，支持相应的verbs接口，如图1所示。从图中不难发现，RoCE协议存在RoCEv1和RoCEv2两个版本，主要区别RoCEv1是基于以太网链路层实现的RDMA协议(交换机需要支持PFC等流控技术，在物理层保证可靠传输)，而RoCEv2是以太网TCP/IP协议中UDP层实现。从性能上，很明显Infiniband网络最好，但网卡和交换机是价格也很高，然而RoCEv2和iWARP仅需使用特殊的网卡就可以了，价格也相对便宜很多。</p>
+<ol>
+<li>Infiniband，支持RDMA的新一代网络协议。 由于这是一种新的网络技术，因此需要支持该技术的NIC和交换机。</li>
+<li>RoCE，一个允许在以太网上执行RDMA的网络协议。 其较低的网络标头是以太网标头，其较高的网络标头（包括数据）是InfiniBand标头。 这支持在标准以太网基础设施（交换机）上使用RDMA。 只有网卡应该是特殊的，支持RoCE。</li>
+<li>iWARP，一个允许在TCP上执行RDMA的网络协议。 IB和RoCE中存在的功能在iWARP中不受支持。 这支持在标准以太网基础设施（交换机）上使用RDMA。 只有网卡应该是特殊的，并且支持iWARP（如果使用CPU卸载），否则所有iWARP堆栈都可以在SW中实现，并且丧失了大部分RDMA性能优势。<br><img src="/img/20190411006.png" alt=""></li>
+</ol>
+<h3 id="Fabric"><a href="#Fabric" class="headerlink" title="Fabric"></a>Fabric</h3><p>A local-area RDMA network is usually referred to as a fabric.所谓Fabric，就是支持RDMA的局域网(LAN)。</p>
+<h3 id="CA-Channel-Adapter"><a href="#CA-Channel-Adapter" class="headerlink" title="CA(Channel Adapter)"></a>CA(Channel Adapter)</h3><p>A channel adapter is the hardware component that connects a system to the fabric.</p>
+<p>CA是Channel Adapter(通道适配器)的缩写。那么，CA就是将系统连接到Fabric的硬件组件。 在IBTA中，一个CA就是IB子网中的一个终端结点(End Node)。分为两种类型，一种是HCA, 另一种叫做TCA, 它们合称为xCA。其中， HCA(Host Channel Adapter)是支持”verbs”接口的CA, TCA(Target Channel Adapter)可以理解为”weak CA”, 不需要像HCA一样支持很多功能。 而在IEEE/IETF中，CA的概念被实体化为RNIC（RDMA Network Interface Card）, iWARP就把一个CA称之为一个RNIC。</p>
+<p>简言之，在IBTA阵营中，CA即HCA或TCA； 而在iWARP阵营中，CA就是RNIC。 总之，无论是HCA、 TCA还是RNIC，它们都是CA, 它们的基本功能本质上都是生产或消费数据包(packet)</p>
+<h3 id="Verbs"><a href="#Verbs" class="headerlink" title="Verbs"></a>Verbs</h3><p>在RDMA的持续演进中，有一个组织叫做OpenFabric Alliance所做的贡献可谓功不可没。 Verbs这个词不好翻译，大致可以理解为访问RDMA硬件的“一组标准动作”。 每一个Verb可以理解为一个Function。</p>
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><h3 id="RDMA技术"><a href="#RDMA技术" class="headerlink" title="RDMA技术"></a>RDMA技术</h3><p><img src="/img/20190411007.png" alt=""></p>
+<p>传统上的RDMA技术设计内核封装多层网络协议并且涉及内核数据传输。RDMA通过专有的RDMA网卡RNIC，绕过内核直接从用户空间访问RDMA enabled NIC网卡。RDMA提供一个专有的verbs interface而不是传统的TCP/IP Socket interface。要使用RDMA首先要建立从RDMA到应用程序内存的数据路径 ，可以通过RDMA专有的verbs interface接口来建立这些数据路径，一旦数据路径建立后，就可以直接访问用户空间buffer。</p>
+<h3 id="RDMA技术详解"><a href="#RDMA技术详解" class="headerlink" title="RDMA技术详解"></a>RDMA技术详解</h3><p>RDMA 的工作过程如下:</p>
+<ol>
+<li><p>当一个应用执行RDMA 读或写请求时，不执行任何数据复制.在不需要任何内核内存参与的条件下，RDMA 请求从运行在用户空间中的应用中发送到本地NIC( 网卡)。</p>
+</li>
+<li><p>NIC 读取缓冲的内容，并通过网络传送到远程NIC。</p>
+</li>
+<li><p>在网络上传输的RDMA 信息包含目标虚拟地址、内存钥匙和数据本身.请求既可以完全在用户空间中处理(通过轮询用户级完成排列) ，又或者在应用一直睡眠到请求完成时的情况下通过系统中断处理.RDMA 操作使应用可以从一个远程应用的内存中读数据或向这个内存写数据。</p>
+</li>
+<li><p>目标NIC 确认内存钥匙，直接将数据写人应用缓存中.用于操作的远程虚拟内存地址包含在RDMA 信息中。</p>
+</li>
+</ol>
+<h3 id="RDMA整体系统架构图"><a href="#RDMA整体系统架构图" class="headerlink" title="RDMA整体系统架构图"></a>RDMA整体系统架构图</h3><p><img src="/img/201904110085.png" alt=""></p>
+<p>上诉介绍的是RDMA整体框架架构图。从图中可以看出，RDMA在应用程序用户空间，提供了一系列verbs interface接口操作RDMA硬件。RDMA绕过内核直接从用户空间访问RDMA 网卡(RNIC)。RNIC网卡中包括Cached Page Table Entry，页表就是用来将虚拟页面映射到相应的物理页面。</p>
+<h3 id="Memory-Registration-MR-内存注册"><a href="#Memory-Registration-MR-内存注册" class="headerlink" title="Memory Registration(MR) | 内存注册"></a>Memory Registration(MR) | 内存注册</h3><p>RDMA 就是用来对内存进行数据传输。那么怎样才能对内存进行传输，很简单，注册。 因为RDMA硬件对用来做数据传输的内存是有特殊要求的。</p>
+<ul>
+<li>在数据传输过程中，应用程序不能修改数据所在的内存。</li>
+<li>操作系统不能对数据所在的内存进行page out操作 — 物理地址和虚拟地址的映射必须是固定不变的。</li>
+</ul>
+<p>注意无论是DMA或者RDMA都要求物理地址连续，这是由DMA引擎所决定的。 那么怎么进行内存注册呢？</p>
+<ul>
+<li>创建两个key (local和remote)指向需要操作的内存区域</li>
+<li>注册的keys是数据传输请求的一部分</li>
+</ul>
+<p>注册一个Memory Region之后，这个时候这个Memory Region也就有了它自己的属性：</p>
+<ul>
+<li>context : RDMA操作上下文</li>
+<li>addr : MR被注册的Buffer地址</li>
+<li>length : MR被注册的Buffer长度</li>
+<li>lkey：MR被注册的本地key</li>
+<li>rkey：MR被注册的远程key</li>
+</ul>
+<p>对Memrory Registration：Memory Registration只是RDMA中对内存保护的一种措施，只有将要操作的内存注册到RDMA Memory Region中，这快操作的内存就交给RDMA 保护域来操作了。这个时候我们就可以对这快内存进行操作，至于操作的起始地址、操作Buffer的长度，可以根据程序的具体需求进行操作。我们只要保证接受方的Buffer 接受的长度大于等于发送的Buffer长度。</p>
+<h3 id="Queues-队列"><a href="#Queues-队列" class="headerlink" title="Queues | 队列"></a>Queues | 队列</h3><p>RDMA一共支持三种队列，发送队列(SQ)和接收队列(RQ)，完成队列(CQ)。其中，SQ和RQ通常成对创建，被称为Queue Pairs(QP)。</p>
+<p>RDMA是基于消息的传输协议，数据传输都是异步操作。 RDMA操作其实很简单，可以理解为：</p>
+<ul>
+<li>Host提交工作请求(WR)到工作队列(WQ): 工作队列包括发送队列(SQ)和接收队列(RQ)。工作队列的每一个元素叫做WQE, 也就是WR。</li>
+<li>Host从完成队列(CQ）中获取工作完成(WC): 完成队列里的每一个叫做CQE, 也就是WC。</li>
+<li>具有RDMA引擎的硬件(hardware)就是一个队列元素处理器。 RDMA硬件不断地从工作队列(WQ)中去取工作请求(WR)来执行，执行完了就给完成队列(CQ)中放置工作完成(WC)。从生产者-消费者的角度理解就是：</li>
+<li>Host生产WR, 把WR放到WQ中去</li>
+<li>RDMA硬件消费WR</li>
+<li>RDMA硬件生产WC, 把WC放到CQ中去</li>
+<li>Host消费WC</li>
+</ul>
+<p><img src="/img/v2-ea7615096a651042d6ff0758d85ad698_720w.jpg" alt=""></p>
+<h2 id="RDMA操作细节"><a href="#RDMA操作细节" class="headerlink" title="RDMA操作细节"></a>RDMA操作细节</h2><p>RDMA提供了基于消息队列的点对点通信，每个应用都可以直接获取自己的消息，无需操作系统和协议栈的介入。</p>
+<p>消息服务建立在通信双方本端和远端应用之间创建的Channel-IO连接之上。当应用需要通信时，就会创建一条Channel连接，每条Channel的首尾端点是两对Queue Pairs（QP）。每对QP由Send Queue（SQ）和Receive Queue（RQ）构成，这些队列中管理着各种类型的消息。QP会被映射到应用的虚拟地址空间，使得应用直接通过它访问RNIC网卡。除了QP描述的两种基本队列之外，RDMA还提供一种队列Complete Queue（CQ），CQ用来知会用户WQ上的消息已经被处理完。</p>
+<p>RDMA提供了一套软件传输接口，方便用户创建传输请求Work Request(WR），WR中描述了应用希望传输到Channel对端的消息内容，WR通知QP中的某个队列Work Queue(WQ)。在WQ中，用户的WR被转化为Work Queue Element（WQE）的格式，等待RNIC的异步调度解析，并从WQE指向的Buffer中拿到真正的消息发送到Channel对端。<br><img src="/img/20190411008.png" alt=""></p>
+<h3 id="RDAM单边操作-RDMA-READ"><a href="#RDAM单边操作-RDMA-READ" class="headerlink" title="RDAM单边操作 (RDMA READ)"></a>RDAM单边操作 (RDMA READ)</h3><p>READ和WRITE是单边操作，只需要本端明确信息的源和目的地址，远端应用不必感知此次通信，数据的读或写都通过RDMA在RNIC与应用Buffer之间完成，再由远端RNIC封装成消息返回到本端。</p>
+<p>对于单边操作，以存储网络环境下的存储为例，数据的流程如下：</p>
+<ol>
+<li>首先A、B建立连接，QP已经创建并且初始化。</li>
+<li>数据被存档在B的buffer地址VB，注意VB应该提前注册到B的RNIC (并且它是一个Memory Region) ，并拿到返回的local key，相当于RDMA操作这块buffer的权限。</li>
+<li>B把数据地址VB，key封装到专用的报文传送到A，这相当于B把数据buffer的操作权交给了A。同时B在它的WQ中注册进一个WR，以用于接收数据传输的A返回的状态。</li>
+<li>A在收到B的送过来的数据VB和R_key后，RNIC会把它们连同自身存储地址VA到封装RDMA READ请求，将这个消息请求发送给B，这个过程A、B两端不需要任何软件参与，就可以将B的数据存储到A的VA虚拟地址。</li>
+<li>A在存储完成后，会向B返回整个数据传输的状态信息。</li>
+</ol>
+<p>单边操作传输方式是RDMA与传统网络传输的最大不同，只需提供直接访问远程的虚拟地址，无须远程应用的参与其中，这种方式适用于批量数据传输。</p>
+<h3 id="RDMA-单边操作-RDMA-WRITE"><a href="#RDMA-单边操作-RDMA-WRITE" class="headerlink" title="RDMA 单边操作 (RDMA WRITE)"></a>RDMA 单边操作 (RDMA WRITE)</h3><p>对于单边操作，以存储网络环境下的存储为例，数据的流程如下：</p>
+<ol>
+<li>首先A、B建立连接，QP已经创建并且初始化。</li>
+<li>数据remote目标存储buffer地址VB，注意VB应该提前注册到B的RNIC(并且它是一个Memory Region)，并拿到返回的local key，相当于RDMA操作这块buffer的权限。</li>
+<li>B把数据地址VB，key封装到专用的报文传送到A，这相当于B把数据buffer的操作权交给了A。同时B在它的WQ中注册进一个WR，以用于接收数据传输的A返回的状态。</li>
+<li>A在收到B的送过来的数据VB和R_key后，RNIC会把它们连同自身发送地址VA到封装RDMA WRITE请求，这个过程A、B两端不需要任何软件参与，就可以将A的数据发送到B的VB虚拟地址。</li>
+<li>A在发送数据完成后，会向B返回整个数据传输的状态信息。</li>
+</ol>
+<p>单边操作传输方式是RDMA与传统网络传输的最大不同，只需提供直接访问远程的虚拟地址，无须远程应用的参与其中，这种方式适用于批量数据传输。</p>
+<h3 id="RDMA-双边操作-RDMA-SEND-RECEIVE"><a href="#RDMA-双边操作-RDMA-SEND-RECEIVE" class="headerlink" title="RDMA 双边操作 (RDMA SEND/RECEIVE)"></a>RDMA 双边操作 (RDMA SEND/RECEIVE)</h3><p>RDMA中SEND/RECEIVE是双边操作，即必须要远端的应用感知参与才能完成收发。在实际中，SEND/RECEIVE多用于连接控制类报文，而数据报文多是通过READ/WRITE来完成的。<br>对于双边操作为例，主机A向主机B(下面简称A、B)发送数据的流程如下：</p>
+<ol>
+<li>首先，A和B都要创建并初始化好各自的QP，CQ</li>
+<li>A和B分别向自己的WQ中注册WQE，对于A，WQ=SQ，WQE描述指向一个等到被发送的数据；对于B，WQ=RQ，WQE描述指向一块用于存储数据的Buffer。</li>
+<li>A的RNIC异步调度轮到A的WQE，解析到这是一个SEND消息，从Buffer中直接向B发出数据。数据流到达B的RNIC后，B的WQE被消耗，并把数据直接存储到WQE指向的存储位置。</li>
+<li>AB通信完成后，A的CQ中会产生一个完成消息CQE表示发送完成。与此同时，B的CQ中也会产生一个完成消息表示接收完成。每个WQ中WQE的处理完成都会产生一个CQE。</li>
+</ol>
+<p>双边操作与传统网络的底层Buffer Pool类似，收发双方的参与过程并无差别，区别在零拷贝、Kernel Bypass，实际上对于RDMA，这是一种复杂的消息传输模式，多用于传输短的控制消息。</p>
+<h2 id="RDMA数据传输"><a href="#RDMA数据传输" class="headerlink" title="RDMA数据传输"></a>RDMA数据传输</h2><h3 id="RDMA-Send-RDMA发送-接收-操作-（Send-Recv）"><a href="#RDMA-Send-RDMA发送-接收-操作-（Send-Recv）" class="headerlink" title="RDMA Send | RDMA发送(/接收)操作 （Send/Recv）"></a>RDMA Send | RDMA发送(/接收)操作 （Send/Recv）</h3><p>跟TCP/IP的send/recv是类似的，不同的是RDMA是基于消息的数据传输协议（而不是基于字节流的传输协议），所有数据包的组装都在RDMA硬件上完成的，也就是说OSI模型中的下面4层(传输层，网络层，数据链路层，物理层)都在RDMA硬件上完成。</p>
+<h3 id="RDMA-Read-RDMA读操作-Pull"><a href="#RDMA-Read-RDMA读操作-Pull" class="headerlink" title="RDMA Read | RDMA读操作 (Pull)"></a>RDMA Read | RDMA读操作 (Pull)</h3><p>RDMA读操作本质上就是Pull操作, 把远程系统内存里的数据拉回到本地系统的内存里。</p>
+<h3 id="RDMA-Write-RDMA写操作-Push"><a href="#RDMA-Write-RDMA写操作-Push" class="headerlink" title="RDMA Write | RDMA写操作 (Push)"></a>RDMA Write | RDMA写操作 (Push)</h3><p>RDMA写操作本质上就是Push操作，把本地系统内存里的数据推送到远程系统的内存里。</p>
+<h3 id="RDMA-Write-with-Immediate-Data-支持立即数的RDMA写操作"><a href="#RDMA-Write-with-Immediate-Data-支持立即数的RDMA写操作" class="headerlink" title="RDMA Write with Immediate Data | 支持立即数的RDMA写操作"></a>RDMA Write with Immediate Data | 支持立即数的RDMA写操作</h3><p>支持立即数的RDMA写操作本质上就是给远程系统Push(推送)带外(OOB)数据, 这跟TCP里的带外数据是类似的。</p>
+<p>可选地，immediate 4字节值可以与数据缓冲器一起发送。 该值作为接收通知的一部分呈现给接收者，并且不包含在数据缓冲器中。</p>
+<h1 id="RDMA-Send-Receive操作"><a href="#RDMA-Send-Receive操作" class="headerlink" title="RDMA Send Receive操作"></a>RDMA Send Receive操作</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>RDMA指的是远程直接内存访问，这是一种通过网络在两个应用程序之间搬运缓冲区里的数据的方法。RDMA与传统的网络接口不同，因为它绕过了操作系统。这允许实现了RDMA的程序具有如下特点：</p>
+<ul>
+<li>绝对的最低时延</li>
+<li>最高的吞吐量</li>
+<li>最小的CPU足迹 （也就是说，需要CPU参与的地方被最小化）</li>
+</ul>
+<h2 id="RDMA-Verbs操作"><a href="#RDMA-Verbs操作" class="headerlink" title="RDMA Verbs操作"></a>RDMA Verbs操作</h2><p>使用RDMA, 我们需要有一张实现了RDMA引擎的网卡。我们把这种卡称之为HCA(主机通道适配器)。 适配器创建一个贯穿PCIe总线的从RDMA引擎到应用程序内存的通道。一个好的HCA将在导线上执行的RDMA协议所需要的全部逻辑都在硬件上予以实现。这包括分组，重组以及流量控制和可靠性保证。因此，从应用程序的角度看，只负责处理所有缓冲区即可。</p>
+<p><img src="/img/v2-f434f07e79221b59cd82e731cd62285d_720w.jpg" alt=""></p>
+<p>在RDMA中我们使用内核态驱动建立一个数据通道。我们称之为命令通道（Command Channel）。使用命令通道，我们能够建立一个数据通道（Data Channel），该通道允许我们在搬运数据的时候完全绕过内核。一旦建立了这种数据通道，我们就能直接读写数据缓冲区。</p>
+<p>建立数据通道的API是一种称之为”verbs”的API。”verbs” API是由一个叫做OFED的Linux开源项目维护的。在站点<a target="_blank" rel="noopener" href="http://www.openfabrics.org上，为Windows">http://www.openfabrics.org上，为Windows</a> WinOF提供了一个等价的项目。”verbs” API跟你用过的socket编程API是不一样的。但是，一旦你掌握了一些概念后，就会变得非常容易，而且在设计你的程序的时候更简单。</p>
+<h2 id="Queue-Pairs"><a href="#Queue-Pairs" class="headerlink" title="Queue Pairs"></a>Queue Pairs</h2><p>RDMA操作开始于“搞”内存。当你在对内存进行操作的时候，就是告诉内核这段内存名花有主了，主人就是你的应用程序。于是，你告诉HCA，就在这段内存上寻址，赶紧准备开辟一条从HCA卡到这段内存的通道。我们将这一动作称之为注册一个内存区域(MR)。一旦MR注册完毕，我们就可以使用这段内存来做任何RDMA操作。在下面的图中，我们可以看到注册的内存区域(MR)和被通信队列所使用的位于内存区域之内的缓冲区(buffer)。</p>
+<p>RDMA Memory Registration<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">ibv_mr</span> &#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">ibv_context</span>     *context;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">ibv_pd</span>      *pd;</span><br><span class="line">    <span class="type">void</span>       *addr;</span><br><span class="line">    <span class="type">size_t</span>      length;</span><br><span class="line">    <span class="type">uint32_t</span>    handle;</span><br><span class="line">    <span class="type">uint32_t</span>    lkey;</span><br><span class="line">    <span class="type">uint32_t</span>    rkey;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/v2-55fa92d979172cd69a027a1401f535c2_720w.jpg" alt=""></p>
+<p>RDMA硬件不断地从工作队列(WQ)中去取工作请求(WR)来执行，执行完了就给完成队列(CQ)中放置工作完成通知(WC)。这个WC意思就是Work Completion。表示这个WR RDMA请求已经被处理完成，可以从这个Completion Queue从取出来，表示这个RDMA请求已经被处理完毕。</p>
+<p>RDMA通信基于三条队列(SQ, RQ和CQ)组成的集合。 其中， 发送队列(SQ)和接收队列(RQ)负责调度工作，他们总是成对被创建，称之为队列对(QP)。当放置在工作队列上的指令被完成的时候，完成队列(CQ)用来发送通知。</p>
+<p>当用户把指令放置到工作队列的时候，就意味着告诉HCA那些缓冲区需要被发送或者用来接受数据。这些指令是一些小的结构体，称之为工作请求(WR)或者工作队列元素(WQE)。 WQE的发音为”WOOKIE”，就像星球大战里的猛兽。一个WQE主要包含一个指向某个缓冲区的指针。一个放置在发送队列（SQ）里的WQE中包含一个指向待发送的消息的指针。一个放置在接受队列里的WQE里的指针指向一段缓冲区，该缓冲区用来存放待接受的消息。</p>
+<p>下面我们来看一下RDMA中的Work Request（SendWR和ReceWR）</p>
+<p>RDMA Send Work Request请求<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">ibv_send_wr</span> &#123;</span><br><span class="line">    <span class="type">uint64_t</span>    wr_id;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">ibv_send_wr</span>     *next;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">ibv_sge</span>     *sg_list;</span><br><span class="line">    <span class="type">int</span>     num_sge;</span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">ibv_wr_opcode</span>      opcode;</span><br><span class="line">    <span class="type">int</span>     send_flags;</span><br><span class="line">    <span class="type">uint32_t</span>    imm_data;       <span class="comment">/* in network byte order */</span></span><br><span class="line">    <span class="keyword">union</span> &#123;</span><br><span class="line">		<span class="keyword">struct</span> &#123;</span><br><span class="line">			<span class="type">uint64_t</span>    remote_addr;</span><br><span class="line">			<span class="type">uint32_t</span>    rkey;</span><br><span class="line">		&#125; rdma;</span><br><span class="line">		<span class="keyword">struct</span> &#123;</span><br><span class="line">			<span class="type">uint64_t</span>    remote_addr;</span><br><span class="line">			<span class="type">uint64_t</span>    compare_add;</span><br><span class="line">			<span class="type">uint64_t</span>    swap;</span><br><span class="line">			<span class="type">uint32_t</span>    rkey;</span><br><span class="line">		&#125; atomic;</span><br><span class="line">		<span class="keyword">struct</span> &#123;</span><br><span class="line">			<span class="keyword">struct</span> <span class="title class_">ibv_ah</span>  *ah;</span><br><span class="line">			<span class="type">uint32_t</span>    remote_qpn;</span><br><span class="line">			<span class="type">uint32_t</span>    remote_qkey;</span><br><span class="line">		&#125; ud;</span><br><span class="line">    &#125; wr;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>RDMA Receive Work Request请求<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">ibv_recv_wr</span> &#123;</span><br><span class="line">    <span class="type">uint64_t</span>        wr_id;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">ibv_recv_wr</span>     *next;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">ibv_sge</span>     *sg_list;</span><br><span class="line">    <span class="type">int</span>         num_sge;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>RDMA是一种异步传输机制。因此我们可以一次性在工作队列里放置好多个发送或接收WQE。HCA将尽可能快地按顺序处理这些WQE。当一个WQE被处理了，那么数据就被搬运了。 一旦传输完成，HCA就创建一个完成队列元素(CQE)并放置到完成队列(CQ)中去。 相应地，CQE的发音为”COOKIE”。</p>
+<p>RDMA Complete Queue Element<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">ibv_wc</span> &#123;</span><br><span class="line">    <span class="type">uint64_t</span> wr_id; </span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">ibv_wc_status</span> status; </span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">ibv_wc_opcode</span> opcode; </span><br><span class="line">    <span class="type">uint32_t</span> vendor_err; </span><br><span class="line">    <span class="type">uint32_t</span> byte_len; </span><br><span class="line">    <span class="type">uint32_t</span> imm_data; <span class="comment">/* in network byte order */</span> </span><br><span class="line">    <span class="type">uint32_t</span> qp_num; </span><br><span class="line">    <span class="type">uint32_t</span> src_qp; </span><br><span class="line">    <span class="type">int</span> wc_flags; </span><br><span class="line">    <span class="type">uint16_t</span> pkey_index; </span><br><span class="line">    <span class="type">uint16_t</span> slid; </span><br><span class="line">    <span class="type">uint8_t</span> sl; </span><br><span class="line">    <span class="type">uint8_t</span> dlid_path_bits; </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h2 id="RDMA-Send-Receive"><a href="#RDMA-Send-Receive" class="headerlink" title="RDMA Send/Receive"></a>RDMA Send/Receive</h2><p>让我们看个简单的例子。在这个例子中，我们将把一个缓冲区里的数据从系统A的内存中搬到系统B的内存中去。这就是我们所说的消息传递语义学。接下来我们要讲的一种操作为SEND，是RDMA中最基础的操作类型。</p>
+<h3 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h3><p>第1步：系统A和B都创建了他们各自的QP的完成队列(CQ), 并为即将进行的RDMA传输注册了相应的内存区域(MR)。 系统A识别了一段缓冲区，该缓冲区的数据将被搬运到系统B上。系统B分配了一段空的缓冲区，用来存放来自系统A发送的数据。<br><img src="/img/v2-1282960e29ec7042ffec89dcc4f5577e_720w.jpg" alt=""></p>
+<h3 id="第二步"><a href="#第二步" class="headerlink" title="第二步"></a>第二步</h3><p>第二步：系统B创建一个WQE并放置到它的接收队列(RQ)中。这个WQE包含了一个指针，该指针指向的内存缓冲区用来存放接收到的数据。系统A也创建一个WQE并放置到它的发送队列(SQ)中去，该WQE中的指针执行一段内存缓冲区，该缓冲区的数据将要被传送。<br><img src="/img/v2-9dcb687ffaee99730313270214b327e6_720w.jpg" alt=""></p>
+<h3 id="第三步"><a href="#第三步" class="headerlink" title="第三步"></a>第三步</h3><p>第三步：系统A上的HCA总是在硬件上干活，看看发送队列里有没有WQE。HCA将消费掉来自系统A的WQE, 然后将内存区域里的数据变成数据流发送给系统B。当数据流开始到达系统B的时候，系统B上的HCA就消费来自系统B的WQE，然后将数据放到该放的缓冲区上去。在高速通道上传输的数据流完全绕过了操作系统内核。<br><img src="/img/v2-397f08428eaee59f9908dcb0ea2b1b56_720w.jpg" alt=""></p>
+<h3 id="第四步"><a href="#第四步" class="headerlink" title="第四步"></a>第四步</h3><p>第四步：当数据搬运完成的时候，HCA会创建一个CQE。 这个CQE被放置到完成队列(CQ)中，表明数据传输已经完成。HCA每消费掉一个WQE, 都会生成一个CQE。因此，在系统A的完成队列中放置一个CQE,意味着对应的WQE的发送操作已经完成。同理，在系统B的完成队列中也会放置一个CQE，表明对应的WQE的接收操作已经完成。如果发生错误，HCA依然会创建一个CQE。在CQE中，包含了一个用来记录传输状态的字段。</p>
+<p>我们刚刚举例说明的是一个RDMA Send操作。在IB或RoCE中，传送一个小缓冲区里的数据耗费的总时间大约在1.3µs。通过同时创建很多WQE, 就能在1秒内传输存放在数百万个缓冲区里的数据。</p>
+<h2 id="RDMA单边通信"><a href="#RDMA单边通信" class="headerlink" title="RDMA单边通信"></a>RDMA单边通信</h2><p>在 RDMA 传输中，SEND/RECEIVE 是双边操作，即需要通信双方的参与，并且 RECEIVE 要先于 SEND 执行，这样对方才能发送数据，当然如果对方不需要发送数据，可以不执行 RECEIVE 操作，因此该过程和传统通信相似，区别在于 RDMA 的零拷贝网络技术和内核旁路，延迟低，多用于传输短的控制消息。</p>
+<p>WRITE/READ 是单边操作，顾名思义，读/写操作是一方在执行，在实际的通信过程中，WRITE/READ 操作是由客户端来执行的，而服务器端不需要执行任何操作。RDMA WRITE 操作中，由客户端把数据从本地 buffer 中直接 push 到远程 QP 的虚拟空间的连续内存块中（物理内存不一定连续），因此需要知道目的地址（remote addr）和访问权限（remote key）。RDMA READ 操作中，是客户端直接到远程的 QP 的虚拟空间的连续内存块中获取数据 pull 到本地目的 buffer 中，因此需要远程 QP 的内存地址和访问权限。单边操作多用于批量数据传输。</p>
+<p>可以看出，在单边操作过程中，客户端需要知道远程 QP 的 remote addr 和 remote key，而这两个信息是可以通过 SEND/REVEIVE 操作来交换的。</p>
+<h3 id="RDMA-单边操作（RDMA-READ）"><a href="#RDMA-单边操作（RDMA-READ）" class="headerlink" title="RDMA 单边操作（RDMA READ）"></a>RDMA 单边操作（RDMA READ）</h3><p>READ 和 WRITE 是单边操作，只需要本端明确信息的源和目的地址，远端应用不必感知此次通信，数据的读或写都通过 RDMA 在网卡与应用 Buffer 之间完成，再由远端网卡封装成消息返回到本端。</p>
+<p>对于单边操作，以存储网络环境下的存储为例，数据的流程如下：</p>
+<ol>
+<li>首先 A、B 建立连接，QP 已经创建并且初始化。</li>
+<li>数据被存档在 B 的 buffer 地址 VB，注意 VB 应该提前注册到 B 的网卡（并且它是一个 memory region），并拿到返回的 remote key，相当于 RDMA 操作这块 buffer 的权限。</li>
+<li>B 把数据地址 VB，key 封装到专用的报文传送到 A，这相当于 B 把数据 buffer 的操作权交给了 A。同时 B 在它的 WQ 中注册进一个 WR，以用于接收数据传输的 A 返回的状态。</li>
+<li>A 在收到 B 的送过来的数据 VB 和 remote key 后，网卡会把它们连同自身存储地址 VA 到封装 RDMA READ 请求，将这个消息请求发送给 B，这个过程 A、B 两端不需要任何软件参与，就可以将 B 的数据存储到 A 的 VA 虚拟地址。</li>
+<li>A 在存储完成后，会向 B 返回整个数据传输的状态信息。</li>
+</ol>
+<p>单边操作传输方式是 RDMA 与传统网络传输的最大不同，只需提供直接访问远程的虚拟地址，无须远程应用参与其中，这种方式适用于批量数据传输。</p>
+<h3 id="RDMA-单边操作（RDMA-WRITE）"><a href="#RDMA-单边操作（RDMA-WRITE）" class="headerlink" title="RDMA 单边操作（RDMA WRITE）"></a>RDMA 单边操作（RDMA WRITE）</h3><p>对于单边操作，以存储网络环境下的存储为例，数据的流程如下：</p>
+<ol>
+<li>首先 A、B 建立连接，QP 已经创建并且初始化。</li>
+<li>数据 remote 目标存储 buffer 地址 VB，注意 VB 应该提前注册到 B 的网卡（并且它是一个 memory region），并拿到返回的 remote key，相当于 RDMA 操作这块 buffer 的权限。</li>
+<li>B 把数据地址 VB，key 封装到专用的报文传送到 A，这相当于 B 把数据 buffer 的操作权交给了 A。同时 B 在它的 WQ 中注册进一个 WR，以用于接收数据传输的 A 返回的状态。</li>
+<li>A 在收到 B 的送过来的数据 VB 和 remote key 后，网卡会把它们连同自身发送地址 VA 到封装 RDMA WRITE 请求，这个过程 A、B 两端不需要任何软件参与，就可以将 A 的数据发送到 B 的 VB 虚拟地址。</li>
+<li>A 在发送数据完成后，会向 B 返回整个数据传输的状态信息。</li>
+</ol>
+<p>单边操作传输方式是 RDMA 与传统网络传输的最大不同，只需提供直接访问远程的虚拟地址，无须远程应用的参与其中，这种方式适用于批量数据传输。</p>
+<h3 id="RDMA-双边操作（RDMA-SEND-RECEIVE）"><a href="#RDMA-双边操作（RDMA-SEND-RECEIVE）" class="headerlink" title="RDMA 双边操作（RDMA SEND/RECEIVE）"></a>RDMA 双边操作（RDMA SEND/RECEIVE）</h3><p>RDMA 中 SEND/RECEIVE 是双边操作，即必须要远端的应用感知参与才能完成收发。在实际中，SEND/RECEIVE 多用于连接控制类报文，而数据报文多是通过 READ/WRITE 来完成的。</p>
+<p>对于双边操作为例，主机 A 向主机 B（下面简称 A、B）发送数据的流程如下：</p>
+<ol>
+<li>首先，A 和 B 都要创建并初始化好各自的 QP，CQ。</li>
+<li>A 和 B 分别向自己的 WQ 中注册 WQE，对于 A，WQ = SQ，WQE 描述指向一个等到被发送的数据；对于 B，WQ = RQ，WQE 描述指向一块用于存储数据的 Buffer。</li>
+<li>A 的网卡异步调度轮到 A 的 WQE，解析到这是一个 SEND 消息，从 buffer 中直接向 B 发出数据。数据流到达 B 的网卡后，B 的 WQE 被消耗，并把数据直接存储到 WQE 指向的存储位置。</li>
+<li>AB 通信完成后，A 的 CQ 中会产生一个完成消息 CQE 表示发送完成。与此同时，B 的 CQ 中也会产生一个完成消息表示接收完成。每个 WQ 中 WQE 的处理完成都会产生一个 CQE。</li>
+</ol>
+<p>双边操作与传统网络的底层 Buffer Pool 类似，收发双方的参与过程并无差别，区别在零拷贝、kernel bypass，实际上对于 RDMA，这是一种复杂的消息传输模式，多用于传输短的控制消息。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在这博客中，我们学习了如何使用RDMA verbs API。同时也介绍了队列的概念，而队列概念是RDMA编程的基础。最后，我们演示了RDMA send操作，展现了缓冲区的数据是如何在从一个系统搬运到另一个系统上去的。</p>
+<h1 id="理解RDMA-SGL"><a href="#理解RDMA-SGL" class="headerlink" title="理解RDMA SGL"></a>理解RDMA SGL</h1><h2 id="前言-1"><a href="#前言-1" class="headerlink" title="前言"></a>前言</h2><p>在使用RDMA操作之前，我们需要了解一些RDMA API中的一些需要的值。其中在ibv_send_wr我们需要一个sg_list的数组，sg_list是用来存放ibv_sge元素，那么什么是SGL以及什么是sge呢？对于一个使用RDMA进行开发的程序员来说，我们需要了解这一系列细节。</p>
+<h2 id="SGE简介"><a href="#SGE简介" class="headerlink" title="SGE简介"></a>SGE简介</h2><p>在NVMe over PCIe中，I/O命令支持SGL(Scatter Gather List 分散聚合表)和PRP(Physical Region Page 物理(内存)区域页), 而管理命令只支持PRP;而在NVMe over Fabrics中，无论是管理命令还是I/O命令都只支持SGL。</p>
+<p>RDMA编程中，SGL(Scatter/Gather List)是最基本的数据组织形式。 SGL是一个数组，该数组中的元素被称之为SGE(Scatter/Gather Element)，每一个SGE就是一个Data Segment(数据段)。RDMA支持Scatter/Gather操作，具体来讲就是RDMA可以支持一个连续的Buffer空间，进行Scatter分散到多个目的主机的不连续的Buffer空间。Gather指的就是多个不连续的Buffer空间，可以Gather到目的主机的一段连续的Buffer空间。</p>
+<p>下面我们就来看一下ibv_sge的定义：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">ibv_sge</span> &#123;</span><br><span class="line">    <span class="type">uint64_t</span>    addr;</span><br><span class="line">    <span class="type">uint32_t</span>    length;</span><br><span class="line">    <span class="type">uint32_t</span>    lkey;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>addr: 数据段所在的虚拟内存的起始地址 (Virtual Address of the Data Segment (i.e. Buffer))</li>
+<li>length: 数据段长度(Length of the Data Segment)</li>
+<li>lkey: 该数据段对应的L_Key (Key of the local Memory Region)</li>
+</ul>
+<h2 id="ivc-post-send接口"><a href="#ivc-post-send接口" class="headerlink" title="ivc_post_send接口"></a>ivc_post_send接口</h2><p>而在数据传输中，发送/接收使用的Verbs API为：</p>
+<p>ibv_post_send() - post a list of work requests (WRs) to a send queue 将一个WR列表放置到发送队列中 ibv_post_recv() - post a list of work requests (WRs) to a receive queue 将一个WR列表放置到接收队列中<br>下面以ibv_post_send()为例，说明SGL是如何被放置到RDMA硬件的线缆(Wire)上的。</p>
+<p><code>ibv_post_send()</code>的函数原型<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;infiniband/verbs.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">ibv_post_send</span><span class="params">(<span class="keyword">struct</span> ibv_qp *qp, </span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="keyword">struct</span> ibv_send_wr *wr,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="keyword">struct</span> ibv_send_wr **bad_wr)</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p><code>ibv_post_send()</code>将以send_wr开头的工作请求（WR）的列表发布到Queue Pair的Send Queue。 它会在第一次失败时停止处理此列表中的WR（可以在发布请求时立即检测到），并通过bad_wr返回此失败的WR。</p>
+<p>参数wr是一个ibv_send_wr结构，如中所定义。</p>
+<h2 id="ibv-send-wr结构"><a href="#ibv-send-wr结构" class="headerlink" title="ibv_send_wr结构"></a>ibv_send_wr结构</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">ibv_send_wr</span> &#123;</span><br><span class="line">    <span class="type">uint64_t</span>    wr_id;      <span class="comment">/* User defined WR ID */</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">ibv_send_wr</span>     *next;       <span class="comment">/* Pointer to next WR in list, NULL if last WR */</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">ibv_sge</span>     *sg_list;    <span class="comment">/* Pointer to the s/g array */</span></span><br><span class="line">    <span class="type">int</span>     num_sge;    <span class="comment">/* Size of the s/g array */</span></span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">ibv_wr_opcode</span>      opcode;     <span class="comment">/* Operation type */</span></span><br><span class="line">    <span class="type">int</span>     send_flags;     <span class="comment">/* Flags of the WR properties */</span></span><br><span class="line">    <span class="type">uint32_t</span>    imm_data;       <span class="comment">/* Immediate data (in network byte order) */</span></span><br><span class="line">    <span class="keyword">union</span> &#123;</span><br><span class="line">    <span class="keyword">struct</span> &#123;</span><br><span class="line">        <span class="type">uint64_t</span>    remote_addr;    <span class="comment">/* Start address of remote memory buffer */</span></span><br><span class="line">        <span class="type">uint32_t</span>    rkey;       <span class="comment">/* Key of the remote Memory Region */</span></span><br><span class="line">    &#125; rdma;</span><br><span class="line">    <span class="keyword">struct</span> &#123;</span><br><span class="line">        <span class="type">uint64_t</span>    remote_addr;    <span class="comment">/* Start address of remote memory buffer */</span></span><br><span class="line">        <span class="type">uint64_t</span>    compare_add;    <span class="comment">/* Compare operand */</span></span><br><span class="line">        <span class="type">uint64_t</span>    swap;       <span class="comment">/* Swap operand */</span></span><br><span class="line">            <span class="type">uint32_t</span>    rkey;       <span class="comment">/* Key of the remote Memory Region */</span></span><br><span class="line">        &#125; atomic;</span><br><span class="line">        <span class="keyword">struct</span> &#123;</span><br><span class="line">            <span class="keyword">struct</span> <span class="title class_">ibv_ah</span>  *ah;     <span class="comment">/* Address handle (AH) for the remote node address */</span></span><br><span class="line">            <span class="type">uint32_t</span>    remote_qpn;     <span class="comment">/* QP number of the destination QP */</span></span><br><span class="line">            <span class="type">uint32_t</span>    remote_qkey;    <span class="comment">/* Q_Key number of the destination QP */</span></span><br><span class="line">        &#125; ud;</span><br><span class="line">    &#125; wr;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>在调用<code>ibv_post_send()</code>之前，必须填充好数据结构wr。 wr是一个链表，每一个结点包含了一个sg_list(i.e. SGL: 由一个或多个SGE构成的数组), sg_list的长度为num_sge。</p>
+<h2 id="RDMA-提交WR流程"><a href="#RDMA-提交WR流程" class="headerlink" title="RDMA 提交WR流程"></a>RDMA 提交WR流程</h2><p>下面图解一下SGL和WR链表的对应关系，并说明一个SGL (struct ibv_sge *sg_list)里包含的多个数据段是如何被RDMA硬件聚合成一个连续的数据段的。</p>
+<h3 id="第一步：创建SGL"><a href="#第一步：创建SGL" class="headerlink" title="第一步：创建SGL"></a>第一步：创建SGL</h3><p><img src="/img/v2-a45f31b55c22ca8aad8a139be0eb8d99_720w.jpg" alt=""></p>
+<p>从上图中，我们可以看到wr链表中的每一个结点都包含了一个SGL，SGL是一个数组，包含一个或多个SGE。通过ibv_post_send提交一个RDMA SEND 请求。这个WR请求中，包括一个sg_list的元素。它是一个SGE链表，SGE指向具体需要发送数据的Buffer。</p>
+<h3 id="第二步：使用PD进行内存保护"><a href="#第二步：使用PD进行内存保护" class="headerlink" title="第二步：使用PD进行内存保护"></a>第二步：使用PD进行内存保护</h3><p><img src="/img/v2-4e72a802e022d5742de169921c185cd8_720w.jpg" alt=""></p>
+<p>我们在发送一段内存地址的时候，我们需要将这段内存地址通过Memory Registration注册到RDMA中。也就是说注册到PD内存保护域当中。一个SGL至少被一个MR保护, 多个MR存在同一个PD中。如图所示一段内存MR可以保护多个SGE元素。</p>
+<h3 id="调用ibv-post-send-将SGL发送到wire上去"><a href="#调用ibv-post-send-将SGL发送到wire上去" class="headerlink" title="调用ibv_post_send()将SGL发送到wire上去"></a>调用ibv_post_send()将SGL发送到wire上去</h3><p><img src="/img/v2-dec6f454affdc07019b8729c6c13fc96_720w.jpg" alt=""></p>
+<p>在上图中，一个SGL数组包含了3个SGE, 长度分别为N1, N2, N3字节。我们可以看到，这3个buffer并不连续，它们Scatter(分散)在内存中的各个地方。RDMA硬件读取到SGL后，进行Gather(聚合)操作，于是在RDMA硬件的Wire上看到的就是N3+N2+N1个连续的字节。换句话说，通过使用SGL, 我们可以把分散(Scatter)在内存中的多个数据段(不连续)交给RDMA硬件去聚合(Gather)成连续的数据段。</p>
+<h1 id="RDMA服务器的代码流程"><a href="#RDMA服务器的代码流程" class="headerlink" title="RDMA服务器的代码流程"></a>RDMA服务器的代码流程</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">main()</span><br><span class="line">&#123;</span><br><span class="line">	<span class="number">1.</span> rdma_create_event_channel</span><br><span class="line">	<span class="comment">// 这一步是创建一个event channel，event channel是RDMA设备在操作完成后，或者有连接请求等事件发生时，用来通知应用程序的通道。其内部就是一个file descriptor, 因此可以进行poll等操作。</span></span><br><span class="line"></span><br><span class="line">	<span class="number">2.</span> rdma_create_id(channel, **id，……)</span><br><span class="line">	<span class="comment">// 这一步创建一个rdma_cm_id, 概念上等价与socket编程时的listen socket。</span></span><br><span class="line"></span><br><span class="line">	<span class="number">3.</span> rdma_bind_addr(id,addr)</span><br><span class="line">	<span class="comment">// 和socket编程一样，也要先绑定一个本地的地址和端口，以进行listen操作。</span></span><br><span class="line"></span><br><span class="line">	<span class="number">4.</span> rdma_listen(id,block)</span><br><span class="line">	<span class="comment">// 开始侦听客户端的连接请求</span></span><br><span class="line"></span><br><span class="line">	<span class="number">5.</span> rdma_get_cm_event</span><br><span class="line">	<span class="comment">// 这个调用就是作用在第一步创建的event channel上面，要从event channel中获取一个事件。这是个阻塞调用，只有有事件时才会返回。在一切正常的情况下，函数返回时会得到一个 RDMA_CM_EVENT_CONNECT_REQUEST事件，也就是说，有客户端发起连接了。</span></span><br><span class="line">	<span class="comment">//在事件的参数里面，会有一个新的rdma_cm_id传入。这点和socket是不同的，socket只有在accept后才有新的socket fd创建。</span></span><br><span class="line"></span><br><span class="line">on_event()</span><br><span class="line">&#123;</span><br><span class="line">    on_connect_request()<span class="comment">//RDMA_CM_EVENT_CONNECT_REQUEST</span></span><br><span class="line">	&#123;</span><br><span class="line">		build_context()</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="number">6.</span>ibv_alloc_pd</span><br><span class="line">			<span class="comment">// 创建一个protection domain。protection domain可以看作是一个内存保护单位，在内存区域和队列直接建立一个关联关系，防止未授权的访问。</span></span><br><span class="line"></span><br><span class="line">			<span class="number">7.</span>ibv_create_comp_channel</span><br><span class="line">			<span class="comment">// 和之前创建的event channel类似，这也是一个event channel，但只用来报告完成队列里面的事件。当完成队列里有新的任务完成时，就通过这个channel向应用程序报告。</span></span><br><span class="line"></span><br><span class="line">			<span class="number">8.</span>ibv_create_cq</span><br><span class="line">			<span class="comment">// 创建完成队列，创建时就指定使用第6步的channel。</span></span><br><span class="line"></span><br><span class="line">		&#125;<span class="comment">//--end build_context()</span></span><br><span class="line"></span><br><span class="line">		<span class="number">9.</span>rdma_create_qp</span><br><span class="line">		<span class="comment">// 创建一个queue pair, 一个queue pair包括一个发送queue和一个接收queue. 指定使用前面创建的cq作为完成队列。该qp创建时就指定关联到第6步创建的pd上。</span></span><br><span class="line"></span><br><span class="line">		<span class="number">10.</span>ibv_reg_mr</span><br><span class="line">		<span class="comment">// 注册内存区域。RDMA使用的内存，必须事先进行注册。这个是可以理解的，DMA的内存在边界对齐，能否被swap等方面，都有要求。</span></span><br><span class="line"></span><br><span class="line">		<span class="number">11.</span>rdma_accept</span><br><span class="line">		<span class="comment">// 至此，做好了全部的准备工作，可以调用accept接受客户端的这个请求了。</span></span><br><span class="line">	&#125; <span class="comment">//--end on_connect_request()</span></span><br><span class="line"></span><br><span class="line">	<span class="number">12.</span>rdma_ack_cm_event</span><br><span class="line">	<span class="comment">// 对于每个从event channel得到的事件，都要调用ack函数，否则会产生内存泄漏。这一步的ack是对应第5步的get。每一次get调用，都要有对应的ack调用。</span></span><br><span class="line"></span><br><span class="line">	<span class="number">13.</span>rdma_get_cm_event</span><br><span class="line">	<span class="comment">// 继续调用rdma_get_cm_event, 一切正常的话我们此时应该得到 RDMA_CM_EVENT_ESTABLISHED 事件，表示连接已经建立起来。不需要做额外的处理，直接rdma_ack_cm_event就行了</span></span><br><span class="line">&#125;<span class="comment">//--end on_event()</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 当rdma_get_cm_event返回RDMA_CM_EVENT_DISCONNECTED事件时，表示客户端断开了连接，server端要进行对应的清理。此时可以调用rdma_ack_cm_event释放事件资源。然后依次调用下面的函数，释放连接资源，内存资源，队列资源。</span></span><br><span class="line"></span><br><span class="line">rdma_disconnect</span><br><span class="line"></span><br><span class="line">rdma_destroy_qp</span><br><span class="line"></span><br><span class="line">ibv_dereg_mr</span><br><span class="line"></span><br><span class="line">rdma_destroy_id</span><br><span class="line"><span class="comment">//释放同客户端连接的rdma_cm_id</span></span><br><span class="line"></span><br><span class="line">rdma_destroy_id</span><br><span class="line"><span class="comment">// 释放用于侦听的rdma_cm_id</span></span><br><span class="line"></span><br><span class="line">rdma_destroy_event_channel</span><br><span class="line"><span class="comment">// 释放 event channel</span></span><br><span class="line"></span><br><span class="line">&#125; <span class="comment">// end main</span></span><br></pre></td></tr></table></figure>
+<p>服务端server.c<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rdma/rdma_cma.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TEST_NZ(x) do &#123; <span class="keyword">if</span> ( (x)) die(<span class="string">&quot;error: &quot;</span> #x <span class="string">&quot; failed (returned non-zero).&quot;</span> ); &#125; while (0)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TEST_Z(x)  do &#123; <span class="keyword">if</span> (!(x)) die(<span class="string">&quot;error: &quot;</span> #x <span class="string">&quot; failed (returned zero/null).&quot;</span>); &#125; while (0)</span></span><br><span class="line"> </span><br><span class="line"><span class="type">const</span> <span class="type">int</span> BUFFER_SIZE = <span class="number">1024</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">context</span> &#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_context</span> *ctx;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_pd</span> *pd;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_cq</span> *cq;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_comp_channel</span> *comp_channel;</span><br><span class="line"> </span><br><span class="line">  <span class="type">pthread_t</span> cq_poller_thread;</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">connection</span> &#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_qp</span> *qp;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_mr</span> *recv_mr;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_mr</span> *send_mr;</span><br><span class="line"> </span><br><span class="line">  <span class="type">char</span> *recv_region;</span><br><span class="line">  <span class="type">char</span> *send_region;</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">die</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *reason)</span></span>;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">build_context</span><span class="params">(<span class="keyword">struct</span> ibv_context *verbs)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">build_qp_attr</span><span class="params">(<span class="keyword">struct</span> ibv_qp_init_attr *qp_attr)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> * <span class="title">poll_cq</span><span class="params">(<span class="type">void</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">post_receives</span><span class="params">(<span class="keyword">struct</span> connection *conn)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">register_memory</span><span class="params">(<span class="keyword">struct</span> connection *conn)</span></span>;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">on_completion</span><span class="params">(<span class="keyword">struct</span> ibv_wc *wc)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">on_connect_request</span><span class="params">(<span class="keyword">struct</span> rdma_cm_id *id)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">on_connection</span><span class="params">(<span class="type">void</span> *context)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">on_disconnect</span><span class="params">(<span class="keyword">struct</span> rdma_cm_id *id)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">on_event</span><span class="params">(<span class="keyword">struct</span> rdma_cm_event *event)</span></span>;</span><br><span class="line"> </span><br><span class="line"><span class="type">static</span> <span class="keyword">struct</span> <span class="title class_">context</span> *s_ctx = <span class="literal">NULL</span>;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> _USE_IPV6</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">sockaddr_in6</span> addr;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> addr;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">rdma_cm_event</span> *event = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">rdma_cm_id</span> *listener = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">rdma_event_channel</span> *ec = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="type">uint16_t</span> port = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">memset</span>(&amp;addr, <span class="number">0</span>, <span class="built_in">sizeof</span>(addr));</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> _USE_IPV6</span></span><br><span class="line">  addr.sin6_family = AF_INET6;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">  addr.sin_family = AF_INET;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_Z</span>(ec = <span class="built_in">rdma_create_event_channel</span>());</span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">rdma_create_id</span>(ec, &amp;listener, <span class="literal">NULL</span>, RDMA_PS_TCP));</span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">rdma_bind_addr</span>(listener, (<span class="keyword">struct</span> sockaddr *)&amp;addr));</span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">rdma_listen</span>(listener, <span class="number">10</span>)); <span class="comment">/* backlog=10 is arbitrary */</span></span><br><span class="line"> </span><br><span class="line">  port = <span class="built_in">ntohs</span>(<span class="built_in">rdma_get_src_port</span>(listener)); <span class="comment">//rdma_get_src_port 返回listener对应的tcp 端口</span></span><br><span class="line"> </span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;listening on port %d.\n&quot;</span>, port);</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">while</span> (<span class="built_in">rdma_get_cm_event</span>(ec, &amp;event) == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">rdma_cm_event</span> event_copy;</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">memcpy</span>(&amp;event_copy, event, <span class="built_in">sizeof</span>(*event));</span><br><span class="line">    <span class="built_in">rdma_ack_cm_event</span>(event);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">on_event</span>(&amp;event_copy))</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">rdma_destroy_id</span>(listener);</span><br><span class="line">  <span class="built_in">rdma_destroy_event_channel</span>(ec);</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">die</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *reason)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">fprintf</span>(stderr, <span class="string">&quot;%s\n&quot;</span>, reason);</span><br><span class="line">  <span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">build_context</span><span class="params">(<span class="keyword">struct</span> ibv_context *verbs)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (s_ctx) &#123;</span><br><span class="line">    <span class="keyword">if</span> (s_ctx-&gt;ctx != verbs)</span><br><span class="line">      <span class="built_in">die</span>(<span class="string">&quot;cannot handle events in more than one context.&quot;</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  s_ctx = (<span class="keyword">struct</span> context *)<span class="built_in">malloc</span>(<span class="built_in">sizeof</span>(<span class="keyword">struct</span> context));</span><br><span class="line"> </span><br><span class="line">  s_ctx-&gt;ctx = verbs;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_Z</span>(s_ctx-&gt;pd = <span class="built_in">ibv_alloc_pd</span>(s_ctx-&gt;ctx));</span><br><span class="line">  <span class="built_in">TEST_Z</span>(s_ctx-&gt;comp_channel = <span class="built_in">ibv_create_comp_channel</span>(s_ctx-&gt;ctx));</span><br><span class="line">  <span class="built_in">TEST_Z</span>(s_ctx-&gt;cq = <span class="built_in">ibv_create_cq</span>(s_ctx-&gt;ctx, <span class="number">10</span>, <span class="literal">NULL</span>, s_ctx-&gt;comp_channel, <span class="number">0</span>)); <span class="comment">/* cqe=10 is arbitrary */</span></span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">ibv_req_notify_cq</span>(s_ctx-&gt;cq, <span class="number">0</span>)); #完成完成队列与完成通道的关联</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">pthread_create</span>(&amp;s_ctx-&gt;cq_poller_thread, <span class="literal">NULL</span>, poll_cq, <span class="literal">NULL</span>));</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">build_qp_attr</span><span class="params">(<span class="keyword">struct</span> ibv_qp_init_attr *qp_attr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">memset</span>(qp_attr, <span class="number">0</span>, <span class="built_in">sizeof</span>(*qp_attr));</span><br><span class="line"> </span><br><span class="line">  qp_attr-&gt;send_cq = s_ctx-&gt;cq;</span><br><span class="line">  qp_attr-&gt;recv_cq = s_ctx-&gt;cq;</span><br><span class="line">  qp_attr-&gt;qp_type = IBV_QPT_RC;</span><br><span class="line"> </span><br><span class="line">  qp_attr-&gt;cap.max_send_wr = <span class="number">10</span>;</span><br><span class="line">  qp_attr-&gt;cap.max_recv_wr = <span class="number">10</span>;</span><br><span class="line">  qp_attr-&gt;cap.max_send_sge = <span class="number">1</span>;</span><br><span class="line">  qp_attr-&gt;cap.max_recv_sge = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> * <span class="title">poll_cq</span><span class="params">(<span class="type">void</span> *ctx)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_cq</span> *cq;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_wc</span> wc;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="built_in">TEST_NZ</span>(<span class="built_in">ibv_get_cq_event</span>(s_ctx-&gt;comp_channel, &amp;cq, &amp;ctx));</span><br><span class="line">    <span class="built_in">ibv_ack_cq_events</span>(cq, <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">TEST_NZ</span>(<span class="built_in">ibv_req_notify_cq</span>(cq, <span class="number">0</span>));</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">ibv_poll_cq</span>(cq, <span class="number">1</span>, &amp;wc))</span><br><span class="line">      <span class="built_in">on_completion</span>(&amp;wc);</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">post_receives</span><span class="params">(<span class="keyword">struct</span> connection *conn)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_recv_wr</span> wr, *bad_wr = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_sge</span> sge;</span><br><span class="line"> </span><br><span class="line">  wr.wr_id = (<span class="type">uintptr_t</span>)conn;</span><br><span class="line">  wr.next = <span class="literal">NULL</span>;</span><br><span class="line">  wr.sg_list = &amp;sge;</span><br><span class="line">  wr.num_sge = <span class="number">1</span>;</span><br><span class="line"> </span><br><span class="line">  sge.addr = (<span class="type">uintptr_t</span>)conn-&gt;recv_region;</span><br><span class="line">  sge.length = BUFFER_SIZE;</span><br><span class="line">  sge.lkey = conn-&gt;recv_mr-&gt;lkey;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">ibv_post_recv</span>(conn-&gt;qp, &amp;wr, &amp;bad_wr));</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">register_memory</span><span class="params">(<span class="keyword">struct</span> connection *conn)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  conn-&gt;send_region = <span class="built_in">malloc</span>(BUFFER_SIZE);</span><br><span class="line">  conn-&gt;recv_region = <span class="built_in">malloc</span>(BUFFER_SIZE);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_Z</span>(conn-&gt;send_mr = <span class="built_in">ibv_reg_mr</span>(</span><br><span class="line">    s_ctx-&gt;pd,</span><br><span class="line">    conn-&gt;send_region,</span><br><span class="line">    BUFFER_SIZE,</span><br><span class="line">    <span class="number">0</span>));</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_Z</span>(conn-&gt;recv_mr = <span class="built_in">ibv_reg_mr</span>(</span><br><span class="line">    s_ctx-&gt;pd,</span><br><span class="line">    conn-&gt;recv_region,</span><br><span class="line">    BUFFER_SIZE,</span><br><span class="line">    IBV_ACCESS_LOCAL_WRITE));</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">on_completion</span><span class="params">(<span class="keyword">struct</span> ibv_wc *wc)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (wc-&gt;status != IBV_WC_SUCCESS)</span><br><span class="line">    <span class="built_in">die</span>(<span class="string">&quot;on_completion: status is not IBV_WC_SUCCESS.&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">if</span> (wc-&gt;opcode &amp; IBV_WC_RECV) &#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">connection</span> *conn = (<span class="keyword">struct</span> connection *)(<span class="type">uintptr_t</span>)wc-&gt;wr_id;</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;received message: %s\n&quot;</span>, conn-&gt;recv_region);</span><br><span class="line"> </span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (wc-&gt;opcode == IBV_WC_SEND) &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;send completed successfully.\n&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">on_connect_request</span><span class="params">(<span class="keyword">struct</span> rdma_cm_id *id)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_qp_init_attr</span> qp_attr;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">rdma_conn_param</span> cm_params;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">connection</span> *conn;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;received connection request.\n&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">build_context</span>(id-&gt;verbs);</span><br><span class="line">  <span class="built_in">build_qp_attr</span>(&amp;qp_attr);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">rdma_create_qp</span>(id, s_ctx-&gt;pd, &amp;qp_attr));</span><br><span class="line"> </span><br><span class="line">  id-&gt;context = conn = (<span class="keyword">struct</span> connection *)<span class="built_in">malloc</span>(<span class="built_in">sizeof</span>(<span class="keyword">struct</span> connection));</span><br><span class="line">  conn-&gt;qp = id-&gt;qp;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">register_memory</span>(conn);</span><br><span class="line">  <span class="built_in">post_receives</span>(conn);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">memset</span>(&amp;cm_params, <span class="number">0</span>, <span class="built_in">sizeof</span>(cm_params));</span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">rdma_accept</span>(id, &amp;cm_params));</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">on_connection</span><span class="params">(<span class="type">void</span> *context)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">connection</span> *conn = (<span class="keyword">struct</span> connection *)context;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_send_wr</span> wr, *bad_wr = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_sge</span> sge;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">snprintf</span>(conn-&gt;send_region, BUFFER_SIZE, <span class="string">&quot;message from passive/server side with pid %d&quot;</span>, <span class="built_in">getpid</span>());</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;connected. posting send...\n&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">memset</span>(&amp;wr, <span class="number">0</span>, <span class="built_in">sizeof</span>(wr));</span><br><span class="line"> </span><br><span class="line">  wr.opcode = IBV_WR_SEND;</span><br><span class="line">  wr.sg_list = &amp;sge;</span><br><span class="line">  wr.num_sge = <span class="number">1</span>;</span><br><span class="line">  wr.send_flags = IBV_SEND_SIGNALED;</span><br><span class="line"> </span><br><span class="line">  sge.addr = (<span class="type">uintptr_t</span>)conn-&gt;send_region;</span><br><span class="line">  sge.length = BUFFER_SIZE;</span><br><span class="line">  sge.lkey = conn-&gt;send_mr-&gt;lkey;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">ibv_post_send</span>(conn-&gt;qp, &amp;wr, &amp;bad_wr));</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">on_disconnect</span><span class="params">(<span class="keyword">struct</span> rdma_cm_id *id)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">connection</span> *conn = (<span class="keyword">struct</span> connection *)id-&gt;context;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;peer disconnected.\n&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">rdma_destroy_qp</span>(id);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">ibv_dereg_mr</span>(conn-&gt;send_mr);</span><br><span class="line">  <span class="built_in">ibv_dereg_mr</span>(conn-&gt;recv_mr);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">free</span>(conn-&gt;send_region);</span><br><span class="line">  <span class="built_in">free</span>(conn-&gt;recv_region);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">free</span>(conn);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">rdma_destroy_id</span>(id);</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">on_event</span><span class="params">(<span class="keyword">struct</span> rdma_cm_event *event)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> r = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">if</span> (event-&gt;event == RDMA_CM_EVENT_CONNECT_REQUEST)</span><br><span class="line">    r = <span class="built_in">on_connect_request</span>(event-&gt;id);</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (event-&gt;event == RDMA_CM_EVENT_ESTABLISHED)</span><br><span class="line">    r = <span class="built_in">on_connection</span>(event-&gt;id-&gt;context);</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (event-&gt;event == RDMA_CM_EVENT_DISCONNECTED)</span><br><span class="line">    r = <span class="built_in">on_disconnect</span>(event-&gt;id);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="built_in">die</span>(<span class="string">&quot;on_event: unknown event.&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">return</span> r;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>客户端client.c<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netdb.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rdma/rdma_cma.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TEST_NZ(x) do &#123; <span class="keyword">if</span> ( (x)) die(<span class="string">&quot;error: &quot;</span> #x <span class="string">&quot; failed (returned non-zero).&quot;</span> ); &#125; while (0)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TEST_Z(x)  do &#123; <span class="keyword">if</span> (!(x)) die(<span class="string">&quot;error: &quot;</span> #x <span class="string">&quot; failed (returned zero/null).&quot;</span>); &#125; while (0)</span></span><br><span class="line"> </span><br><span class="line"><span class="type">const</span> <span class="type">int</span> BUFFER_SIZE = <span class="number">1024</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> TIMEOUT_IN_MS = <span class="number">500</span>; <span class="comment">/* ms */</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">context</span> &#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_context</span> *ctx;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_pd</span> *pd;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_cq</span> *cq;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_comp_channel</span> *comp_channel;</span><br><span class="line"> </span><br><span class="line">  <span class="type">pthread_t</span> cq_poller_thread;</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">connection</span> &#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">rdma_cm_id</span> *id;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_qp</span> *qp;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_mr</span> *recv_mr;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_mr</span> *send_mr;</span><br><span class="line"> </span><br><span class="line">  <span class="type">char</span> *recv_region;</span><br><span class="line">  <span class="type">char</span> *send_region;</span><br><span class="line"> </span><br><span class="line">  <span class="type">int</span> num_completions;</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">die</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *reason)</span></span>;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">build_context</span><span class="params">(<span class="keyword">struct</span> ibv_context *verbs)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">build_qp_attr</span><span class="params">(<span class="keyword">struct</span> ibv_qp_init_attr *qp_attr)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> * <span class="title">poll_cq</span><span class="params">(<span class="type">void</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">post_receives</span><span class="params">(<span class="keyword">struct</span> connection *conn)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">register_memory</span><span class="params">(<span class="keyword">struct</span> connection *conn)</span></span>;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">on_addr_resolved</span><span class="params">(<span class="keyword">struct</span> rdma_cm_id *id)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">on_completion</span><span class="params">(<span class="keyword">struct</span> ibv_wc *wc)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">on_connection</span><span class="params">(<span class="type">void</span> *context)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">on_disconnect</span><span class="params">(<span class="keyword">struct</span> rdma_cm_id *id)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">on_event</span><span class="params">(<span class="keyword">struct</span> rdma_cm_event *event)</span></span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">on_route_resolved</span><span class="params">(<span class="keyword">struct</span> rdma_cm_id *id)</span></span>;</span><br><span class="line"> </span><br><span class="line"><span class="type">static</span> <span class="keyword">struct</span> <span class="title class_">context</span> *s_ctx = <span class="literal">NULL</span>;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">addrinfo</span> *addr;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">rdma_cm_event</span> *event = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">rdma_cm_id</span> *conn= <span class="literal">NULL</span>;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">rdma_event_channel</span> *ec = <span class="literal">NULL</span>;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">if</span> (argc != <span class="number">3</span>)</span><br><span class="line">    <span class="built_in">die</span>(<span class="string">&quot;usage: client &lt;server-address&gt; &lt;server-port&gt;&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">getaddrinfo</span>(argv[<span class="number">1</span>], argv[<span class="number">2</span>], <span class="literal">NULL</span>, &amp;addr));</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_Z</span>(ec = <span class="built_in">rdma_create_event_channel</span>());</span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">rdma_create_id</span>(ec, &amp;conn, <span class="literal">NULL</span>, RDMA_PS_TCP));</span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">rdma_resolve_addr</span>(conn, <span class="literal">NULL</span>, addr-&gt;ai_addr, TIMEOUT_IN_MS));</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">freeaddrinfo</span>(addr);</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">while</span> (<span class="built_in">rdma_get_cm_event</span>(ec, &amp;event) == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">rdma_cm_event</span> event_copy;</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">memcpy</span>(&amp;event_copy, event, <span class="built_in">sizeof</span>(*event));</span><br><span class="line">    <span class="built_in">rdma_ack_cm_event</span>(event);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">on_event</span>(&amp;event_copy))</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">rdma_destroy_event_channel</span>(ec);</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">die</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *reason)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">fprintf</span>(stderr, <span class="string">&quot;%s\n&quot;</span>, reason);</span><br><span class="line">  <span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">build_context</span><span class="params">(<span class="keyword">struct</span> ibv_context *verbs)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (s_ctx) &#123;</span><br><span class="line">    <span class="keyword">if</span> (s_ctx-&gt;ctx != verbs)</span><br><span class="line">      <span class="built_in">die</span>(<span class="string">&quot;cannot handle events in more than one context.&quot;</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  s_ctx = (<span class="keyword">struct</span> context *)<span class="built_in">malloc</span>(<span class="built_in">sizeof</span>(<span class="keyword">struct</span> context));</span><br><span class="line"> </span><br><span class="line">  s_ctx-&gt;ctx = verbs;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_Z</span>(s_ctx-&gt;pd = <span class="built_in">ibv_alloc_pd</span>(s_ctx-&gt;ctx));</span><br><span class="line">  <span class="built_in">TEST_Z</span>(s_ctx-&gt;comp_channel = <span class="built_in">ibv_create_comp_channel</span>(s_ctx-&gt;ctx));</span><br><span class="line">  <span class="built_in">TEST_Z</span>(s_ctx-&gt;cq = <span class="built_in">ibv_create_cq</span>(s_ctx-&gt;ctx, <span class="number">10</span>, <span class="literal">NULL</span>, s_ctx-&gt;comp_channel, <span class="number">0</span>)); <span class="comment">/* cqe=10 is arbitrary */</span></span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">ibv_req_notify_cq</span>(s_ctx-&gt;cq, <span class="number">0</span>));</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">pthread_create</span>(&amp;s_ctx-&gt;cq_poller_thread, <span class="literal">NULL</span>, poll_cq, <span class="literal">NULL</span>));</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">build_qp_attr</span><span class="params">(<span class="keyword">struct</span> ibv_qp_init_attr *qp_attr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">memset</span>(qp_attr, <span class="number">0</span>, <span class="built_in">sizeof</span>(*qp_attr));</span><br><span class="line"> </span><br><span class="line">  qp_attr-&gt;send_cq = s_ctx-&gt;cq;</span><br><span class="line">  qp_attr-&gt;recv_cq = s_ctx-&gt;cq;</span><br><span class="line">  qp_attr-&gt;qp_type = IBV_QPT_RC;</span><br><span class="line"> </span><br><span class="line">  qp_attr-&gt;cap.max_send_wr = <span class="number">10</span>;</span><br><span class="line">  qp_attr-&gt;cap.max_recv_wr = <span class="number">10</span>;</span><br><span class="line">  qp_attr-&gt;cap.max_send_sge = <span class="number">1</span>;</span><br><span class="line">  qp_attr-&gt;cap.max_recv_sge = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> * <span class="title">poll_cq</span><span class="params">(<span class="type">void</span> *ctx)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_cq</span> *cq;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_wc</span> wc;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="built_in">TEST_NZ</span>(<span class="built_in">ibv_get_cq_event</span>(s_ctx-&gt;comp_channel, &amp;cq, &amp;ctx));</span><br><span class="line">    <span class="built_in">ibv_ack_cq_events</span>(cq, <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">TEST_NZ</span>(<span class="built_in">ibv_req_notify_cq</span>(cq, <span class="number">0</span>));</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">ibv_poll_cq</span>(cq, <span class="number">1</span>, &amp;wc))</span><br><span class="line">      <span class="built_in">on_completion</span>(&amp;wc);</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">post_receives</span><span class="params">(<span class="keyword">struct</span> connection *conn)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_recv_wr</span> wr, *bad_wr = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_sge</span> sge;</span><br><span class="line"> </span><br><span class="line">  wr.wr_id = (<span class="type">uintptr_t</span>)conn;</span><br><span class="line">  wr.next = <span class="literal">NULL</span>;</span><br><span class="line">  wr.sg_list = &amp;sge;</span><br><span class="line">  wr.num_sge = <span class="number">1</span>;</span><br><span class="line"> </span><br><span class="line">  sge.addr = (<span class="type">uintptr_t</span>)conn-&gt;recv_region;</span><br><span class="line">  sge.length = BUFFER_SIZE;</span><br><span class="line">  sge.lkey = conn-&gt;recv_mr-&gt;lkey;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">ibv_post_recv</span>(conn-&gt;qp, &amp;wr, &amp;bad_wr));</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">register_memory</span><span class="params">(<span class="keyword">struct</span> connection *conn)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  conn-&gt;send_region = <span class="built_in">malloc</span>(BUFFER_SIZE);</span><br><span class="line">  conn-&gt;recv_region = <span class="built_in">malloc</span>(BUFFER_SIZE);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_Z</span>(conn-&gt;send_mr = <span class="built_in">ibv_reg_mr</span>(</span><br><span class="line">    s_ctx-&gt;pd, </span><br><span class="line">    conn-&gt;send_region, </span><br><span class="line">    BUFFER_SIZE, </span><br><span class="line">    <span class="number">0</span>));</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_Z</span>(conn-&gt;recv_mr = <span class="built_in">ibv_reg_mr</span>(</span><br><span class="line">    s_ctx-&gt;pd, </span><br><span class="line">    conn-&gt;recv_region, </span><br><span class="line">    BUFFER_SIZE, </span><br><span class="line">    IBV_ACCESS_LOCAL_WRITE));</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">on_addr_resolved</span><span class="params">(<span class="keyword">struct</span> rdma_cm_id *id)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_qp_init_attr</span> qp_attr;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">connection</span> *conn;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;address resolved.\n&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">build_context</span>(id-&gt;verbs);</span><br><span class="line">  <span class="built_in">build_qp_attr</span>(&amp;qp_attr);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">rdma_create_qp</span>(id, s_ctx-&gt;pd, &amp;qp_attr));</span><br><span class="line"> </span><br><span class="line">  id-&gt;context = conn = (<span class="keyword">struct</span> connection *)<span class="built_in">malloc</span>(<span class="built_in">sizeof</span>(<span class="keyword">struct</span> connection));</span><br><span class="line"> </span><br><span class="line">  conn-&gt;id = id;</span><br><span class="line">  conn-&gt;qp = id-&gt;qp;</span><br><span class="line">  conn-&gt;num_completions = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">register_memory</span>(conn);</span><br><span class="line">  <span class="built_in">post_receives</span>(conn);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">rdma_resolve_route</span>(id, TIMEOUT_IN_MS));</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">on_completion</span><span class="params">(<span class="keyword">struct</span> ibv_wc *wc)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">connection</span> *conn = (<span class="keyword">struct</span> connection *)(<span class="type">uintptr_t</span>)wc-&gt;wr_id;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">if</span> (wc-&gt;status != IBV_WC_SUCCESS)</span><br><span class="line">    <span class="built_in">die</span>(<span class="string">&quot;on_completion: status is not IBV_WC_SUCCESS.&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">if</span> (wc-&gt;opcode &amp; IBV_WC_RECV)</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;received message: %s\n&quot;</span>, conn-&gt;recv_region);</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (wc-&gt;opcode == IBV_WC_SEND)</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;send completed successfully.\n&quot;</span>);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="built_in">die</span>(<span class="string">&quot;on_completion: completion isn&#x27;t a send or a receive.&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">if</span> (++conn-&gt;num_completions == <span class="number">2</span>)</span><br><span class="line">    <span class="built_in">rdma_disconnect</span>(conn-&gt;id);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">on_connection</span><span class="params">(<span class="type">void</span> *context)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">connection</span> *conn = (<span class="keyword">struct</span> connection *)context;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_send_wr</span> wr, *bad_wr = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ibv_sge</span> sge;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">snprintf</span>(conn-&gt;send_region, BUFFER_SIZE, <span class="string">&quot;message from active/client side with pid %d&quot;</span>, <span class="built_in">getpid</span>());</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;connected. posting send...\n&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">memset</span>(&amp;wr, <span class="number">0</span>, <span class="built_in">sizeof</span>(wr));</span><br><span class="line"> </span><br><span class="line">  wr.wr_id = (<span class="type">uintptr_t</span>)conn;</span><br><span class="line">  wr.opcode = IBV_WR_SEND;</span><br><span class="line">  wr.sg_list = &amp;sge;</span><br><span class="line">  wr.num_sge = <span class="number">1</span>;</span><br><span class="line">  wr.send_flags = IBV_SEND_SIGNALED;</span><br><span class="line"> </span><br><span class="line">  sge.addr = (<span class="type">uintptr_t</span>)conn-&gt;send_region;</span><br><span class="line">  sge.length = BUFFER_SIZE;</span><br><span class="line">  sge.lkey = conn-&gt;send_mr-&gt;lkey;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">ibv_post_send</span>(conn-&gt;qp, &amp;wr, &amp;bad_wr));</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">on_disconnect</span><span class="params">(<span class="keyword">struct</span> rdma_cm_id *id)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">connection</span> *conn = (<span class="keyword">struct</span> connection *)id-&gt;context;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;disconnected.\n&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">rdma_destroy_qp</span>(id);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">ibv_dereg_mr</span>(conn-&gt;send_mr);</span><br><span class="line">  <span class="built_in">ibv_dereg_mr</span>(conn-&gt;recv_mr);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">free</span>(conn-&gt;send_region);</span><br><span class="line">  <span class="built_in">free</span>(conn-&gt;recv_region);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">free</span>(conn);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">rdma_destroy_id</span>(id);</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span>; <span class="comment">/* exit event loop */</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">on_event</span><span class="params">(<span class="keyword">struct</span> rdma_cm_event *event)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> r = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">if</span> (event-&gt;event == RDMA_CM_EVENT_ADDR_RESOLVED)</span><br><span class="line">    r = <span class="built_in">on_addr_resolved</span>(event-&gt;id);</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (event-&gt;event == RDMA_CM_EVENT_ROUTE_RESOLVED)</span><br><span class="line">    r = <span class="built_in">on_route_resolved</span>(event-&gt;id);</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (event-&gt;event == RDMA_CM_EVENT_ESTABLISHED)</span><br><span class="line">    r = <span class="built_in">on_connection</span>(event-&gt;id-&gt;context);</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (event-&gt;event == RDMA_CM_EVENT_DISCONNECTED)</span><br><span class="line">    r = <span class="built_in">on_disconnect</span>(event-&gt;id);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="built_in">die</span>(<span class="string">&quot;on_event: unknown event.&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">return</span> r;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">on_route_resolved</span><span class="params">(<span class="keyword">struct</span> rdma_cm_id *id)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">rdma_conn_param</span> cm_params;</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;route resolved.\n&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  <span class="built_in">memset</span>(&amp;cm_params, <span class="number">0</span>, <span class="built_in">sizeof</span>(cm_params));</span><br><span class="line">  <span class="built_in">TEST_NZ</span>(<span class="built_in">rdma_connect</span>(id, &amp;cm_params));</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag"># 积累</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/09/24/%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90LINUX%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81%20%E7%AC%94%E8%AE%B01/" rel="next" title="深入分析Linux内核源码笔记1">
+                <i class="fa fa-chevron-left"></i> 深入分析Linux内核源码笔记1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/10/07/cache%E7%BC%93%E5%AD%98%E5%99%A8%E4%BB%8B%E7%BB%8D/" rel="prev" title="Cache 缓存器介绍">
+                Cache 缓存器介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E6%99%AF%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">背景介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9FTCP-IP%E9%80%9A%E4%BF%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">传统TCP&#x2F;IP通信模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E7%BD%91%E7%BB%9C%E5%AE%9A%E4%B9%89"><span class="nav-number">1.2.</span> <span class="nav-text">通信网络定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BD%93%E4%BB%8A%E7%BD%91%E7%BB%9C%E7%8E%B0%E7%8A%B6"><span class="nav-number">1.3.</span> <span class="nav-text">当今网络现状</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9FTCP-IP%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.4.</span> <span class="nav-text">传统TCP&#x2F;IP存在的问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%B7%A5%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text">相关工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-Offloading-Engine"><span class="nav-number">2.1.</span> <span class="nav-text">TCP Offloading Engine</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#User-Net-Networking-U-Net"><span class="nav-number">2.2.</span> <span class="nav-text">User-Net Networking(U-Net)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DMA"><span class="nav-number">3.</span> <span class="nav-text">DMA</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RDMA"><span class="nav-number">4.</span> <span class="nav-text">RDMA</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RDMA%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="nav-number">4.1.</span> <span class="nav-text">RDMA的优势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDMA-%E4%B8%89%E7%A7%8D%E4%B8%8D%E5%90%8C%E7%9A%84%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.2.</span> <span class="nav-text">RDMA 三种不同的硬件实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDMA%E5%9F%BA%E6%9C%AC%E6%9C%AF%E8%AF%AD"><span class="nav-number">4.3.</span> <span class="nav-text">RDMA基本术语</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDMA%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">4.4.</span> <span class="nav-text">RDMA基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RDMA%E4%B8%89%E7%A7%8D%E4%B8%8D%E5%90%8C%E7%9A%84%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.4.1.</span> <span class="nav-text">RDMA三种不同的硬件实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fabric"><span class="nav-number">4.4.2.</span> <span class="nav-text">Fabric</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CA-Channel-Adapter"><span class="nav-number">4.4.3.</span> <span class="nav-text">CA(Channel Adapter)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Verbs"><span class="nav-number">4.4.4.</span> <span class="nav-text">Verbs</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-number">4.5.</span> <span class="nav-text">核心概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RDMA%E6%8A%80%E6%9C%AF"><span class="nav-number">4.5.1.</span> <span class="nav-text">RDMA技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDMA%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3"><span class="nav-number">4.5.2.</span> <span class="nav-text">RDMA技术详解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDMA%E6%95%B4%E4%BD%93%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="nav-number">4.5.3.</span> <span class="nav-text">RDMA整体系统架构图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Memory-Registration-MR-%E5%86%85%E5%AD%98%E6%B3%A8%E5%86%8C"><span class="nav-number">4.5.4.</span> <span class="nav-text">Memory Registration(MR) | 内存注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Queues-%E9%98%9F%E5%88%97"><span class="nav-number">4.5.5.</span> <span class="nav-text">Queues | 队列</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDMA%E6%93%8D%E4%BD%9C%E7%BB%86%E8%8A%82"><span class="nav-number">4.6.</span> <span class="nav-text">RDMA操作细节</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RDAM%E5%8D%95%E8%BE%B9%E6%93%8D%E4%BD%9C-RDMA-READ"><span class="nav-number">4.6.1.</span> <span class="nav-text">RDAM单边操作 (RDMA READ)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDMA-%E5%8D%95%E8%BE%B9%E6%93%8D%E4%BD%9C-RDMA-WRITE"><span class="nav-number">4.6.2.</span> <span class="nav-text">RDMA 单边操作 (RDMA WRITE)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDMA-%E5%8F%8C%E8%BE%B9%E6%93%8D%E4%BD%9C-RDMA-SEND-RECEIVE"><span class="nav-number">4.6.3.</span> <span class="nav-text">RDMA 双边操作 (RDMA SEND&#x2F;RECEIVE)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDMA%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="nav-number">4.7.</span> <span class="nav-text">RDMA数据传输</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RDMA-Send-RDMA%E5%8F%91%E9%80%81-%E6%8E%A5%E6%94%B6-%E6%93%8D%E4%BD%9C-%EF%BC%88Send-Recv%EF%BC%89"><span class="nav-number">4.7.1.</span> <span class="nav-text">RDMA Send | RDMA发送(&#x2F;接收)操作 （Send&#x2F;Recv）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDMA-Read-RDMA%E8%AF%BB%E6%93%8D%E4%BD%9C-Pull"><span class="nav-number">4.7.2.</span> <span class="nav-text">RDMA Read | RDMA读操作 (Pull)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDMA-Write-RDMA%E5%86%99%E6%93%8D%E4%BD%9C-Push"><span class="nav-number">4.7.3.</span> <span class="nav-text">RDMA Write | RDMA写操作 (Push)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDMA-Write-with-Immediate-Data-%E6%94%AF%E6%8C%81%E7%AB%8B%E5%8D%B3%E6%95%B0%E7%9A%84RDMA%E5%86%99%E6%93%8D%E4%BD%9C"><span class="nav-number">4.7.4.</span> <span class="nav-text">RDMA Write with Immediate Data | 支持立即数的RDMA写操作</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RDMA-Send-Receive%E6%93%8D%E4%BD%9C"><span class="nav-number">5.</span> <span class="nav-text">RDMA Send Receive操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">5.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDMA-Verbs%E6%93%8D%E4%BD%9C"><span class="nav-number">5.2.</span> <span class="nav-text">RDMA Verbs操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Queue-Pairs"><span class="nav-number">5.3.</span> <span class="nav-text">Queue Pairs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDMA-Send-Receive"><span class="nav-number">5.4.</span> <span class="nav-text">RDMA Send&#x2F;Receive</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5"><span class="nav-number">5.4.1.</span> <span class="nav-text">第一步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5"><span class="nav-number">5.4.2.</span> <span class="nav-text">第二步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5"><span class="nav-number">5.4.3.</span> <span class="nav-text">第三步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5"><span class="nav-number">5.4.4.</span> <span class="nav-text">第四步</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDMA%E5%8D%95%E8%BE%B9%E9%80%9A%E4%BF%A1"><span class="nav-number">5.5.</span> <span class="nav-text">RDMA单边通信</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RDMA-%E5%8D%95%E8%BE%B9%E6%93%8D%E4%BD%9C%EF%BC%88RDMA-READ%EF%BC%89"><span class="nav-number">5.5.1.</span> <span class="nav-text">RDMA 单边操作（RDMA READ）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDMA-%E5%8D%95%E8%BE%B9%E6%93%8D%E4%BD%9C%EF%BC%88RDMA-WRITE%EF%BC%89"><span class="nav-number">5.5.2.</span> <span class="nav-text">RDMA 单边操作（RDMA WRITE）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDMA-%E5%8F%8C%E8%BE%B9%E6%93%8D%E4%BD%9C%EF%BC%88RDMA-SEND-RECEIVE%EF%BC%89"><span class="nav-number">5.5.3.</span> <span class="nav-text">RDMA 双边操作（RDMA SEND&#x2F;RECEIVE）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.6.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%90%86%E8%A7%A3RDMA-SGL"><span class="nav-number">6.</span> <span class="nav-text">理解RDMA SGL</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80-1"><span class="nav-number">6.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SGE%E7%AE%80%E4%BB%8B"><span class="nav-number">6.2.</span> <span class="nav-text">SGE简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ivc-post-send%E6%8E%A5%E5%8F%A3"><span class="nav-number">6.3.</span> <span class="nav-text">ivc_post_send接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ibv-send-wr%E7%BB%93%E6%9E%84"><span class="nav-number">6.4.</span> <span class="nav-text">ibv_send_wr结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDMA-%E6%8F%90%E4%BA%A4WR%E6%B5%81%E7%A8%8B"><span class="nav-number">6.5.</span> <span class="nav-text">RDMA 提交WR流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%88%9B%E5%BB%BASGL"><span class="nav-number">6.5.1.</span> <span class="nav-text">第一步：创建SGL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E4%BD%BF%E7%94%A8PD%E8%BF%9B%E8%A1%8C%E5%86%85%E5%AD%98%E4%BF%9D%E6%8A%A4"><span class="nav-number">6.5.2.</span> <span class="nav-text">第二步：使用PD进行内存保护</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E7%94%A8ibv-post-send-%E5%B0%86SGL%E5%8F%91%E9%80%81%E5%88%B0wire%E4%B8%8A%E5%8E%BB"><span class="nav-number">6.5.3.</span> <span class="nav-text">调用ibv_post_send()将SGL发送到wire上去</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RDMA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B"><span class="nav-number">7.</span> <span class="nav-text">RDMA服务器的代码流程</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zn-ch">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Linux," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="调试工具ltrace strace ftrace的使用最近学习了一些调试工具，包括ltrace strace ftrace。这些都属于不同层级的调试工具。 下面是我画的简易的层次关系图。 12345678  App  |  |  &lt;--------ltrace  |libc ld  &lt; -------strace  |  |     &lt;----------systemtap ke">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux脚本及检测工具">
+<meta property="og:url" content="http://yoursite.com/2019/04/09/Linux%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="调试工具ltrace strace ftrace的使用最近学习了一些调试工具，包括ltrace strace ftrace。这些都属于不同层级的调试工具。 下面是我画的简易的层次关系图。 12345678  App  |  |  &lt;--------ltrace  |libc ld  &lt; -------strace  |  |     &lt;----------systemtap ke">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/img/640-16940508313340.png">
+<meta property="og:image" content="http://yoursite.com/img/640-16940508313341.png">
+<meta property="og:image" content="http://yoursite.com/img/640-16940508313342.png">
+<meta property="og:image" content="http://yoursite.com/img/640-16940508313343.png">
+<meta property="og:image" content="http://yoursite.com/img/640-16940508313344.png">
+<meta property="og:image" content="http://yoursite.com/img/640-16940508313355.png">
+<meta property="og:image" content="http://yoursite.com/img/640-16940508313356.png">
+<meta property="og:image" content="http://yoursite.com/img/640-16940508313357.png">
+<meta property="og:image" content="http://yoursite.com/img/640-16940508313358.png">
+<meta property="og:image" content="http://yoursite.com/img/20200806172800.webp">
+<meta property="og:image" content="https://img-blog.csdn.net/20161222132206475?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="https://img-blog.csdn.net/20161222132459961?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="https://img-blog.csdn.net/20161222132842965?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="https://img-blog.csdn.net/20161222134126671?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="https://img-blog.csdn.net/20161222135411738?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="https://img-blog.csdn.net/20161222163734721?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="https://img-blog.csdn.net/20161222165754978?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="https://img-blog.csdn.net/20161222170445544?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="https://img-blog.csdn.net/20161222170134808?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://yoursite.com/img/20210716100700.png">
+<meta property="og:image" content="http://yoursite.com/img/20210716100701.png">
+<meta property="og:image" content="http://yoursite.com/img/20210716100702.png">
+<meta property="og:image" content="http://yoursite.com/img/20210716100703.png">
+<meta property="og:image" content="http://yoursite.com/img/20210716100704.png">
+<meta property="og:image" content="http://yoursite.com/img/20210716100705.png">
+<meta property="og:image" content="http://yoursite.com/img/20210716100706.png">
+<meta property="og:image" content="http://yoursite.com/img/20210716100707.png">
+<meta property="og:image" content="http://yoursite.com/img/20210716100708.png">
+<meta property="article:published_time" content="2019-04-09T10:06:08.000Z">
+<meta property="article:modified_time" content="2023-09-07T03:06:06.104Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/640-16940508313340.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/09/Linux相关命令/"/>
+
+
+
+
+
+  <title>linux脚本及检测工具 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zn-ch">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hao Yu's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">The program monkey was eaten by the siege lion.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/09/Linux%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">linux脚本及检测工具</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-09T18:06:08+08:00">
+                2019-04-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="调试工具ltrace-strace-ftrace的使用"><a href="#调试工具ltrace-strace-ftrace的使用" class="headerlink" title="调试工具ltrace strace ftrace的使用"></a>调试工具ltrace strace ftrace的使用</h1><p>最近学习了一些调试工具，包括ltrace strace ftrace。这些都属于不同层级的调试工具。 下面是我画的简易的层次关系图。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">  App</span><br><span class="line">  |</span><br><span class="line">  |  &lt;--------ltrace</span><br><span class="line">  |</span><br><span class="line">libc ld  &lt; -------strace</span><br><span class="line">  |</span><br><span class="line">  |     &lt;----------systemtap</span><br><span class="line"> kernel  &lt;---------ftrace</span><br></pre></td></tr></table></figure>
+<p>systemtap是当下功能强大的内核函数追踪工具，我们编写特定的script就可以调试内核函数，由于这个篇幅有限，我将在其他文章中进行介绍。</p>
+<p>先从最简单的说起ltrace起。 拿最简单的hello world程序来说，printf调用的lic里面的库函数说白了就是put（）,put()函数返回值就是打印字符的个数，包括转移字符\n。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost day3]<span class="comment"># ltrace -f ./hello</span></span><br><span class="line">[pid 15439] __libc_start_main(0x40052c, 1, 0x7fff226b6888, 0x400560</span><br><span class="line">[pid 15439] puts(<span class="string">&quot;Hello world&quot;</span>Hello world</span><br><span class="line">)                                                    = 12</span><br><span class="line">[pid 15439] puts(<span class="string">&quot;Hello world&quot;</span>Hello world</span><br><span class="line">)                                                    = 12</span><br><span class="line">[pid 15439] +++ exited (status 0) +++</span><br><span class="line">[root@localhost day3]<span class="comment">#</span></span><br></pre></td></tr></table></figure>
+<p>下面我来说一下strace的功能，追踪system call 与 signal。所谓系统调用，就是内核提供的、功能十分强大的一系列的函数。这些系统调用是在内核中实现的，比如linux中的POSIX标准就是指的这一些。再通过一定的方式把系统调用给用户，一般都通过门(gate)陷入(trap)实现。系统调用是用户程序和内核交互的接口。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost day3]<span class="comment"># strace -f ./hello</span></span><br><span class="line">execve(<span class="string">&quot;./hello&quot;</span>, [<span class="string">&quot;./hello&quot;</span>], [/* 51 vars */]) = 0</span><br><span class="line">brk(0)                                  = 0x184e000</span><br><span class="line">mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7ff8cecb5000</span><br><span class="line">access(<span class="string">&quot;/etc/ld.so.preload&quot;</span>, R_OK)      = -1 ENOENT (No such file or directory)</span><br><span class="line">open(<span class="string">&quot;/etc/ld.so.cache&quot;</span>, O_RDONLY|O_CLOEXEC) = 3</span><br><span class="line">fstat(3, &#123;st_mode=S_IFREG|0644, st_size=114694, ...&#125;) = 0</span><br><span class="line">mmap(NULL, 114694, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7ff8cec98000</span><br><span class="line">close(3)                                = 0</span><br><span class="line">open(<span class="string">&quot;/lib64/libc.so.6&quot;</span>, O_RDONLY|O_CLOEXEC) = 3</span><br><span class="line"><span class="built_in">read</span>(3, <span class="string">&quot;\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0&gt;\0\1\0\0\0\20\33\242\361&lt;\0\0\0&quot;</span>..., 832) = 832 </span><br><span class="line">fstat(3, &#123;st_mode=S_IFREG|0755, st_size=2071376, ...&#125;) = 0 </span><br><span class="line">mmap(0x3cf1a00000, 3896312, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x3cf1a00000 </span><br><span class="line">mprotect(0x3cf1bad000, 2097152, PROT_NONE) = 0 </span><br><span class="line">mmap(0x3cf1dad000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1ad000) = 0x3cf1dad000 mmap(0x3cf1db3000, 17400, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x3cf1db3000 </span><br><span class="line">close(3)                                = 0 </span><br><span class="line">mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7ff8cec97000 </span><br><span class="line">mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7ff8cec95000 </span><br><span class="line">arch_prctl(ARCH_SET_FS, 0x7ff8cec95740) = 0 </span><br><span class="line">mprotect(0x3cf1dad000, 16384, PROT_READ) = 0 </span><br><span class="line">mprotect(0x600000, 4096, PROT_READ)     = 0 </span><br><span class="line">mprotect(0x3cf1820000, 4096, PROT_READ) = 0 </span><br><span class="line">munmap(0x7ff8cec98000, 114694)          = 0 </span><br><span class="line">fstat(1, &#123;st_mode=S_IFCHR|0620, st_rdev=makedev(136, 0), ...&#125;) = 0 </span><br><span class="line">mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7ff8cecb4000 </span><br><span class="line">write(1, <span class="string">&quot;Hello world\n&quot;</span>, 12Hello world )           = 12 </span><br><span class="line">write(1, <span class="string">&quot;Hello world\n&quot;</span>, 12Hello world )           = 12 </span><br><span class="line">exit_group(0)                           = ? +++ </span><br><span class="line">exited with 0 +++ </span><br><span class="line">[root@localhost day3]<span class="comment"># </span></span><br></pre></td></tr></table></figure>
+<p>通过查看上面的system call，我们就会对elf文件载入流程有一个清晰的认识。</p>
+<p>流程：</p>
+<blockquote>
+<p>1.调用execve()函数执行载入</p>
+<p>2.brk() allocate new space to load the infomation of programmer</p>
+<p>3.mmap()把elf头载入virtual address</p>
+<p>4.先链接ld.so与ld.so.cache中是否存在之前调用过库函数的绝对地址</p>
+<p>5.查看file 状态的fstat()，包括r w x 等</p>
+<p>6.读取ELF头，并映射到虚拟地址，进行内存保护mprotect（）</p>
+<p>7.载入libc.so库函数</p>
+<p>8.arch_prctl()设置运行环境的体系结构</p>
+<p>9.write（）就是内核中写函数，包括发消息给其他的用户，写入设备等。 10.完成调用，退出。</p>
+</blockquote>
+<p>Ftrace 是一个内核中的追踪器，用于帮助系统开发者或设计者查看内核运行情况，它可以被用来调试或者分析延迟/性能问题。最早 ftrace 是一个 function tracer，仅能够记录内核的函数调用流程。如今 ftrace 已经成为一个 framework，采用 plugin 的方式支持开发人员添加更多种类的 trace 功能。</p>
+<p>Ftrace需要kernel支持 CONFIG_FUNCTION_TRACER CONFIG_FUNCTION_GRAPH_TRACER CONFIG_CONTEXT_SWITCH_TRACER CONFIG_NOP_TRACER CONFIG_SCHED_TRACER Debugfs 勾选，这样才可以使用ftrace中的一些特定功能。</p>
+<p>编译内核完成后，重新开机载入新内核。 ftrace不同于其他的调试工具，他需要debugfs的辅助。debugfs是一种特殊的文件系统，本身无法进行编辑，任何写入信息都要靠echo载入。另外由于是kernel debug，所以需要最高的root权限。 我们要先挂载这个文件系统到特殊的文件目录。这个/mnt/与/sys/kernel/debug/tracing是等同的。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost /]<span class="comment"># mount -t debugfs debugfs /mnt/ </span></span><br><span class="line">[root@localhost /]<span class="comment"># cd /mnt/ </span></span><br><span class="line">[root@localhost mnt]<span class="comment"># ls </span></span><br><span class="line">acpi         cleancache     dri            hid        iwlwifi             mei     sched_features  usb             x86 bdi          cxgb4          dynamic_debug  ideapad    kernel_page_tables  mmc0    sleep_time      vgaswitcheroo   xen bluetooth    debug_objects  extfrag        ieee80211  kprobes             rcu     suspend_stats   virtio-ports boot_params  dma_buf        frontswap      ips        mce                 regmap  tracing         wakeup_sources</span><br><span class="line">[root@localhost mnt]<span class="comment"># cd tracing/ </span></span><br><span class="line">[root@localhost tracing]<span class="comment"># ls </span></span><br><span class="line">available_events            enabled_functions         max_graph_depth  set_ftrace_filter   stack_trace_filter  tracing_cpumask available_filter_functions  events                    options          set_ftrace_notrace  trace               tracing_max_latency available_tracers           free_buffer               per_cpu          set_ftrace_pid      trace_clock         tracing_on buffer_size_kb              function_profile_enabled  printk_formats   set_graph_function  trace_marker        tracing_thresh buffer_total_size_kb        instances                 README           snapshot            trace_options       uprobe_events current_tracer              kprobe_events             saved_cmdlines   stack_max_size      trace_pipe          uprobe_profile dyn_ftrace_total_info       kprobe_profile            set_event        stack_trace         trace_stat </span><br></pre></td></tr></table></figure>
+<p> Ftrace 的普通使用步骤如下：</p>
+<ol>
+<li>挂载Debugfs: Ftrace 通过 debugfs 向用户态提供访问接口。配置内核时激活 debugfs 后会创建目录 /sys/kernel/debug ，debugfs 文件系统就是挂载 到该目录。 1.1 运行时挂载： Officially mount method :</li>
+</ol>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mount -t debugfs nodev /sys/kernel/debug</span></span><br><span class="line">OR:</span><br><span class="line"><span class="comment"># mkdir /debug</span></span><br><span class="line"><span class="comment"># mount -t debugfs nodev /debug</span></span><br><span class="line"><span class="comment"># cd /debug/tracing</span></span><br><span class="line"></span><br><span class="line">OR: <span class="comment"># mount -t debugfs nodev /sys/kernel/debug</span></span><br><span class="line"><span class="comment"># ln -s /sys/kernel/debug /debug</span></span><br></pre></td></tr></table></figure>
+<p>1.2 系统启动自动挂载： 要在系统启动自动挂载debugfs，需要将如下内容添加到 /etc/fstab 文件： debugfs /sys/kernel/debug debugfs defaults 0 0</p>
+<ol>
+<li>选择一种 tracer:</li>
+</ol>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cat current_tracer</span></span><br><span class="line"></span><br><span class="line">nop // no option</span><br><span class="line"></span><br><span class="line"> <span class="comment"># cat available_tracers</span></span><br><span class="line"></span><br><span class="line">blk function_graph <span class="keyword">function</span> nop</span><br><span class="line"></span><br><span class="line"><span class="comment"># echo function_graph &gt; current_tracer</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li>打开关闭追踪（在老的内核上有tracing_enabled，需要给tracing_enabled和tracing_on同时赋1 才能打开追踪，而在新的内核上去掉tracing_enabled只需要控制tracing_on 即可打开关闭追踪）<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># echo 1 &gt; tracing_on; run_test; echo 0 &gt; tracing_on</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>注：其实ftrace_enabled并不是去掉了，而是从 tracing目录中去掉，我们还是可以在 /proc/sys/kernel/ftrace_enabled 目录下看到他的身影，而且默认已经被设置为1，所以现在我们只需要echo 1到tracing_on 中即可打开追踪。 $ cat /proc/sys/kernel/ftrace_enabled 1</p>
+<ol>
+<li>查看追踪结果：</li>
+</ol>
+<p>ftrace 的输出信息主要保存在 3 个文件中。</p>
+<ul>
+<li>Trace，该文件保存 ftrace 的输出信息，其内容可以直接阅读。</li>
+<li>latency_trace，保存与 trace 相同的信息，不过组织方式略有不同。主要为了用户能方便地分析系统中有关延迟的信息。</li>
+<li>trace_pipe 是一个管道文件，主要为了方便应用程序读取 trace 内容。算是扩展接口吧。</li>
+</ul>
+<p>所以可以直接查看 trace 追踪文件，也可以在追踪之前使用trace_pipe 将追踪结果直接导向其他的文件。 比如：<code># cat trace_pipe &gt; /tmp/log &amp;</code><br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># cat /tmp/log</span><br><span class="line"></span><br><span class="line">OR # cat trace</span><br></pre></td></tr></table></figure></p>
+<p>Ftrace 的进阶使用</p>
+<ol>
+<li><p>使用 echo pid &gt; set_ftrace_pid 来追踪特定的进程！</p>
+</li>
+<li><p>追踪事件：</p>
+</li>
+</ol>
+<p>2.1 首先查看事件文件夹下面有哪些选项：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># ls events/</span><br><span class="line">    block       ext4    header_event  jbd2    napi    raw_syscalls  …… enable</span><br><span class="line">        # ls events/sched/</span><br><span class="line">    enable          sched_kthread_stop_ret  sched_process_exit  sched_process_wait  ……</span><br></pre></td></tr></table></figure></p>
+<p>2.2 追踪一个/若干事件：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># echo 1 &gt; events/sched/sched_wakeup/enable</span><br><span class="line"># cat trace | head -10</span><br><span class="line"># tracer: nop</span><br><span class="line">#TASK-PID  CPU#  TIMESTAMP    FUNCTION</span><br><span class="line">#   |       |       |           |</span><br><span class="line">bash-2613 [001] 425.078164: sched_wakeup: task bash:2613 [120] success=0 [001]</span><br><span class="line">bash-2613 [001] 425.078184: sched_wakeup: task bash:2613 [120] success=0 [001]</span><br></pre></td></tr></table></figure></p>
+<p>2.3 追踪一类事件：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># echo 1 &gt; events/sched/enable</span><br><span class="line"># cat trace | head -10</span><br><span class="line"># tracer: nop</span><br><span class="line">#TASK-PID        CPU#  TIMESTAMP    FUNCTION</span><br><span class="line">#   |             |       |           |</span><br><span class="line">events/0-9      [000] 638.042792: sched_switch: task events/0:9 [120] (S) ==&gt; kondemand/0:1305 [120]</span><br><span class="line">ondemand/0-1305 [000] 638.042796: sched_stat_wait: task: restorecond:1395 wait: 15023 [ns]</span><br></pre></td></tr></table></figure></p>
+<p>2.4 追踪所有事件：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># echo 1 &gt; events/enable</span><br><span class="line"># cat trace | head -10</span><br><span class="line"># tracer: nop</span><br><span class="line">#TASK-PID    CPU#  TIMESTAMP    FUNCTION</span><br><span class="line">#   |         |       |           |</span><br><span class="line">cpid-1470   [001]   794.947181:   kfree: call_site=ffffffff810c996d ptr=(null)</span><br><span class="line">acpid-1470  [001]   794.947182: sys_read -&gt; 0x1</span><br><span class="line">acpid-1470  [001]   794.947183: sys_exit: NR 0 = 1</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li><p>stack_trace</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># echo 1 &gt; /proc/sys/kernel/stack_tracer_enabled</span><br><span class="line">OR  # kernel command line “stacktrace”</span><br><span class="line">查看： # cat stack_trace</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将要跟踪的函数写入文件 set_ftrace_filter ，将不希望跟踪的函数写入文件 set_ftrace_notrace。通常直接操作文件 set_ftrace_filter 就可以了.</p>
+</li>
+</ol>
+<p>============= Ftrace 提供的函数使用=============</p>
+<p>内核头文件 include/linux/kernel.h 中描述了 ftrace 提供的工具函数的原型，这些函数包括 trace_printk、tracing_on/tracing_off 等。</p>
+<ol>
+<li>使用 trace_printk 打印跟踪信息</li>
+</ol>
+<p>ftrace 提供了一个用于向 ftrace 跟踪缓冲区输出跟踪信息的工具函数，叫做 trace_printk()，它的使用方式与 printk() 类似。可以通过 trace 文件读取该函数的输出。从头文件 include/linux/kernel.h 中可以看到，在激活配置 CONFIG_TRACING 后，trace_printk() 定义为宏： #define trace_printk(fmt, args…) \ … 所以在使用时：(例子是在一个内核模块中添加打印信息)</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/init.h&gt;</span> </span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/module.h&gt;</span> </span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/kernel.h&gt;</span> </span></span><br><span class="line">MODULE_LICENSE(<span class="string">&quot;GPL&quot;</span>); </span><br><span class="line">     </span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">ftrace_demo_init</span><span class="params">(<span class="type">void</span>)</span> </span><br><span class="line">&#123; </span><br><span class="line">    trace_printk(<span class="string">&quot;Can not see this in trace unless loaded for the second time\n&quot;</span>); </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">&#125; </span><br><span class="line">     </span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">ftrace_demo_exit</span><span class="params">(<span class="type">void</span>)</span> </span><br><span class="line">&#123; </span><br><span class="line">    trace_printk(<span class="string">&quot;Module unloading\n&quot;</span>); </span><br><span class="line">&#125; </span><br><span class="line">     </span><br><span class="line">module_init(ftrace_demo_init); </span><br><span class="line">module_exit(ftrace_demo_exit);</span><br></pre></td></tr></table></figure>
+<ol>
+<li>使用 tracing_on/tracing_off 控制跟踪信息的记录</li>
+</ol>
+<p>在跟踪过程中，有时候在检测到某些事件发生时，想要停止跟踪信息的记录，这样，跟踪缓冲区中较新的数据是与该事件有关的。在用户态，可以通过向文件 tracing_on 写入 0 来停止记录跟踪信息，写入 1 会继续记录跟踪信息。而在内核代码中，可以通过函数 tracing_on() 和 tracing_off() 来做到这一点，它们的行为类似于对 /sys/kernel/debug/tracing 下的文件 tracing_on 分别执行写 1 和 写 0 的操作。 使用这两个函数，会对跟踪信息的记录控制地更准确一些，这是因为在用户态写文件 tracing_on 到实际暂停跟踪，中间由于上下文切换、系统调度控制等可能已经经过较长的时间，这样会积累大量的跟踪信息，而感兴趣的那部分可能会被覆盖掉了。</p>
+<p>实际代码中，可以通过特定条件（比如检测到某种异常状况，等等）来控制跟踪信息的记录，函数的使用方式类似如下的形式：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (condition)</span><br><span class="line">tracing_on() or <span class="title function_">tracing_off</span><span class="params">()</span></span><br></pre></td></tr></table></figure>
+<p>跟踪模块运行状况时，使用 ftrace 命令操作序列在用户态进行必要的设置，而在代码中则可以通过 traceing_on() 控制在进入特定代码区域时开启跟踪信息，并在遇到某些条件时通过 tracing_off() 暂停；读者可以在查看完感兴趣的信息后，将 1 写入 tracing_on 文件以继续记录跟踪信息。实践中，可以通过宏来控制是否将对这些函数的调用编译进内核模块，这样可以在调试时将其开启，在最终发布时将其关闭。 用户态的应用程序可以通过直接读写文件 tracing_on 来控制记录跟踪信息的暂停状态，以便了解应用程序运行期间内核中发生的活动。</p>
+<p>如果我们要开启追踪功能。echo 1 &gt; tracing_on echo function_graph &gt;current_tracer 另外我们也可以设置要追踪的pid值 event buffer等</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"># tracer: function_graph</span><br><span class="line">#</span><br><span class="line"># CPU  DURATION                  FUNCTION CALLS</span><br><span class="line"># |     |   |                     |   |   |   |</span><br><span class="line"> 2)               |     update_curr() &#123;</span><br><span class="line"> 2)   0.147 us    |        update_min_vruntime();</span><br><span class="line"> 2)               |            cpuacct_charge() &#123;</span><br><span class="line"> 2)   0.097 us    |            debug_lockdep_rcu_enabled();</span><br><span class="line"> 2)   0.082 us    |            rcu_is_cpu_idle();</span><br><span class="line"> 2)   0.120 us    |            debug_lockdep_rcu_enabled();</span><br><span class="line"> 2)   0.098 us    |            debug_lockdep_rcu_enabled();</span><br><span class="line"> 2)   0.094 us    |            rcu_is_cpu_idle();</span><br><span class="line"> 2)   0.099 us    |            rcu_lockdep_current_cpu_online();</span><br><span class="line"> 2)   0.072 us    |            debug_lockdep_rcu_enabled();</span><br><span class="line"> 2)   0.071 us    |            rcu_is_cpu_idle();</span><br><span class="line"> 2)   6.935 us    |                    &#125;</span><br><span class="line"> 2)   8.757 us    |      &#125;</span><br><span class="line"> 2)   0.269 us    |            __compute_runnable_contrib();</span><br><span class="line"> 2)   0.093 us    |            __update_entity_load_avg_contrib();</span><br><span class="line"> 2)   0.188 us    |            update_cfs_rq_blocked_load();</span><br><span class="line"> 2)   0.113 us    |            update_cfs_shares();</span><br><span class="line"> 2)               |            sched_slice.isra.38() &#123;</span><br><span class="line"> 2)   0.206 us    |            calc_delta_mine();</span><br><span class="line"> 2)   0.962 us    |    &#125;</span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+<p>ftrace 不仅可以追踪内核中的函数，也可以追踪用户态下的函数是如何trap in kernel 然后ret的。 比如我们写一个fork的demo</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> ret;</span><br><span class="line">    <span class="type">int</span> fd;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="type">char</span> pidbuf[<span class="number">20</span>];</span><br><span class="line">    <span class="type">pid_t</span> id;</span><br><span class="line"> </span><br><span class="line">    id = fork();</span><br><span class="line">    <span class="keyword">if</span> (id &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;Error in fork&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (id == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;i);</span><br><span class="line">         </span><br><span class="line">        ret = execv(<span class="string">&quot;hello&quot;</span>, <span class="literal">NULL</span>);</span><br><span class="line">        <span class="keyword">if</span> (ret == <span class="number">-1</span>) &#123;</span><br><span class="line">            <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;Error in execv&quot;</span>);</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">sprintf</span>(pidbuf, <span class="string">&quot;%ld&quot;</span>, (<span class="type">long</span>)id);</span><br><span class="line">        fd = open(<span class="string">&quot;/sys/kernel/debug/tracing/set_ftrace_pid&quot;</span>, O_CREAT | O_RDWR, <span class="number">0660</span>);</span><br><span class="line">        <span class="keyword">if</span> (fd &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;Error in open&quot;</span>);</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        write(fd, pidbuf, <span class="built_in">strlen</span>(pidbuf));</span><br><span class="line">        close(fd);</span><br><span class="line">        fd = open(<span class="string">&quot;/sys/kernel/debug/tracing/tracing_on&quot;</span>, O_CREAT | O_RDWR, <span class="number">0660</span>);</span><br><span class="line">        write(fd, <span class="string">&quot;1&quot;</span>, <span class="number">2</span>);</span><br><span class="line">        close(fd);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;!!!!\n&quot;</span>);</span><br><span class="line">        sleep(<span class="number">5</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后使用ftrace进行追踪，可以得到一个system call的完整的结果。</p>
+<h1 id="Linux性能分析工具汇总"><a href="#Linux性能分析工具汇总" class="headerlink" title="Linux性能分析工具汇总"></a>Linux性能分析工具汇总</h1><p>首先来看一张图：</p>
+<p><img src="/img/640-16940508313340.png" alt="图片"></p>
+<p>上图是Brendan Gregg 的一次性能分析的分享，这里面的所有工具都可以通过 <code>man</code> 来获得它的帮助文档，下面简单介绍介绍一下常规的用法：</p>
+<h3 id="vmstat—虚拟内存统计"><a href="#vmstat—虚拟内存统计" class="headerlink" title="vmstat—虚拟内存统计"></a>vmstat—虚拟内存统计</h3><p>vmstat（VirtualMeomoryStatistics，虚拟内存统计）是 Linux 中监控内存的常用工具,可对操作系统的虚拟内存、进程、CPU 等的整体情况进行监视。vmstat 的常规用法：<code>vmstat interval times</code> 即每隔 <code>interval</code> 秒采样一次，共采样 <code>times</code> 次，如果省略 <code>times</code>，则一直采集数据，直到用户手动停止为止。简单举个例子：</p>
+<p><img src="/img/640-16940508313341.png" alt="图片"></p>
+<p>可以使用 <code>ctrl+c</code> 停止 <code>vmstat</code> 采集数据。</p>
+<p>第一行显示了系统自启动以来的平均值，第二行开始显示现在正在发生的情况，接下来的行会显示每5秒间隔发生了什么，每一列的含义在头部，如下所示：</p>
+<ul>
+<li>procs：r 这一列显示了多少进程在等待cpu，b列显示多少进程正在不可中断的休眠（等待IO）。</li>
+<li>memory：swapd 列显示了多少块被换出了磁盘（页面交换），剩下的列显示了多少块是空闲的（未被使用），多少块正在被用作缓冲区，以及多少正在被用作操作系统的缓存。</li>
+<li>swap：显示交换活动：每秒有多少块正在被换入（从磁盘）和换出（到磁盘）。</li>
+<li>io：显示了多少块从块设备读取（bi）和写出（bo）,通常反映了硬盘I/O。</li>
+<li>system：显示每秒中断(in)和上下文切换（cs）的数量。</li>
+<li>cpu：显示所有的cpu时间花费在各类操作的百分比，包括执行用户代码（非内核），执行系统代码（内核），空闲以及等待IO。</li>
+</ul>
+<p>内存不足的表现：free  memory 急剧减少，回收 buffer 和 cache 也无济于事，大量使用交换分区（swpd）,页面交换（swap）频繁，读写磁盘数量（io）增多，缺页中断（in）增多，上下文切换（cs）次数增多，等待IO的进程数（b）增多，大量CPU时间用于等待IO（wa）</p>
+<h3 id="iostat—用于报告中央处理器统计信息"><a href="#iostat—用于报告中央处理器统计信息" class="headerlink" title="iostat—用于报告中央处理器统计信息"></a>iostat—用于报告中央处理器统计信息</h3><p>iostat 用于报告中央处理器（CPU）统计信息和整个系统、适配器、tty 设备、磁盘和 CD-ROM 的输入/输出统计信息，默认显示了与 vmstat 相同的 cpu 使用信息，使用以下命令显示扩展的设备统计：</p>
+<p><img src="/img/640-16940508313342.png" alt="图片"></p>
+<p>第一行显示的是自系统启动以来的平均值，然后显示增量的平均值，每个设备一行。</p>
+<p>常见 linux 的磁盘 IO 指标的缩写习惯：rq 是 request，r 是 read，w 是 write，qu 是 queue，sz 是 size，a 是verage，tm 是 time，svc 是 service。</p>
+<ul>
+<li>rrqm/s 和 wrqm/s：每秒合并的读和写请求，“合并的”意味着操作系统从队列中拿出多个逻辑请求合并为一个请求到实际磁盘。</li>
+<li>r/s和w/s：每秒发送到设备的读和写请求数。</li>
+<li>rsec/s和wsec/s：每秒读和写的扇区数。</li>
+<li>avgrq –sz：请求的扇区数。</li>
+<li>avgqu –sz：在设备队列中等待的请求数。</li>
+<li>await：每个IO请求花费的时间。</li>
+<li>svctm：实际请求（服务）时间。</li>
+<li>%util：至少有一个活跃请求所占时间的百分比。</li>
+</ul>
+<h3 id="dstat—系统监控工具"><a href="#dstat—系统监控工具" class="headerlink" title="dstat—系统监控工具"></a>dstat—系统监控工具</h3><p>dstat 显示了 cpu 使用情况，磁盘 io 情况，网络发包情况和换页情况，输出是彩色的，可读性较强，相对于 vmstat 和iostat 的输入更加详细且较为直观。在使用时，直接输入命令即可，当然也可以使用特定参数。</p>
+<p>如下：<code>dstat –cdlmnpsy</code></p>
+<p><img src="/img/640-16940508313343.png" alt="图片"></p>
+<p>img</p>
+<h3 id="iotop—LINUX进程实时监控工具"><a href="#iotop—LINUX进程实时监控工具" class="headerlink" title="iotop—LINUX进程实时监控工具"></a>iotop—LINUX进程实时监控工具</h3><p>iotop命令是专门显示硬盘IO的命令，界面风格类似top命令，可以显示IO负载具体是由哪个进程产生的。是一个用来监视磁盘I/O使用状况的top类工具，具有与top相似的UI，其中包括PID、用户、I/O、进程等相关信息。</p>
+<p>可以以非交互的方式使用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iotop –bod interval</span><br></pre></td></tr></table></figure>
+<p>查看每个进程的 <code>I/O</code>，可以使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pidstat，pidstat –d instat</span><br></pre></td></tr></table></figure>
+<h3 id="pidstat—监控系统资源情况"><a href="#pidstat—监控系统资源情况" class="headerlink" title="pidstat—监控系统资源情况"></a>pidstat—监控系统资源情况</h3><p>pidstat 主要用于监控全部或指定进程占用系统资源的情况,如 CPU,内存、设备 IO、任务切换、线程等。</p>
+<p>使用方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pidstat –d interval</span><br></pre></td></tr></table></figure>
+<p>pidstat 还可以用以统计CPU使用信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pidstat –u interval</span><br></pre></td></tr></table></figure>
+<p>统计内存信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pidstat –r interval</span><br></pre></td></tr></table></figure>
+<h3 id="top"><a href="#top" class="headerlink" title="top"></a>top</h3><ul>
+<li>top 命令的汇总区域显示了五个方面的系统性能信息：</li>
+<li>负载：时间，登陆用户数，系统平均负载；</li>
+<li>进程：运行，睡眠，停止，僵尸；</li>
+<li>cpu:用户态，核心态，NICE,空闲，等待IO,中断等；</li>
+<li>内存：总量，已用，空闲（系统角度），缓冲，缓存；</li>
+<li>交换分区：总量，已用，空闲</li>
+</ul>
+<p>任务区域默认显示：进程 ID，有效用户，进程优先级，NICE 值，进程使用的虚拟内存，物理内存和共享内存，进程状态，CPU 占用率，内存占用率，累计 CPU 时间，进程命令行信息。</p>
+<h3 id="htop"><a href="#htop" class="headerlink" title="htop"></a>htop</h3><p>htop 是 Linux 系统中的一个互动的进程查看器,一个文本模式的应用程序(在控制台或者X终端中),需要 ncurses。</p>
+<p><img src="/img/640-16940508313344.png" alt="图片"></p>
+<p>img</p>
+<p>Htop 可让用户交互式操作，支持颜色主题，可横向或纵向滚动浏览进程列表，并支持鼠标操作。</p>
+<p>与 top 相比，htop 有以下优点：</p>
+<ul>
+<li>可以横向或者纵向滚动浏览进程列表，以便看到所有的进程和完整的命令行。</li>
+<li>在启动上，比top更快。</li>
+<li>杀进程时不需要输入进程号。</li>
+<li>htop支持鼠标操作。</li>
+</ul>
+<h3 id="mpstat"><a href="#mpstat" class="headerlink" title="mpstat"></a>mpstat</h3><p>mpstat 是 Multiprocessor Statistics的缩写，是实时系统监控工具。其报告CPU的一些统计信息，这些信息存放在 <code>/proc/stat</code> 文件中。在多 CPUs 系统里，其不但能查看所有 CPU 的平均状况信息，而且能够查看特定 CPU 的信息。常见用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mpstat –P ALL interval times</span><br></pre></td></tr></table></figure>
+<h3 id="netstat"><a href="#netstat" class="headerlink" title="netstat"></a>netstat</h3><p>netstat 用于显示与 IP、TCP、UDP和 ICMP 协议相关的统计数据，一般用于检验本机各端口的网络连接情况。</p>
+<p>常见用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">netstat –npl   # 可以查看你要打开的端口是否已经打开。</span><br><span class="line"></span><br><span class="line">netstat –rn    # 打印路由表信息。</span><br><span class="line"></span><br><span class="line">netstat –in    # 提供系统上的接口信息，打印每个接口的MTU,输入分组数，输入错误，输出分组数，输出错误，冲突以及当前的输出队列的长度。</span><br></pre></td></tr></table></figure>
+<h3 id="ps—显示当前进程的状态"><a href="#ps—显示当前进程的状态" class="headerlink" title="ps—显示当前进程的状态"></a>ps—显示当前进程的状态</h3><p>ps 参数太多，具体使用方法可以参考 <code>man ps</code></p>
+<p>常用的方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ps  aux       #hsserver</span><br><span class="line"></span><br><span class="line">ps –ef |grep   #hundsun</span><br></pre></td></tr></table></figure>
+<p>杀掉某一程序的方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps  aux | grep mysqld | grep –v grep | awk ‘&#123;print $2 &#125;’ xargs kill -9</span><br></pre></td></tr></table></figure>
+<p>杀掉僵尸进程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps –eal | awk ‘&#123;if ($2 == “Z”)&#123;print $4&#125;&#125;’ | xargs kill -9</span><br></pre></td></tr></table></figure>
+<h3 id="strace"><a href="#strace" class="headerlink" title="strace"></a>strace</h3><p>跟踪程序执行过程中产生的系统调用及接收到的信号，帮助分析程序或命令执行中遇到的异常情况。</p>
+<p>举例：查看 mysqld 在 linux 上加载哪种配置文件，可以通过运行下面的命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strace –e stat64 mysqld –print –defaults &gt; /dev/null</span><br></pre></td></tr></table></figure>
+<h3 id="uptime"><a href="#uptime" class="headerlink" title="uptime"></a>uptime</h3><p>能够打印系统总共运行了多长时间和系统的平均负载，uptime 命令最后输出的三个数字的含义分别是 1分钟，5分钟，15分钟内系统的平均负荷。</p>
+<h3 id="lsof"><a href="#lsof" class="headerlink" title="lsof"></a>lsof</h3><p>lsof（list open files）是一个列出当前系统打开文件的工具。通过 lsof 工具能够查看这个列表对系统检测及排错，常见的用法：</p>
+<p>查看文件系统阻塞</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof /boot</span><br></pre></td></tr></table></figure>
+<p>查看端口号被哪个进程占用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof  -i : 3306</span><br></pre></td></tr></table></figure>
+<p>查看用户打开哪些文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof –u username</span><br></pre></td></tr></table></figure>
+<p>查看进程打开哪些文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof –p  4838</span><br></pre></td></tr></table></figure>
+<p>查看远程已打开的网络链接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof –i @192.168.34.128</span><br></pre></td></tr></table></figure>
+<h3 id="perf"><a href="#perf" class="headerlink" title="perf"></a>perf</h3><p>perf 是 Linux kernel 自带的系统性能优化工具。优势在于与 Linux Kernel 的紧密结合，它可以最先应用到加入 Kernel 的new feature，用于查看热点函数，查看 cashe miss 的比率，从而帮助开发者来优化程序性能。</p>
+<p>性能调优工具如 perf，Oprofile 等的基本原理都是对被监测对象进行采样，最简单的情形是根据 tick 中断进行采样，即在 tick 中断内触发采样点，在采样点里判断程序当时的上下文。假如一个程序 90% 的时间都花费在函数 foo() 上，那么 90% 的采样点都应该落在函数 foo() 的上下文中。运气不可捉摸，但我想只要采样频率足够高，采样时间足够长，那么以上推论就比较可靠。因此，通过 tick 触发采样，我们便可以了解程序中哪些地方最耗时间，从而重点分析。</p>
+<h3 id="汇总"><a href="#汇总" class="headerlink" title="汇总"></a>汇总</h3><p>结合以上常用的性能测试命令并联系文初的性能分析工具的图，就可以初步了解到性能分析过程中哪个方面的性能使用哪方面的工具（命令）。</p>
+<h2 id="常用的性能测试工具"><a href="#常用的性能测试工具" class="headerlink" title="常用的性能测试工具"></a>常用的性能测试工具</h2><p>熟练并精通了第二部分的性能分析命令工具，引入几个性能测试的工具，介绍之前先简单了解几个性能测试工具：</p>
+<ul>
+<li>perf_events：一款随 Linux 内核代码一同发布和维护的性能诊断工具，由内核社区维护和发展。Perf 不仅可以用于应用程序的性能统计分析，也可以应用于内核代码的性能统计和分析。</li>
+<li>eBPF tools：一款使用 bcc 进行的性能追踪的工具，eBPF map可以使用定制的 eBPF 程序被广泛应用于内核调优方面，也可以读取用户级的异步代码。重要的是这个外部的数据可以在用户空间管理。这个 k-v 格式的 map 数据体是通过在用户空间调用 bpf 系统调用创建、添加、删除等操作管理的。</li>
+<li>perf-tools：一款基于 perf_events (perf) 和 ftrace 的Linux性能分析调优工具集。Perf-Tools 依赖库少，使用简单。支持Linux 3.2 及以上内核版本。</li>
+<li>bcc(BPF Compiler Collection):：一款使用 eBP F的 perf 性能分析工具。一个用于创建高效的内核跟踪和操作程序的工具包，包括几个有用的工具和示例。利用扩展的BPF（伯克利数据包过滤器），正式称为eBPF，一个新的功能，首先被添加到Linux 3.15。多用途需要Linux 4.1以上BCC。</li>
+<li>ktap：一种新型的linux脚本动态性能跟踪工具。允许用户跟踪Linux内核动态。ktap是设计给具有互操作性，允许用户调整操作的见解，排除故障和延长内核和应用程序。它类似于Linux和Solaris DTrace SystemTap。</li>
+<li>Flame Graphs：是一款使用 perf，system tap，ktap 可视化的图形软件，允许最频繁的代码路径快速准确地识别，可以是使用 <code>github.com/brendangregg/flamegraph</code> 中的开发源代码的程序生成。</li>
+</ul>
+<h3 id="Linux-observability-tools-Linux-性能观测工具"><a href="#Linux-observability-tools-Linux-性能观测工具" class="headerlink" title="Linux observability tools | Linux 性能观测工具"></a>Linux observability tools | Linux 性能观测工具</h3><p><img src="/img/640-16940508313355.png" alt="图片"></p>
+<p>img</p>
+<ul>
+<li>首先学习的Basic Tool有如下：uptime、top(htop)、mpstat、isstat、vmstat、free、ping、nicstat、dstat。</li>
+<li>高级的命令如下：sar、netstat、pidstat、strace、tcpdump、blktrace、iotop、slabtop、sysctl、/proc。</li>
+</ul>
+<h3 id="Linux-benchmarking-tools-Linux-性能测评工具"><a href="#Linux-benchmarking-tools-Linux-性能测评工具" class="headerlink" title="Linux benchmarking tools | Linux 性能测评工具"></a>Linux benchmarking tools | Linux 性能测评工具</h3><p><img src="/img/640-16940508313356.png" alt="图片"></p>
+<p>img</p>
+<p>是一款性能测评工具，对于不同模块的性能测试可以使用相应的工具，想要深入了解，可以参考最下文的附件文档。</p>
+<h3 id="Linux-tuning-tools-Linux-性能调优工具"><a href="#Linux-tuning-tools-Linux-性能调优工具" class="headerlink" title="Linux tuning tools | Linux 性能调优工具"></a>Linux tuning tools | Linux 性能调优工具</h3><p><img src="/img/640-16940508313357.png" alt="图片"></p>
+<p>img</p>
+<p>是一款性能调优工具，主要是从linux内核源码层进行的调优，想要深入了解，可以参考下文附件文档。</p>
+<h3 id="Linux-observability-sar-linux性能观测工具"><a href="#Linux-observability-sar-linux性能观测工具" class="headerlink" title="Linux observability sar | linux性能观测工具"></a>Linux observability sar | linux性能观测工具</h3><p><img src="/img/640-16940508313358.png" alt="图片"></p>
+<p>img</p>
+<p>sar（System Activity Reporter系统活动情况报告）是目前LINUX上最为全面的系统性能分析工具之一，可以从多方面对系统的活动进行报告，包括：文件的读写情况、系统调用的使用情况、磁盘I/O、CPU效率、内存使用状况、进程活动及IPC 有关的活动等方面。sar 的常规使用方式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sar  [options] [-A] [-o file]  t [n]</span><br></pre></td></tr></table></figure>
+<p>其中：t 为采样间隔，n 为采样次数，默认值是1；-o file 表示将命令结果以二进制格式存放在文件中，file 是文件名。options 为命令行选项</p>
+<h1 id="Linux命令"><a href="#Linux命令" class="headerlink" title="Linux命令"></a>Linux命令</h1><h2 id="文件和目录"><a href="#文件和目录" class="headerlink" title="文件和目录"></a>文件和目录</h2><h3 id="cd命令"><a href="#cd命令" class="headerlink" title="cd命令"></a>cd命令</h3><p>（它用于切换当前目录，它的参数是要切换到的目录的路径，可以是绝对路径，也可以是相对路径）</p>
+<ul>
+<li><code>cd /home</code>   进入 ‘/ home’ 目录</li>
+<li><code>cd ..</code>        返回上一级目录 </li>
+<li><code>cd ../..</code>        返回上两级目录 </li>
+<li><code>cd</code>        进入个人的主目录 </li>
+<li><code>cd ~user1</code>   进入个人的主目录 </li>
+<li><code>cd -</code>        返回上次所在的目录</li>
+</ul>
+<h3 id="pwd命令"><a href="#pwd命令" class="headerlink" title="pwd命令"></a>pwd命令</h3><p>pwd 显示工作路径</p>
+<h3 id="ls命令"><a href="#ls命令" class="headerlink" title="ls命令"></a>ls命令</h3><p>（查看文件与目录的命令，list之意）</p>
+<ul>
+<li>ls 查看目录中的文件 </li>
+<li>ls -l 显示文件和目录的详细资料 </li>
+<li>ls -a 列出全部文件，包含隐藏文件</li>
+<li>ls -R 连同子目录的内容一起列出（递归列出），等于该目录下的所有文件都会显示出来  </li>
+<li>ls [0-9] 显示包含数字的文件名和目录名</li>
+<li>ls -al 长格式显示当前目录下所有文件</li>
+<li>ls -h  文件大小显示为常见大小单位 B KB MB …</li>
+<li>ls -d  显示目录本身，而不是里面的子文件</li>
+</ul>
+<p>长格式显示项<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-rw-------    1   root    root    1190    08-10 23:37     anaconda-ks.cfg</span><br><span class="line">     ①       ②    ③      ④       ⑤          ⑥                ⑦</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>第①项：权限位</li>
+<li>第②项：引用计数</li>
+<li>第③项：属主（所有者）</li>
+<li>第④项：属组</li>
+<li>第⑤项：大小</li>
+<li>第⑥项：最后一次修改时间</li>
+<li>第⑦项：文件名</li>
+</ul>
+<h3 id="cp-命令"><a href="#cp-命令" class="headerlink" title="cp 命令"></a>cp 命令</h3><p>（用于复制文件，copy之意，它还可以把多个文件一次性地复制到一个目录下）</p>
+<ul>
+<li>-a ：将文件的特性一起复制</li>
+<li>-p ：连同文件的属性一起复制，而非使用默认方式，与-a相似，常用于备份</li>
+<li>-i ：若目标文件已经存在时，在覆盖时会先询问操作的进行</li>
+<li>-r ：递归持续复制，用于目录的复制行为</li>
+<li>-u ：目标文件与源文件有差异时才会复制</li>
+</ul>
+<h3 id="mv命令"><a href="#mv命令" class="headerlink" title="mv命令"></a>mv命令</h3><p>（用于移动文件、目录或更名，move之意）</p>
+<ul>
+<li>-f ：force强制的意思，如果目标文件已经存在，不会询问而直接覆盖</li>
+<li>-i ：若目标文件已经存在，就会询问是否覆盖</li>
+<li>-u ：若目标文件已经存在，且比目标文件新，才会更新</li>
+</ul>
+<h3 id="rm-命令"><a href="#rm-命令" class="headerlink" title="rm 命令"></a>rm 命令</h3><p>（用于删除文件或目录，remove之意）</p>
+<ul>
+<li>-f ：就是force的意思，忽略不存在的文件，不会出现警告消息</li>
+<li>-i ：互动模式，在删除前会询问用户是否操作</li>
+<li>-r ：递归删除，最常用于目录删除，它是一个非常危险的参数</li>
+</ul>
+<h3 id="mkdir"><a href="#mkdir" class="headerlink" title="mkdir"></a>mkdir</h3><ul>
+<li>mkdir test                   创建名为test的目录</li>
+<li>mkdir -p test1/test2/test3   递归创建</li>
+</ul>
+<h3 id="rmdir"><a href="#rmdir" class="headerlink" title="rmdir"></a>rmdir</h3><p>删除目录  (只能删除空目录)</p>
+<h2 id="查看文件内容"><a href="#查看文件内容" class="headerlink" title="查看文件内容"></a>查看文件内容</h2><h3 id="touch"><a href="#touch" class="headerlink" title="touch"></a>touch</h3><ul>
+<li>命令名称：touch</li>
+<li>命令所在路径：/bin/touch</li>
+<li>权限：所有用户</li>
+<li>能描述：创建空文件 或 修改文件时间</li>
+</ul>
+<p>touch test.py    创建空文件，如果文件存在，则修改文件创建时间</p>
+<h3 id="more"><a href="#more" class="headerlink" title="more"></a>more</h3><ul>
+<li>命令所在路径：/bin/more</li>
+<li>执行权限：所有用户</li>
+<li>功能描述：分屏显示文件内容</li>
+</ul>
+<p>more 文件名    分屏显示文件内容</p>
+<ul>
+<li>向上翻页  空格键</li>
+<li>向下翻页  b键</li>
+<li>退出查看  q键</li>
+</ul>
+<h3 id="head"><a href="#head" class="headerlink" title="head"></a>head</h3><ul>
+<li>命令所在路径：/usr/bin/head</li>
+<li>执行权限：所有用户</li>
+<li>功能描述：显示文件头</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">head 文件名           显示文件头几行(默认显示10行)</span><br><span class="line">head -n 20 文件名     显示文件前20行</span><br><span class="line">head -n -20 文件名    显示文件最后20行</span><br><span class="line">ctrl + c             强制终止查看模式</span><br><span class="line">ctrl + l             清屏</span><br></pre></td></tr></table></figure>
+<h3 id="ln"><a href="#ln" class="headerlink" title="ln"></a>ln</h3><ul>
+<li>命令所在路径：/bin/ln</li>
+<li>执行权限：所有用户</li>
+<li>功能描述：链接文件</li>
+</ul>
+<p>等同于Windows中的快捷方式，新建的链接，占用不同的硬盘位置，修改一个文件，两边都会改变，删除源文件，软连接文件打不开</p>
+<p>ln -s 源文件 目标文件 创建链接文件(文件名都必须写绝对路径)</p>
+<h3 id="cat命令"><a href="#cat命令" class="headerlink" title="cat命令"></a>cat命令</h3><p>（用于查看文本文件的内容，后接要查看的文件名，通常可用管道与more和less一起使用）</p>
+<ul>
+<li>cat file1 从第一个字节开始正向查看文件的内容 </li>
+<li>tac file1 从最后一行开始反向查看一个文件的内容 </li>
+<li>cat -n file1 标示文件的行数 </li>
+<li>more file1 查看一个长文件的内容 </li>
+<li>head -n 2 file1 查看一个文件的前两行 </li>
+<li>tail -n 2 file1 查看一个文件的最后两行 </li>
+<li>tail -n +1000 file1  从1000行开始显示，显示1000行以后的</li>
+<li>cat filename | head -n 3000 | tail -n +1000  显示1000行到3000行</li>
+<li>cat filename | tail -n +3000 | head -n 1000  从第3000行开始，显示1000(即显示3000~3999行)</li>
+</ul>
+<h2 id="文件搜索"><a href="#文件搜索" class="headerlink" title="文件搜索"></a>文件搜索</h2><h3 id="find命令"><a href="#find命令" class="headerlink" title="find命令"></a>find命令</h3><ul>
+<li>find / -name file1 从 ‘/‘ 开始进入根文件系统搜索文件和目录 </li>
+<li>find / -user user1 搜索属于用户 ‘user1’ 的文件和目录 </li>
+<li>find /usr/bin -type f -atime +100 搜索在过去100天内未被使用过的执行文件 </li>
+<li>find /usr/bin -type f -mtime -10 搜索在10天内被创建或者修改过的文件 </li>
+<li>whereis halt 显示一个二进制文件、源码或man的位置 </li>
+<li>which halt 显示一个二进制文件或可执行文件的完整路径</li>
+</ul>
+<p>删除大于50M的文件：<br>find /var/mail/ -size +50M -exec rm {} ＼;</p>
+<h2 id="文件的权限"><a href="#文件的权限" class="headerlink" title="文件的权限"></a>文件的权限</h2><p>-rw-r—r—. 1 root root 44736 7月  18 00:38 install.log</p>
+<p>权限位是十位<br>第一位：代表文件类型</p>
+<ul>
+<li>-   普通文件</li>
+<li>d   目录文件</li>
+<li>l   链接文件</li>
+</ul>
+<p>其他九位：代表各用户的权限(前三位=属主权限u  中间三位=属组权限g  其他人权限o)<br>-r   读   4<br>-w   写   2<br>-x   执行  1</p>
+<p>权限对文件的含义：</p>
+<ul>
+<li>r：读取文件内容 如：cat、more、head、tail</li>
+<li>w：编辑、新增、修改文件内容 如：vi、echo 但是不包含删除文件</li>
+<li>x：可执行  /tmp/11/22/abc   ————-</li>
+</ul>
+<p>权限对目录的含义：</p>
+<ul>
+<li>r：可以查询目录下文件名 如：ls</li>
+<li>w：具有修改目录结构的权限 如：touch、rm、mv、cp</li>
+<li>x：可以进入目录 如：cd</li>
+</ul>
+<h3 id="chmod-命令"><a href="#chmod-命令" class="headerlink" title="chmod 命令"></a>chmod 命令</h3><p>ls -lh 显示权限 </p>
+<ul>
+<li>chmod ugo+rwx directory1 设置目录的所有人(u)、群组(g)以及其他人(o)以读（r，4 ）、写(w，2)和执行(x，1)的权限 </li>
+<li>chmod go-rwx directory1  删除群组(g)与其他人(o)对目录的读写执行权限</li>
+</ul>
+<h3 id="chown-命令"><a href="#chown-命令" class="headerlink" title="chown 命令"></a>chown 命令</h3><p>（改变文件的所有者）</p>
+<ul>
+<li>chown user1 file1 改变一个文件的所有人属性 </li>
+<li>chown -R user1 directory1 改变一个目录的所有人属性并同时改变改目录下所有文件的属性 </li>
+<li>chown user1:group1 file1 改变一个文件的所有人和群组属性</li>
+</ul>
+<h3 id="chgrp-命令"><a href="#chgrp-命令" class="headerlink" title="chgrp 命令"></a>chgrp 命令</h3><p>（改变文件所属用户组）<br>chgrp group1 file1 改变文件的群组</p>
+<h2 id="文本处理"><a href="#文本处理" class="headerlink" title="文本处理"></a>文本处理</h2><h3 id="grep"><a href="#grep" class="headerlink" title="grep"></a>grep</h3><p>grep是一款强大的文本搜索工具，支持正则表达式。全称（ global search regular expression(RE) and print out the line）</p>
+<blockquote>
+<p>语法:grep [option]… PATTERN [FILE]…</p>
+</blockquote>
+<p>常用:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">usage: grep [-abcDEFGHhIiJLlmnOoqRSsUVvwxZ] [-A num] [-B num] [-C[num]]</span><br><span class="line"> [-e pattern] [-f file] [--binary-files=value] [--color=when]</span><br><span class="line"> [--context[=num]] [--directories=action] [--label] [--line-buffered]</span><br><span class="line"> [--null] [pattern] [file ...]</span><br></pre></td></tr></table></figure><br>常用参数:</p>
+<ul>
+<li>-v        取反</li>
+<li>-i        忽略大小写</li>
+<li>-c        符合条件的行数</li>
+<li>-n        输出的同时打印行号</li>
+<li>^<em>        以</em>开头         </li>
+<li><em>$         以</em>结尾 </li>
+<li>^$         空行 </li>
+</ul>
+<h4 id="实际使用"><a href="#实际使用" class="headerlink" title="实际使用"></a>实际使用</h4><p>准备好一个小故事txt:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# cat monkey</span><br><span class="line">One day,a little monkey is playing by the well.一天,有只小猴子在井边玩儿.</span><br><span class="line">He looks in the well and shouts :它往井里一瞧,高喊道：</span><br><span class="line">“Oh!My god!The moon has fallen into the well!” “噢!我的天!月亮掉到井里头啦!”</span><br><span class="line">An older monkeys runs over,takes a look,and says,一只大猴子跑来一看,说,</span><br><span class="line">“Goodness me!The moon is really in the water!” “糟啦!月亮掉在井里头啦!”</span><br><span class="line">And olderly monkey comes over.老猴子也跑过来.</span><br><span class="line">He is very surprised as well and cries out:他也非常惊奇,喊道：</span><br><span class="line">“The moon is in the well.” “糟了,月亮掉在井里头了!”</span><br><span class="line">A group of monkeys run over to the well .一群猴子跑到井边来,</span><br><span class="line">They look at the moon in the well and shout:他们看到井里的月亮,喊道：</span><br><span class="line">“The moon did fall into the well!Come on!Let’get it out!”</span><br><span class="line">“月亮掉在井里头啦!快来!让我们把它捞起来!”</span><br><span class="line">Then,the oldest monkey hangs on the tree up side down ,with his feet on the branch .</span><br><span class="line">然后,老猴子倒挂在大树上,</span><br><span class="line">And he pulls the next monkey’s feet with his hands.拉住大猴子的脚,</span><br><span class="line">All the other monkeys follow his suit,其他的猴子一个个跟着,</span><br><span class="line">And they join each other one by one down to the moon in the well.</span><br><span class="line">它们一只连着一只直到井里.</span><br><span class="line">Just before they reach the moon,the oldest monkey raises his head and happens to see the moon in the sky,正好他们摸到月亮的时候,老猴子抬头发现月亮挂在天上呢</span><br><span class="line">He yells excitedly “Don’t be so foolish!The moon is still in the sky!”</span><br><span class="line">它兴奋地大叫：“别蠢了!月亮还好好地挂在天上呢!</span><br></pre></td></tr></table></figure></p>
+<p>直接查找符合条件的行<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# grep moon monkey</span><br><span class="line">“Oh!My god!The moon has fallen into the well!” “噢!我的天!月亮掉到井里头啦!”</span><br><span class="line">“Goodness me!The moon is really in the water!” “糟啦!月亮掉在井里头啦!”</span><br><span class="line">“The moon is in the well.” “糟了,月亮掉在井里头了!”</span><br><span class="line">They look at the moon in the well and shout:他们看到井里的月亮,喊道：</span><br><span class="line">“The moon did fall into the well!Come on!Let’get it out!”</span><br><span class="line">And they join each other one by one down to the moon in the well.</span><br><span class="line">Just before they reach the moon,the oldest monkey raises his head and happens to see the moon in the sky,正好他们摸到月亮的时候,老猴子抬头发现月亮挂在天上呢</span><br><span class="line">He yells excitedly “Don’t be so foolish!The moon is still in the sky!”</span><br></pre></td></tr></table></figure></p>
+<p>查找反向符合条件的行<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# grep -v  moon monkey</span><br><span class="line">One day,a little monkey is playing by the well.一天,有只小猴子在井边玩儿.</span><br><span class="line">He looks in the well and shouts :它往井里一瞧,高喊道：</span><br><span class="line">An older monkeys runs over,takes a look,and says,一只大猴子跑来一看,说,</span><br><span class="line">And olderly monkey comes over.老猴子也跑过来.</span><br><span class="line">He is very surprised as well and cries out:他也非常惊奇,喊道：</span><br><span class="line">A group of monkeys run over to the well .一群猴子跑到井边来,</span><br><span class="line">“月亮掉在井里头啦!快来!让我们把它捞起来!”</span><br><span class="line">Then,the oldest monkey hangs on the tree up side down ,with his feet on the branch .</span><br><span class="line">然后,老猴子倒挂在大树上,</span><br><span class="line">And he pulls the next monkey’s feet with his hands.拉住大猴子的脚,</span><br><span class="line">All the other monkeys follow his suit,其他的猴子一个个跟着,</span><br><span class="line">它们一只连着一只直到井里.</span><br><span class="line">它兴奋地大叫：“别蠢了!月亮还好好地挂在天上呢!”</span><br></pre></td></tr></table></figure></p>
+<p>直接查找符合条件的行数<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# grep -c  moon monkey</span><br><span class="line">8</span><br></pre></td></tr></table></figure></p>
+<p>忽略大小写查找符合条件的行数，先来看一下直接查找的结果<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# grep my monkey</span><br></pre></td></tr></table></figure></p>
+<p>忽略大小写查看<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# grep -i my monkey</span><br><span class="line">“Oh!My god!The moon has fallen into the well!” “噢!我的天!月亮掉到井里头啦!”</span><br></pre></td></tr></table></figure></p>
+<p>查找符合条件的行并输出行号<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# grep -n monkey monkey</span><br><span class="line">1:One day,a little monkey is playing by the well.一天,有只小猴子在井边玩儿.</span><br><span class="line">4:An older monkeys runs over,takes a look,and says,一只大猴子跑来一看,说,</span><br><span class="line">6:And olderly monkey comes over.老猴子也跑过来.</span><br><span class="line">9:A group of monkeys run over to the well .一群猴子跑到井边来,</span><br><span class="line">13:Then,the oldest monkey hangs on the tree up side down ,with his feet on the branch .</span><br><span class="line">15:And he pulls the next monkey’s feet with his hands.拉住大猴子的脚,</span><br><span class="line">16:All the other monkeys follow his suit,其他的猴子一个个跟着,</span><br><span class="line">19:Just before they reach the moon,the oldest monkey raises his head and happens to see the moon in the sky,正好他们摸到月亮的时候,老猴子抬头发现月亮挂在天上呢</span><br></pre></td></tr></table></figure></p>
+<p>查找开头是J的行<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# grep &#x27;^J&#x27; monkey</span><br><span class="line">Just before they reach the moon,the oldest monkey raises his head and happens to see the moon in the sky,正好他们摸到月亮的时候,老猴子抬头发现月亮挂在天上呢</span><br></pre></td></tr></table></figure></p>
+<p>查找结尾是呢的行<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# grep &quot;呢$&quot; monkey</span><br><span class="line">Just before they reach the moon,the oldest monkey raises his head and happens to see the moon in the sky,正好他们摸到月亮的时候,老猴子抬头发现月亮挂在天上呢</span><br></pre></td></tr></table></figure></p>
+<h3 id="sed"><a href="#sed" class="headerlink" title="sed"></a>sed</h3><p>sed是一种流编辑器，是一款处理文本比较优秀的工具，可以结合正则表达式一起使用。</p>
+<p>sed执行过程：<br><img src="/img/20200806172800.webp" alt=""></p>
+<ul>
+<li>sed命令: sed</li>
+<li>语法 :  sed [选项]… {命令集} [输入文件]…</li>
+</ul>
+<p>常用命令:</p>
+<ul>
+<li>d  删除选择的行    </li>
+<li>s   查找    </li>
+<li>y  替换</li>
+<li>i   当前行前面插入一行</li>
+<li>a  当前行后面插入一行</li>
+<li>p  打印行       </li>
+<li>q  退出     </li>
+</ul>
+<p>替换符:</p>
+<ul>
+<li>数字 ：替换第几处    </li>
+<li>g :  全局替换    </li>
+<li>\1:  子串匹配标记，前面搜索可以用元字符集(..)</li>
+<li>&amp;:  保留搜索刀的字符用来替换其他字符</li>
+</ul>
+<p>查看文件:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">➜ cat word</span><br><span class="line">Twinkle, twinkle, little star</span><br><span class="line">How I wonder what you are</span><br><span class="line">Up above the world so high</span><br><span class="line">Like a diamond in the sky</span><br><span class="line">When the blazing sun is gone</span><br></pre></td></tr></table></figure><br>替换：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">➜ sed &#x27;s/little/big/&#x27; word</span><br><span class="line">Twinkle, twinkle, big star</span><br><span class="line">How I wonder what you are</span><br><span class="line">Up above the world so high</span><br><span class="line">Like a diamond in the sky</span><br><span class="line">When the blazing sun is gone</span><br></pre></td></tr></table></figure></p>
+<p>查看文本:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">➜ cat word1</span><br><span class="line">Oh if there&#x27;s one thing to be taught</span><br><span class="line">it&#x27;s dreams are made to be caught</span><br><span class="line">and friends can never be bought</span><br><span class="line">Doesn&#x27;t matter how long it&#x27;s been</span><br><span class="line">I know you&#x27;ll always jump in</span><br><span class="line">&#x27;Cause we don&#x27;t know how to quit</span><br></pre></td></tr></table></figure></p>
+<p>全局替换:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">➜ sed &#x27;s/to/can/g&#x27; word1</span><br><span class="line">Oh if there&#x27;s one thing can be taught</span><br><span class="line">it&#x27;s dreams are made can be caught</span><br><span class="line">and friends can never be bought</span><br><span class="line">Doesn&#x27;t matter how long it&#x27;s been</span><br><span class="line">I know you&#x27;ll always jump in</span><br><span class="line">&#x27;Cause we don&#x27;t know how can quit</span><br></pre></td></tr></table></figure></p>
+<p>按行替换（替换2到最后一行)<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">➜ sed &#x27;2,$s/to/can/&#x27; word1</span><br><span class="line">Oh if there&#x27;s one thing to be taught</span><br><span class="line">it&#x27;s dreams are made can be caught</span><br><span class="line">and friends can never be bought</span><br><span class="line">Doesn&#x27;t matter how long it&#x27;s been</span><br><span class="line">I know you&#x27;ll always jump in</span><br><span class="line">&#x27;Cause we don&#x27;t know how can quit</span><br></pre></td></tr></table></figure></p>
+<p>删除:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">➜ sed &#x27;2d&#x27; word</span><br><span class="line">Twinkle, twinkle, little star</span><br><span class="line">Up above the world so high</span><br><span class="line">Like a diamond in the sky</span><br><span class="line">When the blazing sun is gone</span><br></pre></td></tr></table></figure><br>显示行号:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">➜ sed &#x27;=;2d&#x27; word</span><br><span class="line">1</span><br><span class="line">Twinkle, twinkle, little star</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">Up above the world so high</span><br><span class="line">4</span><br><span class="line">Like a diamond in the sky</span><br><span class="line">5</span><br><span class="line">When the blazing sun is gone</span><br></pre></td></tr></table></figure></p>
+<p>删除第2行到第四行:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">➜ sed &#x27;=;2,4d&#x27; word</span><br><span class="line">1</span><br><span class="line">Twinkle, twinkle, little star</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">When the blazing sun is gone</span><br></pre></td></tr></table></figure></p>
+<p>向前插入:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">➜ echo &quot;hello&quot; | sed &#x27;i\kitty&#x27;</span><br><span class="line">kitty</span><br><span class="line">hello</span><br></pre></td></tr></table></figure><br>向后插入:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">➜ echo &quot;kitty&quot; | sed &#x27;i\hello&#x27;</span><br><span class="line">hello</span><br><span class="line">kitty</span><br></pre></td></tr></table></figure></p>
+<p>替换第二行为hello kitty<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">➜ sed &#x27;2c\hello kitty&#x27; word</span><br><span class="line">Twinkle, twinkle, little star</span><br><span class="line">hello kitty</span><br><span class="line">Up above the world so high</span><br><span class="line">Like a diamond in the sky</span><br><span class="line">When the blazing sun is gone</span><br></pre></td></tr></table></figure><br>替换第二行到最后一行为hello kitty<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">➜ sed &#x27;2,$c\hello kitty&#x27; word</span><br><span class="line">Twinkle, twinkle, little star</span><br><span class="line">hello kitty</span><br></pre></td></tr></table></figure><br>写入行，把带star的行写入c文件中,c提前创建<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">➜ sed -n &#x27;/star/w c&#x27; word</span><br><span class="line">➜ cat c</span><br><span class="line">Twinkle, twinkle, little star</span><br></pre></td></tr></table></figure><br>退出：打印3行后，退出sed<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">➜ sed &#x27;3q&#x27; word</span><br><span class="line">Twinkle, twinkle, little star</span><br><span class="line">How I wonder what you are</span><br><span class="line">Up above the world so high</span><br></pre></td></tr></table></figure></p>
+<h3 id="awk"><a href="#awk" class="headerlink" title="awk"></a>awk</h3><p>比起sed和grep，awk不仅仅是一个小工具，也可以算得上一种小型的编程语言了，支持if判断分支和while循环语句还有它的内置函数等，是一个要比grep和sed更强大的文本处理工具，但也就意味着要学习的东西更多了。</p>
+<p>下面来说一下awk的一些基础概念以及实际操作。</p>
+<p>语法：</p>
+<ul>
+<li>Usage: <code>awk [POSIX or GNU style options] -f progfile [--] file ...</code></li>
+<li>Usage: <code>awk [POSIX or GNU style options] [--] &#39;program&#39; file ...</code></li>
+</ul>
+<p>域：类似数据库列的概念，但它是按照序号来指定的，比如我要第一个列就是1，第二列就是2，依此类推。$0就是输出整个文本的内容。默认用空格作为分隔符，当然你可以自己通过-F设置适合自己情况的分隔符。</p>
+<p>提前自己编了一段数据，学生以及学生成绩数据表。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>列数</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Name</td>
+<td>姓名</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Math</td>
+<td>数学</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Chinese</td>
+<td>语文</td>
+</tr>
+<tr>
+<td>4</td>
+<td>English</td>
+<td>英语</td>
+</tr>
+<tr>
+<td>5</td>
+<td>History</td>
+<td>历史</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Sport</td>
+<td>体育</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Grade</td>
+<td>班级</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>“Name  Math  Chinese  English History  Sport grade 输出整个文本<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]## awk &#x27;&#123;print $0&#125;&#x27; students_store</span><br><span class="line">Xiaoka          60   80    40    90   77  class-1</span><br><span class="line">Yizhihua        70    66   50    80   90  class-1</span><br><span class="line">kerwin          80    90   60    70   60  class-2</span><br><span class="line">Fengzheng       90    78    62   40   62  class-2</span><br></pre></td></tr></table></figure><br>输出第一列（姓名列)<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]## awk &#x27;&#123;print $1&#125;&#x27; students_store</span><br><span class="line">Xiaoka</span><br><span class="line">Yizhihua</span><br><span class="line">kerwin</span><br><span class="line">Fengzheng</span><br></pre></td></tr></table></figure><br>模式&amp;动作<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk &#x27;&#123;[pattern] action&#125;&#x27; &#123;filenames&#125;  </span><br></pre></td></tr></table></figure><br>模式pattern 可以是</p>
+<ul>
+<li>条件语句</li>
+<li>正则</li>
+</ul>
+<p>模式的两个特殊字段 BEGIN 和 END (不指定时匹配或打印行数)</p>
+<ul>
+<li>BEGIN ：一般用来打印列名称。</li>
+<li>END : 一般用来打印总结性质的字符。</li>
+</ul>
+<p>动作：action 在{}内指定，一般用来打印，也可以是一个代码段。</p>
+<h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><p>给上面的文本加入标题头:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]##  awk &#x27;BEGIN &#123;print &quot;Name     Math  Chinese  English History  Sport grade\n----------------------------------------------&quot;&#125; &#123;print $0&#125;&#x27; students_store</span><br><span class="line"></span><br><span class="line">Name         Math  Chinese  English History  Sport  grade</span><br><span class="line">----------------------------------------------------------</span><br><span class="line">Xiaoka       60    80       40      90     77    class-1</span><br><span class="line">Yizhihua     70    66       50      80     90    class-1</span><br><span class="line">kerwin       80    90       60      70     60    class-2</span><br><span class="line">Fengzheng    90    78       62      40     62    class-2</span><br></pre></td></tr></table></figure><br>仅打印姓名、数学成绩、班级信息，再加一个文尾(再接再厉):<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]## awk &#x27;BEGIN &#123;print &quot;Name   Math  grade\n---------------------&quot;&#125; &#123;print $1 2 &quot;\t&quot; $7&#125; END &#123;print &quot;continue to exert oneself&quot;&#125;&#x27; students_store</span><br><span class="line"></span><br><span class="line">Name     Math  grade</span><br><span class="line">---------------------</span><br><span class="line">Xiaoka   60   class-1</span><br><span class="line">Yizhihua 70   class-1</span><br><span class="line">kerwin   80   class-2</span><br><span class="line">Fengzheng 90  class-2</span><br><span class="line">continue to exert oneself</span><br></pre></td></tr></table></figure></p>
+<h4 id="结合正则"><a href="#结合正则" class="headerlink" title="结合正则"></a>结合正则</h4><p>使用方法：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">符号 ~  后接正则表达式</span><br></pre></td></tr></table></figure><br>此时我们再加入一条后来的新同学，并且没有分班。先来看下现在的数据<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]## cat students_store</span><br><span class="line">Xiaoka       60   80    40    90   77  class-1</span><br><span class="line">Yizhihua     70    66   50    80   90  class-1</span><br><span class="line">kerwin       80    90   60    70   60  class-2</span><br><span class="line">Fengzheng    90    78   62    40   62  class-2</span><br><span class="line">xman         -     -     -     -   -    -</span><br></pre></td></tr></table></figure><br>模糊匹配|查询已经分班的学生<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]## awk &#x27;$0 ~/class/&#x27; students_store</span><br><span class="line">Xiaoka       60   80    40    90   77  class-1</span><br><span class="line">Yizhihua     70    66   50    80   90  class-1</span><br><span class="line">kerwin       80    90   60     70  60  class-2</span><br><span class="line">Fengzheng    90    78   62     40  62  class-2</span><br></pre></td></tr></table></figure><br>精准匹配|查询1班的学生<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]## awk &#x27;$7==&quot;class-1&quot; &#123;print $0&#125;&#x27;  students_store</span><br><span class="line">Xiaoka       60   80    40    90   77  class-1</span><br><span class="line">Yizhihua     70    66   50    80   90  class-1</span><br></pre></td></tr></table></figure><br>反向匹配|查询不是1班的学生<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]## awk &#x27;$7!=&quot;class-1&quot; &#123;print $0&#125;&#x27;  students_store</span><br><span class="line">kerwin       80    90   60     70   60  class-2</span><br><span class="line">Fengzheng    90    78    62     40  62 class-2</span><br><span class="line">xman         -     -     -     -   -    -</span><br></pre></td></tr></table></figure><br>比较操作|查询数学大于80的<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]## awk &#x27;$2&gt;60 &#123;print $0&#125;&#x27;  students_store</span><br><span class="line">Yizhihua     70    66   50    80   90  class-1</span><br><span class="line">kerwin       80    90   60     70   60  class-2</span><br><span class="line">Fengzheng    90    78    62     40  62 class-2</span><br></pre></td></tr></table></figure><br>查询数学大于英语成绩的<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]## awk &#x27;$2 &gt; $4  &#123;print $0&#125;&#x27;  students_store</span><br><span class="line">Xiaoka       60   80    40    90   77  class-1</span><br><span class="line">Yizhihua     70    66   50    80   90  class-1</span><br><span class="line">kerwin       80    90   60    70   60  class-2</span><br><span class="line">Fengzheng    90    78    62   40   62  class-2</span><br></pre></td></tr></table></figure><br>匹配指定字符中的任意字符，在加一列专业，让我们来看看憨憨们的专业，顺便给最后一个新来的同学分个班吧。然后再来看下此时的数据。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]## cat students_store</span><br><span class="line">Xiaoka       60   80    40    90   77  class-1  Java</span><br><span class="line">Yizhihua     70    66   50    80   90  class-1  java</span><br><span class="line">kerwin       80    90   60     70   60  class-2 Java</span><br><span class="line">Fengzheng    90    78    62     40  62 class-2  java</span><br><span class="line">xman         -     -     -     -   -    class-3 php</span><br></pre></td></tr></table></figure><br>或关系匹配|查询1班和3班的学生<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@iz2ze76ybn73dvwmdij06zz ~]## awk &#x27;$0 ~/(class-1|class-3)/&#x27; students_store</span><br><span class="line">Xiaoka       60   80    40    90   77  class-1  Java</span><br><span class="line">Yizhihua     70    66   50    80   90  class-1  java</span><br><span class="line">xman         -     -     -     -   -   class-3 php</span><br></pre></td></tr></table></figure><br>任意字符匹配|名字第二个字母是</p>
+<p>字符解释：</p>
+<ul>
+<li>^ : 字段或记录的开头。</li>
+<li>. : 任意字符。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@iz2ze76ybn73dvwmdij06zz ~]## awk &#x27;$0 ~/(class-1|class-3)/&#x27; students_store</span><br><span class="line">Xiaoka       60   80    40    90   77  class-1  Java</span><br><span class="line">Yizhihua     70    66   50    80   90  class-1  java</span><br><span class="line">xman         -     -     -     -   -    class-3 php</span><br></pre></td></tr></table></figure>
+<p>复合表达式：&amp;&amp; AND的关系，必同时满足才行哦~</p>
+<p>查询数学成绩大于60并且语文成绩也大于60的童鞋。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]## awk &#x27;&#123; if ($2 &gt; 60 &amp;&amp; $3 &gt; 60) print $0&#125;&#x27; students_store</span><br><span class="line">Yizhihua     70    66   50    80   90  class-1  java</span><br><span class="line">kerwin       80    90   60    70   60  class-2  Java</span><br><span class="line">Fengzheng    90    78    62   40   62  class-2  java</span><br></pre></td></tr></table></figure><br>||  OR：查询数学大于80或者语文大于80的童鞋。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]##  awk &#x27;&#123; if ($2 &gt; 80 || $4 &gt; 80) print $0&#125;&#x27; students_store</span><br><span class="line">Fengzheng    90    78    62     40  62 class-2  java</span><br></pre></td></tr></table></figure></p>
+<h4 id="printf-格式化输出"><a href="#printf-格式化输出" class="headerlink" title="printf 格式化输出"></a>printf 格式化输出</h4><p>除了能达到功能以外，一个好看的格式也是必不可少的，因此格式化的输出看起来会更舒服哦～</p>
+<p>语法：</p>
+<ul>
+<li>printf ([格式]，参数)</li>
+<li>printf %x(格式) 具体参数 x代表具体格式</li>
+</ul>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>左对齐</td>
+</tr>
+<tr>
+<td>Width</td>
+<td>域的步长</td>
+</tr>
+<tr>
+<td>.prec</td>
+<td>最大字符串长度或小数点右边位数</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>格式转化符常用格式</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%c</td>
+<td>ASCII</td>
+</tr>
+<tr>
+<td>%d</td>
+<td>整数</td>
+</tr>
+<tr>
+<td>%o</td>
+<td>八进制</td>
+</tr>
+<tr>
+<td>%x</td>
+<td>十六进制数</td>
+</tr>
+<tr>
+<td>%f</td>
+<td>浮点数</td>
+</tr>
+<tr>
+<td>%e</td>
+<td>浮点数（科学记数法)</td>
+</tr>
+<tr>
+<td>%s</td>
+<td>字符串</td>
+</tr>
+<tr>
+<td>%g</td>
+<td>决定使用浮点转化e/f</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="具体操作示例"><a href="#具体操作示例" class="headerlink" title="具体操作示例"></a>具体操作示例</h4><p>ASCII码🐎<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# echo &quot;66&quot; | awk &#x27;&#123;printf &quot;%c\n&quot;,$0&#125;&#x27;</span><br><span class="line">B</span><br></pre></td></tr></table></figure><br>浮点数<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# awk &#x27;BEGIN &#123;printf &quot;%f\n&quot;,100&#125;&#x27;</span><br><span class="line">100.000000</span><br></pre></td></tr></table></figure><br>16进制数<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# awk &#x27;BEGIN &#123;printf &quot;%x&quot;,996&#125;&#x27;</span><br><span class="line">3e4</span><br></pre></td></tr></table></figure></p>
+<h4 id="内置变量"><a href="#内置变量" class="headerlink" title="内置变量"></a>内置变量</h4><p>频率较高常用内置变量</p>
+<ul>
+<li>NF ：记录浏览域的个数，在记录被读后设置。</li>
+<li>NR ：已读的记录数。</li>
+<li>FS : 设置输入域分隔符</li>
+<li>ARGC ：命令行参数个数，支持命令行传入。</li>
+<li>RS : 控制记录分隔符</li>
+<li>FIlENAME : awk当前读文件的名称</li>
+</ul>
+<h4 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h4><p>输出学生成绩表和域个数以及已读记录数。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# awk &#x27;&#123;print $0, NF , NR&#125;&#x27; students_store</span><br><span class="line">Xiaoka       60   80    40    90   77  class-1  Java 8 1</span><br><span class="line">Yizhihua     70    66   50    80   90  class-1  java 8 2</span><br><span class="line">kerwin       80    90   60     70  60  class-2  Java 8 3</span><br><span class="line">Fengzheng    90    78   62     40  62  class-2  java 8 4</span><br><span class="line">xman         -     -     -     -   -   class-3  php  8 5</span><br></pre></td></tr></table></figure></p>
+<h4 id="内置函数"><a href="#内置函数" class="headerlink" title="内置函数"></a>内置函数</h4><p>常用函数:</p>
+<ul>
+<li>length(s)  返回s长度</li>
+<li>index(s,t) 返回s中字符串t第一次出现的位置</li>
+<li>match (s,r) s中是否包含r字符串</li>
+<li>split(s,a,fs) 在fs上将s分成序列a</li>
+<li>gsub(r,s) 用s代替r，范围全文本</li>
+<li>gsub(r,s,t) 范围t中，s代替r</li>
+<li>substr(s,p) 返回字符串s从第p个位置开始后面的部分（下标是从1 开始算的，大家可以自己试试）</li>
+<li>substr(s,p,n) 返回字符串s从第p个位置开始后面n个字符串的部分</li>
+</ul>
+<h4 id="操作-1"><a href="#操作-1" class="headerlink" title="操作"></a>操作</h4><p>length<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# awk &#x27;BEGIN &#123;print length(&quot; hello,im xiaoka&quot;)&#125;&#x27;</span><br><span class="line">16</span><br></pre></td></tr></table></figure><br>index<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# awk &#x27;BEGIN &#123;print index(&quot;xiaoka&quot;,&quot;ok&quot;)&#125;&#x27;</span><br><span class="line">4</span><br></pre></td></tr></table></figure><br>match<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# awk &#x27;BEGIN &#123;print match(&quot;Java小咖秀&quot;,&quot;va小&quot;)&#125;&#x27;</span><br><span class="line">3</span><br></pre></td></tr></table></figure><br>gsub<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# awk &#x27;gsub(&quot;Xiaoka&quot;,&quot;xk&quot;) &#123;print $0&#125;&#x27; students_store</span><br><span class="line">xk       60   80    40    90   77  class-1  Java</span><br></pre></td></tr></table></figure><br>substr(s,p)<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# awk &#x27;BEGIN &#123;print substr(&quot;xiaoka&quot;,3)&#125;&#x27;</span><br><span class="line">aoka</span><br></pre></td></tr></table></figure><br>substr(s,p,n)<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# awk &#x27;BEGIN &#123;print substr(&quot;xiaoka&quot;,3,2)&#125;&#x27;</span><br><span class="line">ao</span><br></pre></td></tr></table></figure><br>split<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# str=&quot;java,xiao,ka,xiu&quot;</span><br><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# awk &#x27;BEGIN&#123;split(&#x27;&quot;\&quot;$str\&quot;&quot;&#x27;,ary,&quot;,&quot;); for(i in ary) &#123;if(ary[i]&gt;1) print ary[i]&#125;&#125;&#x27;</span><br><span class="line">xiu</span><br><span class="line">java</span><br><span class="line">xiao</span><br><span class="line">ka</span><br></pre></td></tr></table></figure></p>
+<h3 id="awk脚本"><a href="#awk脚本" class="headerlink" title="awk脚本"></a>awk脚本</h3><p>前面说过awk是可以说是一个小型编程语言。如果命令比较短我们可以直接在命令行执行，当命令行比较长的时候，可以使用脚本来处理，比命令行的可读性更高，还可以加上注释。</p>
+<h4 id="写一个完整的awk脚本并执行步骤"><a href="#写一个完整的awk脚本并执行步骤" class="headerlink" title="写一个完整的awk脚本并执行步骤"></a>写一个完整的awk脚本并执行步骤</h4><p>1.先创建一个awk文件<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# vim printname.awk</span><br></pre></td></tr></table></figure><br>2.脚本第一行要指定解释器<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/awk -f</span><br></pre></td></tr></table></figure><br>3.编写脚本内容，打印一下名称<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# cat printname.awk</span><br><span class="line">#!/usr/bin/awk -f</span><br><span class="line">#可以加注释了，哈哈</span><br><span class="line">BEGIN &#123; print &quot;my name is Java小咖秀&quot;&#125;</span><br></pre></td></tr></table></figure><br>4.既然是脚本，必不可少的可执行权限安排上~<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# chmod +x printname.awk</span><br><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# ll printname.awk</span><br><span class="line">-rwxr-xr-x 1 root root 60 7月   1 15:23 printname.awk</span><br></pre></td></tr></table></figure><br>5.有了可执行权限，我们来执行下看结果<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iz2ze76ybn73dvwmdij06zz ~]# ./printname.awk</span><br><span class="line">my name is Java小咖秀</span><br></pre></td></tr></table></figure></p>
+<h3 id="paste-命令"><a href="#paste-命令" class="headerlink" title="paste 命令"></a>paste 命令</h3><ul>
+<li>paste file1 file2 合并两个文件或两栏的内容 </li>
+<li>paste -d ‘+’ file1 file2 合并两个文件或两栏的内容，中间用”+”区分</li>
+</ul>
+<h3 id="sort-命令"><a href="#sort-命令" class="headerlink" title="sort 命令"></a>sort 命令</h3><ul>
+<li>sort file1 file2 排序两个文件的内容 </li>
+<li>sort file1 file2 | uniq 取出两个文件的并集(重复的行只保留一份) </li>
+<li>sort file1 file2 | uniq -u 删除交集，留下其他的行 </li>
+<li>sort file1 file2 | uniq -d 取出两个文件的交集(只留下同时存在于两个文件中的文件)</li>
+</ul>
+<h3 id="comm-命令"><a href="#comm-命令" class="headerlink" title="comm 命令"></a>comm 命令</h3><ul>
+<li>comm -1 file1 file2 比较两个文件的内容只删除 ‘file1’ 所包含的内容 </li>
+<li>comm -2 file1 file2 比较两个文件的内容只删除 ‘file2’ 所包含的内容 </li>
+<li>comm -3 file1 file2 比较两个文件的内容只删除两个文件共有的部分</li>
+</ul>
+<h2 id="打包和压缩文件"><a href="#打包和压缩文件" class="headerlink" title="打包和压缩文件"></a>打包和压缩文件</h2><h3 id="tar-命令"><a href="#tar-命令" class="headerlink" title="tar 命令"></a>tar 命令</h3><p>（对文件进行打包，默认情况并不会压缩，如果指定了相应的参数，它还会调用相应的压缩程序（如gzip和bzip等）进行压缩和解压）</p>
+<ul>
+<li>-c ：新建打包文件</li>
+<li>-t ：查看打包文件的内容含有哪些文件名</li>
+<li>-x ：解打包或解压缩的功能，可以搭配-C（大写）指定解压的目录，注意-c,-t,-x不能同时出现在同一条命令中</li>
+<li>-j ：通过bzip2的支持进行压缩/解压缩</li>
+<li>-z ：通过gzip的支持进行压缩/解压缩</li>
+<li>-v ：在压缩/解压缩过程中，将正在处理的文件名显示出来</li>
+<li>-f filename ：filename为要处理的文件</li>
+<li><p>-C dir ：指定压缩/解压缩的目录dir</p>
+</li>
+<li><p>压缩：tar -jcv -f filename.tar.bz2 要被处理的文件或目录名称</p>
+</li>
+<li>查询：tar -jtv -f filename.tar.bz2</li>
+<li><p>解压：tar -jxv -f filename.tar.bz2 -C 欲解压缩的目录</p>
+</li>
+<li><p>bunzip2 file1.bz2 解压一个叫做 ‘file1.bz2’的文件 </p>
+</li>
+<li>bzip2 file1 压缩一个叫做 ‘file1’ 的文件 </li>
+<li>gunzip file1.gz 解压一个叫做 ‘file1.gz’的文件 </li>
+<li>gzip file1 压缩一个叫做 ‘file1’的文件 </li>
+<li>gzip -9 file1 最大程度压缩 </li>
+<li>rar a file1.rar test_file 创建一个叫做 ‘file1.rar’ 的包 </li>
+<li>rar a file1.rar file1 file2 dir1 同时压缩 ‘file1’, ‘file2’ 以及目录 ‘dir1’ </li>
+<li><p>rar x file1.rar 解压rar包</p>
+</li>
+<li><p>zip file1.zip file1 创建一个zip格式的压缩包 </p>
+</li>
+<li>unzip file1.zip 解压一个zip格式压缩包 </li>
+<li>zip -r file1.zip file1 file2 dir1 将几个文件和目录同时压缩成一个zip格式的压缩包</li>
+</ul>
+<h2 id="系统和关机"><a href="#系统和关机" class="headerlink" title="系统和关机"></a>系统和关机</h2><ul>
+<li>shutdown -h now 关闭系统(1) </li>
+<li>init 0 关闭系统(2) </li>
+<li>telinit 0 关闭系统(3) </li>
+<li>shutdown -h hours:minutes &amp; 按预定时间关闭系统 </li>
+<li>shutdown -c 取消按预定时间关闭系统 </li>
+<li>shutdown -r now 重启(1) </li>
+<li>reboot 重启(2) </li>
+<li>logout 注销 </li>
+<li>time 测算一个命令（即程序）的执行时间</li>
+</ul>
+<h2 id="进程相关的命令"><a href="#进程相关的命令" class="headerlink" title="进程相关的命令"></a>进程相关的命令</h2><h3 id="jps命令"><a href="#jps命令" class="headerlink" title="jps命令"></a>jps命令</h3><p>（显示当前系统的java进程情况，及其id号）</p>
+<ul>
+<li>jps(Java Virtual Machine Process Status Tool)是JDK 1.5提供的一个显示当前所有java进程pid的命令，简单实用，非常适合在linux/unix平台上简单察看当前java进程的一些简单情况。</li>
+</ul>
+<h3 id="ps命令"><a href="#ps命令" class="headerlink" title="ps命令"></a>ps命令</h3><p>（用于将某个时间点的进程运行情况选取下来并输出，process之意）</p>
+<ul>
+<li>-A ：所有的进程均显示出来</li>
+<li>-a ：不与terminal有关的所有进程</li>
+<li>-u ：有效用户的相关进程</li>
+<li>-x ：一般与a参数一起使用，可列出较完整的信息</li>
+<li><p>-l ：较长，较详细地将PID的信息列出</p>
+</li>
+<li><p>ps aux # 查看系统所有的进程数据</p>
+</li>
+<li>ps ax # 查看不与terminal有关的所有进程</li>
+<li>ps -lA # 查看系统所有的进程数据</li>
+<li>ps axjf # 查看连同一部分进程树状态</li>
+</ul>
+<h3 id="kill命令"><a href="#kill命令" class="headerlink" title="kill命令"></a>kill命令</h3><p>（用于向某个工作（%jobnumber）或者是某个PID（数字）传送一个信号，它通常与ps和jobs命令一起使用）</p>
+<h3 id="killall命令"><a href="#killall命令" class="headerlink" title="killall命令"></a>killall命令</h3><p>（向一个命令启动的进程发送一个信号）</p>
+<h3 id="top命令"><a href="#top命令" class="headerlink" title="top命令"></a>top命令</h3><p>是Linux下常用的性能分析工具，能够实时显示系统中各个进程的资源占用状况，类似于Windows的任务管理器。</p>
+<p>如何杀死进程：</p>
+<ol>
+<li>图形化界面的方式</li>
+<li>kill -9 pid  （-9表示强制关闭）</li>
+<li>killall -9 程序的名字</li>
+<li>pkill 程序的名字</li>
+</ol>
+<p>查看进程端口号：<br>netstat -tunlp|grep 端口号</p>
+<h1 id="普通文件和目录文件的区别"><a href="#普通文件和目录文件的区别" class="headerlink" title="普通文件和目录文件的区别"></a>普通文件和目录文件的区别</h1><h2 id="普通文件和目录文件"><a href="#普通文件和目录文件" class="headerlink" title="普通文件和目录文件"></a>普通文件和目录文件</h2><ul>
+<li>普通文件：存储普通数据，一般就是字符串。</li>
+<li>目录文件：存储了一张表，该表就是该目录文件下，所有文件名和inode的映射关系。</li>
+</ul>
+<h2 id="权限的区别"><a href="#权限的区别" class="headerlink" title="权限的区别"></a>权限的区别</h2><p>对于普通文件来说，rwx的意义是：</p>
+<ul>
+<li>r：可以获得这个普通文件的名字和内容。</li>
+<li>w：可以修改这个文件的内容和文件名。可以删除该文件。</li>
+<li>x：该文件是否具有被执行的权限。</li>
+</ul>
+<p>对于目录文件来说，rwx的意义是：</p>
+<ul>
+<li>r：表示具有读取目录结构列表的权限，所以当你具有读取(r)一个目录的权限时，表示你可以查询该目录下的文件名。 就可以利用 ls 这个命令将该目录的内容列表显示出来， 必须这个目录有x的权限，才可以进入这个目录。</li>
+<li>w：移动该目录结构列表的权限（建立新的文件与目录、删除已经存在的文件与目录、更名、移动位置）。</li>
+<li>x：目录不可以被执行，目录的x代表的是用户能否进入该目录成为工作目录。</li>
+</ul>
+<h1 id="Linux-常见目录"><a href="#Linux-常见目录" class="headerlink" title="Linux 常见目录"></a>Linux 常见目录</h1><ul>
+<li><code>/</code>  根目录</li>
+<li><code>/bin</code>  命令保存目录（普通用户就可以读取的命令）</li>
+<li><code>/boot</code>  启动目录，启动相关文件</li>
+<li><code>/dev</code>  设备文件保存目录</li>
+<li><code>/etc</code>  配置文件保存目录</li>
+<li><code>/home</code>  普通用户的家目录</li>
+<li><code>/lib</code>  系统库保存目录</li>
+<li><code>/mnt</code>  系统挂载目录</li>
+<li><code>/media</code>  挂载目录</li>
+<li><code>/root</code>  超级用户的家目录</li>
+<li><code>/tmp</code>  临时目录</li>
+<li><code>/sbin</code>  命令保存目录（超级用户才能使用的目录）</li>
+<li><code>/proc</code>  直接写入内存的</li>
+<li><code>/sys</code>  将内核的一些信息映射，可供应用程序所用</li>
+<li><code>/usr</code>  系统软件资源目录</li>
+<li><code>/usr/bin/</code>  系统命令（普通用户）</li>
+<li><code>/usr/sbin/</code>  系统命令（超级用户）</li>
+<li><code>/var</code>  系统相关文档内容</li>
+<li><code>/var/log/</code>  系统日志位置</li>
+<li><code>/var/spool/mail/</code>  系统默认邮箱位置</li>
+<li><code>/var/lib/</code>  默认安装的库文件目录</li>
+</ul>
+<h2 id="nohup"><a href="#nohup" class="headerlink" title="nohup"></a>nohup</h2><p>在应用Unix/Linux时，我们一般想让某个程序在后台运行，于是我们将常会用 &amp; 在程序结尾来让程序自动运行。比如我们要运行mysql在后台： /usr/local/mysql/bin/mysqld_safe –user=mysql &amp;。可是有很多程序并不想mysqld一样，这样我们就需要nohup命令，怎样使用nohup命令呢？这里讲解nohup命令的一些用法。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup /root/start.sh &amp;</span><br></pre></td></tr></table></figure></p>
+<p>在shell中回车后提示：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[~]$ appending output to nohup.out</span><br></pre></td></tr></table></figure></p>
+<p>原程序的的标准输出被自动改向到当前目录下的nohup.out文件，起到了log的作用。</p>
+<p>但是有时候在这一步会有问题，当把终端关闭后，进程会自动被关闭，察看nohup.out可以看到在关闭终端瞬间服务自动关闭。</p>
+<p>咨询红旗Linux工程师后，他也不得其解，在我的终端上执行后，他启动的进程竟然在关闭终端后依然运行。</p>
+<p>在第二遍给我演示时，我才发现我和他操作终端时的一个细节不同：他是在当shell中提示了nohup成功后还需要按终端上键盘任意键退回到shell输入命令窗口，然后通过在shell中输入exit来退出终端；而我是每次在nohup执行成功后直接点关闭程序按钮关闭终端.。所以这时候会断掉该命令所对应的session，导致nohup对应的进程被通知需要一起shutdown。</p>
+<p>这个细节有人和我一样没注意到，所以在这儿记录一下了。</p>
+<p>nohup 命令</p>
+<p>用途：不挂断地运行命令。</p>
+<p>语法：nohup Command [ Arg … ] [　&amp; ]</p>
+<p>描述：nohup 命令运行由 Command 参数和任何相关的 Arg 参数指定的命令，忽略所有挂断（SIGHUP）信号。在注销后使用 nohup 命令运行后台中的程序。要运行后台中的 nohup 命令，添加 &amp; （ 表示”and”的符号）到命令的尾部。</p>
+<p>无论是否将 nohup 命令的输出重定向到终端，输出都将附加到当前目录的 nohup.out 文件中。如果当前目录的 nohup.out 文件不可写，输出重定向到 $HOME/nohup.out 文件中。如果没有文件能创建或打开以用于追加，那么 Command 参数指定的命令不可调用。如果标准错误是一个终端，那么把指定的命令写给标准错误的所有输出作为标准输出重定向到相同的文件描述符。</p>
+<p>退出状态：该命令返回下列出口值：</p>
+<ul>
+<li>126 可以查找但不能调用 Command 参数指定的命令。</li>
+<li>127 nohup 命令发生错误或不能查找由 Command 参数指定的命令。</li>
+</ul>
+<p>否则，nohup 命令的退出状态是 Command 参数指定命令的退出状态。</p>
+<h3 id="nohup命令及其输出文件"><a href="#nohup命令及其输出文件" class="headerlink" title="nohup命令及其输出文件"></a>nohup命令及其输出文件</h3><p>nohup命令：如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用nohup命令。该命令可以在你退出帐户/关闭终端之后继续运行相应的进程。nohup就是不挂起的意思( n ohang up)。</p>
+<p>该命令的一般形式为：nohup command &amp;</p>
+<h3 id="使用nohup命令提交作业"><a href="#使用nohup命令提交作业" class="headerlink" title="使用nohup命令提交作业"></a>使用nohup命令提交作业</h3><p>如果使用nohup命令提交作业，那么在缺省情况下该作业的所有输出都被重定向到一个名为nohup.out的文件中，除非另外指定了输出文件：</p>
+<p>nohup command &gt; myout.file 2&gt;&amp;1 &amp;</p>
+<p>在上面的例子中，输出被重定向到myout.file文件中。</p>
+<p>使用 jobs 查看任务。</p>
+<p>使用 fg %n　关闭。</p>
+<h1 id="环境变量设置"><a href="#环境变量设置" class="headerlink" title="环境变量设置"></a>环境变量设置</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>环境变量是在操作系统中一个具有特定名字的对象，它包含了一个或多个应用程序将使用到的信息。Linux是一个多用户的操作系统，每个用户登录系统时都会有一个专用的运行环境，通常情况下每个用户的默认的环境都是相同的。这个默认环境就是一组环境变量的定义。每个用户都可以通过修改环境变量的方式对自己的运行环境进行配置。</p>
+<h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><p>根据环境变量的生命周期我们可以将其分为永久性变量和临时性变量，根据用户等级的不同又可以将其分为系统级变量和用户级变量。怎么分都无所谓，主要是对它的理解。</p>
+<h2 id="对所有用户生效的永久性变量（系统级）"><a href="#对所有用户生效的永久性变量（系统级）" class="headerlink" title="对所有用户生效的永久性变量（系统级）"></a>对所有用户生效的永久性变量（系统级）</h2><p>这类变量对系统内的所有用户都生效，所有用户都可以使用这类变量。作用范围是整个系统。<br>设置方式： 用vim在/etc/profile文件中添加我们想要的环境变量。<br>当然，这个文件只有在root（超级用户）下才能修改。我们可以在etc目录下使用ls -l查看这个文件的用户及权限。<br><img src="https://img-blog.csdn.net/20161222132206475?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<p>利用vim打开/etc/ profile文件，用export指令添加环境变量。<br><img src="https://img-blog.csdn.net/20161222132459961?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<p>【注意】：添加完成后新的环境变量不会立即生效，除非你调用source /etc/profile 该文件才会生效。否则只能在下次重进此用户时才能生效。<br><img src="https://img-blog.csdn.net/20161222132842965?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<h2 id="对单一用户生效的永久性变量（用户级）"><a href="#对单一用户生效的永久性变量（用户级）" class="headerlink" title="对单一用户生效的永久性变量（用户级）"></a>对单一用户生效的永久性变量（用户级）</h2><p>该类环境变量只对当前的用户永久生效。也就是说假如用户A设置了此类环境变量，这个环境变量只有A可以使用。而对于其他的B,C,D,E….用户等等，这个变量是不存在的。</p>
+<p>设置方法：在用户主目录”~”下的隐藏文件 “.bash_profile”中添加自己想要的环境变量。<br>查看隐藏文件： ls -a或ls -al<br><img src="https://img-blog.csdn.net/20161222134126671?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<p>利用vim打开文件，利用export添加环境变量。与上相同。同样注意，添加完成后新的环境变量不会立即生效，除非你调用source ./.bash_profile 该文件才会生效。否则只能在下次重进此用户时才能生效。</p>
+<p>可以看到我在上图中用红框框住了两个文件，.bashrc和.bash_profile。原则上来说设置此类环境变量时在这两个文件任意一个里面添加都是可以的。</p>
+<p>~/.bash_profile是交互式login方式进入bash shell运行。<br>~/ .bashrc是交互式non-login方式进入bash shell运行。</p>
+<p>二者设置大致相同。通俗点说，就是.bash_profile文件只会在用户登录的时候读取一次，而.bashrc在每次打开终端进行一次新的会话时都会读取。</p>
+<h2 id="临时有效的环境变量（只对当前shell有效）"><a href="#临时有效的环境变量（只对当前shell有效）" class="headerlink" title="临时有效的环境变量（只对当前shell有效）"></a>临时有效的环境变量（只对当前shell有效）</h2><p>此类环境变量只对当前的shell有效。当我们退出登录或者关闭终端再重新打开时，这个环境变量就会消失。是临时的。</p>
+<p>设置方法：直接使用export指令添加。<br><img src="https://img-blog.csdn.net/20161222135411738?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<h2 id="设置环境变量常用的几个指令"><a href="#设置环境变量常用的几个指令" class="headerlink" title="设置环境变量常用的几个指令"></a>设置环境变量常用的几个指令</h2><h3 id="echo"><a href="#echo" class="headerlink" title="echo"></a>echo</h3><p>查看显示环境变量，使用时要加上符号“”例：echo”例：echoPATH</p>
+<h3 id="export"><a href="#export" class="headerlink" title="export"></a>export</h3><p>设置新的环境变量<br>export 新环境变量名=内容<br>例:export MYNAME=”LLZZ”</p>
+<h3 id="修改环境变量"><a href="#修改环境变量" class="headerlink" title="修改环境变量"></a>修改环境变量</h3><p>修改环境变量没有指令，可以直接使用环境变量名进行修改。<br>例：MYNAME=”ZZLL”</p>
+<h3 id="env"><a href="#env" class="headerlink" title="env"></a>env</h3><p>查看所有环境变量</p>
+<h3 id="set"><a href="#set" class="headerlink" title="set"></a>set</h3><p>查看本地定义的所有shell变量</p>
+<h3 id="unset"><a href="#unset" class="headerlink" title="unset"></a>unset</h3><p>删除一个环境变量<br>例 unset MYNAME</p>
+<h3 id="readonly"><a href="#readonly" class="headerlink" title="readonly"></a>readonly</h3><p>设置只读环境变量。<br>例：readonly MYNAME</p>
+<h2 id="常用的几个环境变量"><a href="#常用的几个环境变量" class="headerlink" title="常用的几个环境变量"></a>常用的几个环境变量</h2><h3 id="PATH"><a href="#PATH" class="headerlink" title="PATH"></a>PATH</h3><p>指定命令的搜索路径。通过设置环境变量PATH可以让我们运行程序或指令更加方便。<br>echo $PATH 查看环境变量PATH。<br><img src="https://img-blog.csdn.net/20161222163734721?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<p>每一个冒号都是一个路径，这些搜索路径都是一些可以找到可执行程序的目录列表。当我们输入一个指令时，shell会先检查命令是否是内部命令，不是的话会再检查这个命令是否是一个应用程序。然后shell会试着从这些搜索路径，即PATH（上图中路径）中寻找这些应用程序。如果shell在这些路径目录里没有找到可执行文件。则会报错。若找到，shell内部命令或应用程序将被分解为系统调用并传给Linux内核。</p>
+<p>举个例子：<br>现在有一个c程序test.c通过gcc编译生成的可执行文件a.out（功能：输出helloworld）。我们平常执行这个a.out的时候是使用<br>①相对路径调用方式： ./a.out （”.”代表当前目录，”/”分隔符）。<br>②还可以使用绝对路径调用方式：将其全部路径写出：/home/lzk/test/a.out（此路径是我的工作目录路径，只是个例子，仅供参考）<br><img src="https://img-blog.csdn.net/20161222165754978?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<p>③通过设置PATH环境变量，直接用文件名调用：<br>在没设置PATH前，我们直接使用a.out调用程序会报错，因为shell并没有从PATH已拥有的搜索路径目录中找到a.out这个可执行程序。<br><img src="https://img-blog.csdn.net/20161222170445544?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<p>使用export指令，将a.out的路径添加到搜索路径当中，export PATH=$PATH:路径<br>我们就可以使用a.out直接执行程序。<br><img src="https://img-blog.csdn.net/20161222170134808?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTExaS18=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<h3 id="HOME"><a href="#HOME" class="headerlink" title="HOME"></a>HOME</h3><p>指定用户的主工作目录，即为用户登录到Linux系统中时的默认目录，即“~”。</p>
+<h3 id="LOGNAME"><a href="#LOGNAME" class="headerlink" title="LOGNAME"></a>LOGNAME</h3><p>指当前用户的登录名</p>
+<h3 id="HOSTNAME"><a href="#HOSTNAME" class="headerlink" title="HOSTNAME"></a>HOSTNAME</h3><p>指主机的名称。</p>
+<h3 id="SHELL"><a href="#SHELL" class="headerlink" title="SHELL"></a>SHELL</h3><p>指当前用户用的是哪种shell</p>
+<h3 id="LANG-LANGUGE"><a href="#LANG-LANGUGE" class="headerlink" title="LANG/LANGUGE"></a>LANG/LANGUGE</h3><p>和语言相关的环境变量，使用多种语言的用户可以修改此环境变量。</p>
+<h3 id="MAIL"><a href="#MAIL" class="headerlink" title="MAIL"></a>MAIL</h3><p>指当前用户的邮件存放目录</p>
+<h3 id="PS1"><a href="#PS1" class="headerlink" title="PS1"></a>PS1</h3><p>命令提示符，root用户是#，普通用户是$</p>
+<h3 id="PS2"><a href="#PS2" class="headerlink" title="PS2"></a>PS2</h3><p>附属提示符，默认是“&gt;”</p>
+<h3 id="SECONDS"><a href="#SECONDS" class="headerlink" title="SECONDS"></a>SECONDS</h3><p>从当前shell开始运行所流逝的秒数</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>环境变量是和shell紧密相关的，用户登录系统后就启动了一个shell，对于Linux来说一般是bash（Bourne Again shell，Bourne shell（sh）的扩展），也可以切换到其他版本的shell。bash有两个基本的系统级配置文件：/etc/bashrc和/etc/profile。这些配置文件包含了两组不同的变量：shell变量和环境变量。shell变量是局部的，而环境变量是全局的。环境变量是通过shell命令来设置。设置好的环境变量又可以被所以当前用户的程序使用。</p>
+<h1 id="Linux检测工具"><a href="#Linux检测工具" class="headerlink" title="Linux检测工具"></a>Linux检测工具</h1><ul>
+<li>静态代码检测工具：cppcheck、Clang-Tidy、PC-lint、SonarQube+sonar-cxx、Facebook的infer、Clang Static Analyzer。</li>
+<li>内存泄漏检测工具：valgrind、ASan、mtrace、ccmalloc、debug_new。</li>
+<li>profiling工具：gperftools、perf、intel VTune、AMD CodeAnalyst、gnu prof、Quantify</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://www.brendangregg.com/linuxperf.html">https://www.brendangregg.com/linuxperf.html</a></p>
+<p><img src="/img/20210716100700.png" alt=""><br><img src="/img/20210716100701.png" alt=""><br><img src="/img/20210716100702.png" alt=""><br><img src="/img/20210716100703.png" alt=""><br><img src="/img/20210716100704.png" alt=""><br><img src="/img/20210716100705.png" alt=""><br><img src="/img/20210716100706.png" alt=""><br><img src="/img/20210716100707.png" alt=""><br><img src="/img/20210716100708.png" alt=""></p>
+<h1 id="Linux-shell脚本"><a href="#Linux-shell脚本" class="headerlink" title="Linux shell脚本"></a>Linux shell脚本</h1><h2 id="入参和默认变量"><a href="#入参和默认变量" class="headerlink" title="入参和默认变量"></a>入参和默认变量</h2><p>对于shell脚本而言，有些内容是专门用于处理参数的，它们都有特定的含义，例如：</p>
+<ul>
+<li>/home/shouwang/test.sh para1 para2 para3</li>
+<li>$0                      $1    $2    $3</li>
+<li>脚本名 第一个参数 第三个参数</li>
+</ul>
+<p>除此之外，还有一些其他的默认变量，例如：</p>
+<ul>
+<li><code>$#</code> 代表脚本后面跟的参数个数，前面的例子中有3个参数</li>
+<li><code>$@</code> 代表了所有参数，并且可以被遍历</li>
+<li><code>$*</code> 代表了所有参数，且作为整体，和<code>$@</code>很像，但是有区别</li>
+<li>$$$$ 代表了当前脚本的进程ID</li>
+<li><code>$?</code> 代表了上一条命令的退出状态</li>
+</ul>
+<h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><p>给变量赋值，使用等号即可，但是等号两边千万不要有空格，等号右边有空格的字符串也必须用引号引起来：<code>para1=&quot;hello world&quot;</code>表示字符串直接赋给变量para1</p>
+<p>unset用于取消变量。例如：<br><code>unset para1</code></p>
+<p>如何使用变量呢？使用变量时，需要在变量前加<code>$</code>.</p>
+<p>例如要打印前面para1的内容：<code>echo &quot;para1 is $para1&quot;</code>，将会输出<code>para1 is hello world</code>。或者变量名两边添加大括号：<code>echo &quot;para1 is $&#123;para1&#125;!&quot;</code>，将会输出<code>para1 is hello world!</code></p>
+<p>命令执行在shell中执行命令通常只需要像在终端一样执行命令即可，不过，如果想要命令结果打印出来的时候，这样的方式就行不通了。因此，shell的命令方式常有：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a=`ls` </span><br></pre></td></tr></table></figure><br>“`“是左上角~键，不是单引号。</p>
+<p>或者使用<code>$</code>，后面括号内是执行的命令：<code>echo &quot;current path is $(pwd)&quot;</code> 。</p>
+<p>另外，前面两种方式对于计算表达式也是行不通的，而要采取下面的方式：<code>echo &quot;1+1=$((1+1))&quot;</code>，打印：<code>1+1=2</code>，即<code>$</code>后面用两重括号将要计算的表达式包裹起来。那如果要执行的命令存储在变量中呢？前面的方法都不可行了，当然括号内的内容被当成命令执行还是成立的。要使用下面的方式，例如：</p>
+<ul>
+<li><code>a=&quot;ls&quot;</code></li>
+<li><code>echo &quot;$($a)&quot;</code></li>
+</ul>
+<p>但是如果字符串时多条命令的时候，上面的方式又不可行了，而要采用下面的方式：</p>
+<ul>
+<li><code>a=&quot;ls;pwd&quot;</code></li>
+<li><code>echo &quot;$(eval $a)&quot;</code></li>
+</ul>
+<p>这是使用了eval，将a的内容都作为命令来执行。</p>
+<h2 id="条件分支"><a href="#条件分支" class="headerlink" title="条件分支"></a>条件分支</h2><p>一般说明，如果命令执行成功，则其返回值为0，否则为非0，因此，可以通过下面的方式判断上条命令的执行结果：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">if [ $? -eq 0 ]then</span><br><span class="line">    echo &quot;success&quot;</span><br><span class="line">elif [ $? -eq 1 ]then</span><br><span class="line">    echo &quot;failed,code is 1&quot;</span><br><span class="line">else</span><br><span class="line">    echo &quot;other code&quot;fi</span><br></pre></td></tr></table></figure><br>case语句使用方法如下：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">name=&quot;aa&quot;</span><br><span class="line">	case $name in</span><br><span class="line">	&quot;aa&quot;)    </span><br><span class="line">		echo &quot;name is $name&quot;</span><br><span class="line">		;;</span><br><span class="line">	&quot;&quot;)    </span><br><span class="line">		echo &quot;name is empty&quot;</span><br><span class="line">		;;</span><br><span class="line">	&quot;bb&quot;)</span><br><span class="line">	    echo &quot;name is $name&quot;</span><br><span class="line">	    ;;</span><br><span class="line">	*)</span><br><span class="line">	    echo &quot;other name&quot;</span><br><span class="line">	    ;;</span><br><span class="line">esac</span><br></pre></td></tr></table></figure><br>初学者特别需要注意以下几点：</p>
+<ul>
+<li>[]前面要有空格，它里面是逻辑表达式</li>
+<li>if elif后面要跟then，然后才是要执行的语句</li>
+<li>如果想打印上一条命令的执行结果，最好的做法是将<code>$?</code>赋给一个变量，因为一旦执行了一条命令<code>$?</code>的值就可能会变。</li>
+<li>case每个分支最后以两个分号结尾，最后是case反过来写，即esac。</li>
+</ul>
+<p>多个条件如何使用呢，两种方式，方式一：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if [ 10 -gt 5 -o 10 -gt 4 ];then</span><br><span class="line">    echo &quot;10&gt;5 or 10 &gt;4&quot;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure><br>方式二：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if [ 10 -gt 5 ] || [ 10 -gt 4 ];then</span><br><span class="line">    echo &quot;10&gt;5 or 10 &gt;4&quot;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure><br>其中-o或者||表示或。这里也有一些常见的条件判定。总结如下：</p>
+<ul>
+<li><code>-o</code> <code>or</code>或者，同<code>||</code></li>
+<li><code>-a</code> <code>and</code> 与，同<code>&amp;&amp;</code></li>
+<li><code>!</code> 非</li>
+</ul>
+<p>整数判断：</p>
+<ul>
+<li><code>-eq</code> 两数是否相等</li>
+<li><code>-ne</code> 两数是否不等</li>
+<li><code>-gt</code> 前者是否大于后者（greater then）</li>
+<li><code>-lt</code> 前面是否小于后者（less than）</li>
+<li><code>-ge</code> 前者是否大于等于后者（greater then or equal）</li>
+<li><code>-le</code> 前者是否小于等于后者（less than or equal）</li>
+</ul>
+<p>字符串判断str1 exp str2：</p>
+<ul>
+<li><code>-z &quot;$str1&quot;</code> str1是否为空字符串</li>
+<li><code>-n &quot;$str1&quot;</code> str1是否不是空字符串</li>
+<li><code>&quot;$str1&quot; == &quot;$str2&quot;</code> str1是否与str2相等</li>
+<li><code>&quot;$str1&quot; != &quot;$str2&quot;</code> str1是否与str2不等</li>
+<li><code>&quot;$str1&quot; =~ &quot;str2&quot;</code> str1是否包含str2</li>
+</ul>
+<p>特别注意，字符串变量最好用引号引起来，因为一旦字符串中有空格，这个表达式就错了，有兴趣的可以尝试当str1=”hello world”，而str2=”hello”的时候进行比较。</p>
+<p>文件目录判断：filename</p>
+<ul>
+<li><code>-f $filename</code> 是否为文件</li>
+<li><code>-e $filename</code> 是否存在</li>
+<li><code>-d $filename</code> 是否为目录</li>
+<li><code>-s $filename</code> 文件存在且不为空</li>
+<li><code>! -s $filename</code> 文件是否为空</li>
+</ul>
+<h2 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h2><p>循环形式一，和Python的for in很像：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#遍历输出脚本的参数</span><br><span class="line">for i in $@; </span><br><span class="line">do  </span><br><span class="line">	echo $i</span><br><span class="line">done</span><br></pre></td></tr></table></figure><br>循环形式二，和C语言风格很像：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">for ((i = 0 ; i &lt; 10 ; i++)); </span><br><span class="line">do  </span><br><span class="line">	echo $i</span><br><span class="line">done</span><br><span class="line">#循环打印0到9。</span><br></pre></td></tr></table></figure><br>循环形式三：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">for i in &#123;1..5&#125;; </span><br><span class="line">do</span><br><span class="line">    echo &quot;Welcome $i&quot;</span><br><span class="line">done</span><br><span class="line">#循环打印1到5。</span><br></pre></td></tr></table></figure><br>循环方式四：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">while [ &quot;$ans&quot; != &quot;yes&quot; ]</span><br><span class="line">do</span><br><span class="line">   read -p &quot;please input yes to exit loop:&quot; ans</span><br><span class="line">done</span><br></pre></td></tr></table></figure><br>只有当输入yes时，循环才会退出。即条件满足时，就进行循环。</p>
+<p>循环方式五：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ans=yes</span><br><span class="line">until [ $ans != &quot;yes&quot; ]</span><br><span class="line">do</span><br><span class="line">   read -p &quot;please input yes to exit loop:&quot; ans</span><br><span class="line">done</span><br></pre></td></tr></table></figure><br>这里表示，只有当ans不是yes时，循环就终止。</p>
+<p>循环方式六：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for i in &#123;5..15..3&#125;; </span><br><span class="line">do</span><br><span class="line">    echo &quot;number is $i&quot;</span><br><span class="line">done</span><br></pre></td></tr></table></figure><br>每隔5打印一次，即打印5,8,11,14。</p>
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p>定义函数方式如下：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">myfunc() </span><br><span class="line">&#123;</span><br><span class="line">    echo &quot;hello world $1&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>或者：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">function myfunc() </span><br><span class="line">&#123;</span><br><span class="line">    echo &quot;hello world $1&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>函数调用：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">para1=&quot;shouwang&quot;</span><br><span class="line">myfunc $para1</span><br></pre></td></tr></table></figure></p>
+<h2 id="返回值"><a href="#返回值" class="headerlink" title="返回值"></a>返回值</h2><p>通常函数的return返回值只支持0-255，因此想要获得返回值，可以通过下面的方式。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function myfunc() </span><br><span class="line">&#123;</span><br><span class="line">	local myresult=&#x27;some value&#x27;</span><br><span class="line">	echo $myresult</span><br><span class="line">&#125;</span><br><span class="line">val=$(myfunc) </span><br><span class="line">#val的值为some value</span><br></pre></td></tr></table></figure><br>通过return的方式适用于判断函数的执行是否成功：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">function myfunc() </span><br><span class="line">&#123;</span><br><span class="line">	#do something</span><br><span class="line">	return 0</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if myfunc;then</span><br><span class="line">    echo &quot;success&quot;</span><br><span class="line">else</span><br><span class="line">    echo &quot;failed&quot;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure></p>
+<h2 id="日志保存"><a href="#日志保存" class="headerlink" title="日志保存"></a>日志保存</h2><p>脚本执行后免不了要记录日志，最常用的方法就是重定向。以下面的脚本为例：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">#test.sh</span><br><span class="line">lll  #这个命令是没有的，因此会报错</span><br><span class="line">date</span><br></pre></td></tr></table></figure><br>方式一，将标准输出保存到文件中，打印标准错误：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./test.sh &gt; log.dat</span><br></pre></td></tr></table></figure><br>这种情况下，如果命令执行出错，错误将会打印到控制台。所以如果你在程序中调用，这样将不会讲错误信息保存在日志中。</p>
+<p>方式二，标准输出和标准错误都保存到日志文件中：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./test.sh &gt; log.dat 2&gt;&amp;1</span><br></pre></td></tr></table></figure><br>2&gt;&amp;1的含义可以参考《如何理解linuxshell中的2&gt;&amp;1》</p>
+<p>方式三，保存日志文件的同时，也输出到控制台：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./test.sh |tee log.dat</span><br></pre></td></tr></table></figure></p>
+<h2 id="脚本执行"><a href="#脚本执行" class="headerlink" title="脚本执行"></a>脚本执行</h2><p>最常见的执行方式前面已经看到了：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./test.sh</span><br></pre></td></tr></table></figure><br>其它执行方式：</p>
+<ul>
+<li><code>sh test.sh</code>，在子进程中执行</li>
+<li><code>sh -x test.sh</code>，会在终端打印执行到命令，适合调试</li>
+<li><code>source test.sh</code>，test.sh在父进程中执行</li>
+<li><code>. test.sh</code>，不需要赋予执行权限，临时执行脚本</li>
+</ul>
+<h2 id="退出码"><a href="#退出码" class="headerlink" title="退出码"></a>退出码</h2><p>很多时候我们需要获取脚本的执行结果，即退出状态，通常0表示执行成功，而非0表示失败。为了获得退出码，我们需要使用exit。例如：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">function myfun()</span><br><span class="line">&#123;</span><br><span class="line">	if [ $# -lt 2 ]then</span><br><span class="line">	   echo &quot;para num error&quot;</span><br><span class="line">	   exit 1</span><br><span class="line">	fi</span><br><span class="line">	echo &quot;ok&quot;</span><br><span class="line">	exit 2</span><br><span class="line">&#125;</span><br><span class="line">if [ $# -lt 1 ]then</span><br><span class="line">   echo &quot;para num error&quot;    </span><br><span class="line">   exit 1</span><br><span class="line">fi</span><br><span class="line">returnVal=`myfun aa`</span><br><span class="line">echo &quot;end shell&quot;</span><br><span class="line">exit 0</span><br></pre></td></tr></table></figure><br>这里需要特别注意的一点是，使用<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">returnVal=`myfun aa`</span><br></pre></td></tr></table></figure><br>这样的句子执行函数，即便函数里面有exit，它也不会退出脚本执行，而只是会退出该函数，这是因为exit是退出当前进程，而这种方式执行函数，相当于fork了一个子进程，因此不会退出当前脚本。最终结果就会看到，无论你的函数参数是什么最后end shell都会打印。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./test.sh;echo $?</span><br></pre></td></tr></table></figure><br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0</span><br></pre></td></tr></table></figure><br>这里的0就是脚本的执行结果。</p>
+<h2 id="bash命令逻辑"><a href="#bash命令逻辑" class="headerlink" title="bash命令逻辑"></a>bash命令逻辑</h2><ul>
+<li><code>cmd1&amp;&amp;cmd2</code>：如果cmd1成功则执行cmd2</li>
+<li><code>cmd1||cmd2</code>：如果cmd1不成功则执行cmd2</li>
+<li><code>cmd1|cmd2</code> ：这个是管道，把cmd1的输出作为cmd2的输入</li>
+<li><code>cmd1;cmd2</code> ：连续执行两条命令，先cmd1，然后cmd2</li>
+</ul>
+<h2 id="逻辑运算符"><a href="#逻辑运算符" class="headerlink" title="逻辑运算符"></a>逻辑运算符</h2><p>-f 常用！侦测『档案』是否存在 eg: if [ -f filename ]</p>
+<p>-d 常用！侦测『目录』是否存在</p>
+<p>-b 侦测是否为一个『 block 档案』</p>
+<p>-c 侦测是否为一个『 character 档案』</p>
+<p>-S 侦测是否为一个『 socket 标签档案』</p>
+<p>-L 侦测是否为一个『 symbolic link 的档案』</p>
+<p>-e 侦测『某个东西』是否存在！</p>
+<h3 id="关于程序的逻辑卷标"><a href="#关于程序的逻辑卷标" class="headerlink" title="关于程序的逻辑卷标"></a>关于程序的逻辑卷标</h3><p>-G 侦测是否由 GID 所执行的程序所拥有</p>
+<p>-O 侦测是否由 UID 所执行的程序所拥有</p>
+<p>-p 侦测是否为程序间传送信息的 name pipe 或是 FIFO （老实说，这个不太懂！）</p>
+<h3 id="关于档案的属性侦测"><a href="#关于档案的属性侦测" class="headerlink" title="关于档案的属性侦测"></a>关于档案的属性侦测</h3><p>-r 侦测是否为可读的属性</p>
+<p>-w 侦测是否为可以写入的属性</p>
+<p>-x 侦测是否为可执行的属性</p>
+<p>-s 侦测是否为『非空白档案』</p>
+<p>-u 侦测是否具有『 SUID 』的属性</p>
+<p>-g 侦测是否具有『 SGID 』的属性</p>
+<p>-k 侦测是否具有『 sticky bit 』的属性</p>
+<h3 id="两个档案之间的判断与比较-；例如-test-file1-nt-file2"><a href="#两个档案之间的判断与比较-；例如-test-file1-nt-file2" class="headerlink" title="两个档案之间的判断与比较 ；例如[ test file1 -nt file2 ]"></a>两个档案之间的判断与比较 ；例如[ test file1 -nt file2 ]</h3><p>-nt 第一个档案比第二个档案新</p>
+<p>-ot 第一个档案比第二个档案旧</p>
+<p>-ef 第一个档案与第二个档案为同一个档案（ link 之类的档案）</p>
+<h3 id="逻辑的『和-and-』『或-or-』"><a href="#逻辑的『和-and-』『或-or-』" class="headerlink" title="逻辑的『和(and)』『或(or)』"></a>逻辑的『和(and)』『或(or)』</h3><p>&amp;&amp; 逻辑的 AND 的意思</p>
+<p>|| 逻辑的 OR 的意思</p>
+<h3 id="运算符号-代表意义"><a href="#运算符号-代表意义" class="headerlink" title="运算符号 代表意义"></a>运算符号 代表意义</h3><p>= 等于 应用于：整型或字符串比较 如果在[] 中，只能是字符串</p>
+<p>!=不等于 应用于：整型或字符串比较 如果在[] 中，只能是字符串</p>
+<p>&lt; 小于 应用于：整型比较 在[] 中，不能使用 表示字符串</p>
+<p>> 大于 应用于：整型比较 在[] 中，不能使用 表示字符串</p>
+<p>-eq 等于 应用于：整型比较</p>
+<p>-ne 不等于 应用于：整型比较</p>
+<p>-lt 小于 应用于：整型比较</p>
+<p>-gt 大于 应用于：整型比较</p>
+<p>-le 小于或等于 应用于：整型比较</p>
+<p>-ge 大于或等于 应用于：整型比较</p>
+<p>-a  双方都成立（and） 逻辑表达式 –a 逻辑表达式</p>
+<p>-o  单方成立（or） 逻辑表达式 –o 逻辑表达式</p>
+<p>-z  空字符串</p>
+<p>-n  非空字符串</p>
+<h2 id="逻辑表达式"><a href="#逻辑表达式" class="headerlink" title="逻辑表达式"></a>逻辑表达式</h2><h3 id="test-命令"><a href="#test-命令" class="headerlink" title="test 命令"></a>test 命令</h3><p>使用方法：test EXPRESSION</p>
+<p>如：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# test 1 = 1 &amp;&amp; echo &#x27;ok&#x27;</span><br><span class="line"></span><br><span class="line">ok</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# test -d /etc/ &amp;&amp; echo &#x27;ok&#x27;</span><br><span class="line"></span><br><span class="line">ok</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# test 1 -eq 1 &amp;&amp; echo &#x27;ok&#x27;</span><br><span class="line"></span><br><span class="line">ok</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# if test 1 = 1 ; then echo &#x27;ok&#x27;; fi</span><br><span class="line"></span><br><span class="line">ok</span><br></pre></td></tr></table></figure><br>注意：所有字符 与逻辑运算符直接用“空格”分开，不能连到一起。</p>
+<h3 id="精简表达式"><a href="#精简表达式" class="headerlink" title="精简表达式"></a>精简表达式</h3><p>[] 表达式<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# [ 1 -eq 1 ] &amp;&amp; echo &#x27;ok&#x27;</span><br><span class="line"></span><br><span class="line">ok</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# [ 2 &lt; 1 ] &amp;&amp; echo &#x27;ok&#x27;</span><br><span class="line"></span><br><span class="line">-bash: 2: No such file or directory</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# [ 2 &lt; 1 ] &amp;&amp; echo &#x27;ok&#x27;</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# [ 2 -gt 1 -a 3 -lt 4 ] &amp;&amp; echo &#x27;ok&#x27;</span><br><span class="line"></span><br><span class="line">ok</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# [ 2 -gt 1 &amp;&amp; 3 -lt 4 ] &amp;&amp; echo &#x27;ok&#x27;</span><br><span class="line"></span><br><span class="line">-bash: [: missing `]&#x27;</span><br></pre></td></tr></table></figure><br>注意：在[] 表达式中，常见的&gt;,&lt;需要加转义字符，表示字符串大小比较，以acill码 位置作为比较。 不直接支持&lt;&gt;运算符，还有逻辑运算符|| &amp;&amp; 它需要用-a[and] –o[or]表示</p>
+<p>[[]] 表达式<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# [ 1 -eq 1 ] &amp;&amp; echo &#x27;ok&#x27;</span><br><span class="line"></span><br><span class="line">ok</span><br><span class="line"></span><br><span class="line">[root@localhost ~]$ [[ 2 &lt; 3 ]] &amp;&amp; echo &#x27;ok&#x27;</span><br><span class="line"></span><br><span class="line">ok</span><br><span class="line"></span><br><span class="line">[root@localhost ~]$ [[ 2 &lt; 3 &amp;&amp; 4 &gt; 5 ]] &amp;&amp; echo &#x27;ok&#x27;</span><br><span class="line"></span><br><span class="line">ok</span><br></pre></td></tr></table></figure><br>注意：[[]] 运算符只是[]运算符的扩充。能够支持&lt;,&gt;符号运算不需要转义符，它还是以字符串比较大小。里面支持逻辑运算符：|| &amp;&amp;</p>
+<h3 id="性能比较"><a href="#性能比较" class="headerlink" title="性能比较"></a>性能比较</h3><p>bash的条件表达式中有三个几乎等效的符号和命令：test，[]和[[]]。通常，大家习惯用if [];then这样的形式。而[[]]的出现，根据ABS所说，是为了兼容&gt;&lt;之类的运算符。以下是比较它们性能，发现[[]]是最快的。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ time (for m in &#123;1..100000&#125;; do test -d .;done;)</span><br><span class="line"></span><br><span class="line">real 0m0.658s</span><br><span class="line"></span><br><span class="line">user 0m0.558s</span><br><span class="line"></span><br><span class="line">sys 0m0.100s</span><br><span class="line"></span><br><span class="line">$ time (for m in &#123;1..100000&#125;; do [ -d . ];done;)</span><br><span class="line"></span><br><span class="line">real 0m0.609s</span><br><span class="line"></span><br><span class="line">user 0m0.524s</span><br><span class="line"></span><br><span class="line">sys 0m0.085s</span><br><span class="line"></span><br><span class="line">$ time (for m in &#123;1..100000&#125;; do [[ -d . ]];done;)</span><br><span class="line"></span><br><span class="line">real 0m0.311s</span><br><span class="line"></span><br><span class="line">user 0m0.275s</span><br><span class="line"></span><br><span class="line">sys 0m0.036s</span><br></pre></td></tr></table></figure><br>不考虑对低版本bash和对sh的兼容的情况下，用[[]]是兼容性强，而且性能比较快，在做条件运算时候，可以使用该运算符。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/09/GCC%E5%8F%8A%E7%BC%96%E8%AF%91%E6%8C%87%E5%8D%97/" rel="prev" title="GCC及软件编译指南">
+                GCC及软件编译指南 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E5%B7%A5%E5%85%B7ltrace-strace-ftrace%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">调试工具ltrace strace ftrace的使用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7%E6%B1%87%E6%80%BB"><span class="nav-number">2.</span> <span class="nav-text">Linux性能分析工具汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#vmstat%E2%80%94%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%BB%9F%E8%AE%A1"><span class="nav-number">2.0.1.</span> <span class="nav-text">vmstat—虚拟内存统计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iostat%E2%80%94%E7%94%A8%E4%BA%8E%E6%8A%A5%E5%91%8A%E4%B8%AD%E5%A4%AE%E5%A4%84%E7%90%86%E5%99%A8%E7%BB%9F%E8%AE%A1%E4%BF%A1%E6%81%AF"><span class="nav-number">2.0.2.</span> <span class="nav-text">iostat—用于报告中央处理器统计信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dstat%E2%80%94%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7"><span class="nav-number">2.0.3.</span> <span class="nav-text">dstat—系统监控工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iotop%E2%80%94LINUX%E8%BF%9B%E7%A8%8B%E5%AE%9E%E6%97%B6%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7"><span class="nav-number">2.0.4.</span> <span class="nav-text">iotop—LINUX进程实时监控工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pidstat%E2%80%94%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F%E8%B5%84%E6%BA%90%E6%83%85%E5%86%B5"><span class="nav-number">2.0.5.</span> <span class="nav-text">pidstat—监控系统资源情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#top"><span class="nav-number">2.0.6.</span> <span class="nav-text">top</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#htop"><span class="nav-number">2.0.7.</span> <span class="nav-text">htop</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mpstat"><span class="nav-number">2.0.8.</span> <span class="nav-text">mpstat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#netstat"><span class="nav-number">2.0.9.</span> <span class="nav-text">netstat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ps%E2%80%94%E6%98%BE%E7%A4%BA%E5%BD%93%E5%89%8D%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%8A%B6%E6%80%81"><span class="nav-number">2.0.10.</span> <span class="nav-text">ps—显示当前进程的状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#strace"><span class="nav-number">2.0.11.</span> <span class="nav-text">strace</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#uptime"><span class="nav-number">2.0.12.</span> <span class="nav-text">uptime</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lsof"><span class="nav-number">2.0.13.</span> <span class="nav-text">lsof</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#perf"><span class="nav-number">2.0.14.</span> <span class="nav-text">perf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%87%E6%80%BB"><span class="nav-number">2.0.15.</span> <span class="nav-text">汇总</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7"><span class="nav-number">2.1.</span> <span class="nav-text">常用的性能测试工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-observability-tools-Linux-%E6%80%A7%E8%83%BD%E8%A7%82%E6%B5%8B%E5%B7%A5%E5%85%B7"><span class="nav-number">2.1.1.</span> <span class="nav-text">Linux observability tools | Linux 性能观测工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-benchmarking-tools-Linux-%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%84%E5%B7%A5%E5%85%B7"><span class="nav-number">2.1.2.</span> <span class="nav-text">Linux benchmarking tools | Linux 性能测评工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-tuning-tools-Linux-%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98%E5%B7%A5%E5%85%B7"><span class="nav-number">2.1.3.</span> <span class="nav-text">Linux tuning tools | Linux 性能调优工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-observability-sar-linux%E6%80%A7%E8%83%BD%E8%A7%82%E6%B5%8B%E5%B7%A5%E5%85%B7"><span class="nav-number">2.1.4.</span> <span class="nav-text">Linux observability sar | linux性能观测工具</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E5%91%BD%E4%BB%A4"><span class="nav-number">3.</span> <span class="nav-text">Linux命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95"><span class="nav-number">3.1.</span> <span class="nav-text">文件和目录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#cd%E5%91%BD%E4%BB%A4"><span class="nav-number">3.1.1.</span> <span class="nav-text">cd命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pwd%E5%91%BD%E4%BB%A4"><span class="nav-number">3.1.2.</span> <span class="nav-text">pwd命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ls%E5%91%BD%E4%BB%A4"><span class="nav-number">3.1.3.</span> <span class="nav-text">ls命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cp-%E5%91%BD%E4%BB%A4"><span class="nav-number">3.1.4.</span> <span class="nav-text">cp 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mv%E5%91%BD%E4%BB%A4"><span class="nav-number">3.1.5.</span> <span class="nav-text">mv命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rm-%E5%91%BD%E4%BB%A4"><span class="nav-number">3.1.6.</span> <span class="nav-text">rm 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mkdir"><span class="nav-number">3.1.7.</span> <span class="nav-text">mkdir</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rmdir"><span class="nav-number">3.1.8.</span> <span class="nav-text">rmdir</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9"><span class="nav-number">3.2.</span> <span class="nav-text">查看文件内容</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#touch"><span class="nav-number">3.2.1.</span> <span class="nav-text">touch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#more"><span class="nav-number">3.2.2.</span> <span class="nav-text">more</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#head"><span class="nav-number">3.2.3.</span> <span class="nav-text">head</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ln"><span class="nav-number">3.2.4.</span> <span class="nav-text">ln</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cat%E5%91%BD%E4%BB%A4"><span class="nav-number">3.2.5.</span> <span class="nav-text">cat命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%90%9C%E7%B4%A2"><span class="nav-number">3.3.</span> <span class="nav-text">文件搜索</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#find%E5%91%BD%E4%BB%A4"><span class="nav-number">3.3.1.</span> <span class="nav-text">find命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%9A%84%E6%9D%83%E9%99%90"><span class="nav-number">3.4.</span> <span class="nav-text">文件的权限</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#chmod-%E5%91%BD%E4%BB%A4"><span class="nav-number">3.4.1.</span> <span class="nav-text">chmod 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#chown-%E5%91%BD%E4%BB%A4"><span class="nav-number">3.4.2.</span> <span class="nav-text">chown 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#chgrp-%E5%91%BD%E4%BB%A4"><span class="nav-number">3.4.3.</span> <span class="nav-text">chgrp 命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E5%A4%84%E7%90%86"><span class="nav-number">3.5.</span> <span class="nav-text">文本处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#grep"><span class="nav-number">3.5.1.</span> <span class="nav-text">grep</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E4%BD%BF%E7%94%A8"><span class="nav-number">3.5.1.1.</span> <span class="nav-text">实际使用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sed"><span class="nav-number">3.5.2.</span> <span class="nav-text">sed</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#awk"><span class="nav-number">3.5.3.</span> <span class="nav-text">awk</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.5.3.1.</span> <span class="nav-text">示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%93%E5%90%88%E6%AD%A3%E5%88%99"><span class="nav-number">3.5.3.2.</span> <span class="nav-text">结合正则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#printf-%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%87%BA"><span class="nav-number">3.5.3.3.</span> <span class="nav-text">printf 格式化输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.5.3.4.</span> <span class="nav-text">具体操作示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E7%BD%AE%E5%8F%98%E9%87%8F"><span class="nav-number">3.5.3.5.</span> <span class="nav-text">内置变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C"><span class="nav-number">3.5.3.6.</span> <span class="nav-text">操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0"><span class="nav-number">3.5.3.7.</span> <span class="nav-text">内置函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C-1"><span class="nav-number">3.5.3.8.</span> <span class="nav-text">操作</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#awk%E8%84%9A%E6%9C%AC"><span class="nav-number">3.5.4.</span> <span class="nav-text">awk脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%99%E4%B8%80%E4%B8%AA%E5%AE%8C%E6%95%B4%E7%9A%84awk%E8%84%9A%E6%9C%AC%E5%B9%B6%E6%89%A7%E8%A1%8C%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.5.4.1.</span> <span class="nav-text">写一个完整的awk脚本并执行步骤</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#paste-%E5%91%BD%E4%BB%A4"><span class="nav-number">3.5.5.</span> <span class="nav-text">paste 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sort-%E5%91%BD%E4%BB%A4"><span class="nav-number">3.5.6.</span> <span class="nav-text">sort 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#comm-%E5%91%BD%E4%BB%A4"><span class="nav-number">3.5.7.</span> <span class="nav-text">comm 命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%93%E5%8C%85%E5%92%8C%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6"><span class="nav-number">3.6.</span> <span class="nav-text">打包和压缩文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tar-%E5%91%BD%E4%BB%A4"><span class="nav-number">3.6.1.</span> <span class="nav-text">tar 命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%92%8C%E5%85%B3%E6%9C%BA"><span class="nav-number">3.7.</span> <span class="nav-text">系统和关机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9B%B8%E5%85%B3%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="nav-number">3.8.</span> <span class="nav-text">进程相关的命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#jps%E5%91%BD%E4%BB%A4"><span class="nav-number">3.8.1.</span> <span class="nav-text">jps命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ps%E5%91%BD%E4%BB%A4"><span class="nav-number">3.8.2.</span> <span class="nav-text">ps命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kill%E5%91%BD%E4%BB%A4"><span class="nav-number">3.8.3.</span> <span class="nav-text">kill命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#killall%E5%91%BD%E4%BB%A4"><span class="nav-number">3.8.4.</span> <span class="nav-text">killall命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#top%E5%91%BD%E4%BB%A4"><span class="nav-number">3.8.5.</span> <span class="nav-text">top命令</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95%E6%96%87%E4%BB%B6%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.</span> <span class="nav-text">普通文件和目录文件的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95%E6%96%87%E4%BB%B6"><span class="nav-number">4.1.</span> <span class="nav-text">普通文件和目录文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.2.</span> <span class="nav-text">权限的区别</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux-%E5%B8%B8%E8%A7%81%E7%9B%AE%E5%BD%95"><span class="nav-number">5.</span> <span class="nav-text">Linux 常见目录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#nohup"><span class="nav-number">5.1.</span> <span class="nav-text">nohup</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#nohup%E5%91%BD%E4%BB%A4%E5%8F%8A%E5%85%B6%E8%BE%93%E5%87%BA%E6%96%87%E4%BB%B6"><span class="nav-number">5.1.1.</span> <span class="nav-text">nohup命令及其输出文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8nohup%E5%91%BD%E4%BB%A4%E6%8F%90%E4%BA%A4%E4%BD%9C%E4%B8%9A"><span class="nav-number">5.1.2.</span> <span class="nav-text">使用nohup命令提交作业</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E8%AE%BE%E7%BD%AE"><span class="nav-number">6.</span> <span class="nav-text">环境变量设置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">6.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E7%B1%BB"><span class="nav-number">6.2.</span> <span class="nav-text">分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E6%89%80%E6%9C%89%E7%94%A8%E6%88%B7%E7%94%9F%E6%95%88%E7%9A%84%E6%B0%B8%E4%B9%85%E6%80%A7%E5%8F%98%E9%87%8F%EF%BC%88%E7%B3%BB%E7%BB%9F%E7%BA%A7%EF%BC%89"><span class="nav-number">6.3.</span> <span class="nav-text">对所有用户生效的永久性变量（系统级）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E5%8D%95%E4%B8%80%E7%94%A8%E6%88%B7%E7%94%9F%E6%95%88%E7%9A%84%E6%B0%B8%E4%B9%85%E6%80%A7%E5%8F%98%E9%87%8F%EF%BC%88%E7%94%A8%E6%88%B7%E7%BA%A7%EF%BC%89"><span class="nav-number">6.4.</span> <span class="nav-text">对单一用户生效的永久性变量（用户级）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%B4%E6%97%B6%E6%9C%89%E6%95%88%E7%9A%84%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%EF%BC%88%E5%8F%AA%E5%AF%B9%E5%BD%93%E5%89%8Dshell%E6%9C%89%E6%95%88%EF%BC%89"><span class="nav-number">6.5.</span> <span class="nav-text">临时有效的环境变量（只对当前shell有效）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%B8%B8%E7%94%A8%E7%9A%84%E5%87%A0%E4%B8%AA%E6%8C%87%E4%BB%A4"><span class="nav-number">6.6.</span> <span class="nav-text">设置环境变量常用的几个指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#echo"><span class="nav-number">6.6.1.</span> <span class="nav-text">echo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#export"><span class="nav-number">6.6.2.</span> <span class="nav-text">export</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">6.6.3.</span> <span class="nav-text">修改环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#env"><span class="nav-number">6.6.4.</span> <span class="nav-text">env</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#set"><span class="nav-number">6.6.5.</span> <span class="nav-text">set</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unset"><span class="nav-number">6.6.6.</span> <span class="nav-text">unset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#readonly"><span class="nav-number">6.6.7.</span> <span class="nav-text">readonly</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E5%87%A0%E4%B8%AA%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">6.7.</span> <span class="nav-text">常用的几个环境变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PATH"><span class="nav-number">6.7.1.</span> <span class="nav-text">PATH</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HOME"><span class="nav-number">6.7.2.</span> <span class="nav-text">HOME</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LOGNAME"><span class="nav-number">6.7.3.</span> <span class="nav-text">LOGNAME</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HOSTNAME"><span class="nav-number">6.7.4.</span> <span class="nav-text">HOSTNAME</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SHELL"><span class="nav-number">6.7.5.</span> <span class="nav-text">SHELL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LANG-LANGUGE"><span class="nav-number">6.7.6.</span> <span class="nav-text">LANG&#x2F;LANGUGE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MAIL"><span class="nav-number">6.7.7.</span> <span class="nav-text">MAIL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PS1"><span class="nav-number">6.7.8.</span> <span class="nav-text">PS1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PS2"><span class="nav-number">6.7.9.</span> <span class="nav-text">PS2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SECONDS"><span class="nav-number">6.7.10.</span> <span class="nav-text">SECONDS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.8.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E6%A3%80%E6%B5%8B%E5%B7%A5%E5%85%B7"><span class="nav-number">7.</span> <span class="nav-text">Linux检测工具</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux-shell%E8%84%9A%E6%9C%AC"><span class="nav-number">8.</span> <span class="nav-text">Linux shell脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A5%E5%8F%82%E5%92%8C%E9%BB%98%E8%AE%A4%E5%8F%98%E9%87%8F"><span class="nav-number">8.1.</span> <span class="nav-text">入参和默认变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E9%87%8F"><span class="nav-number">8.2.</span> <span class="nav-text">变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%88%86%E6%94%AF"><span class="nav-number">8.3.</span> <span class="nav-text">条件分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF"><span class="nav-number">8.4.</span> <span class="nav-text">循环</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0"><span class="nav-number">8.5.</span> <span class="nav-text">函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">8.6.</span> <span class="nav-text">返回值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E4%BF%9D%E5%AD%98"><span class="nav-number">8.7.</span> <span class="nav-text">日志保存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C"><span class="nav-number">8.8.</span> <span class="nav-text">脚本执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%80%E5%87%BA%E7%A0%81"><span class="nav-number">8.9.</span> <span class="nav-text">退出码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bash%E5%91%BD%E4%BB%A4%E9%80%BB%E8%BE%91"><span class="nav-number">8.10.</span> <span class="nav-text">bash命令逻辑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">8.11.</span> <span class="nav-text">逻辑运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E7%A8%8B%E5%BA%8F%E7%9A%84%E9%80%BB%E8%BE%91%E5%8D%B7%E6%A0%87"><span class="nav-number">8.11.1.</span> <span class="nav-text">关于程序的逻辑卷标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E6%A1%A3%E6%A1%88%E7%9A%84%E5%B1%9E%E6%80%A7%E4%BE%A6%E6%B5%8B"><span class="nav-number">8.11.2.</span> <span class="nav-text">关于档案的属性侦测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E6%A1%A3%E6%A1%88%E4%B9%8B%E9%97%B4%E7%9A%84%E5%88%A4%E6%96%AD%E4%B8%8E%E6%AF%94%E8%BE%83-%EF%BC%9B%E4%BE%8B%E5%A6%82-test-file1-nt-file2"><span class="nav-number">8.11.3.</span> <span class="nav-text">两个档案之间的判断与比较 ；例如[ test file1 -nt file2 ]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E7%9A%84%E3%80%8E%E5%92%8C-and-%E3%80%8F%E3%80%8E%E6%88%96-or-%E3%80%8F"><span class="nav-number">8.11.4.</span> <span class="nav-text">逻辑的『和(and)』『或(or)』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E7%AE%97%E7%AC%A6%E5%8F%B7-%E4%BB%A3%E8%A1%A8%E6%84%8F%E4%B9%89"><span class="nav-number">8.11.5.</span> <span class="nav-text">运算符号 代表意义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">8.12.</span> <span class="nav-text">逻辑表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#test-%E5%91%BD%E4%BB%A4"><span class="nav-number">8.12.1.</span> <span class="nav-text">test 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B2%BE%E7%AE%80%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">8.12.2.</span> <span class="nav-text">精简表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E6%AF%94%E8%BE%83"><span class="nav-number">8.12.3.</span> <span class="nav-text">性能比较</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

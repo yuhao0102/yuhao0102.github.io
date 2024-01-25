@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zn-ch">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Leetcode," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Leetcode1502.  Can Make Arithmetic Progression From SequenceGiven an array of numbers arr. A sequence of numbers is called an arithmetic progression if the difference between any two consecutive eleme">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Leetcode1501 - 1600">
+<meta property="og:url" content="http://yoursite.com/2020/07/14/Leetcode1501_1600/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="Leetcode1502.  Can Make Arithmetic Progression From SequenceGiven an array of numbers arr. A sequence of numbers is called an arithmetic progression if the difference between any two consecutive eleme">
+<meta property="og:locale" content="zn_CH">
+<meta property="article:published_time" content="2020-07-14T01:46:00.000Z">
+<meta property="article:modified_time" content="2022-12-26T08:02:42.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="Leetcode">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/07/14/Leetcode1501_1600/"/>
+
+
+
+
+
+  <title>Leetcode1501 - 1600 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zn-ch">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hao Yu's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">The program monkey was eaten by the siege lion.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/14/Leetcode1501_1600/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Leetcode1501 - 1600</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-07-14T09:46:00+08:00">
+                2020-07-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Leetcode1502-Can-Make-Arithmetic-Progression-From-Sequence"><a href="#Leetcode1502-Can-Make-Arithmetic-Progression-From-Sequence" class="headerlink" title="Leetcode1502.  Can Make Arithmetic Progression From Sequence"></a>Leetcode1502.  Can Make Arithmetic Progression From Sequence</h1><p>Given an array of numbers arr. A sequence of numbers is called an arithmetic progression if the difference between any two consecutive elements is the same.</p>
+<p>Return true if the array can be rearranged to form an arithmetic progression, otherwise, return false.</p>
+<p>Example 1:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: arr = [3,5,1]</span><br><span class="line">Output: true</span><br><span class="line">Explanation: We can reorder the elements as [1,3,5] or [5,3,1] with differences 2 and -2 respectively, between each consecutive elements.</span><br></pre></td></tr></table></figure><br>Example 2:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: arr = [1,2,4]</span><br><span class="line">Output: false</span><br><span class="line">Explanation: There is no way to reorder the elements to obtain an arithmetic progression.</span><br></pre></td></tr></table></figure><br>判断是否可以组成等差数列，将数组排序后，比较两两数字差是否一致。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">canMakeArithmeticProgression</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; arr)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">sort</span>(arr.<span class="built_in">begin</span>(), arr.<span class="built_in">end</span>());</span><br><span class="line">        <span class="type">int</span> cha = arr[<span class="number">1</span>] - arr[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">2</span>; i &lt; arr.<span class="built_in">size</span>(); i ++)</span><br><span class="line">            <span class="keyword">if</span>(arr[i] - arr[i<span class="number">-1</span>] != cha)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h1 id="Leetcode1507-Reformat-Date"><a href="#Leetcode1507-Reformat-Date" class="headerlink" title="Leetcode1507. Reformat Date"></a>Leetcode1507. Reformat Date</h1><p>Given a date string in the form Day Month Year, where:</p>
+<ul>
+<li>Day is in the set {“1st”, “2nd”, “3rd”, “4th”, …, “30th”, “31st”}.</li>
+<li>Month is in the set {“Jan”, “Feb”, “Mar”, “Apr”, “May”, “Jun”, “Jul”, “Aug”, “Sep”, “Oct”, “Nov”, “Dec”}.</li>
+<li>Year is in the range [1900, 2100].</li>
+</ul>
+<p>Convert the date string to the format YYYY-MM-DD, where:</p>
+<ul>
+<li>YYYY denotes the 4 digit year.</li>
+<li>MM denotes the 2 digit month.</li>
+<li>DD denotes the 2 digit day.</li>
+</ul>
+<p>Example 1:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: date = &quot;20th Oct 2052&quot;</span><br><span class="line">Output: &quot;2052-10-20&quot;</span><br></pre></td></tr></table></figure><br>Example 2:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: date = &quot;6th Jun 1933&quot;</span><br><span class="line">Output: &quot;1933-06-06&quot;</span><br></pre></td></tr></table></figure><br>时间格式转换，很麻烦。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">string <span class="title">reformatDate</span><span class="params">(string date)</span> </span>&#123;</span><br><span class="line">        string res;</span><br><span class="line">        <span class="type">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> day, month, year;</span><br><span class="line">        vector&lt;string&gt; mon&#123;<span class="string">&quot;Jan&quot;</span>, <span class="string">&quot;Feb&quot;</span>, <span class="string">&quot;Mar&quot;</span>, <span class="string">&quot;Apr&quot;</span>, <span class="string">&quot;May&quot;</span>, <span class="string">&quot;Jun&quot;</span>, <span class="string">&quot;Jul&quot;</span>, <span class="string">&quot;Aug&quot;</span>, <span class="string">&quot;Sep&quot;</span>, <span class="string">&quot;Oct&quot;</span>, <span class="string">&quot;Nov&quot;</span>, <span class="string">&quot;Dec&quot;</span>&#125;;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; date.<span class="built_in">length</span>();) &#123;</span><br><span class="line">            <span class="keyword">if</span>(date[i] == <span class="string">&#x27; &#x27;</span>) &#123;</span><br><span class="line">                count ++;</span><br><span class="line">                i ++;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(count == <span class="number">0</span>) &#123;</span><br><span class="line">                day = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">while</span>(<span class="string">&#x27;0&#x27;</span> &lt;= date[i] &amp;&amp; date[i] &lt;= <span class="string">&#x27;9&#x27;</span>) &#123;</span><br><span class="line">                    day = day * <span class="number">10</span> + (date[i] - <span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">                    i ++;</span><br><span class="line">                &#125;</span><br><span class="line">                i += <span class="number">2</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(count == <span class="number">1</span>) &#123;</span><br><span class="line">                string months = <span class="string">&quot;&quot;</span>;</span><br><span class="line">                <span class="type">int</span> ii;</span><br><span class="line">                <span class="keyword">while</span>(date[i] != <span class="string">&#x27; &#x27;</span>) </span><br><span class="line">                    months += date[i ++];</span><br><span class="line">                <span class="keyword">for</span>(ii = <span class="number">0</span>; ii &lt; mon.<span class="built_in">size</span>(); ii ++)</span><br><span class="line">                    <span class="keyword">if</span>(months == mon[ii])</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                month = ii + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(count == <span class="number">2</span>) &#123;</span><br><span class="line">                year = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">while</span>(<span class="string">&#x27;0&#x27;</span> &lt;= date[i] &amp;&amp; date[i] &lt;= <span class="string">&#x27;9&#x27;</span>) &#123;</span><br><span class="line">                    year = year * <span class="number">10</span> + (date[i] - <span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">                    i ++;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">to_string</span>(year) + <span class="string">&quot;-&quot;</span> + (month &gt;= <span class="number">10</span> ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;0&quot;</span>) + <span class="built_in">to_string</span>(month)  + <span class="string">&quot;-&quot;</span> + (day &gt;= <span class="number">10</span> ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;0&quot;</span>) + <span class="built_in">to_string</span>(day);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h1 id="Leetcode1512-Number-of-Good-Pairs"><a href="#Leetcode1512-Number-of-Good-Pairs" class="headerlink" title="Leetcode1512. Number of Good Pairs"></a>Leetcode1512. Number of Good Pairs</h1><p>Given an array of integers nums. A pair (i,j) is called good if nums[i] == nums[j] and i &lt; j. Return the number of good pairs.</p>
+<p>Example 1:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: nums = [1,2,3,1,1,3]</span><br><span class="line">Output: 4</span><br><span class="line">Explanation: There are 4 good pairs (0,3), (0,4), (3,4), (2,5) 0-indexed.</span><br></pre></td></tr></table></figure><br>Example 2:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: nums = [1,1,1,1]</span><br><span class="line">Output: 6</span><br><span class="line">Explanation: Each pair in the array are good.</span><br></pre></td></tr></table></figure><br>遍历一遍即可。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">numIdenticalPairs</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> res = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; nums.<span class="built_in">size</span>(); i ++)</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> j = i + <span class="number">1</span>; j &lt; nums.<span class="built_in">size</span>(); j ++)</span><br><span class="line">                <span class="keyword">if</span>(nums[i] == nums[j])</span><br><span class="line">                    res ++;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h1 id="Leetcode1530-Number-of-Good-Leaf-Nodes-Pairs"><a href="#Leetcode1530-Number-of-Good-Leaf-Nodes-Pairs" class="headerlink" title="Leetcode1530. Number of Good Leaf Nodes Pairs"></a>Leetcode1530. Number of Good Leaf Nodes Pairs</h1><p>You are given the root of a binary tree and an integer distance. A pair of two different leaf nodes of a binary tree is said to be good if the length of the shortest path between them is less than or equal to distance.</p>
+<p>Return the number of good leaf node pairs in the tree.</p>
+<p>Example 1:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: root = [1,2,3,null,4], distance = 3</span><br><span class="line">Output: 1</span><br><span class="line">Explanation: The leaf nodes of the tree are 3 and 4 and the length of the shortest path between them is 3. This is the only good pair.</span><br></pre></td></tr></table></figure></p>
+<p>Example 2:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: root = [1,2,3,4,5,6,7], distance = 3</span><br><span class="line">Output: 2</span><br><span class="line">Explanation: The good pairs are [4,5] and [6,7] with shortest path = 2. The pair [4,6] is not good because the length of ther shortest path between them is 4.</span><br></pre></td></tr></table></figure></p>
+<p>Example 3:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: root = [7,1,4,6,null,5,3,null,null,null,null,null,2], distance = 3</span><br><span class="line">Output: 1</span><br><span class="line">Explanation: The only good pair is [2,5].</span><br></pre></td></tr></table></figure></p>
+<p>Constraints:</p>
+<ul>
+<li>The number of nodes in the tree is in the range [1, 210].</li>
+<li>1 &lt;= Node.val &lt;= 100</li>
+<li>1 &lt;= distance &lt;= 10</li>
+</ul>
+<p>如果二叉树中两个 叶 节点之间的 最短路径长度 小于或者等于 distance ，那它们就可以构成一组 好叶子节点对。这个题让找好叶子节点对的数量。注意到这个题的数据量很小，可以遍历找到。</p>
+<p>因为是找左右子树的数量，所以可以对左右子树分别算一个数组，数组里计算了距离本节点距离为i的节点有几个，例如如果这个点是叶子，那cnt数组中只有cnt[0]为1。在算这两个节点的距离时，如下边的代码所示，要<code>s+1 + t+1</code>，s是node的左子树到node-&gt;left的距离，t是node的右子树到node-&gt;right的距离。起始条件是0，因为是叶子到node的子节点的距离，是可能为0的；而终止条件应该是d-1，因为两端的叶子的路径是经过node的，不能算上根节点。</p>
+<p>计算结果时把左右子树的数组对应值乘起来。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="type">int</span> ret;</span><br><span class="line">    <span class="type">int</span> d;</span><br><span class="line">    </span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">dfs</span><span class="params">(TreeNode* node)</span> </span>&#123;</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">cnt</span><span class="params">(d)</span></span>;</span><br><span class="line">        <span class="keyword">if</span> (!node) </span><br><span class="line">            <span class="keyword">return</span> cnt;</span><br><span class="line">        </span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; lcnt = <span class="built_in">dfs</span>(node-&gt;left);</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; rcnt = <span class="built_in">dfs</span>(node-&gt;right);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> s = <span class="number">0</span>; s &lt;= d<span class="number">-2</span>; s ++)</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> t = <span class="number">0</span>; t &lt;= d<span class="number">-2</span>; t ++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (s + t + <span class="number">2</span> &gt; d)</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                ret += lcnt[s] * rcnt[t];</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; d<span class="number">-1</span>; i ++)</span><br><span class="line">            cnt[i+<span class="number">1</span>] = lcnt[i] + rcnt[i];</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (!node-&gt;left &amp;&amp; !node-&gt;right)</span><br><span class="line">            cnt[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> cnt;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">countPairs</span><span class="params">(TreeNode* root, <span class="type">int</span> distance)</span> </span>&#123;</span><br><span class="line">        ret = <span class="number">0</span>;</span><br><span class="line">        d = distance;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">dfs</span>(root);</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>另一种做法：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">countPairs</span><span class="params">(TreeNode* root, <span class="type">int</span> distance)</span> </span>&#123;</span><br><span class="line">        numPairs = <span class="number">0</span>;</span><br><span class="line">        targetDistance = distance;</span><br><span class="line">        <span class="built_in">countPairsHelper</span>(root, <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> numPairs;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> numPairs;</span><br><span class="line">    <span class="type">int</span> targetDistance;</span><br><span class="line">    </span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">countPairsHelper</span><span class="params">(TreeNode* root, <span class="type">int</span> level)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root == <span class="literal">NULL</span>)</span><br><span class="line">            <span class="keyword">return</span> &#123;&#125;;</span><br><span class="line">        <span class="keyword">if</span> (root-&gt;left == <span class="literal">NULL</span> &amp;&amp; root-&gt;right == <span class="literal">NULL</span>)</span><br><span class="line">            <span class="keyword">return</span> &#123;level&#125;;</span><br><span class="line">        </span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; leftLeaves = <span class="built_in">countPairsHelper</span>(root-&gt;left, level + <span class="number">1</span>);</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; rightLeaves = <span class="built_in">countPairsHelper</span>(root-&gt;right, level + <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> left: leftLeaves) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">auto</span> right: rightLeaves) &#123;</span><br><span class="line">                <span class="keyword">if</span> (left + right - <span class="number">2</span> * level &lt;= targetDistance)</span><br><span class="line">                    numPairs++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> right: rightLeaves)</span><br><span class="line">            leftLeaves.<span class="built_in">push_back</span>(right);</span><br><span class="line">        <span class="keyword">return</span> leftLeaves;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Leetcode/" rel="tag"># Leetcode</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/07/14/Leetcode1601_1700/" rel="next" title="Leetcode1601 - 1700">
+                <i class="fa fa-chevron-left"></i> Leetcode1601 - 1700
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/08/12/Leetcode301_400/" rel="prev" title="Leetcode301 - 400">
+                Leetcode301 - 400 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode1502-Can-Make-Arithmetic-Progression-From-Sequence"><span class="nav-number">1.</span> <span class="nav-text">Leetcode1502.  Can Make Arithmetic Progression From Sequence</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode1507-Reformat-Date"><span class="nav-number">2.</span> <span class="nav-text">Leetcode1507. Reformat Date</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode1512-Number-of-Good-Pairs"><span class="nav-number">3.</span> <span class="nav-text">Leetcode1512. Number of Good Pairs</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode1530-Number-of-Good-Leaf-Nodes-Pairs"><span class="nav-number">4.</span> <span class="nav-text">Leetcode1530. Number of Good Leaf Nodes Pairs</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

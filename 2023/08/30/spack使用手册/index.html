@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zn-ch">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Linux," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="部署spack下载release（推荐）github下载最新的release：github.com&#x2F;spack&#x2F;spack… git123git clone https:&#x2F;&#x2F;github.com&#x2F;spack&#x2F;spack.git ~&#x2F;spackcd ~&#x2F;spackgit checkout releases&#x2F;v0.17 ✨tips: github 国内下载慢，百度 github镜像加速站 或 油猴脚本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spack简明使用手册">
+<meta property="og:url" content="http://yoursite.com/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="部署spack下载release（推荐）github下载最新的release：github.com&#x2F;spack&#x2F;spack… git123git clone https:&#x2F;&#x2F;github.com&#x2F;spack&#x2F;spack.git ~&#x2F;spackcd ~&#x2F;spackgit checkout releases&#x2F;v0.17 ✨tips: github 国内下载慢，百度 github镜像加速站 或 油猴脚本">
+<meta property="og:locale" content="zn_CH">
+<meta property="article:published_time" content="2023-08-30T02:32:00.000Z">
+<meta property="article:modified_time" content="2023-08-30T02:41:04.540Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2023/08/30/spack使用手册/"/>
+
+
+
+
+
+  <title>spack简明使用手册 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zn-ch">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hao Yu's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">The program monkey was eaten by the siege lion.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">spack简明使用手册</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2023-08-30T10:32:00+08:00">
+                2023-08-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="部署spack"><a href="#部署spack" class="headerlink" title="部署spack"></a>部署spack</h1><h2 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h2><h3 id="release（推荐）"><a href="#release（推荐）" class="headerlink" title="release（推荐）"></a>release（推荐）</h3><p>github下载最新的release：github.com/spack/spack…</p>
+<h3 id="git"><a href="#git" class="headerlink" title="git"></a>git</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/spack/spack.git ~/spack</span><br><span class="line">cd ~/spack</span><br><span class="line">git checkout releases/v0.17</span><br></pre></td></tr></table></figure>
+<p>✨tips: github 国内下载慢，百度 github镜像加速站 或 油猴脚本 - github 高速下载</p>
+<h2 id="激活"><a href="#激活" class="headerlink" title="激活"></a>激活</h2><p>对于超算/lab/hpc等多用户场景,建议将spack本地放在全局/共享目录下</p>
+<p>单个普通用户建议放在 ~/.spack/ 或 /opt下</p>
+<p>解压下载好的压缩包, 加载环境变量（根据具体情况变更路径）：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source spack/share/spack/setup-env.sh</span><br></pre></td></tr></table></figure></p>
+<p>可以将此命令写在<code>~/.bashrc</code>或<code>/etc/profile</code>中 ， 打开终端自动生效</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>spack 的用户配置文件均在 ~/.spack 下，首次使用 spack 可能没有此目录，使用 3.2 会自动创建</p>
+<h3 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">$ spack config get config &gt; ~/.spack/config.yaml</span><br><span class="line">$ spack config get config</span><br><span class="line">config:</span><br><span class="line">  install_tree:</span><br><span class="line">    root: $spack/opt/spack</span><br><span class="line">    projections:</span><br><span class="line">      all: $&#123;ARCHITECTURE&#125;/$&#123;COMPILERNAME&#125;-$&#123;COMPILERVER&#125;/$&#123;PACKAGE&#125;-$&#123;VERSION&#125;-$&#123;HASH&#125;</span><br><span class="line">  template_dirs:</span><br><span class="line">  - $spack/share/spack/templates</span><br><span class="line">  build_stage:</span><br><span class="line">  - $tempdir/$user/spack-stage</span><br><span class="line">  - $user_cache_path/stage</span><br><span class="line">  test_stage: $user_cache_path/test</span><br><span class="line">  source_cache: $spack/var/spack/cache</span><br><span class="line">  misc_cache: $user_cache_path/cache</span><br><span class="line">  connect_timeout: 10</span><br><span class="line">  verify_ssl: true</span><br><span class="line">  suppress_gpg_warnings: false</span><br><span class="line">  install_missing_compilers: false</span><br><span class="line">  checksum: true</span><br><span class="line">  deprecated: false</span><br><span class="line">  dirty: false</span><br><span class="line">  build_language: C</span><br><span class="line">  locks: true</span><br><span class="line">  url_fetch_method: urllib</span><br><span class="line">  ccache: false</span><br><span class="line">  concretizer: clingo</span><br><span class="line">  db_lock_timeout: 3</span><br><span class="line">  package_lock_timeout: null</span><br><span class="line">  shared_linking: rpath</span><br><span class="line">  allow_sgid: true</span><br><span class="line">  terminal_title: false</span><br><span class="line">  debug: false</span><br><span class="line">  build_jobs: 16</span><br></pre></td></tr></table></figure>
+<p>解析：</p>
+<ul>
+<li>install_tree 中 root 为当前用户 软件安装的路径 , projections 为软件路径的命名规范</li>
+<li>verify_ssl 在install时会校验url的ssl证书，离线环境可以选择关闭（值为 fasle）</li>
+<li>locks 锁机制： 默认开启，同一用户分别安装相同的软件，只允许有一个进程执行，执行完后，另一个进程将跳过该软件安装；关闭的话，可能制造重复安装，但在某些文件系统的特殊权限限制下，需要关闭，否则会报奇怪的读写错误</li>
+<li>build_job 安装时默认使用的最大cpu核心数</li>
+<li>checksum 校验源码包的hash值</li>
+</ul>
+<h3 id="编译器"><a href="#编译器" class="headerlink" title="编译器"></a>编译器</h3><p>使用<code>spack compiler find</code>将会自动查找本机的所有编译器，生成配置文件<code>~/.spack/linux/compilers.yaml</code></p>
+<p>spack compilers查看添加到配置文件中的编译器<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ spack compilers</span><br><span class="line">==&gt; Available compilers</span><br><span class="line">-- clang centos7-x86_64 -----------------------------------------</span><br><span class="line">clang@12.0.1  clang@3.4.2</span><br><span class="line"></span><br><span class="line">-- gcc centos7-x86_64 -------------------------------------------</span><br><span class="line">gcc@10.2.0  gcc@8.5.0  gcc@7.5.0  gcc@6.5.0  gcc@4.9.4  gcc@4.8.5</span><br><span class="line"></span><br><span class="line">-- intel centos7-x86_64 -----------------------------------------</span><br><span class="line">intel@2021.4.0  intel@19.0.5.281</span><br><span class="line"></span><br><span class="line">-- oneapi centos7-x86_64 ----------------------------------------</span><br><span class="line">oneapi@2021.4.0</span><br></pre></td></tr></table></figure></p>
+<h3 id="源码镜像仓库"><a href="#源码镜像仓库" class="headerlink" title="源码镜像仓库"></a>源码镜像仓库</h3><h4 id="自建源码镜像仓库"><a href="#自建源码镜像仓库" class="headerlink" title="自建源码镜像仓库"></a>自建源码镜像仓库</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ spack mirror create -d &lt;PATH&gt; --all</span><br></pre></td></tr></table></figure>
+<p>一个标准的源码镜像仓库符合以下目录规范：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">mirror/</span><br><span class="line">    cmake/</span><br><span class="line">        cmake-2.8.10.2.tar.gz</span><br><span class="line">    dyninst/</span><br><span class="line">        dyninst-8.1.1.tgz</span><br><span class="line">        dyninst-8.1.2.tgz</span><br><span class="line">    libdwarf/</span><br><span class="line">        libdwarf-20130126.tar.gz</span><br><span class="line">        libdwarf-20130207.tar.gz</span><br><span class="line">        libdwarf-20130729.tar.gz</span><br><span class="line">    libelf/</span><br><span class="line">        libelf-0.8.12.tar.gz</span><br><span class="line">        libelf-0.8.13.tar.gz</span><br><span class="line">    libunwind/</span><br><span class="line">        libunwind-1.1.tar.gz</span><br><span class="line">    mpich/</span><br><span class="line">        mpich-3.0.4.tar.gz</span><br><span class="line">    mvapich2/</span><br><span class="line">        mvapich2-1.9.tgz</span><br></pre></td></tr></table></figure></p>
+<h4 id="添加私有源码镜像仓库"><a href="#添加私有源码镜像仓库" class="headerlink" title="添加私有源码镜像仓库"></a>添加私有源码镜像仓库</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ spack mirror add &lt;scope&gt; &lt;path&gt;</span><br></pre></td></tr></table></figure>
+<p>生成配置文件~/.spack/linux/mirrors.yaml</p>
+<p>例如 添加 一个 在/opt/mirror下的源码镜像仓库，给它取名为haha:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack mirror add haha /opt/mirror</span><br></pre></td></tr></table></figure></p>
+<h4 id="查看已添加的源码镜像仓库"><a href="#查看已添加的源码镜像仓库" class="headerlink" title="查看已添加的源码镜像仓库"></a>查看已添加的源码镜像仓库</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ spack mirror list</span><br><span class="line">spack-public    https://mirror.spack.io</span><br></pre></td></tr></table></figure>
+<p>默认使用 位于美国亚马逊云的 spack公共仓库 mirror.spack.io ，在国内获取 源码/索引 的速度可能会很慢</p>
+<h4 id="脚本源"><a href="#脚本源" class="headerlink" title="脚本源"></a>脚本源</h4><p>查看当前使用的脚本源<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ spack repo list</span><br><span class="line">==&gt; 1 package repository.</span><br><span class="line">builtin    /root/spack/var/spack/repos/builtin</span><br></pre></td></tr></table></figure><br>默认使用spack官方的脚本源</p>
+<h4 id="添加私有脚本源"><a href="#添加私有脚本源" class="headerlink" title="添加私有脚本源"></a>添加私有脚本源</h4><p>一个标准的spack脚本源符合如下的路径规范：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ tree -L /root/spack/var/spack/repos/yeesuan</span><br><span class="line">/root/spack/var/spack/repos/yeesuan</span><br><span class="line">├── packages</span><br><span class="line">│   ├── gromacs</span><br><span class="line">│   │   ├── package.py</span><br><span class="line">│   │   └── __pycache__	</span><br><span class="line">└── repo.yaml</span><br></pre></td></tr></table></figure>
+<p>其中 repo.yaml 定义了该脚本源的命名空间：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">repo:</span><br><span class="line">  namespace: &#x27;yeesuan&#x27;</span><br></pre></td></tr></table></figure>
+<p>添加该脚本源：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ spack repo add /root/spack/var/spack/repos/yeesuan</span><br></pre></td></tr></table></figure></p>
+<h3 id="modules"><a href="#modules" class="headerlink" title="modules"></a>modules</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">$ spack config get modules &gt; ~/.spack/modules</span><br><span class="line">$ spack config get modules </span><br><span class="line">modules:</span><br><span class="line">  prefix_inspections:</span><br><span class="line">    lib:</span><br><span class="line">    - LD_LIBRARY_PATH</span><br><span class="line">    lib64:</span><br><span class="line">    - LD_LIBRARY_PATH</span><br><span class="line">    bin:</span><br><span class="line">    - PATH</span><br><span class="line">    man:</span><br><span class="line">    - MANPATH</span><br><span class="line">    share/man:</span><br><span class="line">    - MANPATH</span><br><span class="line">    share/aclocal:</span><br><span class="line">    - ACLOCAL_PATH</span><br><span class="line">    lib/pkgconfig:</span><br><span class="line">    - PKG_CONFIG_PATH</span><br><span class="line">    lib64/pkgconfig:</span><br><span class="line">    - PKG_CONFIG_PATH</span><br><span class="line">    share/pkgconfig:</span><br><span class="line">    - PKG_CONFIG_PATH</span><br><span class="line">    ? &#x27;&#x27;</span><br><span class="line">    : - CMAKE_PREFIX_PATH</span><br><span class="line"></span><br><span class="line">  # These are configurations for the module set named &quot;default&quot;</span><br><span class="line">  default:</span><br><span class="line">    # roots:</span><br><span class="line">    #  tcl:    $spack/share/spack/modules</span><br><span class="line">    #  lmod:   $spack/share/spack/lmod</span><br><span class="line">    enable:</span><br><span class="line">    - tcl</span><br><span class="line"></span><br><span class="line">    # Default configurations if lmod is enabled</span><br><span class="line">    lmod:</span><br><span class="line">      hierarchy:</span><br><span class="line">      - mpi</span><br></pre></td></tr></table></figure>
+<p>prefix_inspections：定义了声明的环境变量和路径的对应关系</p>
+<p>其中defalut中roots的tcl /lmod 定义了 安装软件后，modules 文件的安装位置</p>
+<h3 id="自定义packages"><a href="#自定义packages" class="headerlink" title="自定义packages"></a>自定义packages</h3><p><code>spack external find</code>可以添加系统中的软件，为spack 管理 (超算环境不推荐)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ spack external find</span><br><span class="line">==&gt; The following specs have been detected on this system and added to /root/.spack/packages.yaml</span><br><span class="line">bash@4.2.46       gawk@4.0.2    krb5@1.15.1          pkg-config@0.27.1  sqlite@3.7.17</span><br><span class="line">bzip2@1.0.6       gcc@4.8.5     llvm@3.4.2           python@2.7.5       tar@1.26</span><br><span class="line">cpio@2.11         git@2.36.0    llvm-doe@3.4.2       python@3.6.8       texinfo@5.1</span><br><span class="line">diffutils@3.3     gmake@3.82    openssh@7.4p1        rsync@3.1.2        xz@5.2.2</span><br><span class="line">file@5.11         go@1.18.1     openssl@1.0.2k-fips  rust@1.60.0</span><br><span class="line">findutils@4.5.11  groff@1.22.2  perl@5.16.3          sed@4.2.2</span><br></pre></td></tr></table></figure>
+<p>这是我们自定义添加的两块软件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">packages:</span><br><span class="line">  cmake:</span><br><span class="line">    externals:</span><br><span class="line">    - spec: cmake@3.21.4</span><br><span class="line">      prefix: /yeesuan/linux-centos7-haswell/gcc-4.8.5/cmake-3.21.4-4q7yowzqqc6x36tsxd2bsgeenwci6iqt</span><br><span class="line">  util-linux-uuid:</span><br><span class="line">    externals:</span><br><span class="line">    - spec: util-linux-uuid@2.36.2</span><br><span class="line">      prefix: /yeesuan/linux-centos7-haswell/gcc-4.8.5/util-linux-uuid-2.36.2-psepywix72fmt453hwcmrepmqslrai3a</span><br></pre></td></tr></table></figure>
+<p>可以按照上述规范添加自己的软件</p>
+<h1 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h1><h2 id="spack中有什么？"><a href="#spack中有什么？" class="headerlink" title="spack中有什么？"></a>spack中有什么？</h2><p>基础命令：spack list</p>
+<p>默认返回所有支持spack安装的软件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ spack list</span><br><span class="line">==&gt; 5969 packages.</span><br><span class="line">3dtk	intel-oneapi-inspector	    pexsi		   py-pygeos 	r-parallelmap</span><br><span class="line">3proxy	intel-oneapi-ipp pfapack	py-pygetwindow r-param      helpers</span><br></pre></td></tr></table></figure>
+<p>支持通配符查找:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ spack list *blas*</span><br><span class="line">==&gt; 18 packages.</span><br><span class="line">blaspp        blast-legacy  cblas       hipblas            ncbi-magicblast  openblas</span><br><span class="line">blasr         blast-plus    flexiblas   libblastrampoline  ncbi-rmblastn    rocblas</span><br><span class="line">blasr-libcpp  blast2go      graphblast  liblas             netlib-xblas     samblaster</span><br></pre></td></tr></table></figure>
+<p>查找描述里包含某个关键词：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ spack list -d physics</span><br><span class="line">==&gt; 46 packages.</span><br><span class="line">albany  cradl            flecsph   herwig3    n2p2         py-openmc           sombrero</span><br><span class="line">alps    damask           freefem   herwigpp   openmc       py-uproot3-methods  thepeg</span><br><span class="line">amp     datatransferkit  geant4    jali       pennant      pythia6             trilinos</span><br><span class="line">ascent  delphes          genfit    libsakura  podio        pythia8             yambo</span><br><span class="line">axom    exciting         hepmc     lorene     portage      r-qvalue</span><br><span class="line">clhep   fastjet          hepmc3    mcutils    precice      recola</span><br><span class="line">cp2k    flecsi           heputils  minuit     py-espresso  rivet</span><br></pre></td></tr></table></figure>
+<h2 id="查看软件详细信息"><a href="#查看软件详细信息" class="headerlink" title="查看软件详细信息"></a>查看软件详细信息</h2><p>基础命令：<code>spack info &lt;package_name&gt;</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">$ spack info vasp</span><br><span class="line">MakefilePackage:   vasp</span><br><span class="line"></span><br><span class="line">Description:</span><br><span class="line"> The Vienna Ab initio Simulation Package (VASP) is a computer program</span><br><span class="line">for atomic scale materials modelling, e.g. electronic structure</span><br><span class="line">calculations and quantum-mechanical molecular dynamics, from first</span><br><span class="line">principles.</span><br><span class="line"></span><br><span class="line">Homepage: https://vasp.at</span><br><span class="line"></span><br><span class="line">Externally Detectable:</span><br><span class="line">    False</span><br><span class="line"></span><br><span class="line">Tags:</span><br><span class="line">    None</span><br><span class="line"></span><br><span class="line">Preferred version:</span><br><span class="line">    6.1.1        file:///root/vasp.6.1.1.tgz</span><br><span class="line"></span><br><span class="line">Safe versions:</span><br><span class="line">    6.1.1        file:///root/vasp.6.1.1.tgz</span><br><span class="line">    5.4.4.pl2    file:///root/vasp.5.4.4.pl2.tgz</span><br><span class="line">    5.4.4        file:///root/vasp.5.4.4.tgz</span><br><span class="line"></span><br><span class="line">Deprecated versions:</span><br><span class="line">    None</span><br><span class="line"></span><br><span class="line">Variants:</span><br><span class="line">    Name [Default]     When    Allowed values    Description</span><br><span class="line">    ===============    ====    ===============   ====================================</span><br><span class="line"></span><br><span class="line">    cuda [off]         --      on, off           Enables running on Nvidia GPUs</span><br><span class="line">    scalapack [off]    --      on, off           Enables build with SCALAPACK</span><br><span class="line">    vaspsol [off]      --      on, off           Enable VASPsol implicit solvation model</span><br><span class="line">                                                 https://github.com/henniggroup/VASPsol</span><br><span class="line">Installation Phases:</span><br><span class="line">    edit    build    install</span><br><span class="line"></span><br><span class="line">Build Dependencies:</span><br><span class="line">    blas  cuda  fftw  lapack  mpi  netlib-scalapack  qd  rsync</span><br><span class="line"></span><br><span class="line">Link Dependencies:</span><br><span class="line">    blas  cuda  fftw  lapack  mpi  netlib-scalapack  qd</span><br><span class="line">    </span><br><span class="line">Run Dependencies:</span><br><span class="line">    mpi</span><br><span class="line"></span><br><span class="line">Virtual Packages:</span><br><span class="line">    None</span><br></pre></td></tr></table></figure>
+<p>解析<br>1.MakefilePackage表示vasp用make构建</p>
+<p>其他的，像gromacs 是<code>CMakePackage</code>，表示用<code>cmake</code>构建，fftw 是 <code>Autotools</code>, 流程中需要先<code>configure</code>再<code>make</code></p>
+<p>2.Description： 软件的介绍</p>
+<p>3.Homepage：软件官网</p>
+<p>4.Preferred version是推荐版本，Safe versions是安全的（经过充分验证的）版本</p>
+<p>其中，左侧列是<code>版本号</code>，右侧列是<code>软件的URL地址</code></p>
+<p>spack默认使用 系统命令 <code>curl</code> “下载”软件 ，curl支持的协议有 https/http/file/…. ，上面例子表示默认使用当前路径下的源码包<br>5.Variants 我翻译为“特性”</p>
+<p>第一列为特性的名字，第二列为特性的条件，第三列为特性的值，其中，第一列，变量名后的中括号内，是<code>默认</code>的变量值</p>
+<p>6.Installation Phases 表示了该软件安装时的三个步骤</p>
+<p>7.Build Dependencies 表示了构建前需要加载的环境</p>
+<p>8.Link Dependencies 表示了构建时用到的链接库</p>
+<p>9.Run Dependencies 表示了在使用软件时，需要加载的环境</p>
+<h2 id="安装软件"><a href="#安装软件" class="headerlink" title="安装软件"></a>安装软件</h2><p>基础命令：<code>spack install &lt;package_name&gt;</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ spack install zlib</span><br><span class="line">==&gt; Bootstrapping clingo from pre-built binaries</span><br><span class="line">==&gt; Installing zlib-1.2.11-3rlgy7ycxtoho44una6o3itgfjltkmpd</span><br><span class="line">==&gt; No binary for zlib-1.2.11-3rlgy7ycxtoho44una6o3itgfjltkmpd found: installing from source</span><br><span class="line">==&gt; Fetching https://mirror.spack.io/_source-cache/archive/c3/c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1.tar.gz</span><br><span class="line">==&gt; No patches needed for zlib</span><br><span class="line">==&gt; zlib: Executing phase: &#x27;install&#x27;</span><br><span class="line">==&gt; zlib: Successfully installed zlib-1.2.11-3rlgy7ycxtoho44una6o3itgfjltkmpd</span><br><span class="line">  Fetch: 1.06s.  Build: 3.09s.	Total: 4.15s.</span><br><span class="line">[+] /home/spack/spack/opt/spack/linux-ubuntu18.04-x86_64/gcc-7.5.0/zlib-1.2.11-3rlgy7ycxtoho44una6o3itgfjltkmpd</span><br></pre></td></tr></table></figure>
+<h2 id="进阶-高度自定义的安装命令"><a href="#进阶-高度自定义的安装命令" class="headerlink" title="进阶-高度自定义的安装命令"></a>进阶-高度自定义的安装命令</h2><h3 id="指定编译器"><a href="#指定编译器" class="headerlink" title="指定编译器"></a>指定编译器</h3><p>编译器需要搭配 百分号 “%”，只能跟在软件名后面</p>
+<p>例如使用gcc编译器：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack install zlib%gcc</span><br></pre></td></tr></table></figure>
+<p>软件名和编译器之间允许有多个空格，所以也可以写成这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack install zlib %gcc</span><br></pre></td></tr></table></figure>
+<p>一般地，我们的系统中存在多个版本的gcc编译器，所以需要指定使用哪一个版本的编译器：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack install zlib %gcc@6.5.0</span><br></pre></td></tr></table></figure>
+<p>需要说明的是，这里的编译器 名称，可能不会和 spack list 中一一对应，</p>
+<p>例如，英特尔oneapi的编译器，list表里的名称为 intel-oneapi-compilers, 但spack compilers里则是intel</p>
+<h3 id="指定依赖"><a href="#指定依赖" class="headerlink" title="指定依赖"></a>指定依赖</h3><p>以2.1为例，vasp的依赖，其中的blas、lapack、netlib-scalapack 这三个数学库在英特尔的mkl库中均有实现，</p>
+<p>所以安装vasp时可以指定使用mkl,搭配 “^”</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack install vasp ^intel-mkl</span><br></pre></td></tr></table></figure>
+<p>2020之后的mkl库的包名发生了变化，我们指定适合用2021.4.0版本的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack install vasp ^intel-oneapi-mkl@2021.4.0</span><br></pre></td></tr></table></figure>
+<p>我们的cc编译器也想用intel的icc, 版本号和mkl相同</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack install vasp %intel@2021.4.0 ^intel-oneapi-mkl@2021.4.0</span><br></pre></td></tr></table></figure>
+<h3 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h3><p>仍以2.1为例，官方提供的vasp有一个叫vaspsol的特性，它是vasp的一个扩展包，默认关闭状态，如果想开启此特性,需要搭配“+”使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack install vasp +vaspsol</span><br></pre></td></tr></table></figure>
+<p>mpich的特性pmi的值有多个，默认为mpi</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pmi [pmi]            --      off, pmi, pmi2, pmix    PMI interface.</span><br></pre></td></tr></table></figure>
+<p>我们想全都使用，则使用“=”表达，以英文小写逗号“，”分隔不同的值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack install mpich mpi=pmi,pmi2,pmix</span><br></pre></td></tr></table></figure>
+<p>mpich的特性fortran的值默认时开启状态，我们不想使用它,搭配波浪线</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack install mpich ~fortran</span><br></pre></td></tr></table></figure>
+<h3 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h3><p>构建时可以指定使用的最大cpu核心数，在install后面 加入 -j 参数， 后接核心数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack install -j 64 vasp</span><br></pre></td></tr></table></figure>
+<p>✨tips: 可以通过系统命令 nproc 查询到最大核心数 ，也可以写成变量的形式</p>
+<h2 id="综合"><a href="#综合" class="headerlink" title="综合"></a>综合</h2><p>以安装gcc6.5.0为例，使用系统自带的gcc4.8.5编译，需要开启几乎全部的特性，其中的go使用1.16版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack install -j 64 -y gcc@6.5.0 %gcc@4.8.5 +binutils+bootstrap+piclibs+strip languages=ada,c,c++,fortran,go,java,jit,lto,objc,obj-c++ ^go@1.16</span><br></pre></td></tr></table></figure>
+<p>✨tips: 其中的 “-y”可以默认选择一些软件的提示性的编译选项或其他选项</p>
+<h2 id="卸载软件"><a href="#卸载软件" class="headerlink" title="卸载软件"></a>卸载软件</h2><p>基础命令：<code>spakc uninstall &lt;package_name&gt;</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ spack uninstall autoconf</span><br><span class="line">==&gt; Error: autoconf matches multiple packages:</span><br><span class="line"></span><br><span class="line">    -- linux-centos7-cascadelake / gcc@10.2.0 -----------------------</span><br><span class="line">    kwq2zrg autoconf@2.69</span><br><span class="line"></span><br><span class="line">    -- linux-centos7-skylake_avx512 / gcc@6.5.0 ---------------------</span><br><span class="line">    2vv3qa2 autoconf@2.69</span><br><span class="line"></span><br><span class="line">==&gt; Error: You can either:</span><br><span class="line">    a) use a more specific spec, or</span><br><span class="line">    b) specify the spec by its hash (e.g. `spack uninstall /hash`), or</span><br><span class="line">    c) use `spack uninstall --all` to uninstall ALL matching specs.</span><br></pre></td></tr></table></figure>
+<p>像上面，卸载报错，我们可以指定编译器：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack uninstall autoconf %gcc@6.5.0</span><br></pre></td></tr></table></figure>
+<p>方便地，使用其hash值：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack uninstall /2vv3qa2</span><br></pre></td></tr></table></figure>
+<p>默认卸载全部autoconf:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack uninstall --all autoconf</span><br></pre></td></tr></table></figure>
+<p>有时候，卸载该软件也需要卸载其依赖：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack uninstall -d &lt;package_name&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="查找已安装的软件"><a href="#查找已安装的软件" class="headerlink" title="查找已安装的软件"></a>查找已安装的软件</h3><p>基础命令：spack find</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ spack find</span><br><span class="line">==&gt; 805 installed packages</span><br><span class="line">-- linux-centos7-cascadelake / gcc@10.2.0 -----------------------</span><br><span class="line">boost@1.77.0            intel-oneapi-mpi@2021.4.0  python@3.8.12</span><br><span class="line">bzip2@1.0.8             libbsd@0.11.3              readline@8.1</span><br><span class="line">cereal@1.3.0            libffi@3.3                 sqlite@3.36.0</span><br><span class="line"></span><br><span class="line">-- linux-centos7-cascadelake / intel@19.0.5.281 -----------------</span><br><span class="line">abinit@9.4.2          intel-mpi@2019.5.281    parmetis@4.0.3</span><br><span class="line">amg@1.2               intel-tbb@2020.3        parmetis@4.0.3</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h3 id="指定包名"><a href="#指定包名" class="headerlink" title="指定包名"></a>指定包名</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ spack find vasp</span><br><span class="line">==&gt; 2 installed packages</span><br><span class="line">-- linux-centos7-cascadelake / intel@19.0.5.281 -----------------</span><br><span class="line">vasp@5.4.4</span><br><span class="line"></span><br><span class="line">-- linux-centos7-cascadelake / intel@2021.4.0 -------------------</span><br><span class="line">vasp@6.1.0</span><br></pre></td></tr></table></figure>
+<h3 id="指定编译器-1"><a href="#指定编译器-1" class="headerlink" title="指定编译器"></a>指定编译器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ spack find vasp %intel@2021.4.0</span><br><span class="line">==&gt; 1 installed package</span><br><span class="line">-- linux-centos7-cascadelake / intel@2021.4.0 -------------------</span><br><span class="line">vasp@6.1.0</span><br></pre></td></tr></table></figure>
+<h3 id="指定版本号"><a href="#指定版本号" class="headerlink" title="指定版本号"></a>指定版本号</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ spack find vasp@5.4.4</span><br><span class="line">==&gt; 1 installed package</span><br><span class="line">-- linux-centos7-cascadelake / intel@19.0.5.281 -----------------</span><br><span class="line">vasp@5.4.4</span><br></pre></td></tr></table></figure>
+<h3 id="查看软件的特征值"><a href="#查看软件的特征值" class="headerlink" title="查看软件的特征值"></a>查看软件的特征值</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ spack find -l openmpi</span><br><span class="line">==&gt; 2 installed packages</span><br><span class="line">-- linux-centos7-haswell / gcc@4.8.5 ----------------------------</span><br><span class="line">pt2putc openmpi@4.1.1</span><br><span class="line"></span><br><span class="line">-- linux-centos7-skylake_avx512 / gcc@6.5.0 ---------------------</span><br><span class="line">tchnk2v openmpi@4.1.1</span><br></pre></td></tr></table></figure>
+<p>✨tips: 1.spack支持使用<code>/&lt;hash_value&gt;</code>的方式替代<code>&lt;package_name&gt;</code>，hash_vaule支持长写（完整 ）和短写（前面3到7个字符） 2.可以使用 -L 查看完整的特征值</p>
+<h3 id="查看软件的特征值和依赖"><a href="#查看软件的特征值和依赖" class="headerlink" title="查看软件的特征值和依赖"></a>查看软件的特征值和依赖</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ spack find -l -d openmpi</span><br><span class="line">==&gt; 2 installed packages</span><br><span class="line">-- linux-centos7-haswell / gcc@4.8.5 ----------------------------</span><br><span class="line">pt2putc openmpi@4.1.1</span><br><span class="line">y5iroad     hwloc@2.6.0</span><br><span class="line">bmzkyfq         libpciaccess@0.16</span><br><span class="line">xkbs7ll         libxml2@2.9.12</span><br><span class="line">rpsecj5             libiconv@1.16</span><br><span class="line">e6cbjcd             xz@5.2.5</span><br><span class="line">z6uqlxn             zlib@1.2.11</span><br><span class="line">ez4gk67         ncurses@6.2</span><br><span class="line">owe3cjs     libevent@2.1.12</span><br><span class="line">jwr4s44         openssl@1.1.1l</span><br><span class="line">2hfxs5z     numactl@2.0.14</span><br><span class="line">tjk74sh     openssh@8.7p1</span><br><span class="line">ugfkpjd         libedit@3.1-20210216</span><br></pre></td></tr></table></figure>
+<h3 id="查看软件的路径"><a href="#查看软件的路径" class="headerlink" title="查看软件的路径"></a>查看软件的路径</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">spack find -p openmpi</span><br><span class="line">==&gt; 2 installed packages</span><br><span class="line">-- linux-centos7-haswell / gcc@4.8.5 ----------------------------</span><br><span class="line">openmpi@4.1.1  /yeesuan495/.spack/software/linux-centos7-haswell/gcc-4.8.5/openmpi-4.1.1-pt2putcrv2o53naxpesk3rsb4xl44pqa</span><br><span class="line"></span><br><span class="line">-- linux-centos7-skylake_avx512 / gcc@6.5.0 ---------------------</span><br><span class="line">openmpi@4.1.1  /yeesuan495/.spack/software/linux-centos7-skylake_avx512/gcc-6.5.0/openmpi-4.1.1-tchnk2vf4iskpfkh7giwurtmyipwmjma</span><br></pre></td></tr></table></figure>
+<h4 id="location-（建议用find-p）"><a href="#location-（建议用find-p）" class="headerlink" title="location （建议用find -p）"></a>location （建议用find -p）</h4><p>location 命令也可以定位软件的路径</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ spack location -i openmpi%gcc@4.8.5</span><br><span class="line">/yeesuan495/.spack/software/linux-centos7-haswell/gcc-4.8.5/openmpi-4.1.1-pt2putcrv2o53naxpesk3rsb4xl44pqa</span><br></pre></td></tr></table></figure>
+<h4 id="cd-进入软件根目录"><a href="#cd-进入软件根目录" class="headerlink" title="cd 进入软件根目录"></a>cd 进入软件根目录</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ spack cd -i openmpi%gcc@4.8.5</span><br><span class="line">[yxxxx@xxxx openmpi-4.1.1-pt2putcrv2o53naxpesk3rsb4xl44pqa]$</span><br></pre></td></tr></table></figure>
+<h4 id="查看软件的命名空间"><a href="#查看软件的命名空间" class="headerlink" title="查看软件的命名空间"></a>查看软件的命名空间</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ spack find -N mpich</span><br><span class="line">==&gt; 1 installed package</span><br><span class="line">-- linux-centos7-skylake_avx512 / gcc@6.5.0 ---------------------</span><br><span class="line">local.mpich@3.4.2</span><br><span class="line"></span><br><span class="line">$ spack find -N xz</span><br><span class="line">==&gt; 3 installed packages</span><br><span class="line">-- linux-centos7-cascadelake / gcc@10.2.0 -----------------------</span><br><span class="line">builtin.xz@5.2.5</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h2 id="使用软件"><a href="#使用软件" class="headerlink" title="使用软件"></a>使用软件</h2><p>基础命令：</p>
+<p>加载软件环境变量 <code>spack load &lt;package_name&gt;</code></p>
+<p>卸载软件环境变量 <code>spack unload &lt;package_name&gt;</code></p>
+<h3 id="查看已加载的依赖"><a href="#查看已加载的依赖" class="headerlink" title="查看已加载的依赖"></a>查看已加载的依赖</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ spack find --loaded</span><br><span class="line">==&gt; 4 loaded packages</span><br><span class="line">-- linux-centos7-cascadelake / intel@2021.4.0 -------------------</span><br><span class="line">fftw@3.3.10                intel-oneapi-mpi@2021.4.0</span><br><span class="line">intel-oneapi-mkl@2021.4.0  intel-oneapi-tbb@2021.4.0</span><br></pre></td></tr></table></figure>
+<h3 id="仅加载软件本身或它的依赖"><a href="#仅加载软件本身或它的依赖" class="headerlink" title="仅加载软件本身或它的依赖"></a>仅加载软件本身或它的依赖</h3><p>仅软件本身：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack load --only package &lt;package_name&gt;</span><br></pre></td></tr></table></figure>
+<p>仅依赖：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack load --only dependencies &lt;package_name&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="查看加载软件的所有环境变量"><a href="#查看加载软件的所有环境变量" class="headerlink" title="查看加载软件的所有环境变量"></a>查看加载软件的所有环境变量</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spack load --sh &lt;package_name&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="指定参数加载环境变量"><a href="#指定参数加载环境变量" class="headerlink" title="指定参数加载环境变量"></a>指定参数加载环境变量</h3><p>指定版本号<code>spack load &lt;package_name&gt;@&lt;package_version&gt;</code></p>
+<p>指定编译器<code>spack load &lt;package_name&gt; %&lt;compiler_name&gt;@&lt;compiler_version&gt;</code></p>
+<p>指定用到的依赖/特性<code>spack load &lt;package_name&gt; ^&lt;dependency_name&gt;</code></p>
+<p>指定命名空间<code>spack load &lt;scope&gt;.&lt;package_name&gt;</code></p>
+<p>上述加载方式都可以组合使用</p>
+<p>使用hash值 : <code>spack load /&lt;hash_value&gt;</code></p>
+<p>✨tips: 有时候我们查到的软件版本号和编译器甚至命名空间都一样，它将很难区分</p>
+<p>通常，使用<code>spack find -l -d  &lt;package_name&gt;</code> 可以打印多个“相同”的软件的依赖详情，我们选择其中一个的hash值加载</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/" rel="next" title="解读CUDA最佳实践指南">
+                <i class="fa fa-chevron-left"></i> 解读CUDA最佳实践指南
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/" rel="prev" title="BPF之巅--洞悉Linux系统和应用性能">
+                BPF之巅--洞悉Linux系统和应用性能 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2spack"><span class="nav-number">1.</span> <span class="nav-text">部署spack</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD"><span class="nav-number">1.1.</span> <span class="nav-text">下载</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#release%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="nav-number">1.1.1.</span> <span class="nav-text">release（推荐）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git"><span class="nav-number">1.1.2.</span> <span class="nav-text">git</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BF%80%E6%B4%BB"><span class="nav-number">1.2.</span> <span class="nav-text">激活</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.</span> <span class="nav-text">配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.1.</span> <span class="nav-text">基本配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8"><span class="nav-number">1.3.2.</span> <span class="nav-text">编译器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93"><span class="nav-number">1.3.3.</span> <span class="nav-text">源码镜像仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%BB%BA%E6%BA%90%E7%A0%81%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">自建源码镜像仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E7%A7%81%E6%9C%89%E6%BA%90%E7%A0%81%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">添加私有源码镜像仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%B7%B2%E6%B7%BB%E5%8A%A0%E7%9A%84%E6%BA%90%E7%A0%81%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">查看已添加的源码镜像仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E6%BA%90"><span class="nav-number">1.3.3.4.</span> <span class="nav-text">脚本源</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E7%A7%81%E6%9C%89%E8%84%9A%E6%9C%AC%E6%BA%90"><span class="nav-number">1.3.3.5.</span> <span class="nav-text">添加私有脚本源</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#modules"><span class="nav-number">1.3.4.</span> <span class="nav-text">modules</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89packages"><span class="nav-number">1.3.5.</span> <span class="nav-text">自定义packages</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">基本使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#spack%E4%B8%AD%E6%9C%89%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">2.1.</span> <span class="nav-text">spack中有什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%BD%AF%E4%BB%B6%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF"><span class="nav-number">2.2.</span> <span class="nav-text">查看软件详细信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6"><span class="nav-number">2.3.</span> <span class="nav-text">安装软件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E9%98%B6-%E9%AB%98%E5%BA%A6%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84%E5%AE%89%E8%A3%85%E5%91%BD%E4%BB%A4"><span class="nav-number">2.4.</span> <span class="nav-text">进阶-高度自定义的安装命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E5%AE%9A%E7%BC%96%E8%AF%91%E5%99%A8"><span class="nav-number">2.4.1.</span> <span class="nav-text">指定编译器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E5%AE%9A%E4%BE%9D%E8%B5%96"><span class="nav-number">2.4.2.</span> <span class="nav-text">指定依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E6%80%A7"><span class="nav-number">2.4.3.</span> <span class="nav-text">特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">2.4.4.</span> <span class="nav-text">多线程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%BC%E5%90%88"><span class="nav-number">2.5.</span> <span class="nav-text">综合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%B8%E8%BD%BD%E8%BD%AF%E4%BB%B6"><span class="nav-number">2.6.</span> <span class="nav-text">卸载软件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE%E5%B7%B2%E5%AE%89%E8%A3%85%E7%9A%84%E8%BD%AF%E4%BB%B6"><span class="nav-number">2.6.1.</span> <span class="nav-text">查找已安装的软件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E5%AE%9A%E5%8C%85%E5%90%8D"><span class="nav-number">2.6.2.</span> <span class="nav-text">指定包名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E5%AE%9A%E7%BC%96%E8%AF%91%E5%99%A8-1"><span class="nav-number">2.6.3.</span> <span class="nav-text">指定编译器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%AC%E5%8F%B7"><span class="nav-number">2.6.4.</span> <span class="nav-text">指定版本号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%BD%AF%E4%BB%B6%E7%9A%84%E7%89%B9%E5%BE%81%E5%80%BC"><span class="nav-number">2.6.5.</span> <span class="nav-text">查看软件的特征值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%BD%AF%E4%BB%B6%E7%9A%84%E7%89%B9%E5%BE%81%E5%80%BC%E5%92%8C%E4%BE%9D%E8%B5%96"><span class="nav-number">2.6.6.</span> <span class="nav-text">查看软件的特征值和依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%BD%AF%E4%BB%B6%E7%9A%84%E8%B7%AF%E5%BE%84"><span class="nav-number">2.6.7.</span> <span class="nav-text">查看软件的路径</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#location-%EF%BC%88%E5%BB%BA%E8%AE%AE%E7%94%A8find-p%EF%BC%89"><span class="nav-number">2.6.7.1.</span> <span class="nav-text">location （建议用find -p）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cd-%E8%BF%9B%E5%85%A5%E8%BD%AF%E4%BB%B6%E6%A0%B9%E7%9B%AE%E5%BD%95"><span class="nav-number">2.6.7.2.</span> <span class="nav-text">cd 进入软件根目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4"><span class="nav-number">2.6.7.3.</span> <span class="nav-text">查看软件的命名空间</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%BD%AF%E4%BB%B6"><span class="nav-number">2.7.</span> <span class="nav-text">使用软件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%B7%B2%E5%8A%A0%E8%BD%BD%E7%9A%84%E4%BE%9D%E8%B5%96"><span class="nav-number">2.7.1.</span> <span class="nav-text">查看已加载的依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%85%E5%8A%A0%E8%BD%BD%E8%BD%AF%E4%BB%B6%E6%9C%AC%E8%BA%AB%E6%88%96%E5%AE%83%E7%9A%84%E4%BE%9D%E8%B5%96"><span class="nav-number">2.7.2.</span> <span class="nav-text">仅加载软件本身或它的依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%8A%A0%E8%BD%BD%E8%BD%AF%E4%BB%B6%E7%9A%84%E6%89%80%E6%9C%89%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">2.7.3.</span> <span class="nav-text">查看加载软件的所有环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E5%AE%9A%E5%8F%82%E6%95%B0%E5%8A%A0%E8%BD%BD%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">2.7.4.</span> <span class="nav-text">指定参数加载环境变量</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

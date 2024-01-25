@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zn-ch">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="C++," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="整体视角1、高性能编程关注点1. 系统层面  简化控制流程和数据流程 减少消息传递次数 负载均衡，比如避免个别服务器成为性能瓶颈 充分利用硬件性能，比如打满 CPU 减少系统额外开销，比如上下文切换等 批处理与数据预取、内存屏障、绑核、伪共享、核隔离等  2. 算法层面  高效算法降低时间和空间复杂度 高效的数据结构设计 增加任务的并发性（如协程）、减少锁的开销（lock_free）  3. 代码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++ 高性能编程实战">
+<meta property="og:url" content="http://yoursite.com/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="整体视角1、高性能编程关注点1. 系统层面  简化控制流程和数据流程 减少消息传递次数 负载均衡，比如避免个别服务器成为性能瓶颈 充分利用硬件性能，比如打满 CPU 减少系统额外开销，比如上下文切换等 批处理与数据预取、内存屏障、绑核、伪共享、核隔离等  2. 算法层面  高效算法降低时间和空间复杂度 高效的数据结构设计 增加任务的并发性（如协程）、减少锁的开销（lock_free）  3. 代码">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/img/v2-df11064b3f9be58a770c69a5d9b57a7c_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-5184fa892229e18b389604e8595244db_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-638f0389c961ec7eead51f533714cc88_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-f7e91336fecf836e2e8cbe56246f3041_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-bb02a2414506b2a0491369e004b554da_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-51a108c282a8d4636a4b921f9a4d4697_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-3f4cc55da6bea8adedf14725eb100a21_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-6f3d074be510c28c2a1d718f2cb2a3ec_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-93eb0b676c7c86a006cbf17212391216_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-bb94c124836a0714bf3fa8df70fd487f_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-841b8a2750141cc1e2367fceb4e7ef80_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-6f140842c407ea676c20cc7330bd7eb3_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-40f4c32197ceb6c67379d8df2af79122_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-5d5b9326b0935b980de21bf164832f0f_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-3d9a688fa2656194716e833eeac79c53_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-95cc34fcddf1e40eeb1486092abb6726_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-9b030ea80f0b6b021d0b52285f72f90f_720w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-a87e0a32ef128721f6077f767690cf93_720w.webp">
+<meta property="article:published_time" content="2023-04-10T06:33:00.000Z">
+<meta property="article:modified_time" content="2023-04-10T07:22:51.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/v2-df11064b3f9be58a770c69a5d9b57a7c_720w.webp">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2023/04/10/cpp高性能编程实战/"/>
+
+
+
+
+
+  <title>C++ 高性能编程实战 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zn-ch">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hao Yu's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">The program monkey was eaten by the siege lion.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">C++ 高性能编程实战</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2023-04-10T14:33:00+08:00">
+                2023-04-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="整体视角"><a href="#整体视角" class="headerlink" title="整体视角"></a>整体视角</h1><h2 id="1、高性能编程关注点"><a href="#1、高性能编程关注点" class="headerlink" title="1、高性能编程关注点"></a>1、高性能编程关注点</h2><p><strong>1. 系统层面</strong></p>
+<ul>
+<li>简化控制流程和数据流程</li>
+<li>减少消息传递次数</li>
+<li>负载均衡，比如避免个别服务器成为性能瓶颈</li>
+<li>充分利用硬件性能，比如打满 CPU</li>
+<li>减少系统额外开销，比如上下文切换等</li>
+<li>批处理与数据预取、内存屏障、绑核、伪共享、核隔离等</li>
+</ul>
+<p><strong>2. 算法层面</strong></p>
+<ul>
+<li>高效算法降低时间和空间复杂度</li>
+<li>高效的数据结构设计</li>
+<li>增加任务的并发性（如协程）、减少锁的开销（lock_free）</li>
+</ul>
+<p><strong>3. 代码层面</strong></p>
+<ul>
+<li>I-cache（指令），D-cache（数据） 优化</li>
+<li>代码执行顺序的调整，比如减少分支预测失败率</li>
+<li>编译优化选项，比如 PGO、LTO、BOLT等</li>
+<li>语言本身相关的优化技巧</li>
+<li>减少函数调用栈的深度</li>
+<li>操作放置到编译期执行，比如模板</li>
+<li>延迟计算：<ul>
+<li>（1）两端构建（当实例能够被静态地构建时，经常会缺少构建对象所需的信息。在构建对象时，我们并 不是一气呵成，而是仅在构造函数中编写建立空对象的最低限度的代码。稍后，程序再调用该对象的初始化成员函数来完成构建。将初始化推迟至有足够的额外数据时，意味 着被构建的对象总是高效的、扁平的数据结构；</li>
+<li>（2）写时复制（指当一个对象被复制时，并不复制它的动态成员变量，而是让两个实例共享动态变量。只在其中某个实例要修改该变量时，才会真正进行复制）</li>
+</ul>
+</li>
+</ul>
+<h2 id="2、预置知识-Cache"><a href="#2、预置知识-Cache" class="headerlink" title="2、预置知识 - Cache"></a>2、预置知识 - Cache</h2><p><strong>1. Cache hierarchy</strong></p>
+<p>Cache（缓存）一般分为 3 级：L1、L2、L3. 通常来说 L1、L2是集成在 CPU 里面的（可以称之为On-chip cache），而 L3 是放在 CPU 外面（可以称之为 Off-chip cache）。当然这个不是绝对的，不同 CPU 的做法可能会不太一样。当然，Register（寄存器）里的数据读写是最快的。比如，矩阵乘法优化：</p>
+<p><strong>2. Cache size</strong></p>
+<p>Cache 的容量决定了有多少代码和数据可以放到 Cache 里面，如果一个程序的热点（hotspot）已经完全填充了整个 Cache，那 么再从 Cache 角度考虑优化就是白费力气了。</p>
+<p><strong>3. Cache line size</strong></p>
+<p>CPU 从内存 Load 数据是一次一个 cache line；往内存里面写也是一次一个 cache line，所以一个 cache line 里面的数据最好是读写分开，否则就会相互影响。</p>
+<p><strong>4. Cache associative</strong></p>
+<p>全关联(full associative)：内存可以映射到任意一个 Cache line；</p>
+<p>N-way 关联：这个就是一个哈希表的结构，N 就是冲突链的长度，超过了 N，就需要替换。</p>
+<p><strong>5. Cache type</strong></p>
+<p>I-cache（指令）、D-cache（数据）、TLB（MMU 的 cache）</p>
+<h2 id="3、系统优化方法"><a href="#3、系统优化方法" class="headerlink" title="3、系统优化方法"></a>3、系统优化方法</h2><p><strong>1. Asynchronous</strong></p>
+<p>异步，yyds！</p>
+<p><strong>2. Polling</strong></p>
+<p>Polling 是网络设备里面常用的一个技术，比如 Linux 的 NAPI 或者 epoll。与之对应的是中断，或者是事件。Polling 避免了状态切换的开销，所以有更高的性能。但是，如果系统里面有多种任务，如何在 Polling 的时候，保证其他任务的执行时间？Polling 通常意味着独占，此时系统无法响应其他事件，可能会造成严重后果。凡是能用事件或中断的地方都能用 Polling 替代，是否合理，需要结合系统的数据流程来决定。</p>
+<p><strong>3. 静态内存池</strong></p>
+<p>静态内存有更好的性能，但是适应性较差（特别是系统里面有多个 任务的时候），而且会有浪费（提前分配，还没用到就分配了）。</p>
+<p><strong>4. 并发优化：lock-free 和 lock-less。</strong></p>
+<p>lock-free 是完全无锁的设计，有两种实现方式：</p>
+<p>• Per-cpu data， 上文已经提及过，就是 thread local</p>
+<p>• CAS based，CAS 是 compare and swap，这是一个原子操作（spinlock 的实现同样需要 compare and swap，但区别是 spinlock 只有两个状态 LOCKED 和 UNLOCKED，而 CAS 的变量可以有多个状态）；其次，CAS 的实现必须由硬件来保障(原子操作)，CAS 一次可以操作 32 bits，也有 MCAS，一次可以修改一块内存。基于 CAS 实现的数据结构没有一个统一、一致的实现方法，所以有时不如直接加锁的算法那么简单，直接，针对不同的数据结构，有不同的 CAS 实现方法，读者可以自己搜索。</p>
+<p>lock-less 的目的是减少锁的争用（contention），而不是减少锁。这个和锁的粒度（granularity）相关，锁的粒度越小，等待的时间就越短，并发的时间就越长。</p>
+<p>锁的争用，需要考虑不同线程在获取锁后，会执行哪些不同的动作。比如多线程队列，一般情况下，我们一把锁锁住整个队列，性能很差。如果所有的 enqueue 操作都是往队列的尾部插入新节点，而所有的 dequeue 操作都是从队列的头部删除节点，那么 enqueue 和 dequeue 大部分时候都是相互独立的，我们大部分时候根本不需要锁住整个队列，白白损失性能！那么一个很自然就能想到的算法优化方案就呼之欲出了：我们可以把那个队列锁拆成两个：一个队列头部锁（head lock)和一个队列尾部锁(tail lock)，伪代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">node_t</span> &#123;</span><br><span class="line">    TYPE value; </span><br><span class="line">    <span class="type">node_t</span> *next</span><br><span class="line">&#125; NODE;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">queue_t</span> &#123;</span><br><span class="line">    NODE *head; </span><br><span class="line">    NODE *tail;</span><br><span class="line">    LOCK q_h_lock;</span><br><span class="line">    LOCK q_t_lock;</span><br><span class="line">&#125; Q;</span><br><span class="line"> </span><br><span class="line"><span class="built_in">initialize</span>(Q *q) &#123;</span><br><span class="line">   node = <span class="built_in">new_node</span>()   <span class="comment">// Allocate a free node</span></span><br><span class="line">   node-&gt;next = <span class="literal">NULL</span>   <span class="comment">// Make it the only node in the linked list</span></span><br><span class="line">   q-&gt;head = q-&gt;tail = node   <span class="comment">// Both head and tail point to it</span></span><br><span class="line">   q-&gt;q_h_lock = q-&gt;q_t_lock = FREE   <span class="comment">// Locks are initially free</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="built_in">enqueue</span>(Q *q, TYPE value) &#123;</span><br><span class="line">   node = <span class="built_in">new_node</span>()       <span class="comment">// Allocate a new node from the free list</span></span><br><span class="line">   node-&gt;value = value     <span class="comment">// Copy enqueued value into node</span></span><br><span class="line">   node-&gt;next = <span class="literal">NULL</span>       <span class="comment">// Set next pointer of node to NULL</span></span><br><span class="line">   <span class="built_in">lock</span>(&amp;q-&gt;q_t_lock)      <span class="comment">// Acquire t_lock in order to access Tail</span></span><br><span class="line">      q-&gt;tail-&gt;next = node <span class="comment">// Link node at the end of the queue</span></span><br><span class="line">      q-&gt;tail = node       <span class="comment">// Swing Tail to node</span></span><br><span class="line">   <span class="built_in">unlock</span>(&amp;q-&gt;q_t_lock)    <span class="comment">// Release t_lock</span></span><br><span class="line">｝</span><br><span class="line"> </span><br><span class="line"><span class="built_in">dequeue</span>(Q *q, TYPE *pvalue) &#123;</span><br><span class="line">   <span class="built_in">lock</span>(&amp;q-&gt;q_h_lock)   <span class="comment">// Acquire h_lock in order to access Head</span></span><br><span class="line">      node = q-&gt;head    <span class="comment">// Read Head</span></span><br><span class="line">      new_head = node-&gt;next       <span class="comment">// Read next pointer</span></span><br><span class="line">      <span class="keyword">if</span> new_head == <span class="literal">NULL</span>         <span class="comment">// Is queue empty?</span></span><br><span class="line">         <span class="built_in">unlock</span>(&amp;q-&gt;q_h_lock)     <span class="comment">// Release h_lock before return</span></span><br><span class="line">         <span class="keyword">return</span> FALSE             <span class="comment">// Queue was empty</span></span><br><span class="line">      endif</span><br><span class="line">      *pvalue = new_head-&gt;value   <span class="comment">// Queue not empty, read value</span></span><br><span class="line">      q-&gt;head = new_head  <span class="comment">// Swing Head to next node</span></span><br><span class="line">   <span class="built_in">unlock</span>(&amp;q-&gt;q_h_lock)   <span class="comment">// Release h_lock</span></span><br><span class="line">   <span class="built_in">free</span>(node)             <span class="comment">// Free node</span></span><br><span class="line">   <span class="keyword">return</span> TRUE            <span class="comment">// Queue was not empty, dequeue succeeded</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>5. 进程间通信 - 共享内存</strong></p>
+<p>对于本地进程间需要高频次的大量数据交互，首推共享内存这种方案。</p>
+<p>现代操作系统普遍采用了基于虚拟内存的管理方案，在这种内存管理方式之下，各个进程之间进行了强制隔离。程序代码中使用的内存地址均是一个虚拟地址，由操作系统的内存管理算法提前分配映射到对应的物理内存页面，CPU在执行代码指令时，对访问到的内存地址再进行实时的转换翻译。</p>
+<p><img src="/img/v2-df11064b3f9be58a770c69a5d9b57a7c_720w.webp" alt="img"></p>
+<p>从上图可以看出，不同进程之中，虽然是同一个内存地址，最终在操作系统和 CPU 的配合下，实际存储数据的内存页面却是不同的。而共享内存这种进程间通信方案的核心在于：如果让同一个物理内存页面映射到两个进程地址空间中，双方不是就可以直接读写，而无需拷贝了吗？</p>
+<p><img src="/img/v2-5184fa892229e18b389604e8595244db_720w.webp" alt="img"></p>
+<p>当然，共享内存只是最终的数据传输载体，双方要实现通信还得借助信号、信号量等其他通知机制。</p>
+<p><strong>6. I/O 优化 - 多路复用技术</strong></p>
+<p>网络编程中，当每个线程都要阻塞在 recv 等待对方的请求，如果访问的人多了，线程开的就多了，大量线程都在阻塞，系统运转速度也随之下降。这个时候，你需要多路复用技术，使用 select 模型，将所有等待（accept、recv）都放在主线程里，工作线程不需要再等待。</p>
+<p><img src="/img/v2-638f0389c961ec7eead51f533714cc88_720w.webp" alt="img"></p>
+<p>但是，select 不能应付海量的网站访问。这个时候，你需要升级多路复用模型为 epoll。select 有三弊，epoll 有三优：</p>
+<ul>
+<li>select 底层采用数组来管理套接字描述符，同时管理的数量有上限，一般不超过几千个，epoll使用树和链表来管理，同时管理数量可以很大</li>
+<li>select不会告诉你到底哪个套接字来了消息，你需要一个个去询问。epoll 直接告诉你谁来了消息，不用轮询</li>
+<li>select进行系统调用时还需要把套接字列表在用户空间和内核空间来回拷贝，循环中调用 select 时简直浪费。epoll 统一在内核管理套接字描述符，无需来回拷贝</li>
+</ul>
+<p><strong>7. 线程池技术</strong></p>
+<p>使用一个公共的任务队列，请求来临时，向队列中投递任务，各个工作线程统一从队列中不断取出任务来处理，这就是线程池技术。</p>
+<p><img src="/img/v2-f7e91336fecf836e2e8cbe56246f3041_720w.webp" alt="img"></p>
+<p>多线程技术的使用一定程度提升了服务器的并发能力，但同时，多个线程之间为了数据同步，常常需要使用互斥体、信号、条件变量等手段来同步多个线程。这些重量级的同步手段往往会导致线程在用户态/内核态多次切换，系统调用，线程切换都是不小的开销。</p>
+<h2 id="4、算法优化"><a href="#4、算法优化" class="headerlink" title="4、算法优化"></a>4、算法优化</h2><p>比如高效的过滤算法、哈希算法、分治算法等等，大家在刷题的过程中估计都能感受到算法的魅力了，这里不再赘述。</p>
+<h2 id="5、代码层次优化"><a href="#5、代码层次优化" class="headerlink" title="5、代码层次优化"></a>5、代码层次优化</h2><p><strong>1. I-cache 优化</strong></p>
+<p>一是相关的源文件要放在一起；二是相关的函数在object文件里面，也应该是相邻的。这样，在可执行文件被加载到内存里面的时候，函数的位置也是相邻的。相邻的函数，冲突的几率比较小。而且相关的函数放在一起，也符合模块化编程的要求：那就是 高内聚，低耦合。</p>
+<p>如果能够把一个 code path 上的函数编译到一起（需要编译器支持，把相关函数编译到一起）， 很显然会提高 I-cache 的命中率，减少冲突。但是一个系统有很多个 code path，所以不可能面面俱到。不同的性能指标，在优化的时候可能是冲突的。所以尽量做对所以 case 都有效的优化，虽然做到这一点比较难。</p>
+<p>常见的手段有函数重排（获取程序运行轨迹，重排二进制目标文件（elf 文件）里的代码段）、函数冷热分区等。</p>
+<p><strong>2. D-cache相关优化</strong></p>
+<ul>
+<li>Cache line alignment （cache 对齐）</li>
+</ul>
+<p>数据跨越两个 cacheline，就意味着两次 load 或者两次 store。如果数据结构是 cacheline 对齐的，就有可能减少一次读写。数据结构的首地址 cache line 对齐，意味着可能有内存浪费（特别是数组这样连续分配的数据结构），所以需要在空间和时间两方面权衡。</p>
+<ul>
+<li>分支预测</li>
+</ul>
+<p>likely/unlikely</p>
+<ul>
+<li>Data prefetch (数据预取）</li>
+</ul>
+<p>使用 X86 架构下 gcc 内置的预取指令集：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;time.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">binarySearch</span><span class="params">(<span class="type">int</span> *array, <span class="type">int</span> number_of_elements, <span class="type">int</span> key)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> low = <span class="number">0</span>, high = number_of_elements<span class="number">-1</span>, mid;</span><br><span class="line">        <span class="keyword">while</span>(low &lt;= high) &#123;</span><br><span class="line">                mid = (low + high)/<span class="number">2</span>;</span><br><span class="line">           <span class="meta">#<span class="keyword">ifdef</span> DO_PREFETCH</span></span><br><span class="line">           <span class="comment">// low path</span></span><br><span class="line">           __builtin_prefetch (&amp;array[(mid + <span class="number">1</span> + high)/<span class="number">2</span>], <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">           <span class="comment">// high path</span></span><br><span class="line">           __builtin_prefetch (&amp;array[(low + mid - <span class="number">1</span>)/<span class="number">2</span>], <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">           <span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span>(array[mid] &lt; key)</span><br><span class="line">                        low = mid + <span class="number">1</span>; </span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span>(array[mid] == key)</span><br><span class="line">                        <span class="keyword">return</span> mid;</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span>(array[mid] &gt; key)</span><br><span class="line">                        high = mid<span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Register parameters （寄存器参数）</li>
+</ul>
+<p>一般来说，函数调用的参数少于某个数，比如 3，参数是通过寄存器传递的（这个要看 ABI 的约定）。所以，写函数的时候，不要带那么多参数。</p>
+<ul>
+<li>Lazy computation （延迟计算）</li>
+</ul>
+<p>延迟计算的意思是最近用不上的变量，就不要去初始化。通常来说，在函数开始就会初始化很多数据，但是这些数据在函数执行过程中并没有用到（比如一个分支判断，就退出了函数），那么这些动作就是浪费了。</p>
+<p>变量初始化是一个好的编程习惯，但是在性能优化的时候，有可能就是一个多余的动作，需要综合考虑函数的各个分支，做出决定。</p>
+<p>延迟计算也可以是系统层次的优化，比如 COW(copy-on-write) 就是在 fork 子进程的时候，并没有复制父进程所有的页表，而是只复制指令部分。当有写发生的时候，再复制数据部分，这样可以避免不必要的复制，提供进程创建的速度。</p>
+<ul>
+<li>Early computation （提前计算）</li>
+</ul>
+<p>有些变量，需要计算一次，多次使用的时候。最好是提前计算一下，保存结果，以后再引用，避免每次都重新计算一次。</p>
+<ul>
+<li>Allocation on stack （局部变量）</li>
+</ul>
+<p>适当定义一些全局变量避免栈上的变量</p>
+<ul>
+<li>Per-cpu data structure (非共享的数据结构）</li>
+</ul>
+<p>比如并发编程时，给每个线程分配独立的内存空间</p>
+<ul>
+<li>Move exception path out （把 exception 处理放到另一个函数里面）</li>
+</ul>
+<p>只要引入了异常机制，无论系统是否会抛出异常，异常代码都会影响代码的大小与性能；未触发异常时对系统影响并不明显，主要影响一些编译优化手段；触发异常之后按异常实现机制的不同，其对系统性能的影响也不相同，不过一般很明显。所以，不用担心异常对正常代码逻辑性能的影响，同时不要借用异常机制处理业务逻辑。现代 C++ 编译器所使用的异常机制对正常代码性能的影响<a href="https://link.zhihu.com/?target=http%3A//www.open-std.org/jtc1/sc22/wg21/docs/TR18015.pdf">并不明显</a>，只有出现异常的时候异常机制才会影响整个系统的性能，<a href="https://link.zhihu.com/?target=https%3A//pspdfkit.com/blog/2020/performance-overhead-of-exceptions-in-cpp/">这里</a>有一些测试数据。</p>
+<p>另外，把 exception path 和 critical path 放到一起（代码混合在一起），就会影响 critical path 的 cache 性能。而很多时候，exception path 都是长篇大论，有点喧宾夺主的感觉。如果能把 critical path 和 exception path 完全分离开，这样对 i-cache 有很大帮助</p>
+<ul>
+<li>Read, write split （读写分离）</li>
+</ul>
+<p>伪共享(false sharing)：就是说两个无关的变量，一个读，一个写，而这两个变量在一个cache line里面。那么写会导致cache line失效（通常是在多核编程里面，两个变量在不同的core上引用）。读写分离是一个很难运用的技巧，特别是在code很复杂的情况下。需要不断地调试，是个力气活（如果有工具帮助会好一点，比如 cache miss时触发 cpu 的 execption 处理之类的）</p>
+<h2 id="6、总结"><a href="#6、总结" class="headerlink" title="6、总结"></a>6、总结</h2><p>上面所列举的大多数还是通用的高性能编程手段，从物理硬件 CPU、内存、硬盘、网卡到软件层面的通信、缓存、算法、架构每一个环节的优化都是通往高性能的道路。软件性能瓶颈定位的常用手段有 perf（火焰图）以及在 Intel CPU 上使用 pmu-tools 进行 TopDown 分析。接下来，我们将从 C++ 编程语言本身层面出发，探讨下不同场景下最高效的 C++ 代码实现方式。</p>
+<p><img src="/img/v2-bb02a2414506b2a0491369e004b554da_720w.webp" alt="img"></p>
+<h1 id="并发优化"><a href="#并发优化" class="headerlink" title="并发优化"></a>并发优化</h1><h2 id="1、单线程中的并发"><a href="#1、单线程中的并发" class="headerlink" title="1、单线程中的并发"></a>1、单线程中的并发</h2><h3 id="SIMD-指令集优化"><a href="#SIMD-指令集优化" class="headerlink" title="SIMD 指令集优化"></a><strong>SIMD 指令集优化</strong></h3><p>提到并发，大家默认会认为是多核多线程技术，实际上单核单线程内也能利用上硬件细粒度的并发能力：SIMD（Single Instruction Multiple Data），与之相对的就是多核多线程中的 MIMD（Multiple Instruction Multiple Data）。CPU 指令集的发展经历了 MMX（Multi Media eXtension）、SSE（Streaming SIMD Extensions）、AVX（Advanced Vector Extensions）、IMCI 等。笔者在 Intel 实习期间，就是用 SSE 128 位指令集实现了 FFT（快速傅立叶变换），而以前是基于 SSE 64 位指令集实现的。</p>
+<p>下面是一个利用 SSE 指令进行优化的例子：<strong>将 Mat1 和 Mat2 矩阵元素乘积之后更新到 Mat2</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 优化前</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">MatMulti</span><span class="params">(Mat m1, Mat m2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; m1.rows; i++) &#123;</span><br><span class="line">        <span class="type">float</span> *pixel_1 = (<span class="type">float</span> *)m1.data + i * m1.step / <span class="number">4</span>;  <span class="comment">// 32f</span></span><br><span class="line">        <span class="type">float</span> *pixel_2 = (<span class="type">float</span> *)m2.data + i * m2.step / <span class="number">4</span>;  <span class="comment">// 32f</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; m1.cols; j++) &#123;</span><br><span class="line">            *pixel_2 = (*pixel_1) * (*pixel_2);</span><br><span class="line">            pixel_1 += <span class="number">1</span>;</span><br><span class="line">            pixel_2 += <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 优化后</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">SSEMatMulti</span><span class="params">(Mat m1, Mat m2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; m1.rows; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">float</span> *pixel_1 = (<span class="type">float</span> *)m1.data + i * m1.step / <span class="number">4</span>;  <span class="comment">// 32f</span></span><br><span class="line">        <span class="type">float</span> *pixel_2 = (<span class="type">float</span> *)m2.data + i * m2.step / <span class="number">4</span>;  <span class="comment">// 32f</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; m1.cols; j++)</span><br><span class="line">        &#123;</span><br><span class="line">            __m128 sse_1 = _mm_load_ps(pixel_1);  <span class="comment">// 将 pixel_1 地址指向的值复制给 sse_1</span></span><br><span class="line">            __m128 sse_2 = _mm_load_ps(pixel_2);  <span class="comment">// 将 pixel_2 地址指向的值复制给 sse_2</span></span><br><span class="line">            __m128 h = _mm_mul_ss(sse_1, sse_2);  </span><br><span class="line">            _mm_storer_ps(pixel_2, h);</span><br><span class="line">            pixel_1 += <span class="number">1</span>;</span><br><span class="line">            pixel_2 += <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关于指令集优化，更多内容请参考下面这篇文章：</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/325632066">C/C++指令集介绍以及优化（主要针对SSE优化）98 赞同 · 1 评论文章</a></p>
+<h3 id="OoOE（Out-of-Ordered-Execution）优化"><a href="#OoOE（Out-of-Ordered-Execution）优化" class="headerlink" title="OoOE（Out of Ordered Execution）优化"></a><strong>OoOE（Out of Ordered Execution）优化</strong></h3><p>经典 5 级 RISC 流水线如下图所示，分为 5 个步骤：取指 -&gt; 译码 -&gt; 计算 -&gt; 访存 -&gt; 写回。</p>
+<p><img src="/img/v2-51a108c282a8d4636a4b921f9a4d4697_720w.webp" alt="img"></p>
+<p>当执行环节遇到数据依赖，以及缓存未命中等场景，就会导致整体停顿的产生，其中 MEM 环节的影响尤其明显，主要是因为多级缓存及多核共享带来的单次访存所需周期数参差不齐的现象越来越严重。为了减轻停顿的影响，现代 CPU 引入了<strong>乱序执行结合超标量</strong>的技术，什么意思呢？一方面：对于重点执行部件，比如计算、访存，增加多份来支持并行；另一方面：在执行部件前引入缓冲池/队列机制。最终从流水线模式向类似”多线程”的方式靠拢。</p>
+<h3 id="TMAM（Top-down-Micro-architecture-Analysis-Methodology，自顶向下的微架构分析方法）"><a href="#TMAM（Top-down-Micro-architecture-Analysis-Methodology，自顶向下的微架构分析方法）" class="headerlink" title="TMAM（Top-down Micro-architecture Analysis Methodology，自顶向下的微架构分析方法）"></a><strong>TMAM（Top-down Micro-architecture Analysis Methodology，自顶向下的微架构分析方法）</strong></h3><p>这是 Intel CPU 工程师归纳总结用于优化 CPU 性能的方法论。TMAM 理论基础就是将各类 CPU 各类微指令进行归类从大的方面先确认可能出现的瓶颈，再进一步分析找到瓶颈点，该方法也符合我们人类的思维，从宏观再到细节，过早的关注细节，往往需要花费更多的时间。这套方法论的优势在于：</p>
+<ul>
+<li>即使没有硬件相关的知识也能够基于 CPU 的特性优化程序</li>
+<li>系统性的消除我们对程序性能瓶颈的猜测：分支预测成功率低？CPU 缓存命中率低？内存瓶颈？</li>
+<li>快速的识别出在多核乱序 CPU 中瓶颈点</li>
+<li>Intel 提供分析工具：pmu-tools</li>
+</ul>
+<p>笔者在华为期间，就是用这套方法对 5G 核心网进行性能优化。TMAM 将各种 CPU 资源大致分为 4 类：</p>
+<p><img src="/img/v2-3f4cc55da6bea8adedf14725eb100a21_720w.webp" alt="img"></p>
+<ol>
+<li>Retiring</li>
+</ol>
+<p>Retiring 表示运行有效的 uOps 的 pipeline slot，即这些 uOps 最终会退出（注意一个微指令最终结果要么被丢弃、要么退出将结果回写到 register），它可以用于评估程序对 CPU 的相对比较真实的有效率。理想情况下，所有流水线 slot 都应该是”Retiring”。100% 的 Retiring 意味着每个周期的 uOps Retiring数将达到最大化，极致的 Retiring 可以增加每个周期的指令吞吐数（IPC）。需要注意的是，Retiring 这一分类的占比高并不意味着没有优化的空间。例如 retiring 中 Microcode assists 的类别实际上是对性能有损耗的，我们需要避免这类操作。</p>
+<ol>
+<li>Bad Speculation</li>
+</ol>
+<p>Bad Speculation 表示错误预测导致浪费 pipeline 资源，包括由于提交最终不会 retired 的 uOps 以及部分 slots 是由于从先前的错误预测中恢复而被阻塞的。由于预测错误分支而浪费的工作被归类为”错误预测”类别。例如：if、switch、while、for等都可能会产生 bad speculation。</p>
+<ol>
+<li>Front-End-Bound</li>
+</ol>
+<ul>
+<li>取指令</li>
+<li>将指令进行解码成微指令</li>
+<li>将指令分发给 Back-End，每个周期最多分发4条微指令</li>
+</ul>
+<p>Front-End Bound 表示处理其的 Front-End 的一部分 slots 没法交付足够的指令给 Back-End。Front-End 作为处理器的第一个部分其核心职责就是获取 Back-End 所需的指令。在 Front-End 中由预测器预测下一个需要获取的地址，然后从内存子系统中获取对应的缓存行，在转换成对应的指令，最后解码成uOps（微指令）。Front-End Bound 意味着，会导致部分slot 即使 Back-End 没有阻塞也会被闲置。例如因为指令 cache misses引起的阻塞是可以归类为 Front-End Bound。</p>
+<p><strong>优化建议：</strong></p>
+<p><strong>（1）尽可能减少代码的 footprint</strong>：C/C++可以利用编译器的优化选项来帮助优化，比如 GCC -O* 都会对 footprint 进行优化或者通过指定 -fomit-frame-pointer 也可以达到效果；</p>
+<p><strong>（2）充分利用 CPU 硬件特性：</strong>宏融合（macro-fusion）特性可以将2条指令合并成一条微指令，它能提升 Front-End 的吞吐。 比如下图中的循环示例：</p>
+<p><img src="/img/v2-6f3d074be510c28c2a1d718f2cb2a3ec_720w.webp" alt="img"></p>
+<p>所以建议循环条件中的类型采用无符号的数据类型可以使用到宏融合特性提升 Front-End 吞吐量。</p>
+<p><strong>（3）调整代码布局（co-locating-hot-code)</strong></p>
+<ul>
+<li>充分利用编译器的 PGO 特性：-fprofile-generate -fprofile-use</li>
+<li>可以通过<code>__attribute__ ((hot)) __attribute__ ((code))</code> 来调整代码在内存中的布局，hot 的代码在解码阶段有利于 CPU 进行预取。</li>
+</ul>
+<p>其他优化选项，可以参考：</p>
+<p><a href="https://link.zhihu.com/?target=https%3A//link.segmentfault.com/%3Fenc%3DIsWvcWLv6jLcFmwla6JftA%3D%3D.YzsQCES2I7zZaQzhb4r136cyNY2G%2BnkGtS8mCjA7ZvfQ2MH2GJToX83L1KPVLZs6vG%2F%2BWSB0kM4EFtQyoBwbWA%3D%3D">GCC优化选项link.segmentfault.com/?enc=IsWvcWLv6jLcFmwla6JftA%3D%3D.YzsQCES2I7zZaQzhb4r136cyNY2G%2BnkGtS8mCjA7ZvfQ2MH2GJToX83L1KPVLZs6vG%2F%2BWSB0kM4EFtQyoBwbWA%3D%3D</a></p>
+<p><a href="https://link.zhihu.com/?target=https%3A//link.segmentfault.com/%3Fenc%3DG2y8z%2BV1BEbm%2BtUNGilarQ%3D%3D.0cpASZjv8hkrvrjlLTKEJMEOD88PlbnAD5vXXrLIdlTU6vZmCvCKEu35f5HdIyoHB373G3%2B0YRdlDSK9Q29tLw%2FSO4vX4EH%2FOAVcrD6IHyyANKmDqlQRQEy9I89OXyAm">GCC 通用属性优化link.segmentfault.com/?enc=G2y8z%2BV1BEbm%2BtUNGilarQ%3D%3D.0cpASZjv8hkrvrjlLTKEJMEOD88PlbnAD5vXXrLIdlTU6vZmCvCKEu35f5HdIyoHB373G3%2B0YRdlDSK9Q29tLw%2FSO4vX4EH%2FOAVcrD6IHyyANKmDqlQRQEy9I89OXyAm</a></p>
+<p><strong>（4）分支预测优化</strong></p>
+<p>\4. Back-End-Bound</p>
+<ul>
+<li>接收 Front-End 提交的微指令</li>
+<li>必要时对 Front-End 提交的微指令进行重排</li>
+<li>从内存中获取对应的指令操作数</li>
+<li>执行微指令、提交结果到内存</li>
+</ul>
+<p>Back-End Bound 表示部分 pipeline slots 因为 Back-End 缺少一些必要的资源导致没有 uOps 交付给 Back-End。</p>
+<p>Back-End 处理器的核心部分是通过调度器乱序地将准备好的 uOps 分发给对应执行单元，一旦执行完成，uOps 将会根据程序的顺序返回对应的结果。例如：像 cache-misses 引起的阻塞（停顿）或者因为除法运算器过载引起的停顿都可以归为此类。此类别可以在进行细分为两大类：Memory-Bound 、Core Bound。</p>
+<p>归纳总结一下就是：</p>
+<blockquote>
+<p>Front End Bound = Bound in Instruction Fetch -&gt; Decode (Instruction Cache, ITLB)Back End Bound = Bound in Execute -&gt; Commit (Example = Execute, load latency)<br>Bad Speculation = When pipeline incorrectly predicts execution (Example branch mispredict memory ordering nuke)<br>Retiring = Pipeline is retiring uops</p>
+</blockquote>
+<p>一个微指令状态可以按照下图决策树进行归类：</p>
+<p><img src="/img/v2-93eb0b676c7c86a006cbf17212391216_720w.webp" alt="img"></p>
+<p>上图中的叶子节点，程序运行一定时间之后各个类别都会有一个 pipeline slot 的占比，只有 Retiring 的才是我们所期望的结果，那么每个类别占比应该是多少才是合理或者说性能相对来说是比较好，没有必要再继续优化？Intel 在实验室里根据不同的程序类型提供了一个参考的标准：</p>
+<p><img src="/img/v2-bb94c124836a0714bf3fa8df70fd487f_720w.webp" alt="img"></p>
+<p>只有 Retiring 类别是越高越好，其他三类都是占比越低越好。如果某一个类别占比比较突出，那么它就是我们进行优化时重点关注的对象。</p>
+<p><strong>优化建议：</strong></p>
+<p><strong>（1）合理使用缓存行对齐</strong></p>
+<p>CPU 的缓存是弥足珍贵的，应该尽量的提高其使用率，平常使用过程中可能存在一些误区导致 CPU cache 有效利用率比较低。下面来看一个不适合进行缓存行对齐的例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CACHE_LINE</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">S1</span> &#123;</span><br><span class="line">    <span class="type">int</span> r1;</span><br><span class="line">    <span class="type">int</span> r2;</span><br><span class="line">    <span class="type">int</span> r3;</span><br><span class="line">    <span class="built_in">S1</span>() : <span class="built_in">r1</span>(<span class="number">1</span>), <span class="built_in">r2</span>(<span class="number">2</span>), <span class="built_in">r3</span>(<span class="number">3</span>) &#123;&#125;</span><br><span class="line">&#125; CACHE_LINE;</span><br></pre></td></tr></table></figure>
+<p>下面这个是测试效果：</p>
+<p><img src="/img/v2-841b8a2750141cc1e2367fceb4e7ef80_720w.webp" alt="img"></p>
+<p>做了缓存行对齐：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CACHE_LINE __attribute__((aligned(64)))</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">S1</span> &#123;</span><br><span class="line">    <span class="type">int</span> r1;</span><br><span class="line">    <span class="type">int</span> r2;</span><br><span class="line">    <span class="type">int</span> r3;</span><br><span class="line">    <span class="built_in">S1</span>() : <span class="built_in">r1</span>(<span class="number">1</span>), <span class="built_in">r2</span>(<span class="number">2</span>), <span class="built_in">r3</span>(<span class="number">3</span>) &#123;&#125;</span><br><span class="line">&#125; CACHE_LINE;</span><br></pre></td></tr></table></figure>
+<p>测试结果:</p>
+<p><img src="/img/v2-6f140842c407ea676c20cc7330bd7eb3_720w.webp" alt="img"></p>
+<p>通过对比两个 retiring 就知道，这种场景下没有做 cache 对齐缓存利用率高，因为在单线程中采用了缓存行导致 cpu cache 利用率低，在上面的例子中缓存行利用率才 3*4/64 = 18%。缓存行对齐使用原则：</p>
+<ul>
+<li>多个线程存在同时写一个对象、结构体的场景（即存在伪共享的场景）</li>
+<li>对象、结构体过大的时候</li>
+<li>将高频访问的对象属性尽可能的放在对象、结构体首部</li>
+</ul>
+<h2 id="2、多线程中的并发"><a href="#2、多线程中的并发" class="headerlink" title="2、多线程中的并发"></a>2、多线程中的并发</h2><h3 id="临界区保护技术"><a href="#临界区保护技术" class="headerlink" title="临界区保护技术"></a>临界区保护技术</h3><ul>
+<li>Mutual Execlusion(pessimistic locking)：基本的互斥技术，存在某个时间周期，算法没有任何实质进展，典型的悲观锁算法</li>
+<li>Lock Free (optimistic locking)：组成算法的一个线程没有任何实质进展，基于 CAS 同步提交，若遇到冲突，回滚</li>
+<li>Wait Free：任意时间周期，算法的任意一个线程都有实质进展</li>
+</ul>
+<p>举个例子：<strong>多线程累加，</strong>上述三种技术对应以下实现方案：</p>
+<ul>
+<li>上锁后累加</li>
+<li>累加后 CAS 提交</li>
+<li>累加后 FAA（Fetch and Add）</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">uint64_t</span> <span class="title">calc</span><span class="params">(<span class="type">uint64_t</span>* seq, <span class="type">size_t</span> size)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; size; i++) &#123;</span><br><span class="line">        seq[(i + <span class="number">1</span>) &amp; <span class="number">7</span>] += seq[i &amp; <span class="number">7</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> seq[i &amp; <span class="number">7</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">std::mutex mtx;</span><br><span class="line"><span class="type">uint64_t</span> sum = <span class="number">0</span>;</span><br><span class="line"><span class="type">size_t</span> workload = <span class="number">10000</span>;</span><br><span class="line"><span class="type">uint64_t</span> seq[<span class="number">512</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Mutual Exclusion</span></span><br><span class="line">    <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(mtx)</span></span>;</span><br><span class="line">    sum += <span class="built_in">calc</span>(seq, workload);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#123;  </span><br><span class="line">    <span class="comment">// Lock Free / Atomic CAS</span></span><br><span class="line">    <span class="keyword">auto</span> curr = atomic_sum.<span class="built_in">load</span>(std::memory_order_relaxed);</span><br><span class="line">    <span class="keyword">auto</span> next = curr;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        next = curr + <span class="built_in">calc</span>(seq, workload)</span><br><span class="line">    &#125; <span class="keyword">while</span> (!atomic_sum.<span class="built_in">compare_exchange_weak</span>(curr, next, std::memory_ordered_relaxed));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Wait Free / Atmoic Modify</span></span><br><span class="line">    atomic_sum.<span class="built_in">fetch_add</span>(<span class="built_in">calc</span>(seq, workload), std::memory_order_relaxed);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实际操作中，我们该如何选择呢？</p>
+<ul>
+<li>优先考虑 Wait Free 的方法，如果可以的话，在性能上接近完全消除了临界区的效果</li>
+<li>充分缩减临界区</li>
+<li>在临界区足够小，且无 Wait Free 方案时，不必对 Lock Free 过度执着，因为 Lock Free “无效预测执行” 以及支持撤销回滚的两阶段提交算法非常复杂，反而会引起过多的消耗。锁本身的开销虽然稍重于原子操作，但其实可以接受的。真正影响性能的是临界区被迫串行执行所带来的并行能力折损。</li>
+</ul>
+<h3 id="并发队列"><a href="#并发队列" class="headerlink" title="并发队列"></a>并发队列</h3><p>在上一篇文章中已经提到过，这里不再赘述了。</p>
+<h3 id="伪共享"><a href="#伪共享" class="headerlink" title="伪共享"></a><strong>伪共享</strong></h3><p>多个 CPU 同时对同一个缓存行的数据进行修改，导致 CPU cache 的数据不一致，也就是缓存失效问题。为什么伪共享只发生在多线程的场景，而多进程的场景不会有问题？这是因为 linux 虚拟内存的特性，各个进程的虚拟地址空间是相互隔离的，也就是说在数据不进行缓存行对齐的情况下，CPU 执行进程 1 时加载的一个缓存行的数据，只会属于进程 1，而不会存在一部分是进程 1、另外一部分是进程 2。</p>
+<p><img src="/img/v2-40f4c32197ceb6c67379d8df2af79122_720w.webp" alt="img"></p>
+<blockquote>
+<p>（上图中不同型号的 L2 cache 组织形式可能不同，有的可能是每个 core 独占，例如 skylake）</p>
+</blockquote>
+<p>伪共享之所以对性能影响很大，是因为他会导致原本可以并行执行的操作，变成了并发执行。这是高性能服务不能接受的，所以我们需要对齐进行优化，方法就是 CPU 缓存行对齐（cache line align）解决伪共享，本来就是一个以空间换取时间的方案。</p>
+<p>Linux系统中采用 MESI 协议处理缓存一致性，所谓 MESI 即是指 CPU 缓存的四种状态：</p>
+<ul>
+<li>M（修改，Modified）：本地处理器已经修改缓存行，即是脏行，它的内容与内存中的内容不一样，并且此 cache 只有本地一个拷贝(专有)；</li>
+<li>E（专有，Exclusive）：缓存行内容和内存中的一样，而且其它处理器都没有这行数据；</li>
+<li>S（共享，Shared）：缓存行内容和内存中的一样, 有可能其它处理器也存在此缓存行的拷贝；</li>
+<li>I（无效，Invalid）：缓存行失效, 不能使用。</li>
+</ul>
+<p><img src="/img/v2-5d5b9326b0935b980de21bf164832f0f_720w.webp" alt="img"></p>
+<p>MESI状态转换</p>
+<p>每个 CPU 缓存行都在四个状态之间互相转换，以此决定 CPU 缓存是否失效，比如 CPU 对一个缓存行执行了写入操作，则此操作会导致其他 CPU 的该缓存行进入 Invalid 无效状态，CPU 需要使用该缓存行的时候需要从内存中重新读取。由此就解决了多 CPU 之间的缓存一致性问题。消除伪共享有如下两种方法：</p>
+<ol>
+<li>缓存行填充（Padding）：为了避免伪共享就需要将可能造成伪共享的多个变量处于不同的缓存行中，可以采用在变量后面填充字节的方式达到该目的。</li>
+<li>尽量让相关访问的数据在一个 cache-line</li>
+<li>使用某些语言或编译器中强制变量对齐，将变量都对齐到缓存行大小，避免伪共享发生。</li>
+</ol>
+<h1 id="内存优化"><a href="#内存优化" class="headerlink" title="内存优化"></a>内存优化</h1><h2 id="1、tcmalloc-和-jemalloc"><a href="#1、tcmalloc-和-jemalloc" class="headerlink" title="1、tcmalloc 和 jemalloc"></a>1、tcmalloc 和 jemalloc</h2><p>线程池技术中，每个线程各司其职，完成一个一个的任务。在 malloc 看来，就是多个长生命周期的线程，随机的在各个时间节点进行内存申请和内存释放。基于这样的场景，首先，尽量分配连续地址空间。其次，多线程下需要考虑分区隔离和减少竞争。</p>
+<p>tcmalloc 和 jemalloc 共同的思路是引入线程缓存机制。通过一次从后端获取大块内存，放入缓存供线程多次申请，降低对后端的实际竞争强度。主要不同点是，当线程缓存被击穿后，tcmalloc 采用了单一的 page heap（简化了中间的 transfer cache 和 central cache） 来承载；而 jemalloc 采用了多个 arena（甚至超过了服务器 core 数）。<strong>一般来讲，在线程数较少，或释放强度较低的情况下，较为简洁的 tcmalloc 性能稍胜 jemalloc。在 core 数较多、申请释放频繁时，jemalloc 因为锁竞争强度远小于 tcmalloc，性能较好</strong>。</p>
+<p><strong>理想的 malloc 模型是什么？</strong></p>
+<ul>
+<li><strong>低竞争性和连续性</strong></li>
+</ul>
+<p>微服务、流式计算、缓存，这几种业务模型几乎涵盖了所有主流的后端服务场景。而这几种业务对内存的应用有一个重要的特征：拥有边界明确的生命周期。比如在早期的 server 设计中，每个 client 请求都分配一个单独的线程处理，处理完再整体销毁。但随着新型的子任务级线程池并发技术的广泛应用，即请求细分为多个子任务充分利用多核并发来提升计算性能。</p>
+<p><strong>std::vector<std::string> 如何优化？这里提供一种思路：</strong></p>
+<ul>
+<li>和典型的 vector 处理主要不同点是：在 clear 或者 pop_back 等操作缩减大小之后，内容对象并不实际析构，只是清空重置。因此，再一次用到这个槽位的时候，可以直接拿到已经构造好的元素，而且其 capacity 之内的内存依然持有。当反复使用同一个实例时，容器内存和每个元素自身的 capacity 都会趋于饱和值，反复的分配和构造需求都被减少了。</li>
+</ul>
+<p>内存分配和实例构造功能解耦。这也是 PMR（Polymorphic Memory Resource，C++17 的新特性）设计的出发点，大名鼎鼎的 EASTL 就是它的原型，它就是为低延迟、高频、计算密集型任务开发的。</p>
+<h2 id="2、string"><a href="#2、string" class="headerlink" title="2、string"></a>2、string</h2><h3 id="短字符串分配"><a href="#短字符串分配" class="headerlink" title="短字符串分配"></a><strong>短字符串分配</strong></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Timer</span> &#123;</span><br><span class="line">    std::chrono::high_resolution_clock::time_point start, end;</span><br><span class="line">    std::chrono::duration&lt;<span class="type">float</span>&gt; duration;</span><br><span class="line">    <span class="built_in">Timer</span>() &#123; start = std::chrono::high_resolution_clock::<span class="built_in">now</span>(); &#125;</span><br><span class="line">    ~<span class="built_in">Timer</span>() &#123;</span><br><span class="line">        end = std::chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">        duration = end - start;</span><br><span class="line">        <span class="type">float</span> ns = duration.<span class="built_in">count</span>() * <span class="number">1000000.0f</span>;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Timer took &quot;</span> &lt;&lt; ns &lt;&lt; <span class="string">&quot;ns&quot;</span></span><br><span class="line">                  &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> SIZE = <span class="number">1000000</span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test_stack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Timer timer;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; SIZE; i++) &#123;</span><br><span class="line">        <span class="type">char</span> buf[<span class="number">12</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test_string</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Timer timer;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; SIZE; i++) &#123;</span><br><span class="line">        <span class="function">std::string <span class="title">str</span><span class="params">(<span class="string">&quot;hello world&quot;</span>)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">test_stack</span>();</span><br><span class="line">    <span class="built_in">test_string</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试结果：</p>
+<p><img src="/img/v2-3d9a688fa2656194716e833eeac79c53_720w.webp" alt="img"></p>
+<p>短字符串构造，char 和 string 性能差不多</p>
+<h3 id="长字符串分配"><a href="#长字符串分配" class="headerlink" title="长字符串分配"></a>长字符串分配</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> SIZE = <span class="number">1000000</span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test_stack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Timer timer;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; SIZE; i++) &#123;</span><br><span class="line">        <span class="type">char</span> buf[<span class="number">32</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test_string</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Timer timer;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; SIZE; i++) &#123;</span><br><span class="line">        <span class="function">std::string <span class="title">str</span><span class="params">(<span class="string">&quot;hello world, it is test string.&quot;</span>)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">test_stack</span>();</span><br><span class="line">    <span class="built_in">test_string</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试结果：</p>
+<p><img src="/img/v2-95cc34fcddf1e40eeb1486092abb6726_720w.webp" alt="img"></p>
+<p>长字符串构造，string 性能比 char 差很多</p>
+<p>string 在 libstadc++ 和 libc++ 的实现方式是不一样的</p>
+<h3 id="std-pmr-string"><a href="#std-pmr-string" class="headerlink" title="std::pmr::string"></a>std::pmr::string</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory_resource&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> SIZE = <span class="number">1000000</span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test_stack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Timer timer;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; SIZE; i++) &#123;</span><br><span class="line">        <span class="function">std::string <span class="title">str</span><span class="params">(<span class="string">&quot;hello world, it is test string.&quot;</span>)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test_string</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Timer timer;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; SIZE; i++) &#123;</span><br><span class="line">        std::<span class="function">pmr::string <span class="title">str</span><span class="params">(<span class="string">&quot;hello world, it is test string.&quot;</span>)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试结果：</p>
+<p><img src="/img/v2-9b030ea80f0b6b021d0b52285f72f90f_720w.webp" alt="img"></p>
+<p>std::pmr::string允许我们在栈上创建string，当超过 1024 个字节后才会在堆上申请内存。</p>
+<h2 id="3、vector"><a href="#3、vector" class="headerlink" title="3、vector"></a>3、vector</h2><p>stl 中 vector 的内存增长速度是 2 的幂次方，而这个值是可以调整的，比如：folly 的 small vector</p>
+<p><a href="https://link.zhihu.com/?target=https%3A//github.com/facebook/folly/blob/main/folly/docs/small_vector.md">folly/small_vector.md at main · facebook/follygithub.com/facebook/folly/blob/main/folly/docs/small_vector.md</a></p>
+<h2 id="4、map"><a href="#4、map" class="headerlink" title="4、map"></a>4、map</h2><p>STL 中的 map 是基于红黑树来实现的，而高效的 map 必然是 hash map，进一步优化的思路就是在 hash map 的基础上引入内存池技术。</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/533012798">C++ 数据结构设计：如何高效地存储并操作超大规模的 70 赞同 · 7 评论文章</a></p>
+<p><a href="https://link.zhihu.com/?target=https%3A//github.com/ktprime/emhash">https://github.com/ktprime/emhashgithub.com/ktprime/emhash</a></p>
+<h2 id="5、protobuf"><a href="#5、protobuf" class="headerlink" title="5、protobuf"></a>5、protobuf</h2><p>比如采取某些字段合并策略，尽量减少序列化、反序列化的次数。</p>
+<h2 id="6、高效使用智能指针"><a href="#6、高效使用智能指针" class="headerlink" title="6、高效使用智能指针"></a>6、高效使用智能指针</h2><ul>
+<li>使用 std::make_shared 代替 new T</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">MyClass</span>(std::string s, <span class="type">int</span> i) : <span class="built_in">s</span>(s), <span class="built_in">i</span>(i) &#123;&#125;  <span class="comment">// 使用初始化列表比较快</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    std::string s;</span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> SIZE = <span class="number">1000000</span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Timer timer;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; SIZE; i++) &#123;</span><br><span class="line">        <span class="function">std::shared_ptr&lt;MyClass&gt; <span class="title">p</span><span class="params">(<span class="keyword">new</span> MyClass(<span class="string">&quot;hello&quot;</span>, <span class="number">123</span>))</span></span>;  <span class="comment">// 会调用两次内存管理器，第一次用于创建 MyClass 的实例，第二次用来创建 std::shared_ptr 的内部结构。</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Timer timer;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; SIZE; i++) &#123;</span><br><span class="line">        std::shared_ptr&lt;MyClass&gt; p = std::<span class="built_in">make_shared</span>&lt;MyClass&gt;(<span class="string">&quot;hello&quot;</span>, <span class="number">123</span>);  <span class="comment">// 一次性分配内存同时保存以上两种数据结构</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">test1</span>();</span><br><span class="line">    <span class="built_in">test2</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试结果：</p>
+<p><img src="/img/v2-a87e0a32ef128721f6077f767690cf93_720w.webp" alt="img"></p>
+<ul>
+<li>避免使用 std::shared_ptr 作为函数的入参，而是通过 get() 函数传递实际的指针</li>
+<li>通过 = delete 修饰，在类定义中禁止不希望发生的复制</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag"># C++</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/01/12/parallel_cuda/" rel="next" title="parallel CUDA 介绍">
+                <i class="fa fa-chevron-left"></i> parallel CUDA 介绍
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/" rel="prev" title="解读CUDA最佳实践指南">
+                解读CUDA最佳实践指南 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E8%A7%86%E8%A7%92"><span class="nav-number">1.</span> <span class="nav-text">整体视角</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%85%B3%E6%B3%A8%E7%82%B9"><span class="nav-number">1.1.</span> <span class="nav-text">1、高性能编程关注点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E9%A2%84%E7%BD%AE%E7%9F%A5%E8%AF%86-Cache"><span class="nav-number">1.2.</span> <span class="nav-text">2、预置知识 - Cache</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95"><span class="nav-number">1.3.</span> <span class="nav-text">3、系统优化方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4%E3%80%81%E7%AE%97%E6%B3%95%E4%BC%98%E5%8C%96"><span class="nav-number">1.4.</span> <span class="nav-text">4、算法优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5%E3%80%81%E4%BB%A3%E7%A0%81%E5%B1%82%E6%AC%A1%E4%BC%98%E5%8C%96"><span class="nav-number">1.5.</span> <span class="nav-text">5、代码层次优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6%E3%80%81%E6%80%BB%E7%BB%93"><span class="nav-number">1.6.</span> <span class="nav-text">6、总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E4%BC%98%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">并发优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E5%8D%95%E7%BA%BF%E7%A8%8B%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91"><span class="nav-number">2.1.</span> <span class="nav-text">1、单线程中的并发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SIMD-%E6%8C%87%E4%BB%A4%E9%9B%86%E4%BC%98%E5%8C%96"><span class="nav-number">2.1.1.</span> <span class="nav-text">SIMD 指令集优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OoOE%EF%BC%88Out-of-Ordered-Execution%EF%BC%89%E4%BC%98%E5%8C%96"><span class="nav-number">2.1.2.</span> <span class="nav-text">OoOE（Out of Ordered Execution）优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TMAM%EF%BC%88Top-down-Micro-architecture-Analysis-Methodology%EF%BC%8C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E7%9A%84%E5%BE%AE%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90%E6%96%B9%E6%B3%95%EF%BC%89"><span class="nav-number">2.1.3.</span> <span class="nav-text">TMAM（Top-down Micro-architecture Analysis Methodology，自顶向下的微架构分析方法）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91"><span class="nav-number">2.2.</span> <span class="nav-text">2、多线程中的并发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%B4%E7%95%8C%E5%8C%BA%E4%BF%9D%E6%8A%A4%E6%8A%80%E6%9C%AF"><span class="nav-number">2.2.1.</span> <span class="nav-text">临界区保护技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E9%98%9F%E5%88%97"><span class="nav-number">2.2.2.</span> <span class="nav-text">并发队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%AA%E5%85%B1%E4%BA%AB"><span class="nav-number">2.2.3.</span> <span class="nav-text">伪共享</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">内存优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81tcmalloc-%E5%92%8C-jemalloc"><span class="nav-number">3.1.</span> <span class="nav-text">1、tcmalloc 和 jemalloc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81string"><span class="nav-number">3.2.</span> <span class="nav-text">2、string</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%AD%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%86%E9%85%8D"><span class="nav-number">3.2.1.</span> <span class="nav-text">短字符串分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%95%BF%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%86%E9%85%8D"><span class="nav-number">3.2.2.</span> <span class="nav-text">长字符串分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#std-pmr-string"><span class="nav-number">3.2.3.</span> <span class="nav-text">std::pmr::string</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81vector"><span class="nav-number">3.3.</span> <span class="nav-text">3、vector</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4%E3%80%81map"><span class="nav-number">3.4.</span> <span class="nav-text">4、map</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5%E3%80%81protobuf"><span class="nav-number">3.5.</span> <span class="nav-text">5、protobuf</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6%E3%80%81%E9%AB%98%E6%95%88%E4%BD%BF%E7%94%A8%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88"><span class="nav-number">3.6.</span> <span class="nav-text">6、高效使用智能指针</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

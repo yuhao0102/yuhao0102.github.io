@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zn-ch">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="数据库," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="原文：https:&#x2F;&#x2F;blog.csdn.net&#x2F;shuaihj&#x2F;article&#x2F;details&#x2F;14163713 事务定义：所谓事务，它是一个操作序列，这些操作要么都执行，要么都不执行，它是一个不可分割的工作单位。 准备工作：为了说明事务的ACID原理，我们使用银行账户及资金管理的案例进行分析。12345678910&#x2F;&#x2F; 创建数据库create table account(   idint pr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="谈谈数据库的ACID">
+<meta property="og:url" content="http://yoursite.com/2019/08/12/%E8%B0%88%E8%B0%88%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84ACID/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="原文：https:&#x2F;&#x2F;blog.csdn.net&#x2F;shuaihj&#x2F;article&#x2F;details&#x2F;14163713 事务定义：所谓事务，它是一个操作序列，这些操作要么都执行，要么都不执行，它是一个不可分割的工作单位。 准备工作：为了说明事务的ACID原理，我们使用银行账户及资金管理的案例进行分析。12345678910&#x2F;&#x2F; 创建数据库create table account(   idint pr">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/img/20131105115813406.png">
+<meta property="og:image" content="http://yoursite.com/img/20131105115822218.png">
+<meta property="og:image" content="http://yoursite.com/img/20131105115826281.png">
+<meta property="og:image" content="http://yoursite.com/img/20131105115830531.png">
+<meta property="og:image" content="http://yoursite.com/img/20190812005.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2012040114023352.png">
+<meta property="og:image" content="http://yoursite.com/img/2012040114063976.png">
+<meta property="og:image" content="http://yoursite.com/img/2012040114082156.png">
+<meta property="og:image" content="http://yoursite.com/img/2012040114105477.png">
+<meta property="article:published_time" content="2019-08-12T13:20:00.000Z">
+<meta property="article:modified_time" content="2019-08-12T13:50:09.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/20131105115813406.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/08/12/谈谈数据库的ACID/"/>
+
+
+
+
+
+  <title>谈谈数据库的ACID | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zn-ch">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hao Yu's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">The program monkey was eaten by the siege lion.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/12/%E8%B0%88%E8%B0%88%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84ACID/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">谈谈数据库的ACID</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-08-12T21:20:00+08:00">
+                2019-08-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>原文：<a target="_blank" rel="noopener" href="https://blog.csdn.net/shuaihj/article/details/14163713">https://blog.csdn.net/shuaihj/article/details/14163713</a></p>
+<h1 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h1><p>定义：所谓事务，它是一个操作序列，这些操作要么都执行，要么都不执行，它是一个不可分割的工作单位。</p>
+<p>准备工作：为了说明事务的ACID原理，我们使用银行账户及资金管理的案例进行分析。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 创建数据库</span><br><span class="line">create table account(</span><br><span class="line">   idint primary key not null,</span><br><span class="line">   namevarchar(40),</span><br><span class="line">   moneydouble</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">// 有两个人开户并存钱</span><br><span class="line">insert into account values(1,&#x27;A&#x27;,1000);</span><br><span class="line">insert into account values(2,&#x27;B&#x27;,1000);</span><br></pre></td></tr></table></figure></p>
+<h1 id="ACID"><a href="#ACID" class="headerlink" title="ACID"></a>ACID</h1><p>ACID，是指在可靠数据库管理系统（DBMS）中，事务(transaction)所应该具有的四个特性：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）、持久性（Durability）.这是可靠数据库所应具备的几个特性.下面针对这几个特性进行逐个讲解.</p>
+<h1 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h1><p>原子性是指事务是一个不可再分割的工作单位，事务中的操作要么都发生，要么都不发生。</p>
+<h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><p>A给B转帐100元钱<br><img src="/img/20131105115813406.png" alt=""></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">begin transaction</span><br><span class="line">update account set money= money - 100where name=&#x27;A&#x27;;</span><br><span class="line">update account set money= money +100where name=&#x27;B&#x27;;</span><br><span class="line">if Error then</span><br><span class="line">       rollback</span><br><span class="line">else</span><br><span class="line">       commit</span><br></pre></td></tr></table></figure>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>在事务中的扣款和加款两条语句，要么都执行，要么就都不执行。否则如果只执行了扣款语句，就提交了，此时如果突然断电，A账号已经发生了扣款，B账号却没收到加款，在生活中就会引起纠纷。</p>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>在数据库管理系统（DBMS）中，默认情况下一条SQL就是一个单独事务，事务是自动提交的。只有显式的使用start transaction开启一个事务，才能将一个代码块放在事务中执行。保障事务的原子性是数据库管理系统的责任，为此许多数据源采用日志机制。例如，SQL Server使用一个预写事务日志，在将数据提交到实际数据页面前，先写在事务日志上。</p>
+<h1 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h1><p>一致性是指在事务开始之前和事务结束以后，数据库的完整性约束没有被破坏。这是说数据库事务不能破坏关系数据的完整性以及业务逻辑上的一致性。</p>
+<h2 id="案例-1"><a href="#案例-1" class="headerlink" title="案例"></a>案例</h2><p>对银行转帐事务，不管事务成功还是失败，应该保证事务结束后ACCOUNT表中aaa和bbb的存款总额为2000元。</p>
+<h2 id="解决方法-1"><a href="#解决方法-1" class="headerlink" title="解决方法"></a>解决方法</h2><p>保障事务的一致性，可以从以下两个层面入手</p>
+<h3 id="数据库机制层面"><a href="#数据库机制层面" class="headerlink" title="数据库机制层面"></a>数据库机制层面</h3><p>数据库层面的一致性是，在一个事务执行之前和之后，数据会符合你设置的约束（唯一约束，外键约束,Check约束等)和触发器设置。这一点是由SQL SERVER进行保证的。比如转账，则可以使用CHECK约束两个账户之和等于2000来达到一致性目的</p>
+<h3 id="业务层面"><a href="#业务层面" class="headerlink" title="业务层面"></a>业务层面</h3><p>对于业务层面来说，一致性是保持业务的一致性。这个业务一致性需要由开发人员进行保证。当然，很多业务方面的一致性，也可以通过转移到数据库机制层面进行保证。</p>
+<h1 id="隔离性"><a href="#隔离性" class="headerlink" title="隔离性"></a>隔离性</h1><p>多个事务并发访问时，事务之间是隔离的，一个事务不应该影响其它事务运行效果。</p>
+<p>这指的是在并发环境中，当不同的事务同时操纵相同的数据时，每个事务都有各自的完整数据空间。由并发事务所做的修改必须与任何其他并发事务所做的修改隔离。事务查看数据更新时，数据所处的状态要么是另一事务修改它之前的状态，要么是另一事务修改它之后的状态，事务不会查看到中间状态的数据。</p>
+<p>在Windows中，如果多个进程对同一个文件进行修改是不允许的，Windows通过这种方式来保证不同进程的隔离性。</p>
+<p>企业开发中，事务最复杂问题都是由事务隔离性引起的。当多个事务并发时，SQL Server利用加锁和阻塞来保证事务之间不同等级的隔离性。一般情况下，完全的隔离性是不现实的，完全的隔离性要求数据库同一时间只执行一条事务，这样会严重影响性能。想要理解SQL Server中对于隔离性的保障，首先要了解并发事务之间是如何干扰的.</p>
+<h2 id="事务之间的相互影响"><a href="#事务之间的相互影响" class="headerlink" title="事务之间的相互影响"></a>事务之间的相互影响</h2><p>事务之间的相互影响分为几种，分别为：脏读，不可重复读，幻读，丢失更新</p>
+<h3 id="脏读"><a href="#脏读" class="headerlink" title="脏读"></a>脏读</h3><p>脏读意味着一个事务读取了另一个事务未提交的数据，而这个数据是有可能回滚的；如下案例，此时如果事务1回滚，则B账户必将有损失。<br><img src="/img/20131105115822218.png" alt=""></p>
+<h3 id="不可重复读"><a href="#不可重复读" class="headerlink" title="不可重复读"></a>不可重复读</h3><p>不可重复读意味着，在数据库访问中，一个事务范围内两个相同的查询却返回了不同数据。这是由于查询时系统中其他事务修改的提交而引起的。如下案例，事务1必然会变得糊涂，不知道发生了什么。<br><img src="/img/20131105115826281.png" alt=""></p>
+<h3 id="幻读（虚读）"><a href="#幻读（虚读）" class="headerlink" title="幻读（虚读）"></a>幻读（虚读）</h3><p>幻读，是指当事务不是独立执行时发生的一种现象，例如第一个事务对一个表中的数据进行了修改，这种修改涉及到表中的全部数据行。同时，第二个事务也修改这个表中的数据，这种修改是向表中插入一行新数据。那么，以后就会发生操作第一个事务的用户发现表中还有没有修改的数据行，就好象发生了幻觉一样.<br><img src="/img/20131105115830531.png" alt=""></p>
+<h3 id="丢失更新"><a href="#丢失更新" class="headerlink" title="丢失更新"></a>丢失更新</h3><p>两个事务同时读取同一条记录，A先修改记录，B也修改记录（B是不知道A修改过），B提交数据后B的修改结果覆盖了A的修改结果。</p>
+<h2 id="理解SQL-SERVER中的隔离级别"><a href="#理解SQL-SERVER中的隔离级别" class="headerlink" title="理解SQL SERVER中的隔离级别"></a>理解SQL SERVER中的隔离级别</h2><p>数据库的事务隔离级别（TRANSACTION ISOLATION LEVEL）是一个数据库上很基本的一个概念。为什么会有事务隔离级别，SQL Server上实现了哪些事务隔离级别？事务隔离级别的前提是一个多用户、多进程、多线程的并发系统，在这个系统中为了保证数据的一致性和完整性，我们引入了事务隔离级别这个概念，对一个单用户、单线程的应用来说则不存在这个问题。</p>
+<p>为了避免上述几种事务之间的影响，SQL Server通过设置不同的隔离级别来进行不同程度的避免。因为高的隔离等级意味着更多的锁，从而牺牲性能。所以这个选项开放给了用户根据具体的需求进行设置。不过默认的隔离级别Read Commited符合了多数的实际需求.<br><img src="/img/20190812005.jpg" alt=""></p>
+<p>SQL Server隔离事务之间的影响是通过锁来实现的，通过阻塞来阻止上述影响。不同的隔离级别是通过加不同的锁，造成阻塞来实现的，所以会以付出性能作为代价；安全级别越高，处理效率越低；安全级别越低，效率高。</p>
+<p>使用方法：SET TRANSACTIONISOLATION LEVEL REPEATABLE READ</p>
+<p>未提交读： 在读数据时不会检查或使用任何锁。因此，在这种隔离级别中可能读取到没有提交的数据。  </p>
+<p>已提交读：只读取提交的数据并等待其他事务释放排他锁。读数据的共享锁在读操作完成后立即释放。已提交读是SQL Server的默认隔离级别。 </p>
+<p>可重复读： 像已提交读级别那样读数据，但会保持共享锁直到事务结束。  </p>
+<p>可串行读：工作方式类似于可重复读。但它不仅会锁定受影响的数据，还会锁定这个范围。这就阻止了新数据插入查询所涉及的范围。</p>
+<h1 id="持久性"><a href="#持久性" class="headerlink" title="持久性"></a>持久性</h1><p>持久性，意味着在事务完成以后，该事务所对数据库所作的更改便持久的保存在数据库之中，并不会被回滚。</p>
+<p>即使出现了任何事故比如断电等，事务一旦提交，则持久化保存在数据库中。</p>
+<p>SQL SERVER通过write-ahead transaction log来保证持久性。write-ahead transaction log的意思是，事务中对数据库的改变在写入到数据库之前，首先写入到事务日志中。而事务日志是按照顺序排号的（LSN）。当数据库崩溃或者服务器断点时，重启动SQL SERVER，SQLSERVER首先会检查日志顺序号，将本应对数据库做更改而未做的部分持久化到数据库，从而保证了持久性。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>事务的（ACID）特性是由关系数据库管理系统（RDBMS，数据库系统）来实现的。数据库管理系统采用日志来保证事务的原子性、一致性和持久性。日志记录了事务对数据库所做的更新，如果某个事务在执行过程中发生错误，就可以根据日志，撤销事务对数据库已做的更新，使数据库退回到执行事务前的初始状态。</p>
+<p>数据库管理系统采用锁机制来实现事务的隔离性。当多个事务同时更新数据库中相同的数据时，只允许持有锁的事务能更新该数据，其他事务必须等待，直到前一个事务释放了锁，其他事务才有机会更新该数据。</p>
+<h1 id="数据库查询优化"><a href="#数据库查询优化" class="headerlink" title="数据库查询优化"></a>数据库查询优化</h1><h2 id="使用索引"><a href="#使用索引" class="headerlink" title="使用索引"></a>使用索引</h2><p>应尽量避免全表扫描，首先应考虑在 where 及 order by ,group by 涉及的列上建立索引</p>
+<h2 id="优化-SQL-语句"><a href="#优化-SQL-语句" class="headerlink" title="优化 SQL 语句"></a>优化 SQL 语句</h2><ol>
+<li><p>通过 explain(查询优化神器)用来查看 SQL 语句的执行效果</p>
+<ul>
+<li>可以帮助选择更好的索引和优化查询语句， 写出更好的优化语句。 通常我们可以对比较复杂的尤其是涉及到多表的 SELECT 语句， 把关键字 EXPLAIN 加到前面， 查看执行计划。例如： explain select * from news;</li>
+</ul>
+</li>
+<li><p>任何地方都不要使用 <code>select * from t</code>。用具体的字段列表代替<code>*</code> ，不要返回用不到的任何字段。</p>
+<ul>
+<li>不需要的字段会增加数据传输的时间，即使mysql服务器和客户端是在同一台机器上，使用的协议还是tcp，通信也是需要额外的时间。</li>
+<li>要取的字段、索引的类型，和这两个也是有关系的。举个例子，对于user表，有name和phone的联合索引，select name from user where phone=12345678912 和 select * from user where phone=12345678912，前者要比后者的速度快，因为name可以在索引上直接拿到，不再需要读取这条记录了。</li>
+<li>大字段，例如很长的varchar，blob，text。准确来说，长度超过728字节的时候，会把超出的数据放到另外一个地方，因此读取这条记录会增加一次io操作。</li>
+</ul>
+</li>
+<li><p>索引列不能参与计算，保持列“干净”</p>
+<ul>
+<li>比如from_unixtime(create_time) = ’2014-05-29’就不能使用到索引，原因很简单，b+树中存的都是数据表中的字段值，但进行检索时，需要把所有元素都应用函数才能比较，显然成本太大。所以语句应该写成create_time = unix_timestamp(’2014-05-29’);</li>
+</ul>
+</li>
+<li><p>查询尽可能使用 limit 减少返回的行数， 减少数据传输时间和带宽浪费。</p>
+</li>
+</ol>
+<h2 id="优化数据库对象"><a href="#优化数据库对象" class="headerlink" title="优化数据库对象"></a>优化数据库对象</h2><ol>
+<li><p>优化表的数据类型</p>
+<ul>
+<li>使用 procedure analyse()函数对表进行分析， 该函数可以对表中列的数据类型提出优化建议。 能小就用小。 表数据类型第一个原则是： 使用能正确的表示和存储数据的最短类型。 这样可以减少对磁盘空间、 内存、 cpu 缓存的使用。</li>
+<li>使用方法： select * from 表名 procedure analyse();</li>
+</ul>
+</li>
+<li><p>对表进行拆分</p>
+<ul>
+<li>通过拆分表可以提高表的访问效率。 有 2 种拆分方法</li>
+<li>垂直拆分。把主键和一些列放在一个表中， 然后把主键和另外的列放在另一个表中。 如果一个表中某些列常用， 而另外一些不常用， 则可以采用垂直拆分。</li>
+<li>水平拆分。根据一列或者多列数据的值把数据行放到二个独立的表中。</li>
+</ul>
+</li>
+<li><p>使用中间表来提高查询速度</p>
+<ul>
+<li>创建中间表， 表结构和源表结构完全相同， 转移要统计的数据到中间表， 然后在中间表上进行统计， 得出想要的结果。</li>
+</ul>
+</li>
+</ol>
+<h2 id="硬件优化"><a href="#硬件优化" class="headerlink" title="硬件优化"></a>硬件优化</h2><ol>
+<li>CPU 的优化<ul>
+<li>选择多核和主频高的 CPU。</li>
+</ul>
+</li>
+<li>内存的优化<ul>
+<li>使用更大的内存。 将尽量多的内存分配给 MYSQL 做缓存。</li>
+</ul>
+</li>
+<li>磁盘 I/O 的优化<ul>
+<li>使用磁盘阵列。RAID 0 没有数据冗余， 没有数据校验的磁盘陈列。 实现 RAID 0至少需要两块以上的硬盘，它将两块以上的硬盘合并成一块， 数据连续地分割在每块盘上。</li>
+<li>RAID1 是将一个两块硬盘所构成 RAID 磁盘阵列， 其容量仅等于一块硬盘的容量， 因为另一块只是当作数据“镜像”。使用 RAID-0+1 磁盘阵列。 RAID 0+1 是 RAID 0 和 RAID 1 的组合形式。 它在提供与 RAID 1 一样的数据安全保障的同时， 也提供了与 RAID 0 近似的存储性能。</li>
+</ul>
+</li>
+<li>调整磁盘调度算法<ul>
+<li>选择合适的磁盘调度算法， 可以减少磁盘的寻道时间</li>
+</ul>
+</li>
+</ol>
+<h2 id="MySQL-自身的优化"><a href="#MySQL-自身的优化" class="headerlink" title="MySQL 自身的优化"></a>MySQL 自身的优化</h2><ol>
+<li>对 MySQL 自身的优化主要是对其配置文件 my.cnf 中的各项参数进行优化调整。 如指定 MySQL 查询缓冲区的大小， 指定 MySQL 允许的最大连接进程数等。</li>
+</ol>
+<h2 id="应用优化"><a href="#应用优化" class="headerlink" title="应用优化"></a>应用优化</h2><ol>
+<li>使用数据库连接池</li>
+<li>使用查询缓存<ul>
+<li>它的作用是存储 select 查询的文本及其相应结果。 如果随后收到一个相同的查询， 服务器会从查询缓存中直接得到查询结果。 查询缓存适用的对象是更新不频繁的表， 当表中数据更改后， 查询缓存中的相关条目就会被清空。</li>
+</ul>
+</li>
+</ol>
+<h1 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h1><h2 id="什么是存储过程？有哪些优缺点？"><a href="#什么是存储过程？有哪些优缺点？" class="headerlink" title="什么是存储过程？有哪些优缺点？"></a>什么是存储过程？有哪些优缺点？</h2><p>存储过程是一些预编译的SQL语句。</p>
+<p>更加直白的理解：存储过程可以说是一个记录集，它是由一些T-SQL语句组成的代码块，这些T-SQL语句代码像一个方法一样实现一些功能（对单表或多表的增删改查），然后再给这个代码块取一个名字，在用到这个功能的时候调用他就行了。</p>
+<p>存储过程是一个预编译的代码块，执行效率比较高<br>一个存储过程替代大量T_SQL语句 ，可以降低网络通信量，提高通信速率<br>可以一定程度上确保数据安全</p>
+<h2 id="索引是什么？有什么作用以及优缺点？"><a href="#索引是什么？有什么作用以及优缺点？" class="headerlink" title="索引是什么？有什么作用以及优缺点？"></a>索引是什么？有什么作用以及优缺点？</h2><p>索引是对数据库表中一或多个列的值进行排序的结构，是帮助MySQL高效获取数据的数据结构</p>
+<p>你也可以这样理解：索引就是加快检索表中数据的方法。数据库的索引类似于书籍的索引。在书籍中，索引允许用户不必翻阅完整个书就能迅速地找到所需要的信息。在数据库中，索引也允许数据库程序迅速地找到表中的数据，而不必扫描整个数据库。</p>
+<p>MySQL数据库几个基本的索引类型：普通索引、唯一索引、主键索引、全文索引</p>
+<p>索引加快数据库的检索速度<br>索引降低了插入、删除、修改等维护任务的速度<br>唯一索引可以确保每一行数据的唯一性<br>通过使用索引，可以在查询的过程中使用优化隐藏器，提高系统的性能<br>索引需要占物理和数据空间</p>
+<h2 id="什么是事务？"><a href="#什么是事务？" class="headerlink" title="什么是事务？"></a>什么是事务？</h2><p>事务（Transaction）是并发控制的基本单位。所谓的事务，它是一个操作序列，这些操作要么都执行，要么都不执行，它是一个不可分割的工作单位。事务是数据库维护数据一致性的单位，在每个事务结束时，都能保持数据一致性。</p>
+<h2 id="数据库的乐观锁和悲观锁是什么？"><a href="#数据库的乐观锁和悲观锁是什么？" class="headerlink" title="数据库的乐观锁和悲观锁是什么？"></a>数据库的乐观锁和悲观锁是什么？</h2><p>数据库管理系统（DBMS）中的并发控制的任务是确保在多个事务同时存取数据库中同一数据时不破坏事务的隔离性和统一性以及数据库的统一性。</p>
+<p>乐观并发控制(乐观锁)和悲观并发控制（悲观锁）是并发控制主要采用的技术手段。</p>
+<p>悲观锁：假定会发生并发冲突，屏蔽一切可能违反数据完整性的操作<br>乐观锁：假设不会发生并发冲突，只在提交操作时检查是否违反数据完整性。</p>
+<h2 id="触发器的作用？"><a href="#触发器的作用？" class="headerlink" title="触发器的作用？"></a>触发器的作用？</h2><p>触发器是一中特殊的存储过程，主要是通过事件来触发而被执行的。它可以强化约束，来维护数据的完整性和一致性，可以跟踪数据库内的操作从而不允许未经许可的更新和变化。可以联级运算。如，某表上的触发器上包含对另一个表的数据操作，而该操作又会导致该表触发器被触发。</p>
+<h2 id="索引的作用？和它的优点缺点是什么？"><a href="#索引的作用？和它的优点缺点是什么？" class="headerlink" title="索引的作用？和它的优点缺点是什么？"></a>索引的作用？和它的优点缺点是什么？</h2><p>数据库索引，是数据库管理系统中一个排序的数据结构，以协助快速查询、更新数据库表中数据。索引的实现通常使用B树及其变种B+树。</p>
+<p>在数据之外，数据库系统还维护着满足特定查找算法的数据结构，这些数据结构以某种方式引用（指向）数据，这样就可以在这些数据结构上实现高级查找算法。这种数据结构，就是索引。</p>
+<p>为表设置索引要付出代价的：一是增加了数据库的存储空间，二是在插入和修改数据时要花费较多的时间(因为索引也要随之变动)。</p>
+<p>创建索引可以大大提高系统的性能（优点）：</p>
+<ul>
+<li>第一，通过创建唯一性索引，可以保证数据库表中每一行数据的唯一性。</li>
+<li>第二，可以大大加快数据的检索速度，这也是创建索引的最主要的原因。</li>
+<li>第三，可以加速表和表之间的连接，特别是在实现数据的参考完整性方面特别有意义。</li>
+<li>第四，在使用分组和排序子句进行数据检索时，同样可以显著减少查询中分组和排序的时间。</li>
+<li>第五，通过使用索引，可以在查询的过程中，使用优化隐藏器，提高系统的性能。</li>
+</ul>
+<p>也许会有人要问：增加索引有如此多的优点，为什么不对表中的每一个列创建一个索引呢？因为，增加索引也有许多不利的方面：</p>
+<ul>
+<li>第一，创建索引和维护索引要耗费时间，这种时间随着数据量的增加而增加。</li>
+<li>第二，索引需要占物理空间，除了数据表占数据空间之外，每一个索引还要占一定的物理空间，如果要建立聚簇索引，那么需要的空间就会更大。</li>
+<li>第三，当对表中的数据进行增加、删除和修改的时候，索引也要动态的维护，这样就降低了数据的维护速度。</li>
+</ul>
+<p>索引是建立在数据库表中的某些列的上面。在创建索引的时候，应该考虑在哪些列上可以创建索引，在哪些列上不能创建索引。</p>
+<p>一般来说，应该在这些列上创建索引：</p>
+<ul>
+<li>在经常需要搜索的列上，可以加快搜索的速度；</li>
+<li>在作为主键的列上，强制该列的唯一性和组织表中数据的排列结构；</li>
+<li>在经常用在连接的列上，这些列主要是一些外键，可以加快连接的速度；</li>
+<li>在经常需要根据范围进行搜索的列上创建索引，因为索引已经排序，其指定的范围是连续的；</li>
+<li>在经常需要排序的列上创建索引，因为索引已经排序，这样查询可以利用索引的排序，加快排序查询时间；</li>
+<li>在经常使用在WHERE子句中的列上面创建索引，加快条件的判断速度。</li>
+</ul>
+<p>同样，对于有些列不应该创建索引：</p>
+<ul>
+<li>第一，对于那些在查询中很少使用或者参考的列不应该创建索引。这是因为，既然这些列很少使用到，因此有索引或者无索引，并能提高查询速度。相反，由于增加了索引，反而降低了系统的维护速度和增大了空间需求。</li>
+<li>第二，对于那些只有很少数据值的列也不应该增加索引。这是因为，由于这些列的取值很少，例如人事表的性别列，在查询的结果中，结果集的数据行占了表中数据行的很大比例，即需要在表中搜索的数据行的比例很大。增加索引，并不能明显加快检索速度。</li>
+<li>第三，对于那些定义为text, image和bit数据类型的列不应该增加索引。这是因为，这些列的数据量要么相当大，要么取值很少。</li>
+<li>第四，当修改性能远远大于检索性能时，不应该创建索引。这是因为，修改性能和检索性能是互相矛盾的。当增加索引时，会提高检索性能，但是会降低修改性能。当减少索引时，会提高修改性能，降低检索性能。因此，当修改性能远远大于检索性能时，不应该创建索引。</li>
+</ul>
+<h2 id="使用索引查询一定能提高查询的性能吗？为什么"><a href="#使用索引查询一定能提高查询的性能吗？为什么" class="headerlink" title="使用索引查询一定能提高查询的性能吗？为什么"></a>使用索引查询一定能提高查询的性能吗？为什么</h2><p>通常,通过索引查询数据比全表扫描要快.但是我们也必须注意到它的代价.</p>
+<p>索引需要空间来存储,也需要定期维护, 每当有记录在表中增减或索引列被修改时,索引本身也会被修改. 这意味着每条记录的INSERT,DELETE,UPDATE将为此多付出4,5 次的磁盘I/O. 因为索引需要额外的存储空间和处理,那些不必要的索引反而会使查询反应时间变慢.使用索引查询不一定能提高查询性能,索引范围查询(INDEX RANGE SCAN)适用于两种情况:</p>
+<p>基于一个范围的检索,一般查询返回结果集小于表中记录数的30%<br>基于非唯一性索引的检索</p>
+<h2 id="简单说一说drop、delete与truncate的区别"><a href="#简单说一说drop、delete与truncate的区别" class="headerlink" title="简单说一说drop、delete与truncate的区别"></a>简单说一说drop、delete与truncate的区别</h2><p>SQL中的drop、delete、truncate都表示删除，但是三者有一些差别</p>
+<p>delete和truncate只删除表的数据不删除表的结构<br>速度,一般来说: drop&gt; truncate &gt;delete<br>delete语句是dml,这个操作会放到rollback segement中,事务提交之后才生效;<br>如果有相应的trigger,执行的时候将被触发. truncate,drop是ddl, 操作立即生效,原数据不放到rollback segment中,不能回滚. 操作不触发trigger.</p>
+<h2 id="drop、delete与truncate分别在什么场景之下使用？"><a href="#drop、delete与truncate分别在什么场景之下使用？" class="headerlink" title="drop、delete与truncate分别在什么场景之下使用？"></a>drop、delete与truncate分别在什么场景之下使用？</h2><p>不再需要一张表的时候，用drop<br>想删除部分数据行时候，用delete，并且带上where子句<br>保留表而删除所有数据的时候用truncate</p>
+<h2 id="超键、候选键、主键、外键分别是什么？"><a href="#超键、候选键、主键、外键分别是什么？" class="headerlink" title="超键、候选键、主键、外键分别是什么？"></a>超键、候选键、主键、外键分别是什么？</h2><p>超键：在关系中能唯一标识元组的属性集称为关系模式的超键。一个属性可以为作为一个超键，多个属性组合在一起也可以作为一个超键。超键包含候选键和主键。</p>
+<p>候选键：是最小超键，即没有冗余元素的超键。</p>
+<p>主键：数据库表中对储存数据对象予以唯一和完整标识的数据列或属性的组合。一个数据列只能有一个主键，且主键的取值不能缺失，即不能为空值（Null）。</p>
+<p>外键：在一个表中存在的另一个表的主键称此表的外键。</p>
+<h2 id="什么是视图？以及视图的使用场景有哪些？"><a href="#什么是视图？以及视图的使用场景有哪些？" class="headerlink" title="什么是视图？以及视图的使用场景有哪些？"></a>什么是视图？以及视图的使用场景有哪些？</h2><p>视图是一种虚拟的表，具有和物理表相同的功能。可以对视图进行增，改，查，操作，试图通常是有一个表或者多个表的行或列的子集。对视图的修改不影响基本表。它使得我们获取数据更容易，相比多表查询。</p>
+<p>只暴露部分字段给访问者，所以就建一个虚表，就是视图。<br>查询的数据来源于不同的表，而查询者希望以统一的方式查询，这样也可以建立一个视图，把多个表查询结果联合起来，查询者只需要直接从视图中获取数据，不必考虑数据来源于不同表所带来的差异</p>
+<h2 id="说一说三个范式。"><a href="#说一说三个范式。" class="headerlink" title="说一说三个范式。"></a>说一说三个范式。</h2><p>第一范式（1NF，确保每列保持原子性）：数据库表中的字段都是单一属性的，不可再分。这个单一属性由基本类型构成，包括整型、实数、字符型、逻辑型、日期型等。</p>
+<p>第一范式的合理遵循需要根据系统的实际需求来定。比如某些数据库系统中需要用到“地址”这个属性，本来直接将“地址”属性设计成一个数据库表的字段就行。但是如果系统经常会访问“地址”属性中的“城市”部分，那么就非要将“地址”这个属性重新拆分为省份、城市、详细地址等多个部分进行存储，这样在对地址中某一部分操作的时候将非常方便。这样设计才算满足了数据库的第一范式，如下表所示。<br><img src="/img/2012040114023352.png" alt=""><br>上表所示的用户信息遵循了第一范式的要求，这样在对用户使用城市进行分类的时候就非常方便，也提高了数据库的性能。</p>
+<p>第二范式（2NF，确保表中的每列都和主键相关）：数据库表中不存在非关键字段对任一候选关键字段的部分函数依赖（部分函数依赖指的是存在组合关键字中的某些字段决定非关键字段的情况），也即所有非关键字段都完全依赖于任意一组候选关键字。 </p>
+<p>第二范式在第一范式的基础之上更进一层。第二范式需要确保数据库表中的每一列都和主键相关，而不能只与主键的某一部分相关（主要针对联合主键而言）。也就是说在一个数据库表中，一个表中只能保存一种数据，不可以把多种数据保存在同一张数据库表中。</p>
+<p>比如要设计一个订单信息表，因为订单中可能会有多种商品，所以要将订单编号和商品编号作为数据库表的联合主键，如下表所示。<br><img src="/img/2012040114063976.png" alt=""></p>
+<p>这样就产生一个问题：这个表中是以订单编号和商品编号作为联合主键。这样在该表中商品名称、单位、商品价格等信息不与该表的主键相关，而仅仅是与商品编号相关。所以在这里违反了第二范式的设计原则。</p>
+<p>而如果把这个订单信息表进行拆分，把商品信息分离到另一个表中，把订单项目表也分离到另一个表中，就非常完美了。如下所示。<br><img src="/img/2012040114082156.png" alt=""></p>
+<p>这样设计，在很大程度上减小了数据库的冗余。如果要获取订单的商品信息，使用商品编号到商品信息表中查询即可。</p>
+<p>第三范式（3NF，确保每列都和主键列直接相关，而不是间接相关）：在第二范式的基础上，数据表中如果不存在非关键字段对任一候选关键字段的传递函数依赖则符合第三范式。所谓传递函数依赖，指的是如 果存在”A → B → C”的决定关系，则C传递函数依赖于A。因此，满足第三范式的数据库表应该不存在如下依赖关系： 关键字段 → 非关键字段 x → 非关键字段y</p>
+<p>比如在设计一个订单数据表的时候，可以将客户编号作为一个外键和订单表建立相应的关系。而不可以在订单表中添加关于客户其它信息（比如姓名、所属公司等）的字段。如下面这两个表所示的设计就是一个满足第三范式的数据库表。</p>
+<p><img src="/img/2012040114105477.png" alt=""></p>
+<p>这样在查询订单信息的时候，就可以使用客户编号来引用客户信息表中的记录，也不必在订单信息表中多次输入客户信息的内容，减小了数据冗余。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/29/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/" rel="next" title="清华大学操作系统课程笔记">
+                <i class="fa fa-chevron-left"></i> 清华大学操作系统课程笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/12/%E5%88%A9%E7%94%A8CAS%E6%93%8D%E4%BD%9C%EF%BC%88Compare%20And%20Set%EF%BC%89%E5%AE%9E%E7%8E%B0%E6%97%A0%E9%94%81%E9%98%9F%E5%88%97/" rel="prev" title="利用CAS操作（Compare And Set）实现无锁队列">
+                利用CAS操作（Compare And Set）实现无锁队列 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ACID"><span class="nav-number">2.</span> <span class="nav-text">ACID</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="nav-number">3.</span> <span class="nav-text">原子性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B"><span class="nav-number">3.1.</span> <span class="nav-text">案例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90"><span class="nav-number">3.2.</span> <span class="nav-text">分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">3.3.</span> <span class="nav-text">解决方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">4.</span> <span class="nav-text">一致性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B-1"><span class="nav-number">4.1.</span> <span class="nav-text">案例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95-1"><span class="nav-number">4.2.</span> <span class="nav-text">解决方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9C%BA%E5%88%B6%E5%B1%82%E9%9D%A2"><span class="nav-number">4.2.1.</span> <span class="nav-text">数据库机制层面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E5%B1%82%E9%9D%A2"><span class="nav-number">4.2.2.</span> <span class="nav-text">业务层面</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9A%94%E7%A6%BB%E6%80%A7"><span class="nav-number">5.</span> <span class="nav-text">隔离性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E4%B9%8B%E9%97%B4%E7%9A%84%E7%9B%B8%E4%BA%92%E5%BD%B1%E5%93%8D"><span class="nav-number">5.1.</span> <span class="nav-text">事务之间的相互影响</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%84%8F%E8%AF%BB"><span class="nav-number">5.1.1.</span> <span class="nav-text">脏读</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB"><span class="nav-number">5.1.2.</span> <span class="nav-text">不可重复读</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BB%E8%AF%BB%EF%BC%88%E8%99%9A%E8%AF%BB%EF%BC%89"><span class="nav-number">5.1.3.</span> <span class="nav-text">幻读（虚读）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A2%E5%A4%B1%E6%9B%B4%E6%96%B0"><span class="nav-number">5.1.4.</span> <span class="nav-text">丢失更新</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%90%86%E8%A7%A3SQL-SERVER%E4%B8%AD%E7%9A%84%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-number">5.2.</span> <span class="nav-text">理解SQL SERVER中的隔离级别</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8C%81%E4%B9%85%E6%80%A7"><span class="nav-number">6.</span> <span class="nav-text">持久性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96"><span class="nav-number">8.</span> <span class="nav-text">数据库查询优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%B4%A2%E5%BC%95"><span class="nav-number">8.1.</span> <span class="nav-text">使用索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96-SQL-%E8%AF%AD%E5%8F%A5"><span class="nav-number">8.2.</span> <span class="nav-text">优化 SQL 语句</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AF%B9%E8%B1%A1"><span class="nav-number">8.3.</span> <span class="nav-text">优化数据库对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E4%BC%98%E5%8C%96"><span class="nav-number">8.4.</span> <span class="nav-text">硬件优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-%E8%87%AA%E8%BA%AB%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-number">8.5.</span> <span class="nav-text">MySQL 自身的优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E4%BC%98%E5%8C%96"><span class="nav-number">8.6.</span> <span class="nav-text">应用优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%84%E5%BD%95"><span class="nav-number">9.</span> <span class="nav-text">附录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%EF%BC%9F%E6%9C%89%E5%93%AA%E4%BA%9B%E4%BC%98%E7%BC%BA%E7%82%B9%EF%BC%9F"><span class="nav-number">9.1.</span> <span class="nav-text">什么是存储过程？有哪些优缺点？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%E4%BB%A5%E5%8F%8A%E4%BC%98%E7%BC%BA%E7%82%B9%EF%BC%9F"><span class="nav-number">9.2.</span> <span class="nav-text">索引是什么？有什么作用以及优缺点？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%8B%E5%8A%A1%EF%BC%9F"><span class="nav-number">9.3.</span> <span class="nav-text">什么是事务？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E5%92%8C%E6%82%B2%E8%A7%82%E9%94%81%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">9.4.</span> <span class="nav-text">数据库的乐观锁和悲观锁是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91%E5%99%A8%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="nav-number">9.5.</span> <span class="nav-text">触发器的作用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9F%E5%92%8C%E5%AE%83%E7%9A%84%E4%BC%98%E7%82%B9%E7%BC%BA%E7%82%B9%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">9.6.</span> <span class="nav-text">索引的作用？和它的优点缺点是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%B4%A2%E5%BC%95%E6%9F%A5%E8%AF%A2%E4%B8%80%E5%AE%9A%E8%83%BD%E6%8F%90%E9%AB%98%E6%9F%A5%E8%AF%A2%E7%9A%84%E6%80%A7%E8%83%BD%E5%90%97%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88"><span class="nav-number">9.7.</span> <span class="nav-text">使用索引查询一定能提高查询的性能吗？为什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E8%AF%B4%E4%B8%80%E8%AF%B4drop%E3%80%81delete%E4%B8%8Etruncate%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">9.8.</span> <span class="nav-text">简单说一说drop、delete与truncate的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#drop%E3%80%81delete%E4%B8%8Etruncate%E5%88%86%E5%88%AB%E5%9C%A8%E4%BB%80%E4%B9%88%E5%9C%BA%E6%99%AF%E4%B9%8B%E4%B8%8B%E4%BD%BF%E7%94%A8%EF%BC%9F"><span class="nav-number">9.9.</span> <span class="nav-text">drop、delete与truncate分别在什么场景之下使用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B6%85%E9%94%AE%E3%80%81%E5%80%99%E9%80%89%E9%94%AE%E3%80%81%E4%B8%BB%E9%94%AE%E3%80%81%E5%A4%96%E9%94%AE%E5%88%86%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">9.10.</span> <span class="nav-text">超键、候选键、主键、外键分别是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%A7%86%E5%9B%BE%EF%BC%9F%E4%BB%A5%E5%8F%8A%E8%A7%86%E5%9B%BE%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">9.11.</span> <span class="nav-text">什么是视图？以及视图的使用场景有哪些？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E4%B8%80%E8%AF%B4%E4%B8%89%E4%B8%AA%E8%8C%83%E5%BC%8F%E3%80%82"><span class="nav-number">9.12.</span> <span class="nav-text">说一说三个范式。</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

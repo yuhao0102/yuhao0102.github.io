@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zn-ch">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="分布式系统," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="什么是一致性多个节点之间不能产生矛盾。 CAP对一个分布式系统，不能同时满足以下三点：  一致性 可用性 分区容错性  要在一致性和可用性之间进行取舍。 一致性模型弱一致性：最终一致性，向数据库中写数据，如果立即读取的话不保证能读取到，但是保证你最终读取到。例如DNS服务器，Cassandra的通信协议Gossip。 强一致性：分布式系统希望数据不能存在单个节点上，分布式系统对fault tole">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一致性算法（Paxos、Raft、ZAB）">
+<meta property="og:url" content="http://yoursite.com/2020/03/28/%E4%B8%80%E8%87%B4%E6%80%A7%E7%AE%97%E6%B3%95Paxos_Raft_ZAB/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="什么是一致性多个节点之间不能产生矛盾。 CAP对一个分布式系统，不能同时满足以下三点：  一致性 可用性 分区容错性  要在一致性和可用性之间进行取舍。 一致性模型弱一致性：最终一致性，向数据库中写数据，如果立即读取的话不保证能读取到，但是保证你最终读取到。例如DNS服务器，Cassandra的通信协议Gossip。 强一致性：分布式系统希望数据不能存在单个节点上，分布式系统对fault tole">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/img/20200328210700.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200328211800.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200328212100.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200328234500.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200329105000.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-7f64a2df8f8817932ed047d35878bca9_1440w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-d3cc1cb525ac72dc59ed34148cb3199c_1440w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-0471619d1b78ba6d57326d97825d9495_1440w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-7cdaa12c6f34b1e92ef86b99c3bdcf32_1440w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-ee29a89e4eb63468e142bb6103dbe4de_1440w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-d36c587901391cae50788061f568d24f_1440w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-12a5ebab63781f9ec49e14e331775537_1440w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-6b85a141cd131aa129a4e70d060f37be_1440w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-9b53bd65fa9e11eeefd5331833d41c78_1440w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-05b80ce9095004381b5846c6179f932e_1440w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-8713b773762e9644c38defa5086afacd_1440w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-4abb923772ec1be269843c977b5af3c8_1440w.jpg">
+<meta property="og:image" content="http://yoursite.com/img/143039-497648278be3413b.webp">
+<meta property="og:image" content="http://yoursite.com/img/143039-2c231aafff2be32a.webp">
+<meta property="og:image" content="http://yoursite.com/img/143039-592b954d8ccd13a2.webp">
+<meta property="og:image" content="http://yoursite.com/img/143039-8526553d49075784.webp">
+<meta property="article:published_time" content="2020-03-28T10:50:00.000Z">
+<meta property="article:modified_time" content="2020-03-29T02:32:42.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="分布式系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/20200328210700.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/03/28/一致性算法Paxos_Raft_ZAB/"/>
+
+
+
+
+
+  <title>一致性算法（Paxos、Raft、ZAB） | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zn-ch">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hao Yu's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">The program monkey was eaten by the siege lion.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/28/%E4%B8%80%E8%87%B4%E6%80%A7%E7%AE%97%E6%B3%95Paxos_Raft_ZAB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">一致性算法（Paxos、Raft、ZAB）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-03-28T18:50:00+08:00">
+                2020-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="什么是一致性"><a href="#什么是一致性" class="headerlink" title="什么是一致性"></a>什么是一致性</h1><p>多个节点之间不能产生矛盾。</p>
+<h2 id="CAP"><a href="#CAP" class="headerlink" title="CAP"></a>CAP</h2><p>对一个分布式系统，不能同时满足以下三点：</p>
+<ul>
+<li>一致性</li>
+<li>可用性</li>
+<li>分区容错性</li>
+</ul>
+<p>要在一致性和可用性之间进行取舍。</p>
+<h2 id="一致性模型"><a href="#一致性模型" class="headerlink" title="一致性模型"></a>一致性模型</h2><p>弱一致性：最终一致性，向数据库中写数据，如果立即读取的话不保证能读取到，但是保证你最终读取到。例如DNS服务器，Cassandra的通信协议Gossip。</p>
+<p>强一致性：分布式系统希望数据不能存在单个节点上，分布式系统对fault tolerance主要解决方案是state machine replication的共识算法。paxos其实是一个共识算法，系统的最终一致性不仅需要达成共识，还会取决于client。</p>
+<h1 id="强一致性算法"><a href="#强一致性算法" class="headerlink" title="强一致性算法"></a>强一致性算法</h1><p>主从同步复制：</p>
+<ul>
+<li>Master接受写请求</li>
+<li>Master复制日志到slave</li>
+<li>Master等到，直至<strong>所有</strong>从库返回，所有从库返回之前系统不可用</li>
+</ul>
+<p>强一致性算法的主要思想是<strong>多数派</strong>，每次写都保证写入大于N/2个节点，每次读保证从大于N/2个节点中读。但是在并发的时候无法保证系统的正确性，顺序非常重要，如下图的例子。<br><img src="/img/20200328210700.jpg" alt=""></p>
+<h2 id="Paxos"><a href="#Paxos" class="headerlink" title="Paxos"></a>Paxos</h2><p>Basic Paxos算法中的角色：</p>
+<ul>
+<li>Client：系统外部角色，请求发起者，像民众。</li>
+<li>Proposer：接受Clinet请求，向集群发出提议，并在冲突发生时，起到冲突调节的作用。像议员提出提案。</li>
+<li>Acceptor：提议投票和接收者，只有在形成法定人数（Quorum，多数派）的时候，提案才会被接受，像国会。</li>
+<li>Learner：提议接收者，备份，对集群一致性没什么影响。</li>
+</ul>
+<p>Basic Paxos的阶段：</p>
+<ul>
+<li>prepare：一个client通过proposer提出一个提案，编号为N，此N大于这个proposer之前提出的提案编号，请求接受这个提案。</li>
+<li>promise：如果N大于此acceptor之前接受的任何提案编号则接受，否则拒绝。</li>
+<li>accept：如果达到了多数派，proposer会发出accept请求，此请求包含提案编号N以及提案内容。</li>
+<li>accepted：如果此acceptor在此期间没有收到任何编号大于N的提案，则接受此提案内容，否则忽略。<br><img src="/img/20200328211800.jpg" alt=""></li>
+</ul>
+<p>假如proposer失败：<br><img src="/img/20200328212100.jpg" alt=""><br>client发起请求，但是接受请求的proposer失败了，proposer准备1号提案，acceptor接受，但是让proposer接受时宕机，另外一个proposer启动起来，接替上一个proposer继续向acceptor发送请求，最终返回到client。即使第一次没有完成的话，也有接续的proposer继续完成。</p>
+<p>活锁：两个议员同时提出议案，先讨论提案号大的，但是提案号小的那个会重新更新提案号再提交，这样一直争论，其实都是两个相同的提案，只是因为同时提交了。用一个random的时间，把两个矛盾的提案隔开，避免冲突的发生。</p>
+<p>basic paxos难以实现，角色很多。使用multi paxos。multi提出了leader的概念，所有的提案都要经过这个leader，就是唯一一个proposer，不管client请求来不来，proposer之间先竞选，选出一个leader，只能这个leader提出提案，其他的proposer提出的都不予理会。在一个server的任期之内，任何请求只需要一轮请求即可。<br><img src="/img/20200328234500.jpg" alt=""></p>
+<h2 id="资料"><a href="#资料" class="headerlink" title="资料"></a>资料</h2><p>Paxos将系统中的角色分为提议者 (Proposer)，决策者 (Acceptor)，和最终决策学习者 (Learner):</p>
+<ul>
+<li>Proposer: 提出提案 (Proposal)。Proposal信息包括提案编号 (Proposal ID) 和提议的值 (Value)。</li>
+<li>Acceptor：参与决策，回应Proposers的提案。收到Proposal后可以接受提案，若Proposal获得多数Acceptors的接受，则称该Proposal被批准。</li>
+<li>Learner：不参与决策，从Proposers/Acceptors学习最新达成一致的提案（Value）。</li>
+<li>在多副本状态机中，每个副本同时具有Proposer、Acceptor、Learner三种角色。</li>
+</ul>
+<h3 id="Paxos算法中的角色"><a href="#Paxos算法中的角色" class="headerlink" title="Paxos算法中的角色"></a>Paxos算法中的角色</h3><p>Paxos算法通过一个决议分为两个阶段（Learn阶段之前决议已经形成）：</p>
+<ul>
+<li>第一阶段：Prepare阶段。Proposer向Acceptors发出Prepare请求，Acceptors针对收到的Prepare请求进行Promise承诺。</li>
+<li>第二阶段：Accept阶段。Proposer收到多数Acceptors承诺的Promise后，向Acceptors发出Propose请求，Acceptors针对收到的Propose请求进行Accept处理。</li>
+<li>第三阶段：Learn阶段。Proposer在收到多数Acceptors的Accept之后，标志着本次Accept成功，决议形成，将形成的决议发送给所有Learners。</li>
+</ul>
+<h3 id="Paxos算法流程"><a href="#Paxos算法流程" class="headerlink" title="Paxos算法流程"></a>Paxos算法流程</h3><p>Paxos算法流程中的每条消息描述如下：</p>
+<ul>
+<li>Prepare: Proposer生成全局唯一且递增的Proposal ID (可使用时间戳加Server ID)，向所有Acceptors发送Prepare请求，这里无需携带提案内容，只携带Proposal ID即可。</li>
+<li>Promise: Acceptors收到Prepare请求后，做出“两个承诺，一个应答”。</li>
+</ul>
+<h3 id="两个承诺："><a href="#两个承诺：" class="headerlink" title="两个承诺："></a>两个承诺：</h3><ol>
+<li>不再接受Proposal ID小于等于（注意：这里是&lt;= ）当前请求的Prepare请求。</li>
+<li>不再接受Proposal ID小于（注意：这里是&lt; ）当前请求的Propose请求。</li>
+</ol>
+<h3 id="一个应答："><a href="#一个应答：" class="headerlink" title="一个应答："></a>一个应答：</h3><p>不违背以前作出的承诺下，回复已经Accept过的提案中Proposal ID最大的那个提案的Value和Proposal ID，没有则返回空值。</p>
+<p>Propose: Proposer 收到多数Acceptors的Promise应答后，从应答中选择Proposal ID最大的提案的Value，作为本次要发起的提案。如果所有应答的提案Value均为空值，则可以自己随意决定提案Value。然后携带当前Proposal ID，向所有Acceptors发送Propose请求。<br>Accept: Acceptor收到Propose请求后，在不违背自己之前作出的承诺下，接受并持久化当前Proposal ID和提案Value。<br>Learn: Proposer收到多数Acceptors的Accept后，决议形成，将形成的决议发送给所有Learners。</p>
+<h3 id="Paxos算法伪代码描述如下："><a href="#Paxos算法伪代码描述如下：" class="headerlink" title="Paxos算法伪代码描述如下："></a>Paxos算法伪代码描述如下：</h3><ul>
+<li>获取一个Proposal ID n，为了保证Proposal ID唯一，可采用时间戳+Server ID生成；</li>
+<li>Proposer向所有Acceptors广播Prepare(n)请求；</li>
+<li>Acceptor比较n和minProposal，如果n&gt;minProposal，minProposal=n，并且将 acceptedProposal 和 acceptedValue 返回；</li>
+<li>Proposer接收到过半数回复后，如果发现有acceptedValue返回，将所有回复中acceptedProposal最大的acceptedValue作为本次提案的value，否则可以任意决定本次提案的value；</li>
+<li>到这里可以进入第二阶段，广播Accept (n,value) 到所有节点；</li>
+<li>Acceptor比较n和minProposal，如果n&gt;=minProposal，则acceptedProposal=minProposal=n，acceptedValue=value，本地持久化后，返回；否则，返回minProposal。</li>
+<li>提议者接收到过半数请求后，如果发现有返回值result &gt;n，表示有更新的提议，跳转到1；否则value达成一致。</li>
+</ul>
+<p>原始的Paxos算法（Basic Paxos）只能对一个值形成决议，决议的形成至少需要两次网络来回，在高并发情况下可能需要更多的网络来回，极端情况下甚至可能形成活锁。如果想连续确定多个值，Basic Paxos搞不定了。因此Basic Paxos几乎只是用来做理论研究，并不直接应用在实际工程中。</p>
+<p>实际应用中几乎都需要连续确定多个值，而且希望能有更高的效率。Multi-Paxos正是为解决此问题而提出。Multi-Paxos基于Basic Paxos做了两点改进：</p>
+<p>针对每一个要确定的值，运行一次Paxos算法实例（Instance），形成决议。每一个Paxos实例使用唯一的Instance ID标识。<br>在所有Proposers中选举一个Leader，由Leader唯一地提交Proposal给Acceptors进行表决。这样没有Proposer竞争，解决了活锁问题。在系统中仅有一个Leader进行Value提交的情况下，Prepare阶段就可以跳过，从而将两阶段变为一阶段，提高效率。</p>
+<p>Multi-Paxos首先需要选举Leader，Leader的确定也是一次决议的形成，所以可执行一次Basic Paxos实例来选举出一个Leader。选出Leader之后只能由Leader提交Proposal，在Leader宕机之后服务临时不可用，需要重新选举Leader继续服务。在系统中仅有一个Leader进行Proposal提交的情况下，Prepare阶段可以跳过。</p>
+<p>Multi-Paxos通过改变Prepare阶段的作用范围至后面Leader提交的所有实例，从而使得Leader的连续提交只需要执行一次Prepare阶段，后续只需要执行Accept阶段，将两阶段变为一阶段，提高了效率。为了区分连续提交的多个实例，每个实例使用一个Instance ID标识，Instance ID由Leader本地递增生成即可。</p>
+<p>Multi-Paxos允许有多个自认为是Leader的节点并发提交Proposal而不影响其安全性，这样的场景即退化为Basic Paxos。</p>
+<h2 id="Raft"><a href="#Raft" class="headerlink" title="Raft"></a>Raft</h2><p>把达到共识、日志复制这个问题划分成3个子问题，怎么选leader，怎么把log同步到其他节点，怎么保证集群的共识是一致的。重定义了角色，把server分成三个角色，leader，follower(从其中选择leader)，candidate(follower竞选leader时的中间角色)。</p>
+<p>多个节点中，follower只能从leader处获得命令，所有节点都是从follower状态开始的，有一个follower想要成为leader，则进入candidate状态，开始投票，同意了则称为leader。所有的请求都会经过leader，由leader向这些节点公布。leader自己先写入，再告诉其他的节点写入，这个过程叫log replication。Raft用timeout控制选举，如果经过一段时间，节点还没有收到leader的心跳信息，这时认为集群中是没有leader的，开始竞选。如果一个节点成为candidate，则另外节点的时钟被刷新，就不会参与竞选，除非经过一段时间后没有收到leader节点的心跳。两个节点同时成为candidate，并且选票相等，然后这两个节点会随机等待一个timeout，如果时间短的timeout会成为leader。所有的写请求都会经过leader，leader会把log发送给所有节点。</p>
+<h2 id="资料-1"><a href="#资料-1" class="headerlink" title="资料"></a>资料</h2><p>不同于Paxos算法直接从分布式一致性问题出发推导出来，Raft算法则是从多副本状态机的角度提出，用于管理多副本状态机的日志复制。Raft实现了和Paxos相同的功能，它将一致性分解为多个子问题：Leader选举（Leader election）、日志同步（Log replication）、安全性（Safety）、日志压缩（Log compaction）、成员变更（Membership change）等。同时，Raft算法使用了更强的假设来减少了需要考虑的状态，使之变的易于理解和实现。</p>
+<p>Raft将系统中的角色分为领导者（Leader）、跟从者（Follower）和候选人（Candidate）：</p>
+<p>Leader：接受客户端请求，并向Follower同步请求日志，当日志同步到大多数节点上后告诉Follower提交日志。<br>Follower：接受并持久化Leader同步的日志，在Leader告之日志可以提交之后，提交日志。<br>Candidate：Leader选举过程中的临时角色。<br><img src="/img/20200329105000.jpg" alt=""></p>
+<p>Raft要求系统在任意时刻最多只有一个Leader，正常工作期间只有Leader和Followers。</p>
+<p>Raft算法角色状态转换如下：<br><img src="/img/v2-7f64a2df8f8817932ed047d35878bca9_1440w.jpg" alt=""></p>
+<p>Follower只响应其他服务器的请求。如果Follower超时没有收到Leader的消息，它会成为一个Candidate并且开始一次Leader选举。收到大多数服务器投票的Candidate会成为新的Leader。Leader在宕机之前会一直保持Leader的状态。<br><img src="/img/v2-d3cc1cb525ac72dc59ed34148cb3199c_1440w.jpg" alt=""></p>
+<p>Raft算法将时间分为一个个的任期（term），每一个term的开始都是Leader选举。在成功选举Leader之后，Leader会在整个term内管理整个集群。如果Leader选举失败，该term就会因为没有Leader而结束。</p>
+<h3 id="Leader选举"><a href="#Leader选举" class="headerlink" title="Leader选举"></a>Leader选举</h3><p>Raft 使用心跳（heartbeat）触发Leader选举。当服务器启动时，初始化为Follower。Leader向所有Followers周期性发送heartbeat。如果Follower在选举超时时间内没有收到Leader的heartbeat，就会等待一段随机的时间后发起一次Leader选举。</p>
+<p>Follower将其当前term加一然后转换为Candidate。它首先给自己投票并且给集群中的其他服务器发送 RequestVote RPC （RPC细节参见八、Raft算法总结）。结果有以下三种情况：</p>
+<p>赢得了多数的选票，成功选举为Leader；</p>
+<ul>
+<li>收到了Leader的消息，表示有其它服务器已经抢先当选了Leader；</li>
+<li>没有服务器赢得多数的选票，Leader选举失败，等待选举时间超时后发起下一次选举。</li>
+</ul>
+<p><img src="/img/v2-0471619d1b78ba6d57326d97825d9495_1440w.jpg" alt=""></p>
+<p>选举出Leader后，Leader通过定期向所有Followers发送心跳信息维持其统治。若Follower一段时间未收到Leader的心跳则认为Leader可能已经挂了，再次发起Leader选举过程。</p>
+<p>Raft保证选举出的Leader上一定具有最新的已提交的日志，这一点将在四、安全性中说明。</p>
+<h3 id="日志同步"><a href="#日志同步" class="headerlink" title="日志同步"></a>日志同步</h3><p>Leader选出后，就开始接收客户端的请求。Leader把请求作为日志条目（Log entries）加入到它的日志中，然后并行的向其他服务器发起 AppendEntries RPC （RPC细节参见八、Raft算法总结）复制日志条目。当这条日志被复制到大多数服务器上，Leader将这条日志应用到它的状态机并向客户端返回执行结果。<br><img src="/img/v2-7cdaa12c6f34b1e92ef86b99c3bdcf32_1440w.jpg" alt=""></p>
+<p>某些Followers可能没有成功的复制日志，Leader会无限的重试 AppendEntries RPC直到所有的Followers最终存储了所有的日志条目。</p>
+<p>日志由有序编号（log index）的日志条目组成。每个日志条目包含它被创建时的任期号（term），和用于状态机执行的命令。如果一个日志条目被复制到大多数服务器上，就被认为可以提交（commit）了。<br><img src="/img/v2-ee29a89e4eb63468e142bb6103dbe4de_1440w.jpg" alt=""></p>
+<p>Raft日志同步保证如下两点：</p>
+<p>如果不同日志中的两个条目有着相同的索引和任期号，则它们所存储的命令是相同的。<br>如果不同日志中的两个条目有着相同的索引和任期号，则它们之前的所有条目都是完全一样的。<br>第一条特性源于Leader在一个term内在给定的一个log index最多创建一条日志条目，同时该条目在日志中的位置也从来不会改变。</p>
+<p>第二条特性源于 AppendEntries 的一个简单的一致性检查。当发送一个 AppendEntries RPC 时，Leader会把新日志条目紧接着之前的条目的log index和term都包含在里面。如果Follower没有在它的日志中找到log index和term都相同的日志，它就会拒绝新的日志条目。</p>
+<p>一般情况下，Leader和Followers的日志保持一致，因此 AppendEntries 一致性检查通常不会失败。然而，Leader崩溃可能会导致日志不一致：旧的Leader可能没有完全复制完日志中的所有条目。<br><img src="/img/v2-d36c587901391cae50788061f568d24f_1440w.jpg" alt=""></p>
+<p>上图阐述了一些Followers可能和新的Leader日志不同的情况。一个Follower可能会丢失掉Leader上的一些条目，也有可能包含一些Leader没有的条目，也有可能两者都会发生。丢失的或者多出来的条目可能会持续多个任期。</p>
+<p>Leader通过强制Followers复制它的日志来处理日志的不一致，Followers上的不一致的日志会被Leader的日志覆盖。</p>
+<p>Leader为了使Followers的日志同自己的一致，Leader需要找到Followers同它的日志一致的地方，然后覆盖Followers在该位置之后的条目。</p>
+<p>Leader会从后往前试，每次AppendEntries失败后尝试前一个日志条目，直到成功找到每个Follower的日志一致位点，然后向后逐条覆盖Followers在该位置之后的条目。</p>
+<h3 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h3><p>Raft增加了如下两条限制以保证安全性：</p>
+<p>拥有最新的已提交的log entry的Follower才有资格成为Leader。<br>这个保证是在RequestVote RPC中做的，Candidate在发送RequestVote RPC时，要带上自己的最后一条日志的term和log index，其他节点收到消息时，如果发现自己的日志比请求中携带的更新，则拒绝投票。日志比较的原则是，如果本地的最后一条log entry的term更大，则term大的更新，如果term一样大，则log index更大的更新。</p>
+<p>Leader只能推进commit index来提交当前term的已经复制到大多数服务器上的日志，旧term日志的提交要等到提交当前term的日志来间接提交（log index 小于 commit index的日志被间接提交）。<br>之所以要这样，是因为可能会出现已提交的日志又被覆盖的情况：<br><img src="/img/v2-12a5ebab63781f9ec49e14e331775537_1440w.jpg" alt=""></p>
+<p>在阶段a，term为2，S1是Leader，且S1写入日志（term, index）为(2, 2)，并且日志被同步写入了S2；</p>
+<p>在阶段b，S1离线，触发一次新的选主，此时S5被选为新的Leader，此时系统term为3，且写入了日志（term, index）为（3， 2）;</p>
+<p>S5尚未将日志推送到Followers就离线了，进而触发了一次新的选主，而之前离线的S1经过重新上线后被选中变成Leader，此时系统term为4，此时S1会将自己的日志同步到Followers，按照上图就是将日志（2， 2）同步到了S3，而此时由于该日志已经被同步到了多数节点（S1, S2, S3），因此，此时日志（2，2）可以被提交了。；</p>
+<p>在阶段d，S1又下线了，触发一次选主，而S5有可能被选为新的Leader（这是因为S5可以满足作为主的一切条件：1. term = 5 &gt; 4，2. 最新的日志为（3，2），比大多数节点（如S2/S3/S4的日志都新），然后S5会将自己的日志更新到Followers，于是S2、S3中已经被提交的日志（2，2）被截断了。</p>
+<p>增加上述限制后，即使日志（2，2）已经被大多数节点（S1、S2、S3）确认了，但是它不能被提交，因为它是来自之前term（2）的日志，直到S1在当前term（4）产生的日志（4， 4）被大多数Followers确认，S1方可提交日志（4，4）这条日志，当然，根据Raft定义，（4，4）之前的所有日志也会被提交。此时即使S1再下线，重新选主时S5不可能成为Leader，因为它没有包含大多数节点已经拥有的日志（4，4）。</p>
+<h3 id="日志压缩"><a href="#日志压缩" class="headerlink" title="日志压缩"></a>日志压缩</h3><p>在实际的系统中，不能让日志无限增长，否则系统重启时需要花很长的时间进行回放，从而影响可用性。Raft采用对整个系统进行snapshot来解决，snapshot之前的日志都可以丢弃。</p>
+<p>每个副本独立的对自己的系统状态进行snapshot，并且只能对已经提交的日志记录进行snapshot。</p>
+<p>Snapshot中包含以下内容：</p>
+<p>日志元数据。最后一条已提交的 log entry的 log index和term。这两个值在snapshot之后的第一条log entry的AppendEntries RPC的完整性检查的时候会被用上。<br>系统当前状态。<br>当Leader要发给某个日志落后太多的Follower的log entry被丢弃，Leader会将snapshot发给Follower。或者当新加进一台机器时，也会发送snapshot给它。发送snapshot使用InstalledSnapshot RPC（RPC细节参见八、Raft算法总结）。</p>
+<p>做snapshot既不要做的太频繁，否则消耗磁盘带宽， 也不要做的太不频繁，否则一旦节点重启需要回放大量日志，影响可用性。推荐当日志达到某个固定的大小做一次snapshot。</p>
+<p>做一次snapshot可能耗时过长，会影响正常日志同步。可以通过使用copy-on-write技术避免snapshot过程影响正常日志同步。</p>
+<h3 id="成员变更"><a href="#成员变更" class="headerlink" title="成员变更"></a>成员变更</h3><p>成员变更是在集群运行过程中副本发生变化，如增加/减少副本数、节点替换等。</p>
+<p>成员变更也是一个分布式一致性问题，既所有服务器对新成员达成一致。但是成员变更又有其特殊性，因为在成员变更的一致性达成的过程中，参与投票的进程会发生变化。</p>
+<p>如果将成员变更当成一般的一致性问题，直接向Leader发送成员变更请求，Leader复制成员变更日志，达成多数派之后提交，各服务器提交成员变更日志后从旧成员配置（Cold）切换到新成员配置（Cnew）。</p>
+<p>因为各个服务器提交成员变更日志的时刻可能不同，造成各个服务器从旧成员配置（Cold）切换到新成员配置（Cnew）的时刻不同。</p>
+<p>成员变更不能影响服务的可用性，但是成员变更过程的某一时刻，可能出现在Cold和Cnew中同时存在两个不相交的多数派，进而可能选出两个Leader，形成不同的决议，破坏安全性。</p>
+<p>由于成员变更的这一特殊性，成员变更不能当成一般的一致性问题去解决。</p>
+<p>为了解决这一问题，Raft提出了两阶段的成员变更方法。集群先从旧成员配置Cold切换到一个过渡成员配置，称为共同一致（joint consensus），共同一致是旧成员配置Cold和新成员配置Cnew的组合Cold U Cnew，一旦共同一致Cold U Cnew被提交，系统再切换到新成员配置Cnew。<br><img src="/img/v2-6b85a141cd131aa129a4e70d060f37be_1440w.jpg" alt=""></p>
+<p>Raft两阶段成员变更过程如下：</p>
+<ul>
+<li>Leader收到成员变更请求从Cold切成Cnew；</li>
+<li>Leader在本地生成一个新的log entry，其内容是Cold∪Cnew，代表当前时刻新旧成员配置共存，写入本地日志，同时将该log entry复制至Cold∪Cnew中的所有副本。在此之后新的日志同步需要保证得到Cold和Cnew两个多数派的确认；</li>
+<li>Follower收到Cold∪Cnew的log entry后更新本地日志，并且此时就以该配置作为自己的成员配置；</li>
+<li>如果Cold和Cnew中的两个多数派确认了Cold U Cnew这条日志，Leader就提交这条log entry；</li>
+<li>接下来Leader生成一条新的log entry，其内容是新成员配置Cnew，同样将该log entry写入本地日志，同时复制到Follower上；</li>
+<li>Follower收到新成员配置Cnew后，将其写入日志，并且从此刻起，就以该配置作为自己的成员配置，并且如果发现自己不在Cnew这个成员配置中会自动退出；</li>
+<li>Leader收到Cnew的多数派确认后，表示成员变更成功，后续的日志只要得到Cnew多数派确认即可。Leader给客户端回复成员变更执行成功。</li>
+</ul>
+<h3 id="异常分析："><a href="#异常分析：" class="headerlink" title="异常分析："></a>异常分析：</h3><ul>
+<li>如果Leader的Cold U Cnew尚未推送到Follower，Leader就挂了，此后选出的新Leader并不包含这条日志，此时新Leader依然使用Cold作为自己的成员配置。</li>
+<li>如果Leader的Cold U Cnew推送到大部分的Follower后就挂了，此后选出的新Leader可能是Cold也可能是Cnew中的某个Follower。</li>
+<li>如果Leader在推送Cnew配置的过程中挂了，那么同样，新选出来的Leader可能是Cold也可能是Cnew中的某一个，此后客户端继续执行一次改变配置的命令即可。</li>
+<li>如果大多数的Follower确认了Cnew这个消息后，那么接下来即使Leader挂了，新选出来的Leader肯定位于Cnew中。</li>
+</ul>
+<p>两阶段成员变更比较通用且容易理解，但是实现比较复杂，同时两阶段的变更协议也会在一定程度上影响变更过程中的服务可用性，因此我们期望增强成员变更的限制，以简化操作流程。</p>
+<p>两阶段成员变更，之所以分为两个阶段，是因为对Cold与Cnew的关系没有做任何假设，为了避免Cold和Cnew各自形成不相交的多数派选出两个Leader，才引入了两阶段方案。</p>
+<p>如果增强成员变更的限制，假设Cold与Cnew任意的多数派交集不为空，这两个成员配置就无法各自形成多数派，那么成员变更方案就可能简化为一阶段。</p>
+<p>那么如何限制Cold与Cnew，使之任意的多数派交集不为空呢？方法就是每次成员变更只允许增加或删除一个成员。</p>
+<p>可从数学上严格证明，只要每次只允许增加或删除一个成员，Cold与Cnew不可能形成两个不相交的多数派。</p>
+<p>一阶段成员变更：</p>
+<ul>
+<li>成员变更限制每次只能增加或删除一个成员（如果要变更多个成员，连续变更多次）。</li>
+<li>成员变更由Leader发起，Cnew得到多数派确认后，返回客户端成员变更成功。</li>
+<li>一次成员变更成功前不允许开始下一次成员变更，因此新任Leader在开始提供服务前要将自己本地保存的最新成员配置重新投票形成多数派确认。</li>
+<li>Leader只要开始同步新成员配置，即可开始使用新的成员配置进行日志同步。</li>
+</ul>
+<h3 id="Raft算法总结"><a href="#Raft算法总结" class="headerlink" title="Raft算法总结"></a>Raft算法总结</h3><p>Raft算法各节点维护的状态：<br><img src="/img/v2-9b53bd65fa9e11eeefd5331833d41c78_1440w.jpg" alt=""></p>
+<p>Leader选举：<br><img src="/img/v2-05b80ce9095004381b5846c6179f932e_1440w.jpg" alt=""></p>
+<p>日志同步：<br><img src="/img/v2-8713b773762e9644c38defa5086afacd_1440w.jpg" alt=""></p>
+<p>Raft状态机：<br><img src="/img/v2-4abb923772ec1be269843c977b5af3c8_1440w.jpg" alt=""></p>
+<h2 id="ZAB"><a href="#ZAB" class="headerlink" title="ZAB"></a>ZAB</h2><p>ZAB(ZooKeeper Atomic Broadcast)则是为ZooKeeper设计的一种支持崩溃恢复的原子广播协议。</p>
+<p>在看ZAB之前我们先复习一下两阶段提交协议<br><img src="/img/143039-497648278be3413b.webp" alt=""></p>
+<p>两阶段提交顾名思义主要分为两个阶段</p>
+<ul>
+<li>第一阶段（请求阶段）:协调者首先会发送某个事务的执行请求给其它所有的参与者，当参与者收到perpare请求时会检查自身并告诉协调者自己的决策是同意还是取消</li>
+<li>第二阶段（提交阶段）:协调者将根据第一阶段的投票结果发送提交或回滚请求（一般是所有参与者都返回同意就发送提交请求，否则发送回滚请求）。</li>
+</ul>
+<p>当然两阶段提交协议并不完美，而且存在数据不一致、同步阻塞、单点等问题，这里不在本文的讨论范围</p>
+<h3 id="协议介绍"><a href="#协议介绍" class="headerlink" title="协议介绍"></a>协议介绍</h3><p>好了，复习完两阶段提交协议，接下来我们继续来分析ZAB协议。</p>
+<p>很多人会误以为ZAB协议是Paxos的一种特殊实现，事实上他们是两种不同的协议。ZAB和Paxos最大的不同是，ZAB主要是为分布式主备系统设计的，而Paxos的实现是一致性状态机(state machine replication)尽管ZAB不是Paxos的实现，但是ZAB也参考了一些Paxos的一些设计思想，比如：</p>
+<ul>
+<li>leader向follows提出提案(proposal)</li>
+<li>leader 需要在达到法定数量(半数以上)的follows确认之后才会进行commit</li>
+<li>每一个proposal都有一个纪元(epoch)号，类似于Paxos中的选票(ballot)</li>
+</ul>
+<h3 id="ZAB特性"><a href="#ZAB特性" class="headerlink" title="ZAB特性"></a>ZAB特性</h3><h4 id="一致性保证"><a href="#一致性保证" class="headerlink" title="一致性保证"></a>一致性保证</h4><ul>
+<li>可靠提交(Reliable delivery) -如果一个事务 A 被一个server提交(committed)了，那么它最终一定会被所有的server提交</li>
+<li>全局有序(Total order) - 假设有A、B两个事务，有一台server先执行A再执行B，那么可以保证所有server上A始终都被在B之前执行</li>
+<li>因果有序(Causal order) - 如果发送者在事务A提交之后再发送B,那么B必将在A之前执行</li>
+</ul>
+<p>只要大多数（法定数量）节点启动，系统就行正常运行。当节点下线后重启，它必须保证能恢复到当前正在执行的事务。</p>
+<h3 id="ZAB的具体实现"><a href="#ZAB的具体实现" class="headerlink" title="ZAB的具体实现"></a>ZAB的具体实现</h3><p>ZooKeeper由client、server两部分构成</p>
+<ul>
+<li>client可以在任何一个server节点上进行读操作</li>
+<li>client可以在任何一个server节点上发起写请求，非leader节点会把此次写请求转发到leader节点上。由leader节点执行</li>
+<li>ZooKeeper使用改编的两阶段提交协议来保证server节点的事务一致性</li>
+</ul>
+<h4 id="ZXID"><a href="#ZXID" class="headerlink" title="ZXID"></a>ZXID</h4><p><img src="/img/143039-2c231aafff2be32a.webp" alt=""><br>ZooKeeper会为每一个事务生成一个唯一且递增长度为64位的ZXID,ZXID由两部分组成：低32位表示计数器(counter)和高32位的纪元号(epoch)。epoch为当前leader在成为leader的时候生成的，且保证会比前一个leader的epoch大</p>
+<p>实际上当新的leader选举成功后，会拿到当前集群中最大的一个ZXID，并去除这个ZXID的epoch,并将此epoch进行加1操作，作为自己的epoch。</p>
+<h4 id="历史队列-history-queue"><a href="#历史队列-history-queue" class="headerlink" title="历史队列(history queue)"></a>历史队列(history queue)</h4><p>每一个follower节点都会有一个先进先出（FIFO)的队列用来存放收到的事务请求，保证执行事务的顺序</p>
+<p>可靠提交由ZAB的事务一致性协议保证<br>全局有序由TCP协议保证<br>因果有序由follower的历史队列(history queue)保证</p>
+<h3 id="ZAB工作模式"><a href="#ZAB工作模式" class="headerlink" title="ZAB工作模式"></a>ZAB工作模式</h3><ul>
+<li>广播(broadcast)模式</li>
+<li>恢复(recovery)模式</li>
+</ul>
+<h4 id="广播-broadcast-模式"><a href="#广播-broadcast-模式" class="headerlink" title="广播(broadcast)模式"></a>广播(broadcast)模式</h4><p><img src="/img/143039-592b954d8ccd13a2.webp" alt=""></p>
+<ul>
+<li>leader从客户端收到一个写请求</li>
+<li>leader生成一个新的事务并为这个事务生成一个唯一的ZXID，</li>
+<li>leader将这个事务发送给所有的follows节点</li>
+<li>follower节点将收到的事务请求加入到历史队列(history queue)中,并发送ack给ack给leader</li>
+<li>当leader收到大多数follower（超过法定数量）的ack消息，leader会发送commit请求</li>
+<li>当follower收到commit请求时，会判断该事务的ZXID是不是比历史队列中的任何事务的ZXID都小，如果是则提交，如果不是则等待比它更小的事务的commit</li>
+</ul>
+<p><img src="/img/143039-8526553d49075784.webp" alt=""></p>
+<h4 id="恢复模式"><a href="#恢复模式" class="headerlink" title="恢复模式"></a>恢复模式</h4><p>恢复模式大致可以分为四个阶段</p>
+<ul>
+<li>选举</li>
+<li>发现</li>
+<li>同步</li>
+<li><p>广播</p>
+</li>
+<li><p>当leader崩溃后，集群进入选举阶段，开始选举出潜在的新leader(一般为集群中拥有最大ZXID的节点)</p>
+</li>
+<li>进入发现阶段，follower与潜在的新leader进行沟通，如果发现超过法定人数的follower同意，则潜在的新leader将epoch加1，进入新的纪元。新的leader产生</li>
+<li>集群间进行数据同步，保证集群中各个节点的事务一致</li>
+<li>集群恢复到广播模式，开始接受客户端的写请求</li>
+</ul>
+<p>当 leader在commit之后但在发出commit消息之前宕机，即只有老leader自己commit了，而其它follower都没有收到commit消息 新的leader也必须保证这个proposal被提交.(新的leader会重新发送该proprosal的commit消息)</p>
+<p>当 leader产生某个proprosal之后但在发出消息之前宕机，即只有老leader自己有这个proproal，当老的leader重启后(此时左右follower),新的leader必须保证老的leader必须丢弃这个proprosal.(新的leader会通知上线后的老leader截断其epoch对应的最后一个commit的位置)</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag"># 分布式系统</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/25/%E5%8D%97%E4%BA%AC%E5%A4%A7%E5%AD%A6%E3%80%8A%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90%E3%80%8B%E8%AF%BE%E7%A8%8B/" rel="next" title="南京大学《软件分析》课程">
+                <i class="fa fa-chevron-left"></i> 南京大学《软件分析》课程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/08/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9C%9F%E7%9B%B8%E8%BF%98%E5%8E%9F%20%E7%AC%94%E8%AE%B0/" rel="prev" title="操作系统真相还原">
+                操作系统真相还原 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">1.</span> <span class="nav-text">什么是一致性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CAP"><span class="nav-number">1.1.</span> <span class="nav-text">CAP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">一致性模型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%BA%E4%B8%80%E8%87%B4%E6%80%A7%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">强一致性算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Paxos"><span class="nav-number">2.1.</span> <span class="nav-text">Paxos</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%84%E6%96%99"><span class="nav-number">2.2.</span> <span class="nav-text">资料</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Paxos%E7%AE%97%E6%B3%95%E4%B8%AD%E7%9A%84%E8%A7%92%E8%89%B2"><span class="nav-number">2.2.1.</span> <span class="nav-text">Paxos算法中的角色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Paxos%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="nav-number">2.2.2.</span> <span class="nav-text">Paxos算法流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E6%89%BF%E8%AF%BA%EF%BC%9A"><span class="nav-number">2.2.3.</span> <span class="nav-text">两个承诺：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E5%BA%94%E7%AD%94%EF%BC%9A"><span class="nav-number">2.2.4.</span> <span class="nav-text">一个应答：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Paxos%E7%AE%97%E6%B3%95%E4%BC%AA%E4%BB%A3%E7%A0%81%E6%8F%8F%E8%BF%B0%E5%A6%82%E4%B8%8B%EF%BC%9A"><span class="nav-number">2.2.5.</span> <span class="nav-text">Paxos算法伪代码描述如下：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Raft"><span class="nav-number">2.3.</span> <span class="nav-text">Raft</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%84%E6%96%99-1"><span class="nav-number">2.4.</span> <span class="nav-text">资料</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Leader%E9%80%89%E4%B8%BE"><span class="nav-number">2.4.1.</span> <span class="nav-text">Leader选举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E5%90%8C%E6%AD%A5"><span class="nav-number">2.4.2.</span> <span class="nav-text">日志同步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E6%80%A7"><span class="nav-number">2.4.3.</span> <span class="nav-text">安全性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E5%8E%8B%E7%BC%A9"><span class="nav-number">2.4.4.</span> <span class="nav-text">日志压缩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E5%91%98%E5%8F%98%E6%9B%B4"><span class="nav-number">2.4.5.</span> <span class="nav-text">成员变更</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E5%88%86%E6%9E%90%EF%BC%9A"><span class="nav-number">2.4.6.</span> <span class="nav-text">异常分析：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Raft%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93"><span class="nav-number">2.4.7.</span> <span class="nav-text">Raft算法总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ZAB"><span class="nav-number">2.5.</span> <span class="nav-text">ZAB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.5.1.</span> <span class="nav-text">协议介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ZAB%E7%89%B9%E6%80%A7"><span class="nav-number">2.5.2.</span> <span class="nav-text">ZAB特性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E4%BF%9D%E8%AF%81"><span class="nav-number">2.5.2.1.</span> <span class="nav-text">一致性保证</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ZAB%E7%9A%84%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.5.3.</span> <span class="nav-text">ZAB的具体实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ZXID"><span class="nav-number">2.5.3.1.</span> <span class="nav-text">ZXID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%86%E5%8F%B2%E9%98%9F%E5%88%97-history-queue"><span class="nav-number">2.5.3.2.</span> <span class="nav-text">历史队列(history queue)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ZAB%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.5.4.</span> <span class="nav-text">ZAB工作模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%BF%E6%92%AD-broadcast-%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.5.4.1.</span> <span class="nav-text">广播(broadcast)模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%81%A2%E5%A4%8D%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.5.4.2.</span> <span class="nav-text">恢复模式</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

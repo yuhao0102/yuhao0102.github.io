@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zn-ch">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="积累," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="SSE技术简介SIMD（single-instruction, multiple-data）是一种使用单道指令处理多道数据流的CPU执行模式，即在一个CPU指令执行周期内用一道指令完成处理多个数据的操作。 从 SIMD 架构介绍可知，相较于 SISD架构，SIMD架构的计算机具有更高的理论峰值浮点算力，因而更适合计算密集型任务。如下图所示，以加法指令为例，在SISD架构计算机上，CPU先执行一条指">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SIMD介绍">
+<meta property="og:url" content="http://yoursite.com/2022/03/10/simd/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="SSE技术简介SIMD（single-instruction, multiple-data）是一种使用单道指令处理多道数据流的CPU执行模式，即在一个CPU指令执行周期内用一道指令完成处理多个数据的操作。 从 SIMD 架构介绍可知，相较于 SISD架构，SIMD架构的计算机具有更高的理论峰值浮点算力，因而更适合计算密集型任务。如下图所示，以加法指令为例，在SISD架构计算机上，CPU先执行一条指">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/img/v2-4ce09b56931d0c07dfd285b7c53d1258_1440w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-2cb6a4793ac96f046b18caf785a7d25a_1440w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-77093f45bae35b0d44533d521925e015_1440w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-28db68861eba0863f77e5fcc69a82a2e_1440w.webp">
+<meta property="og:image" content="http://yoursite.com/img/20160330145907051.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20160330150558576.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20160330150731953.jpg">
+<meta property="og:image" content="http://yoursite.com/img/v2-f184fe55254b04164c53f6e8a0a84561_1440w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-7ffb174473ad7b96fcebbc2fddf7678c_1440w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-bf61297f49fbcaa226c7e31b9d89b256_1440w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-2dc629f6eea019046bb8ceae8a8c1cc8_1440w.webp">
+<meta property="og:image" content="http://yoursite.com/img/v2-9096aea74645d1f6ef698c914d507776_1440w.webp">
+<meta property="article:published_time" content="2022-03-10T07:00:00.000Z">
+<meta property="article:modified_time" content="2022-12-25T04:13:18.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="积累">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/v2-4ce09b56931d0c07dfd285b7c53d1258_1440w.webp">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2022/03/10/simd/"/>
+
+
+
+
+
+  <title>SIMD介绍 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zn-ch">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hao Yu's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">The program monkey was eaten by the siege lion.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/03/10/simd/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SIMD介绍</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2022-03-10T15:00:00+08:00">
+                2022-03-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="SSE技术简介"><a href="#SSE技术简介" class="headerlink" title="SSE技术简介"></a>SSE技术简介</h1><p>SIMD（single-instruction, multiple-data）是一种使用单道指令处理多道数据流的CPU执行模式，即在一个CPU指令执行周期内用一道指令完成处理多个数据的操作。</p>
+<p>从 SIMD 架构介绍可知，相较于 SISD架构，SIMD架构的计算机具有更高的理论峰值浮点算力，因而更适合计算密集型任务。如下图所示，以加法指令为例，在SISD架构计算机上，CPU先执行一条指令，进行A1 + B1 = C1计算，再执行下一条指令，进行A2 + B2 = C2计算，按此顺序依次完成后续计算。四个加法计算需依次串行执行四次。而对于SIMD指令来说，CPU只需执行一条指令，即可完成四个加法计算操作，四个加法计算操作并行执行。</p>
+<p><img src="/img/v2-4ce09b56931d0c07dfd285b7c53d1258_1440w.webp" alt="img"></p>
+<p>图2 SISD 和 SIMD</p>
+<p>SIMD 架构的计算机之所以能够并行化执行四个浮点数（甚至更多）操作的原因是支持 SIMD 指令的 CPU在设计时增加了一些专用的向量寄存器。SIMD向量寄存器的长度往往大于通用寄存器，比如SEE 的 XMM寄存器的长度为128位，AVX和AVX2的YMM寄存器为256位。因此，这些专用的向量寄存器可以同时放入多个数据。但需要注意，这里放入的多个数据需要保证数据类型是一致的。</p>
+<h3 id="Intel-x86-64-SIMD-指令集"><a href="#Intel-x86-64-SIMD-指令集" class="headerlink" title="Intel x86-64 SIMD 指令集"></a>Intel x86-64 SIMD 指令集</h3><p><img src="/img/v2-2cb6a4793ac96f046b18caf785a7d25a_1440w.webp" alt="img"></p>
+<p>图3 Intel SIMD 指令集发展</p>
+<ol>
+<li><a href="https://link.zhihu.com/?target=https%3A//en.wikipedia.org/wiki/MMX_(instruction_set">MMX 指令集</a>)，MMX（Multi Media eXtension，多媒体扩展指令集）指令集是Intel公司于<strong>1996</strong>年推出的一项<a href="https://link.zhihu.com/?target=https%3A//baike.baidu.com/item/%E5%A4%9A%E5%AA%92%E4%BD%93%E6%8C%87%E4%BB%A4/12583714">多媒体指令</a>增强技术。MMX指令集中包括有57条多媒体指令，通过这些指令可以一次处理多个数据，在处理结果超过实际处理能力的时候也能进行正常处理，这样在软件的配合下，就可以得到更高的性能。</li>
+<li><a href="https://link.zhihu.com/?target=https%3A//en.wikipedia.org/wiki/Streaming_SIMD_Extensions">SSE/SSE2/SSE3/SSE4/SSE5 指令集</a>，Intel在<strong>1999</strong>年推出SSE（Streaming SIMD eXtensions）指令集，是x86上对SIMD指令集的一个扩展，主要用于处理单精度浮点数。Intel陆续推出SSE2、SSE3、SSE4版本。其中，SSE主要处理单精度浮点数，SSE2引入了整数的处理，SSE指令集引入了8个128bit的寄存器，称为XMM0到XMM7，正因为这些寄存器存储了多个数据，使用一条指令处理，因此称这项功能为SIMD。</li>
+<li><a href="https://link.zhihu.com/?target=https%3A//en.wikipedia.org/wiki/Advanced_Vector_Extensions">AVX指令集</a>，AVX在2008年3月提出，并在<strong>2011</strong>年 Sandy Bridge系列处理器中首次支持。AVX指令集在单指令多数据流计算性能增强的同时也沿用了的MMX/SSE指令集。不过和MMX/SSE的不同点在于增强的AVX指令，从指令的格式上就发生了很大的变化。x86(IA-32/Intel 64)架构的基础上增加了prefix(Prefix)，所以实现了新的命令，也使更加复杂的指令得以实现，从而提升了x86 CPU的性能。</li>
+<li>AVX2指令集，<strong>2013</strong>年英特尔推出了包含AVX2的处理器。此架构增强了将AVX的打包整数功能从128位扩展到256位。AVX2指令集的一个重要更新是增加了乘加融合（FMA）指令，也添加了新的数据广播、混合和排列指令。</li>
+<li>AVX512指令集，<strong>2017</strong>年Intel 在 Skylake 体系结构中支持了AVX512 指令集。与AVX和AVX2不同，AVX512并不是一个不同的指令集扩展，而是一个相互关联的指令集扩展的集合。对于一个x86处理器，如果其支持AVX512F指令集扩展，那么它就是一个符合AVX512标准的处理器。符合AVX512标准的处理器可以选择性地支持附加的AVX512扩展，如高性能计算、服务器、桌面应用、移动服务等场景增加额外的扩展支持。</li>
+</ol>
+<p>在 Linux 中，可以键入 lscpu 来查看 CPU 的基础信息，包括型号、代号、分级缓存信息和支持的指令集等。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@TENCENT64 ~]<span class="comment"># lscpu</span></span><br><span class="line">Architecture:        x86_64</span><br><span class="line">...</span><br><span class="line">Flags:               fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 invpcid_single intel_ppin ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts pku ospke avx512_vnni md_clear flush_l1d arch_capabilities</span><br></pre></td></tr></table></figure>
+<p>考虑一下下面这个任务：计算一个很长的浮点型数组中每一个元素的平方根。实现这个任务的算法可以这样写：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> each f in array <span class="comment">//对数组中的每一个元素</span></span><br><span class="line">    f = <span class="built_in">sqrt</span>(f) <span class="comment">//计算它的平方根</span></span><br></pre></td></tr></table></figure>
+<p>为了了解实现的细节，我们把上面的代码这样写：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> each f in array</span><br><span class="line">&#123;</span><br><span class="line">    把f从内存加载到浮点寄存器</span><br><span class="line">    计算平方根</span><br><span class="line">    再把计算结果从寄存器中取出放入内存</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>具有Intel SSE指令集支持的处理器有8个128位的寄存器，每一个寄存器可以存放4个（32位）单精度的浮点数。SSE同时提供了一个指令集，其中的指令可以允许把浮点数加载到这些128位的寄存器之中，这些数就可以在这些寄存器中进行算术逻辑运算，然后把结果放回内存。采用SSE技术后，算法可以写成下面的样子：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> each <span class="number">4</span> members in array <span class="comment">//对数组中的每4个元素</span></span><br><span class="line">&#123;</span><br><span class="line">    把数组中的这<span class="number">4</span>个数加载到一个<span class="number">128</span>位的SSE寄存器中</span><br><span class="line">    在一个CPU指令执行周期中完成计算这<span class="number">4</span>个数的平方根的操作</span><br><span class="line">    把所得的<span class="number">4</span>个结果取出写入内存</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>C++编程人员在使用SSE指令函数编程时不必关心这些128位的寄存器，你可以使用128位的数据类型“__m128”和一系列C++函数来实现这些算术和逻辑操作，而决定程序使用哪个SSE寄存器以及代码优化是C++编译器的任务。当需要对很长的浮点数数组中的元素进行处理的时候，SSE技术确实是一种很高效的方法。</p>
+<p>下表不完全列举了 AVX512 的各种扩展指令集和对应的简要说明。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>CPUID 标志</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AVX512F</td>
+<td>基本指令集</td>
+</tr>
+<tr>
+<td>AVX512ER</td>
+<td>指数和倒数指令集</td>
+</tr>
+<tr>
+<td>AVX512PF</td>
+<td>预取指令集</td>
+</tr>
+<tr>
+<td>AVX512CD</td>
+<td>冲突检测指令集</td>
+</tr>
+<tr>
+<td>AVX512DQ</td>
+<td>双字和四字指令集</td>
+</tr>
+<tr>
+<td>AVX512BW</td>
+<td>字节和字指令集</td>
+</tr>
+<tr>
+<td>AVX512VL</td>
+<td>128位和256位向量指令集</td>
+</tr>
+<tr>
+<td>AVX512_IFMA</td>
+<td>整数融合乘加运算</td>
+</tr>
+<tr>
+<td>AVX512_VBMI</td>
+<td>附加向量字节指令集</td>
+</tr>
+<tr>
+<td>AVX512_VNNI</td>
+<td>向量神经网络指令集</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="向量寄存器"><a href="#向量寄存器" class="headerlink" title="向量寄存器"></a>向量寄存器</h3><ol>
+<li>SSE 和 AVX 各自有16个寄存器，SSE 的16个寄存器为 XMM0 - XMM15，XMM是128位寄存器，而YMM是256位寄存器。XMM寄存器也可以用于使用类似x86-SSE的单精度值或者双精度值执行标量浮点运算。</li>
+<li>支持AVX的x86-64处理器包含16个256位大小的寄存器，名为YMM0 ~ YMM15。每个YMM寄存器的低阶128位的别名是相对应的XMM寄存器。大多数AVX指令可以使用任何一个XMM或者YMM寄存器作为SIMD操作数。</li>
+<li>AVX512 将每个AVX SIMD 寄存器的大小从256 位扩展到512位，称为ZMM寄存器；符合AVX512标准的处理器包含32个ZMM寄存器，名为ZMM0 ~ ZMM31。YMM 和 XMM 寄存器分别对应于每个ZMM寄存器的低阶 256 位和 128 位别名。AVX512 处理器还包括八个名为K0~K7的新的操作掩码寄存器；</li>
+</ol>
+<p><img src="/img/v2-77093f45bae35b0d44533d521925e015_1440w.webp" alt="img"></p>
+<p>图4 向量寄存器</p>
+<h1 id="SSE程序设计详细介绍"><a href="#SSE程序设计详细介绍" class="headerlink" title="SSE程序设计详细介绍"></a>SSE程序设计详细介绍</h1><p>包含的头文件：</p>
+<p>所有的SSE指令函数和<code>__m128</code>数据类型都在<code>xmmintrin.h</code>文件中定义：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;xmmintrin.h&gt;</span></span></span><br></pre></td></tr></table></figure></p>
+<p>因为程序中用到的SSE处理器指令是由编译器决定，所以它并没有相关的.lib库文件。</p>
+<h2 id="数据分组（Data-Alignment）"><a href="#数据分组（Data-Alignment）" class="headerlink" title="数据分组（Data Alignment）"></a>数据分组（Data Alignment）</h2><p>由SSE指令处理的每一个浮点数数组必须把其中需要处理的数每16个字节（128位二进制）分为一组。一个静态数组（static array）可由<code>__declspec(align(16))</code>关键字声明：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__declspec(<span class="built_in">align</span>(<span class="number">16</span>)) <span class="type">float</span> m_fArray[ARRAY_SIZE];</span><br></pre></td></tr></table></figure></p>
+<p>动态数组（dynamic array）可由_aligned_malloc函数为其分配空间：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m_fArray = (<span class="type">float</span>*) _aligned_malloc(ARRAY_SIZE * <span class="built_in">sizeof</span>(<span class="type">float</span>), <span class="number">16</span>);</span><br></pre></td></tr></table></figure></p>
+<p>由_aligned_malloc函数分配空间的动态数组可以由_aligned_free函数释放其占用的空间：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_aligned_free(m_fArray);</span><br></pre></td></tr></table></figure></p>
+<h2 id="m128-数据类型"><a href="#m128-数据类型" class="headerlink" title="__m128 数据类型"></a>__m128 数据类型</h2><p>该数据类型的变量可用做SSE指令的操作数，它们不能被用户指令直接存取。_m128类型的变量被自动分配为16个字节的字长。</p>
+<ol>
+<li>SSE 有三种类型定义<code>__m128</code>,<code>__m128d</code> 和<code>__m128i</code>，分别用以表示单精度浮点型、双精度浮点型和整型。</li>
+<li>AVX/AVX2 有三种类型定义<code>__m256</code>,<code>__m256d</code> 和<code>__m256i</code>，分别用以表示单精度浮点型、双精度浮点型和整型。</li>
+<li>AVX512 有三种类型定义<code>__m512</code>,<code>__m512d</code> 和 <code>__512i</code>，分别用以表示单精度浮点型、双精度浮点型和整型。</li>
+</ol>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>描述</th>
+<th>大小</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>__m128</td>
+<td>包含4个单精度浮点数的128位向量</td>
+<td>4 x 32 bit</td>
+</tr>
+<tr>
+<td>__m128d</td>
+<td>包含2个双精度浮点数的128位向量</td>
+<td>2 x 64 bit</td>
+</tr>
+<tr>
+<td>__m128i</td>
+<td>包含数个整型数值的128位向量</td>
+<td>128 bit</td>
+</tr>
+<tr>
+<td>__m256</td>
+<td>包含8个单精度浮点数的256位向量</td>
+<td>8 x 32 bit</td>
+</tr>
+<tr>
+<td>__m256d</td>
+<td>包含4个双精度浮点数的256位向量</td>
+<td>4 x 64 bit</td>
+</tr>
+<tr>
+<td>__m256i</td>
+<td>包含数个整型数值的256位向量</td>
+<td>256 bit</td>
+</tr>
+<tr>
+<td>__m512</td>
+<td>包含16个单精度浮点数的512位向量</td>
+<td>16 x 32 bit</td>
+</tr>
+<tr>
+<td>__m512d</td>
+<td>包含8个双精度浮点数的512位向量</td>
+<td>8 x 64 bit</td>
+</tr>
+<tr>
+<td>__m512i</td>
+<td>包含数个整型数值的512位向量</td>
+<td>512 bit</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>char, short, int, long 均属于整型。</strong></p>
+<p><img src="/img/v2-28db68861eba0863f77e5fcc69a82a2e_1440w.webp" alt="img"></p>
+<p>图5 数据类型</p>
+<h2 id="编程实例"><a href="#编程实例" class="headerlink" title="编程实例"></a>编程实例</h2><p>SSETest项目是一个基于对话框的应用程序，它用到了三个浮点数组参与运算：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fResult[i] = <span class="built_in">sqrt</span>( fSource1[i]*fSource1[i] + fSource2[i]*fSource2[i] ) + <span class="number">0.5</span></span><br></pre></td></tr></table></figure><br>其中i = 0, 1, 2 … ARRAY_SIZE-1</p>
+<p>其中ARRAY_SIZE被定义为30000。数据源数组（Source数组）通过使用sin和cos函数给它赋值，我们用Kris Jearakul开发的瀑布状图表控件（Waterfall chart control）[3] 来显示参与计算的源数组和结果数组。计算所需的时间(以毫秒ms为单位)在对话框中显示出来。我们使用三种不同的途径来完成计算：</p>
+<ul>
+<li>纯C++代码；</li>
+<li>使用SSE指令函数的C++代码；</li>
+<li>包含SSE汇编指令的代码。</li>
+</ul>
+<p>　纯C++代码：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CSSETestDlg::ComputeArrayCPlusPlus</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">                                        <span class="type">float</span>* pArray1, <span class="comment">// [输入] 源数组1</span></span></span></span><br><span class="line"><span class="params"><span class="function">                                        <span class="type">float</span>* pArray2, <span class="comment">// [输入] 源数组2</span></span></span></span><br><span class="line"><span class="params"><span class="function">                                        <span class="type">float</span>* pResult, <span class="comment">// [输出] 用来存放结果的数组</span></span></span></span><br><span class="line"><span class="params"><span class="function">                                        <span class="type">int</span> nSize)</span> <span class="comment">// [输入] 数组的大小</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span>* pSource1 = pArray1;</span><br><span class="line">    <span class="type">float</span>* pSource2 = pArray2;</span><br><span class="line">    <span class="type">float</span>* pDest = pResult;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; nSize; i++ )</span><br><span class="line">    &#123;</span><br><span class="line">        *pDest = (<span class="type">float</span>)<span class="built_in">sqrt</span>((*pSource1) * (*pSource1) + (*pSource2) * (*pSource2)) + <span class="number">0.5f</span>;</span><br><span class="line"></span><br><span class="line">        pSource1++;</span><br><span class="line">        pSource2++;</span><br><span class="line">        pDest++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>下面我们用具有SSE特性的C++代码重写上面这个函数。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>实现的功能</th>
+<th>对应的SSE汇编指令</th>
+<th>Visual C++.NET中的SSE函数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>将4个32位浮点数放进一个128位的存储单元。</td>
+<td>movss 和 shufps</td>
+<td>_mm_set_ps1</td>
+</tr>
+<tr>
+<td>将4对32位浮点数同时进行相乘操作。这4对32位浮点数来自两个128位的存储单元，再把计算结果（乘积）赋给一个128位的存储单元。</td>
+<td>mulps</td>
+<td>_mm_mul_ps</td>
+</tr>
+<tr>
+<td>将4对32位浮点数同时进行相加操作。这4对32位浮点数来自两个128位的存储单元，再把计算结果（相加之和）赋给一个128位的存储单元。</td>
+<td>addps</td>
+<td>_mm_add_ps</td>
+</tr>
+<tr>
+<td>对一个128位存储单元中的4个32位浮点数同时进行求平方根操作。</td>
+<td>sqrtps</td>
+<td>_mm_sqrt_ps</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>　使用Visual C++.NET的 SSE指令函数的代码：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CSSETestDlg::ComputeArrayCPlusPlusSSE</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">                                            <span class="type">float</span>* pArray1, <span class="comment">// [输入] 源数组1</span></span></span></span><br><span class="line"><span class="params"><span class="function">                                            <span class="type">float</span>* pArray2, <span class="comment">// [输入] 源数组2</span></span></span></span><br><span class="line"><span class="params"><span class="function">                                            <span class="type">float</span>* pResult, <span class="comment">// [输出] 用来存放结果的数组</span></span></span></span><br><span class="line"><span class="params"><span class="function">                                            <span class="type">int</span> nSize)</span> <span class="comment">// [输入] 数组的大小</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> nLoop = nSize/ <span class="number">4</span>;</span><br><span class="line">    __m128 m1, m2, m3, m4;</span><br><span class="line">    __m128* pSrc1 = (__m128*) pArray1;</span><br><span class="line">    __m128* pSrc2 = (__m128*) pArray2;</span><br><span class="line">    __m128* pDest = (__m128*) pResult;</span><br><span class="line">    __m128 m0_5 = _mm_set_ps1(<span class="number">0.5f</span>); <span class="comment">// m0_5[0, 1, 2, 3] = 0.5</span></span><br><span class="line">    <span class="keyword">for</span> ( <span class="type">int</span> i = <span class="number">0</span>; i &lt; nLoop; i++ )</span><br><span class="line">    &#123;</span><br><span class="line">        m1 = _mm_mul_ps(*pSrc1, *pSrc1); <span class="comment">// m1 = *pSrc1 * *pSrc1</span></span><br><span class="line">        m2 = _mm_mul_ps(*pSrc2, *pSrc2); <span class="comment">// m2 = *pSrc2 * *pSrc2</span></span><br><span class="line">        m3 = _mm_add_ps(m1, m2); <span class="comment">// m3 = m1 + m2</span></span><br><span class="line">        m4 = _mm_sqrt_ps(m3); <span class="comment">// m4 = sqrt(m3)</span></span><br><span class="line">        *pDest = _mm_add_ps(m4, m0_5); <span class="comment">// *pDest = m4 + 0.5</span></span><br><span class="line">        pSrc1++;</span><br><span class="line">        pSrc2++;</span><br><span class="line">        pDest++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>使用SSE汇编指令实现的C++函数代码：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CSSETestDlg::ComputeArrayAssemblySSE</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">                                            <span class="type">float</span>* pArray1, <span class="comment">// [输入] 源数组1</span></span></span></span><br><span class="line"><span class="params"><span class="function">                                            <span class="type">float</span>* pArray2, <span class="comment">// [输入] 源数组2</span></span></span></span><br><span class="line"><span class="params"><span class="function">                                            <span class="type">float</span>* pResult, <span class="comment">// [输出] 用来存放结果的数组</span></span></span></span><br><span class="line"><span class="params"><span class="function">                                            <span class="type">int</span> nSize)</span> <span class="comment">// [输入] 数组的大小</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> nLoop = nSize/<span class="number">4</span>;</span><br><span class="line">    <span class="type">float</span> f = <span class="number">0.5f</span>;</span><br><span class="line">    _asm</span><br><span class="line">    &#123;</span><br><span class="line">        movss xmm2, f <span class="comment">// xmm2[0] = 0.5</span></span><br><span class="line">        shufps xmm2, xmm2, <span class="number">0</span> <span class="comment">// xmm2[1, 2, 3] = xmm2[0]</span></span><br><span class="line">        mov esi, pArray1 <span class="comment">// 输入的源数组1的地址送往esi</span></span><br><span class="line">        mov edx, pArray2 <span class="comment">// 输入的源数组2的地址送往edx</span></span><br><span class="line">        mov edi, pResult <span class="comment">// 输出结果数组的地址保存在edi</span></span><br><span class="line">        mov ecx, nLoop <span class="comment">//循环次数送往ecx</span></span><br><span class="line"></span><br><span class="line">start_loop:</span><br><span class="line">        movaps xmm0, [esi] <span class="comment">// xmm0 = [esi]</span></span><br><span class="line">        mulps xmm0, xmm0 <span class="comment">// xmm0 = xmm0 * xmm0</span></span><br><span class="line">        movaps xmm1, [edx] <span class="comment">// xmm1 = [edx]</span></span><br><span class="line">        mulps xmm1, xmm1 <span class="comment">// xmm1 = xmm1 * xmm1</span></span><br><span class="line">        addps xmm0, xmm1 <span class="comment">// xmm0 = xmm0 + xmm1</span></span><br><span class="line">        sqrtps xmm0, xmm0 <span class="comment">// xmm0 = sqrt(xmm0)</span></span><br><span class="line">        addps xmm0, xmm2 <span class="comment">// xmm0 = xmm1 + xmm2</span></span><br><span class="line">        movaps [edi], xmm0 <span class="comment">// [edi] = xmm0</span></span><br><span class="line">        add esi, <span class="number">16</span> <span class="comment">// esi += 16</span></span><br><span class="line">        add edx, <span class="number">16</span> <span class="comment">// edx += 16</span></span><br><span class="line">        add edi, <span class="number">16</span> <span class="comment">// edi += 16</span></span><br><span class="line">        dec ecx <span class="comment">// ecx--</span></span><br><span class="line">        jnz start_loop <span class="comment">//如果不为0则转向start_loop</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>最后，在我的计算机上运行计算测试的结果：</p>
+<ul>
+<li>纯C++代码计算所用的时间是26 毫秒</li>
+<li>使用SSE的C++ 函数计算所用的时间是 9 毫秒</li>
+<li>包含SSE汇编指令的C++代码计算所用的时间是 9 毫秒</li>
+</ul>
+<p>SSESample 示例项目</p>
+<p>SSESample项目是一个基于对话框的应用程序，其中它用下面的浮点数数组进行计算：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fResult[i] = <span class="built_in">sqrt</span>(fSource[i]*<span class="number">2.8</span>)</span><br></pre></td></tr></table></figure></p>
+<p>其中i = 0, 1, 2 … ARRAY_SIZE-1</p>
+<p>这个程序同时计算了数组中的最大值和最小值。</p>
+<p>使用SSE汇编指令计算的结果会好一些，因为使用了效率增强了的SSX寄存器组。但是在通常情况下，使用SSE的C++ 函数计算会比汇编代码计算的效率更高一些，因为C++编译器的优化后的代码有很高的运算效率，若要使汇编代码比优化后的代码运算效率更高，这通常是很难做到的。</p>
+<p>　纯C++代码：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 输入: m_fInitialArray</span></span><br><span class="line"><span class="comment">// 输出: m_fResultArray, m_fMin, m_fMax</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">CSSESampleDlg::OnBnClickedButtonCplusplus</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    m_fMin = FLT_MAX;</span><br><span class="line">    m_fMax = FLT_MIN;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; ARRAY_SIZE; i++ )</span><br><span class="line">    &#123;</span><br><span class="line">        m_fResultArray[i] = <span class="built_in">sqrt</span>(m_fInitialArray[i] * <span class="number">2.8f</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> ( m_fResultArray[i] &lt; m_fMin )</span><br><span class="line">            m_fMin = m_fResultArray[i];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> ( m_fResultArray[i] &gt; m_fMax )</span><br><span class="line">            m_fMax = m_fResultArray[i];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>　使用Visual C++.NET的 SSE指令函数的代码：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 输入: m_fInitialArray</span></span><br><span class="line"><span class="comment">// 输出: m_fResultArray, m_fMin, m_fMax</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">CSSESampleDlg::OnBnClickedButtonSseC</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    __m128 coeff = _mm_set_ps1(<span class="number">2.8f</span>); <span class="comment">// coeff[0, 1, 2, 3] = 2.8</span></span><br><span class="line">    __m128 tmp;</span><br><span class="line"></span><br><span class="line">    __m128 min128 = _mm_set_ps1(FLT_MAX); <span class="comment">// min128[0, 1, 2, 3] = FLT_MAX</span></span><br><span class="line">    __m128 max128 = _mm_set_ps1(FLT_MIN); <span class="comment">// max128[0, 1, 2, 3] = FLT_MIN</span></span><br><span class="line"></span><br><span class="line">    __m128* pSource = (__m128*) m_fInitialArray;</span><br><span class="line">    __m128* pDest = (__m128*) m_fResultArray;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> ( <span class="type">int</span> i = <span class="number">0</span>; i &lt; ARRAY_SIZE/<span class="number">4</span>; i++ )</span><br><span class="line">    &#123;</span><br><span class="line">        tmp = _mm_mul_ps(*pSource, coeff); <span class="comment">// tmp = *pSource * coeff</span></span><br><span class="line">        *pDest = _mm_sqrt_ps(tmp); <span class="comment">// *pDest = sqrt(tmp)</span></span><br><span class="line"></span><br><span class="line">        min128 = _mm_min_ps(*pDest, min128);</span><br><span class="line">        max128 = _mm_max_ps(*pDest, max128);</span><br><span class="line"></span><br><span class="line">        pSource++;</span><br><span class="line">        pDest++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计算max128的最大值和min128的最小值</span></span><br><span class="line">    <span class="keyword">union</span> <span class="title class_">u</span></span><br><span class="line">    &#123;</span><br><span class="line">        __m128 m;</span><br><span class="line">        <span class="type">float</span> f[<span class="number">4</span>];</span><br><span class="line">    &#125; x;</span><br><span class="line"></span><br><span class="line">    x.m = min128;</span><br><span class="line">    m_fMin = <span class="built_in">min</span>(x.f[<span class="number">0</span>], <span class="built_in">min</span>(x.f[<span class="number">1</span>], <span class="built_in">min</span>(x.f[<span class="number">2</span>], x.f[<span class="number">3</span>])));</span><br><span class="line"></span><br><span class="line">    x.m = max128;</span><br><span class="line">    m_fMax = <span class="built_in">max</span>(x.f[<span class="number">0</span>], <span class="built_in">max</span>(x.f[<span class="number">1</span>], <span class="built_in">max</span>(x.f[<span class="number">2</span>], x.f[<span class="number">3</span>])));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>　使用SSE汇编指令的C++函数代码：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment">// 输入: m_fInitialArray</span></span><br><span class="line">    <span class="comment">// 输出: m_fResultArray, m_fMin, m_fMax</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">CSSESampleDlg::OnBnClickedButtonSseAssembly</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">float</span>* pIn = m_fInitialArray;</span><br><span class="line">        <span class="type">float</span>* pOut = m_fResultArray;</span><br><span class="line"></span><br><span class="line">        <span class="type">float</span> f = <span class="number">2.8f</span>;</span><br><span class="line">        <span class="type">float</span> flt_min = FLT_MIN;</span><br><span class="line">        <span class="type">float</span> flt_max = FLT_MAX;</span><br><span class="line"></span><br><span class="line">        __m128 min128;</span><br><span class="line">        __m128 max128;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 使用以下的附加寄存器:xmm2、xmm3、xmm4:</span></span><br><span class="line">        <span class="comment">// xmm2 – 相乘系数</span></span><br><span class="line">        <span class="comment">// xmm3 – 最小值</span></span><br><span class="line">        <span class="comment">// xmm4 – 最大值</span></span><br><span class="line"></span><br><span class="line">        _asm</span><br><span class="line">        &#123;</span><br><span class="line">            movss xmm2, f <span class="comment">// xmm2[0] = 2.8</span></span><br><span class="line">            shufps xmm2, xmm2, <span class="number">0</span> <span class="comment">// xmm2[1, 2, 3] = xmm2[0]</span></span><br><span class="line"></span><br><span class="line">            movss xmm3, flt_max <span class="comment">// xmm3 = FLT_MAX</span></span><br><span class="line">            shufps xmm3, xmm3, <span class="number">0</span> <span class="comment">// xmm3[1, 2, 3] = xmm3[0]</span></span><br><span class="line"></span><br><span class="line">            movss xmm4, flt_min <span class="comment">// xmm4 = FLT_MIN</span></span><br><span class="line">            shufps xmm4, xmm4, <span class="number">0</span> <span class="comment">// xmm3[1, 2, 3] = xmm3[0]</span></span><br><span class="line"></span><br><span class="line">            mov esi, pIn <span class="comment">// 输入数组的地址送往esi</span></span><br><span class="line">            mov edi, pOut <span class="comment">// 输出数组的地址送往edi</span></span><br><span class="line">            mov ecx, ARRAY_SIZE/<span class="number">4</span> <span class="comment">// 循环计数器初始化</span></span><br><span class="line"></span><br><span class="line">start_loop:</span><br><span class="line">            movaps xmm1, [esi] <span class="comment">// xmm1 = [esi]</span></span><br><span class="line">            mulps xmm1, xmm2 <span class="comment">// xmm1 = xmm1 * xmm2</span></span><br><span class="line">            sqrtps xmm1, xmm1 <span class="comment">// xmm1 = sqrt(xmm1)</span></span><br><span class="line">            movaps [edi], xmm1 <span class="comment">// [edi] = xmm1</span></span><br><span class="line"></span><br><span class="line">            minps xmm3, xmm1</span><br><span class="line">            maxps xmm4, xmm1</span><br><span class="line"></span><br><span class="line">            add esi, <span class="number">16</span></span><br><span class="line">            add edi, <span class="number">16</span></span><br><span class="line"></span><br><span class="line">            dec ecx</span><br><span class="line">            jnz start_loop</span><br><span class="line"></span><br><span class="line">            movaps min128, xmm3</span><br><span class="line">            movaps max128, xmm4</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">union</span> <span class="title class_">u</span></span><br><span class="line">        &#123;</span><br><span class="line">            __m128 m;</span><br><span class="line">            <span class="type">float</span> f[<span class="number">4</span>];</span><br><span class="line">        &#125; x;</span><br><span class="line"></span><br><span class="line">        x.m = min128;</span><br><span class="line">        m_fMin = <span class="built_in">min</span>(x.f[<span class="number">0</span>], <span class="built_in">min</span>(x.f[<span class="number">1</span>], <span class="built_in">min</span>(x.f[<span class="number">2</span>], x.f[<span class="number">3</span>])));</span><br><span class="line"></span><br><span class="line">        x.m = max128;</span><br><span class="line">        m_fMax = <span class="built_in">max</span>(x.f[<span class="number">0</span>], <span class="built_in">max</span>(x.f[<span class="number">1</span>], <span class="built_in">max</span>(x.f[<span class="number">2</span>], x.f[<span class="number">3</span>])));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="SIMD"><a href="#SIMD" class="headerlink" title="SIMD"></a>SIMD</h1><p>SSE（为Streaming SIMD Extensions的缩写）是由 Intel公司，在1999年推出Pentium III处理器时，同时推出的新指令集。如同其名称所表示的，SSE是一种SIMD指令集。SSE有8个128位寄存器，XMM0 ~XMM7。这些128位元的寄存器，可以用来存放四个32位的单精确度浮点数。SSE的浮点数运算指令就是使用这些寄存器。</p>
+<p>SSE寄存器结构如下：<br><img src="/img/20160330145907051.jpg" alt=""></p>
+<h2 id="寄存器与指令数据细节"><a href="#寄存器与指令数据细节" class="headerlink" title="寄存器与指令数据细节"></a>寄存器与指令数据细节</h2><p>在MMX指令集中，使用的寄存器称作MM0到MM7，实际上借用了浮点处理器的8个寄存器的低64Bit，这样导致了浮点运算速度降低。</p>
+<p>SSE指令集推出时，Intel公司在Pentium III CPU中增加了8个128位的SSE指令专用寄存器，称作XMM0到XMM7。这样SSE指令寄存器可以全速运行，保证了与浮点运算的并行性。这些XMM寄存器用于4个单精度浮点数运算的SIMD执行，并可以与MMX整数运算或x87浮点运算混合执行。</p>
+<p>2001年在Pentium 4上引入了SSE2技术，进一步扩展了指令集，使得XMM寄存器上可以执行8/16/32位宽的整数SIMD运算或双精度浮点数的SIMD运算。对整型数据的支持使得所有的MMX指令都是多余的了，同时也避免了占用浮点数寄存器。SSE2为了更好地利用高速寄存器，还新增加了几条寄存指令，允许程序员控制已经寄存过的数据。这使得 SIMD技术基本完善。</p>
+<p>SSE3指令集扩展的指令包含寄存器的局部位之间的运算，例如高位和低位之间的加减运算；浮点数到整数的转换，以及对超线程技术的支持。</p>
+<p>AVX是Intel的SSE延伸架构，把寄存器XMM 128bit提升至YMM 256bit，以增加一倍的运算效率。此架构支持了三运算指令（3-Operand Instructions），减少在编码上需要先复制才能运算的动作。在微码部分使用了LES LDS这两少用的指令作为延伸指令Prefix。AVX的256bit的YMM寄存器分为两个128bit的lanes，AVX指令并不支持跨lanes的操作。其中YMM寄存器的低128位与Intel SSE指令集的128bitXMM寄存器复用。尽管VGX并不要求内存对齐，但是内存对齐有助于提升性能。如对于128-bit访问的16字节对齐和对于256-bit访问的32字节对齐。</p>
+<p>AVX虽然已经将支持的SIMD数据宽度增加到了256位，但仅仅增加了对256位的浮点SIMD支持，整点SIMD数据的宽度还停留在128位上，AVX2支持的整点SIMD数据宽度从128位扩展到256位。同时支持了跨lanes操作，加入了增强广播、置换指令支持的数据元素类型、移位操作对各个数据元素可变移位数的支持、跨距访存支持。AVX硬件由16个256bitYMM寄存器（YMM0~YMM15）组成。</p>
+<p>每一代的指令集都是对上一代兼容的，支持上一代的指令，也可以使用上一代的寄存器，也就是说，AVX2也依然支持128位，64位的操作，也可以使用上一代的寄存器（当然，寄存器的硬件实现可能有区别）。AVX也对部分之前的指令接口进行了重构，所以可以在指令文档中找到几个处于不同代际有着相同功能调用接口却不相同的函数。</p>
+<p>另外，不同代际的指令不要混用，每次状态切换将消耗 50-80 个时钟周期，会拖慢程序的运行速度。</p>
+<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>由于通常没有内建的128bit和256bit数据类型，SIMD指令使用自己构建的数据类型，这些类型以union实现，这些数据类型可以称作向量，一般来说，MMX指令是<code>__m64</code> 类型的数据，SSE是<code>__m128</code>类型的数据等等。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">union</span> <span class="title class_">__declspec</span>(intrin_type) _CRT_ALIGN(<span class="number">8</span>) __m64</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">unsigned</span> __int64    m64_u64;</span><br><span class="line">    <span class="type">float</span>               m64_f32[<span class="number">2</span>];</span><br><span class="line">    __int8              m64_i8[<span class="number">8</span>];</span><br><span class="line">    __int16             m64_i16[<span class="number">4</span>];</span><br><span class="line">    __int32             m64_i32[<span class="number">2</span>];    </span><br><span class="line">    __int64             m64_i64;</span><br><span class="line">    <span class="type">unsigned</span> __int8     m64_u8[<span class="number">8</span>];</span><br><span class="line">    <span class="type">unsigned</span> __int16    m64_u16[<span class="number">4</span>];</span><br><span class="line">    <span class="type">unsigned</span> __int32    m64_u32[<span class="number">2</span>];</span><br><span class="line">&#125; __m64;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">union</span> <span class="title class_">__declspec</span>(intrin_type) _CRT_ALIGN(<span class="number">16</span>) __m128 &#123;</span><br><span class="line">     <span class="type">float</span>               m128_f32[<span class="number">4</span>];</span><br><span class="line">     <span class="type">unsigned</span> __int64    m128_u64[<span class="number">2</span>];</span><br><span class="line">     __int8              m128_i8[<span class="number">16</span>];</span><br><span class="line">     __int16             m128_i16[<span class="number">8</span>];</span><br><span class="line">     __int32             m128_i32[<span class="number">4</span>];</span><br><span class="line">     __int64             m128_i64[<span class="number">2</span>];</span><br><span class="line">     <span class="type">unsigned</span> __int8     m128_u8[<span class="number">16</span>];</span><br><span class="line">     <span class="type">unsigned</span> __int16    m128_u16[<span class="number">8</span>];</span><br><span class="line">     <span class="type">unsigned</span> __int32    m128_u32[<span class="number">4</span>];</span><br><span class="line"> &#125; __m128;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">union</span> <span class="title class_">__declspec</span>(intrin_type) _CRT_ALIGN(<span class="number">16</span>) __m128i &#123;</span><br><span class="line">    __int8              m128i_i8[<span class="number">16</span>];</span><br><span class="line">    __int16             m128i_i16[<span class="number">8</span>];</span><br><span class="line">    __int32             m128i_i32[<span class="number">4</span>];    </span><br><span class="line">    __int64             m128i_i64[<span class="number">2</span>];</span><br><span class="line">    <span class="type">unsigned</span> __int8     m128i_u8[<span class="number">16</span>];</span><br><span class="line">    <span class="type">unsigned</span> __int16    m128i_u16[<span class="number">8</span>];</span><br><span class="line">    <span class="type">unsigned</span> __int32    m128i_u32[<span class="number">4</span>];</span><br><span class="line">    <span class="type">unsigned</span> __int64    m128i_u64[<span class="number">2</span>];</span><br><span class="line">&#125; __m128i;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">__declspec</span>(intrin_type) _CRT_ALIGN(<span class="number">16</span>) __m128d &#123;</span><br><span class="line">    <span class="type">double</span>              m128d_f64[<span class="number">2</span>];</span><br><span class="line">&#125; __m128d;</span><br></pre></td></tr></table></figure>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>__m128</td>
+<td>包含4个float类型数字的向量</td>
+</tr>
+<tr>
+<td>__m128d</td>
+<td>包含2个double类型数字的向量</td>
+</tr>
+<tr>
+<td>__m128i</td>
+<td>包含若干个整型数字的向量</td>
+</tr>
+<tr>
+<td>__m256</td>
+<td>包含8个float类型数字的向量</td>
+</tr>
+<tr>
+<td>__m256d</td>
+<td>包含4个double类型数字的向量</td>
+</tr>
+<tr>
+<td>__m256i</td>
+<td>包含若干个整型数字的向量</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>每一种类型，从2个下划线开头，接一个m，然后是向量的位长度。如果向量类型是以d结束的，那么向量里面是double类型的数字。如果没有后缀，就代表向量只包含float类型的数字。整形的向量可以包含各种类型的整形数，例如char,short,unsigned long long。也就是说，__m256i可以包含32个char，16个short类型，8个int类型，4个long类型。这些整形数可以是有符号类型也可以是无符号类型。</p>
+<h2 id="内存对齐"><a href="#内存对齐" class="headerlink" title="内存对齐"></a>内存对齐</h2><p>为了方便CPU用指令对内存进行访问，通常要求某种类型对象的地址必须是某个值K（通常是2、4或8）的倍数，如果一个变量的内存地址正好位于它长度的整数倍，我们就称他是自然对齐的。不同长度的内存访问会用到不同的汇编指令，这种对齐限制简化了形成处理器和存储器系统之间接口的硬件设计，提高了内存的访问效率。</p>
+<p>通常对于各种类型的对齐规则如下：</p>
+<ul>
+<li>数组 ：按照基本数据类型对齐，第一个对齐了后面的自然也就对齐了。</li>
+<li>联合 ：按其包含的长度最大的数据类型对齐。</li>
+<li>结构体： 结构体中每个数据类型都要对齐</li>
+</ul>
+<p>对于SIMD的内存对齐是指<code>__m128</code>等union在内存中存储时的存储方式。然而由于结构内存对齐的规则略微复杂，我们以结构为例进行说明：</p>
+<p>一般情况下，由于内存对齐的原因存储多种类型数据的结构体所占的内存大小并非元素本身类型大小之和。对于自然对齐而言：</p>
+<p>对于各成员变量来说，存放的起始地址相对于结构的起始地址的偏移量必须为该变量的类型所占用的字节数的倍数，各成员变量在存放的时候根据在结构中出现的顺序依次申请空间， 同时按照上面的对齐方式调整位置， 空缺的字节自动填充。</p>
+<p>对于整个结构体来说，为了确保结构的大小为结构的字节边界数(即该结构中占用最大的空间的类型的字节数)的倍数，所以在为最后一个成员变量申请空间后，还会根据需要自动填充空缺的字节。</p>
+<p>所以一般我们在定义结构体时定义各元素的顺序也会影响实际结构体在存储时的整体大小，把大小相同或相近的元素放一起，可以减少结构体占用的内存空间。</p>
+<p>除了自然对齐的内存大小，我们也可以设置自己需要的对齐大小，我们称之为对齐系数，如果结构内最大类型的字节数小于对齐系数，结构体内存大小应按最大元素大小对齐，如果最大元素大小超过对齐系数，应按对齐系数大小对齐。</p>
+<p>对齐系数大小的设定可以使用下列方法：</p>
+<p><code>#pragma pack (16)</code>使用预编译器指令要求对齐。<code>#pragma pack()</code>恢复为默认对齐方式。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__attribute__ ((<span class="built_in">aligned</span> (<span class="number">16</span>)))<span class="comment">//GCC要求对齐</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__declspec(intrin_type) _CRT_ALIGN(<span class="number">16</span>)<span class="comment">//Microsoft Visual C++要求对齐</span></span><br></pre></td></tr></table></figure>
+<p>联合的内存对齐方式与结构类似。</p>
+<p>SIMD的指令中通常有对内存对齐的要求，例如，SSE中大部分指令要求地址是16bytes对齐的，以<code>_mm_load_ps</code>函数来说明，这个函数对应于SSE的loadps指令。</p>
+<p>函数原型为：<code>extern __m128 _mm_load_ps(float const*_A);</code></p>
+<p>可以看到，它的输入是一个指向float的指针，返回的就是一个<code>__m128</code>类型的数据，从函数的角度理解，就是把一个float数组的四个元素依次读取，返回一个组合的<code>__m128</code>类型的SSE数据类型，从而可以使用这个返回的结果传递给其它的SSE指令进行运算，比如加法等；从汇编的角度理解，它对应的就是读取内存中连续四个地址的float数据，将其放入SSE的寄存器(XMM)中，从而给其他的指令准备好数据进行计算。其使用示例如下：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> input[<span class="number">4</span>] = &#123; <span class="number">1.0f</span>, <span class="number">2.0f</span>, <span class="number">3.0f</span>, <span class="number">4.0f</span> &#125;;</span><br><span class="line">__m128 a = _mm_load_ps(input);|<span class="comment">//WARNING</span></span><br></pre></td></tr></table></figure></p>
+<p>这里加载正确的前提是：input这个浮点数阵列都是对齐在16 bytes的边上。否则程序会崩溃或得不到正确结果。如果没有对齐，就需要使用_mm_loadu_ps函数，这个函数用于处理没有对齐在16bytes上的数据，但是其速度会比较慢。</p>
+<p>对于上面的例子，如果要将input指定为16bytes对齐，可以采用的方式是：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__declspec(<span class="built_in">align</span>(<span class="number">16</span>)) <span class="type">float</span> input[<span class="number">4</span>] = &#123;<span class="number">1.0</span>, <span class="number">2.0</span>, <span class="number">3.0</span>, <span class="number">4.0</span>&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>为了简化，头文件<code>&lt;xmmintrin.h&gt;</code>中定义了一个宏<code>_MM_ALIGN16</code>来表示上面的含义，即可以用：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_MM_ALIGN16 <span class="type">float</span> input[<span class="number">4</span>] = &#123;<span class="number">1.0</span>, <span class="number">2.0</span>, <span class="number">3.0</span>, <span class="number">4.0</span>&#125;;</span><br></pre></td></tr></table></figure>
+<p>256-bit AVX 指令在内存访问上对内存对齐比128-bit SSE 指令有更高要求。虽然在一个cache-line 之内，Intel 的对齐和非对齐指令已经没有性能差距了，但是由于AVX 有更长的内存访问宽度（YMM &lt;-&gt; memory），会更频繁地触及cache-line 边界。所以1）尽量使用对齐内存分配；2）有时候内存对齐不能保证，可以用128-bit（XMM）指令访问内存，然后再组合成256-bit YMM</p>
+<h2 id="工作模式"><a href="#工作模式" class="headerlink" title="工作模式"></a>工作模式</h2><p>SSE的浮点运算指令分为两大类：Packed 和Scalar。Packed指令是一次对XMM寄存器中的四个浮点数（即DATA0 ~ DATA3）均进行计算，而Scalar则只对XMM暂存器中的DATA0进行计算。如下图所示：<br><img src="/img/20160330150558576.jpg" alt=""></p>
+<p>下面是SSE指令的一般格式，由三部分组成，第一部分是表示指令的作用，比如加法add等，第二部分是s或者p分别表示scalar或packed，第三部分为s，表示单精度浮点数（single precision floating point data）。<br><img src="/img/20160330150731953.jpg" alt=""></p>
+<p>根据上面知道，SSE的寄存器是128bit的，那么SSE就需要使用128bit的数据类型，SSE使用4个浮点数（4*32bit）组合成一个新的数据类型，用于表示128bit类型，SSE指令的返回结果也是128bit的。</p>
+<p>SSE 指令和一般的x86 指令很类似，基本上包括两种定址方式：寄存器-寄存器方式(reg-reg)和寄存器-内存方式(reg-mem)：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">addps xmm0, xmm1 ; reg-reg</span><br><span class="line">addps xmm0, [ebx] ; reg-mem</span><br></pre></td></tr></table></figure></p>
+<p>SSE中大部分指令要求地址是16byte对齐的。要理解这个问题，以<code>_mm_load_ps</code>函数来解释，这个函数对应于<code>loadps</code>的SSE指令。其原型为：<code>extern __m128 _mm_load_ps(float const*_A);</code></p>
+<p>可以看到，它的输入是一个指向float的指针，返回的就是一个<code>__m128</code>类型的数据，从函数的角度理解，就是把一个float数组的四个元素依次读取，返回一个组合的<code>__m128</code>类型的SSE数据类型，从而可以使用这个返回的结果传递给其它的SSE指令进行运算，比如加法等；从汇编的角度理解，它对应的就是读取内存中连续四个地址的float数据，将其放入SSE新的暂存器(XMM0~8)中，从而给其他的指令准备好数据进行计算。其使用示例如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> input[<span class="number">4</span>] = &#123; <span class="number">1.0f</span>, <span class="number">2.0f</span>, <span class="number">3.0f</span>, <span class="number">4.0f</span> &#125;;  </span><br><span class="line">__m128 a = _mm_load_ps(input);  </span><br></pre></td></tr></table></figure>
+<p>这里加载正确的前提是：input这个浮点数数组是对齐在16 byte的边上。否则加载的结果和预期的不一样。如果没有对齐，就需要使用<code>_mm_loadu_ps</code>函数，这个函数用于处理没有对齐在16byte上的数据，但是其速度会比较慢。</p>
+<p>这个只是使用SSE指令的时候要注意一下，我们知道，x86的little-endian特性，位址较低的byte会放在暂存器的右边。也就是说，若以上面的input为例，在载入到XMM暂存器后，暂存器中的DATA0会是1.0，而DATA1是2.0，DATA2是3.0，DATA3是4.0。如果需要以相反的顺序载入的话，可以用_mm_loadr_ps 这个intrinsic，根据需要进行选择。</p>
+<h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><p>使用软件CPU-Z可以查看CPU支持的指令集。</p>
+<p>我们可以在C/C++使用封装的函数而不是嵌入的汇编代码的方式来调用指令集，这就是Compiler Intrinsics。</p>
+<p>Intrinsics指令是对MMX、SSE等指令集的指令的一种封装，以函数的形式提供，使得程序员更容易编写和使用这些高级指令，在编译的时候，这些函数会被内联为汇编，不会产生函数调用的开销。</p>
+<p>除了我们这里使用的intrinsics指令，还有intrinsics函数需要以作区分，这两者既有联系又有区别。编译器指令<code>#pragma intrinsic()</code>可以将一些指定的系统库函数编译为内部函数，从而去掉函数调用参数传递等的开销，这种方式只适用于编译器规定的一部分函数，不是所有函数都能使用，同时会增大生成代码的大小。</p>
+<p>intrinsics更广泛的使用是指令集的封装，能将函数直接映射到高级指令集，同时隐藏了寄存器分配和调度等，从而使得程序员可以以函数调用的方式来实现汇编能达到的功能，编译器会生成为对应的SSE等指令集汇编。</p>
+<p>Intel Intrinsic Guide可以查询到所有的Intrinsic指令、对应的汇编指令以及如何使用等。</p>
+<p>对于VC来说，VC6支持MMX、3DNow!、SSE、SSE2，然后更高版本的VC支持更多的指令集。但是，VC没有提供检测Intrinsic函数集支持性的办法。</p>
+<p>而对于GCC来说，它使用-mmmx、-msse等编译器开关来启用各种指令集，同时定义了对应的<code>__MMX__</code>、<code>__SSE__</code>等宏，然后<code>x86intrin.h</code>会根据这些宏来声明相应的Intrinsic函数集。<code>__MMX__</code>、<code>__SSE__</code>等宏可以帮助我们判断Intrinsic函数集是否支持，但这只是GCC的专用功能。</p>
+<p>如果使用GCC编译器时，使用intrinsics指令时需要在编写cmake或者makefile文件时加上相关参数，例如使用AVX指令集时添加-mavx2参数。</p>
+<p>GCC:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>头文件</th>
+<th>宏</th>
+<th>编译器参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>avx2intrin.h</td>
+<td><strong>AVX2</strong></td>
+<td>-mavx2</td>
+</tr>
+<tr>
+<td>avxintrin.h</td>
+<td><strong>AVX</strong></td>
+<td>-mavx</td>
+</tr>
+<tr>
+<td>emmintrin.h</td>
+<td><strong>SSE2</strong></td>
+<td>-msse2</td>
+</tr>
+<tr>
+<td>nmmintrin.h</td>
+<td><strong>SSE4_2</strong></td>
+<td>-msse4.2</td>
+</tr>
+<tr>
+<td>xmmintrin.h</td>
+<td><strong>SSE</strong></td>
+<td>-msse</td>
+</tr>
+<tr>
+<td>mmintrin.h</td>
+<td><strong>MMX</strong></td>
+<td>-mmmx</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>头文件设置<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mmintrin.h&gt;</span> <span class="comment">//MMX</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;xmmintrin.h&gt;</span> <span class="comment">//SSE(include mmintrin.h)</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;emmintrin.h&gt;</span> <span class="comment">//SSE2(include xmmintrin.h)</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;pmmintrin.h&gt;</span> <span class="comment">//SSE3(include emmintrin.h)</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tmmintrin.h&gt;</span><span class="comment">//SSSE3(include pmmintrin.h)</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;smmintrin.h&gt;</span><span class="comment">//SSE4.1(include tmmintrin.h)</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;nmmintrin.h&gt;</span><span class="comment">//SSE4.2(include smmintrin.h)</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wmmintrin.h&gt;</span><span class="comment">//AES(include nmmintrin.h)</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;immintrin.h&gt;</span><span class="comment">//AVX(include wmmintrin.h)</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;intrin.h&gt;</span><span class="comment">//(include immintrin.h)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>上述头文件中，下一个头文件包含上一个头文件中内容，例如xmmintrin.h为SSE 头文件，此头文件里包含MMX头文件，emmintrin.h为SSE2头文件，此头文件里包含SSE头文件。</p>
+<p>VC引入<code>&lt;intrin.h&gt;</code>会自动引入当前编译器所支持的所有Intrinsic头文件。GCC引入<code>&lt;x86intrin.h&gt;</code>.</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>使用SSE指令，首先要了解这一类用于进行初始化加载数据以及将寄存器的数据保存到内存相关的指令，我们知道，大多数SSE指令是使用的xmm0到xmm8的寄存器，那么使用之前，就需要将数据从内存加载到这些寄存器，在寄存器中完成运算后， 再把计算结果从寄存器中取出放入内存。C++编程人员在使用SSE指令函数编程时，除了加载存储数据外，不必关心这些128位的寄存器的调度，你可以使用128位的数据类型__m128和一系列C++函数来实现这些算术和逻辑操作，而决定程序使用哪个SSE寄存器以及代码优化是C++编译器的任务。</p>
+<p>load系列函数，用于加载数据，从内存到寄存器。</p>
+<p>set系列函数，用于加载数据，大部分需要多个指令执行周期完成，但是可能不需要16字节对齐.这一系列函数主要是类似于load的操作，但是可能会调用多条指令去完成，方便的是可能不需要考虑对齐的问题。</p>
+<p>store系列函数，用于将计算结果等SSE寄存器的数据保存到内存中。这一系列函数和load系列函数的功能对应，基本上都是一个反向的过程</p>
+<p>SSE 指令和 AVX 指令混用<br>SSE/AVX 的混用有时不可避免，AVX-SSE transition penalty并不是由混合SSE和AVX指令导致的，而是因为混合了legacy SSE encoding 和 VEX encoding。</p>
+<p>所以在使用Intel intrinsic写全新的程序时其实并不需要太担心这个问题，因为只要指定了合适的CPU 架构（比如-mavx），SSE 和AVX intrinsic 都会被编译器生成VEX-encoding 代码。</p>
+<h2 id="函数命名"><a href="#函数命名" class="headerlink" title="函数命名"></a>函数命名</h2><p>SIMD指令的intrinsics函数名称一般为如下形式，<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_mm&lt;bit_width&gt;_&lt;name&gt;_&lt;data_type&gt;</span><br></pre></td></tr></table></figure></p>
+<p><bit_width> 表明了向量的位长度，即操作对象的数据类型大小，对于128位的向量，这个参数为空，对于256位的向量，这个参数为256。</p>
+<p><name>描述了内联函数的算术操作。一般由两部分组成：</p>
+<p>第一部分是表示指令的作用，比如加法add等；</p>
+<p>第二部分是可选的修饰符，表示一些特殊的作用，比如从内存对齐，逆序加载等；</p>
+<p><data_type> 表明了操作的粒度，具体情形见下表：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th><data_type>标识</th>
+<th>数据类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>epi8/epi16/epi32</td>
+<td>有符号的8,16,32位整数</td>
+</tr>
+<tr>
+<td>epu8/epu16/epu32</td>
+<td>无符号的8,16.32位整数</td>
+</tr>
+<tr>
+<td>si128/si256</td>
+<td>未指定的128,256位向量</td>
+</tr>
+<tr>
+<td>ps</td>
+<td>包装型单精度浮点数</td>
+</tr>
+<tr>
+<td>ss</td>
+<td>scalar single precision floating point data    数量型单精度浮点数</td>
+</tr>
+<tr>
+<td>pd</td>
+<td>pached double precision floating point data    包装型双精度浮点数</td>
+</tr>
+<tr>
+<td>sd</td>
+<td>数量型双精度浮点数</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>可选的修饰符</th>
+<th>示例</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>u</td>
+<td>loadu</td>
+<td>Unaligned memory: 对内存未对齐的数据进行操作</td>
+</tr>
+<tr>
+<td>s</td>
+<td>subs/adds</td>
+<td>Saturate: 饱和计算将考虑内存能够存储的最小/最大值。非饱和计算略内存问题。即计算的上溢和下溢</td>
+</tr>
+<tr>
+<td>h</td>
+<td>hsub/hadd</td>
+<td>Horizontally: 在水平方向上做加减法</td>
+</tr>
+<tr>
+<td>hi/lo</td>
+<td>mulhi</td>
+<td>高/低位</td>
+</tr>
+<tr>
+<td>r</td>
+<td>setr</td>
+<td>Reverse order: 逆序初始化向量</td>
+</tr>
+<tr>
+<td>fm</td>
+<td>fmadd</td>
+<td>Fused-Multiply-Add(FMA)运算，单一指令进行三元运算</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>在饱和模式下，当计算结果发生溢出（上溢或下溢）时，CPU会自动去掉溢出的部分，使计算结果取该数据类型表示数值的上限值（如果上溢）或下限值（如果下溢）。</p>
+<p>注释中的printf部分是利用<code>__m128</code>这个数据类型来获取相关的值，这个类型是一个union类型，具体定义可以参考相关头文件，但是，对于实际使用，有时候这个值是一个中间值，需要后面计算使用，就得使用store了，效率更高。上面使用的是<code>_mm_loadu_ps</code>和<code>_mm_storeu_ps</code>，不要求字节对齐，如果使用<code>_mm_load_ps</code>和<code>_mm_store_ps</code>，会发现程序会崩溃或得不到正确结果。下面是指定字节对齐后的一种实现方法：</p>
+<p>这类函数名一般以<code>__m</code>开头。函数名称和指令名称有一定的关系</p>
+<p>SSE/AVX 指令集允许使用汇编指令集去操作XMM和YMM寄存器，但直接使用AVX 汇编指令编写汇编代码并不是十分友好而且效率低下。因此，intrinsic function 应运而生。Intrinsic function 类似于 high level 的汇编，开发者可以无痛地将 instinsic function 同 C/C++ 的高级语言特性（如分支、循环、函数和类）无缝衔接。</p>
+<p>SSE/AVX intrinsic functions 的命名习惯如下</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__&lt;return_type&gt; _&lt;vector_size&gt;_&lt;intrin_op&gt;_&lt;suffix&gt;</span><br></pre></td></tr></table></figure>
+<p>__128i, _256i是由整型构成的向量，char、 short、 int 、 long 均属于整型。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">__m128 _mm_set_ps (float e3, float e2, float e1, float e0)</span><br><span class="line"></span><br><span class="line">__m256 _mm256_add_pd (__m256 a, __m256 b)</span><br><span class="line"></span><br><span class="line">__m512 _mm512_max_epi64 (__m512 a, __m512 b)</span><br></pre></td></tr></table></figure>
+<ol>
+<li>return_type, 如 m128、m256 和 m512 代表函数的返回值类型，m128 代表128位的向量，m256代表256位的向量，m512代表512位的向量。</li>
+<li>vector_size , 如 mm、mm256 和 mm512 代表函数操作的数据向量的位长度，mm 代表 128 位的数据向量（SSE），mm256 代表256位的数据向量（AVX 和 AVX2）, mm512 代表512位的数据向量。</li>
+<li>intrin_op，如 set、add 和 max 非常直观的解释函数功能。函数基础功能可以分为数值计算、数据传输、比较和转型四种，参阅 <a href="https://link.zhihu.com/?target=https%3A//www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html">Intel Intrinsics Guide</a> 和 <a href="https://link.zhihu.com/?target=https%3A//db.in.tum.de/~finis/x86-intrin-cheatsheet-v2.2.pdf%3Flang%3Den">x86 Intrinsics Cheat Sheet</a>。</li>
+<li>suffix, 如ps、pd、epi64代表函数参数的数据类型，其中 p = packed，s = 单精度浮点数，d = 双精度浮点数，ep</li>
+</ol>
+<ul>
+<li>ps: 由float类型数据组成的向量</li>
+<li>pd:由double类型数据组成的向量</li>
+<li>epi8/epi16/epi32/epi64: 由8位/16位/32位/64位的有符号整数组成的向量</li>
+<li>epu8/epu16/epu32/epu64: 包含8位/16位/32位/64位的无符号整数组成的向量</li>
+<li>si128/si256: 未指定的128位或者256位向量</li>
+</ul>
+<h2 id="常用的-Intrinsic-指令"><a href="#常用的-Intrinsic-指令" class="headerlink" title="常用的 Intrinsic 指令"></a>常用的 Intrinsic 指令</h2><p>在理解了最基础的指令后，可以到 Intel Intrinsic Guide 查询到所有指令。</p>
+<p>1、 load系列，用于加载数据，从内存到暂存器。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">__m128 _mm_load_ss (<span class="type">float</span> *p)  </span><br><span class="line">__m128 _mm_load_ps (<span class="type">float</span> *p)  </span><br><span class="line">__m128 _mm_load1_ps (<span class="type">float</span> *p)  </span><br><span class="line">__m128 _mm_loadh_pi (__m128 a, __m64 *p)  </span><br><span class="line">__m128 _mm_loadl_pi (__m128 a, __m64 *p)  </span><br><span class="line">__m128 _mm_loadr_ps (<span class="type">float</span> *p)  </span><br><span class="line">__m128 _mm_loadu_ps (<span class="type">float</span> *p)</span><br></pre></td></tr></table></figure>
+<p>上面是从手册查询到的load系列的函数。其中，</p>
+<ul>
+<li><code>_mm_load_ss</code>用于scalar的加载，所以，加载一个单精度浮点数到暂存器的低字节，其它三个字节清0，（r0 := *p, r1 := r2 := r3 := 0.0）。</li>
+<li><code>_mm_load_ps</code>用于packed的加载（下面的都是用于packed的），要求p的地址是16字节对齐，否则读取的结果会出错，（r0 := p[0], r1 := p[1], r2 := p[2], r3 := p[3]）。</li>
+<li><code>_mm_load1_ps</code>表示将p地址的值，加载到暂存器的四个字节，需要多条指令完成，所以，从性能考虑，在内层循环不要使用这类指令。（r0 := r1 := r2 := r3 := *p）。</li>
+<li><code>_mm_loadh_pi</code>和<code>_mm_loadl_pi</code>分别用于从两个参数高底字节等组合加载。具体参考手册。</li>
+<li><code>_mm_loadr_ps</code>表示以<code>_mm_load_ps</code>反向的顺序加载，需要多条指令完成，当然，也要求地址是16字节对齐。（r0 := p[3], r1 := p[2], r2 := p[1], r3 := p[0]）。</li>
+<li><code>_mm_loadu_ps</code>和<code>_mm_load_ps</code>一样的加载，但是不要求地址是16字节对齐，对应指令为movups。</li>
+</ul>
+<p>2、set系列，用于加载数据，大部分需要多条指令完成，但是可能不需要16字节对齐。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">__m128 _mm_set_ss (<span class="type">float</span> w)  </span><br><span class="line">__m128 _mm_set_ps (<span class="type">float</span> z, <span class="type">float</span> y, <span class="type">float</span> x, <span class="type">float</span> w)  </span><br><span class="line">__m128 _mm_set1_ps (<span class="type">float</span> w)  </span><br><span class="line">__m128 _mm_setr_ps (<span class="type">float</span> z, <span class="type">float</span> y, <span class="type">float</span> x, <span class="type">float</span> w)  </span><br><span class="line">__m128 _mm_setzero_ps ()  </span><br></pre></td></tr></table></figure>
+<p>这一系列函数主要是类似于load的操作，但是可能会调用多条指令去完成，方便的是可能不需要考虑对齐的问题。</p>
+<ul>
+<li><code>_mm_set_ss</code>对应于_mm_load_ss的功能，不需要字节对齐，需要多条指令。（r0 = w, r1 = r2 = r3 = 0.0）</li>
+<li><code>_mm_set_ps</code>对应于_mm_load_ps的功能，参数是四个单独的单精度浮点数，所以也不需要字节对齐，需要多条指令。（r0=w, r1 = x, r2 = y, r3 = z，注意顺序）</li>
+<li><code>_mm_set1_ps</code>对应于_mm_load1_ps的功能，不需要字节对齐，需要多条指令。（r0 = r1 = r2 = r3 = w）</li>
+<li><code>_mm_setzero_ps</code>是清0操作，只需要一条指令。（r0 = r1 = r2 = r3 = 0.0）</li>
+</ul>
+<p>3、store系列，用于将计算结果等SSE寄存器的数据保存到内存中。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> _mm_store_ss (<span class="type">float</span> *p, __m128 a)  </span><br><span class="line"><span class="type">void</span> _mm_store_ps (<span class="type">float</span> *p, __m128 a)  </span><br><span class="line"><span class="type">void</span> _mm_store1_ps (<span class="type">float</span> *p, __m128 a)  </span><br><span class="line"><span class="type">void</span> _mm_storeh_pi (__m64 *p, __m128 a)  </span><br><span class="line"><span class="type">void</span> _mm_storel_pi (__m64 *p, __m128 a)  </span><br><span class="line"><span class="type">void</span> _mm_storer_ps (<span class="type">float</span> *p, __m128 a)  </span><br><span class="line"><span class="type">void</span> _mm_storeu_ps (<span class="type">float</span> *p, __m128 a)  </span><br><span class="line"><span class="type">void</span> _mm_stream_ps (<span class="type">float</span> *p, __m128 a) </span><br></pre></td></tr></table></figure></p>
+<p>这一系列函数和load系列函数的功能对应，基本上都是一个反向的过程。</p>
+<ul>
+<li><code>_mm_store_ss</code>：一条指令，*p = a0</li>
+<li><code>_mm_store_ps</code>：一条指令，p[i] = a[i]。</li>
+<li><code>_mm_store1_ps</code>：多条指令，p[i] = a0。</li>
+<li><code>_mm_storeh_pi</code>，_mm_storel_pi：值保存其高位或低位。</li>
+<li><code>_mm_storer_ps</code>：反向，多条指令。</li>
+<li><code>_mm_storeu_ps</code>：一条指令，p[i] = a[i]，不要求16字节对齐。</li>
+<li><code>_mm_stream_ps</code>：直接写入内存，不改变cache的数据。</li>
+</ul>
+<p>4、算术指令</p>
+<p>SSE提供了大量的浮点运算指令，包括加法、减法、乘法、除法、开方、最大值、最小值、近似求倒数、求开方的倒数等等，可见SSE指令的强大之处。那么在了解了上面的数据加载和数据保存的指令之后，使用这些算术指令就很容易了，下面以加法为例。SSE中浮点加法的指令有：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">__m128 _mm_add_ss (__m128 a, __m128 b)  </span><br><span class="line">__m128 _mm_add_ps (__m128 a, __m128 b)  </span><br></pre></td></tr></table></figure>
+<p>其中，<code>_mm_add_ss</code>表示scalar执行模式，<code>_mm_add_ps</code>表示packed执行模式。</p>
+<p>一般而言，使用SSE指令写代码，步骤为：使用load/set函数将数据从内存加载到SSE暂存器；使用相关SSE指令完成计算等；使用store系列函数将结果从暂存器保存到内存，供后面使用。</p>
+<h1 id="mm-prefetch"><a href="#mm-prefetch" class="headerlink" title="_mm_prefetch"></a>_mm_prefetch</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">void_mm_prefetch</span>(<span class="type">char</span> *p, <span class="type">int</span> i)</span><br></pre></td></tr></table></figure>
+<p>从地址P处预取尺寸为cache line大小的数据缓存，参数i指示预取方式（<code>_MM_HINT_T0</code>, <code>_MM_HINT_T1</code>, <code>_MM_HINT_T2</code>, <code>_MM_HINT_NTA</code>，分别表示不同的预取方式）</p>
+<ul>
+<li>T0 预取数据到所有级别的缓存，包括L0。</li>
+<li>T1 预取数据到除L0外所有级别的缓存。</li>
+<li>T2 预取数据到除L0和L1外所有级别的缓存。</li>
+<li>NTA  预取数据到非临时缓冲结构中，可以最小化对缓存的污染。</li>
+</ul>
+<p>如果在CPU操作数据之前，我们就已经将数据主动加载到缓存中，那么就减少了由于缓存不命中，需要从内存取数的情况，这样就可以加速操作，获得性能上提升。使用主动缓存技术来优化内存拷贝。</p>
+<p>注 意，CPU对数据操作拥有绝对自由！使用预取指令只是按我们自己的想法对CPU的数据操作进行补充，有可能CPU当前并不需要我们加载到缓存的数据，这 样，我们的预取指令可能会带来相反的结果，比如对于多任务系统，有可能我们冲掉了有用的缓存。不过，在多任务系统上，由于线程或进程的切换所花费的时间相 对于预取操作来说太长了, 所以可以忽略线程或进程切换对缓存预取的影响。</p>
+<h1 id="mm-movehl-ps"><a href="#mm-movehl-ps" class="headerlink" title="_mm_movehl_ps"></a>_mm_movehl_ps</h1><p>Moves the upper two single-precision, floating-point values of  b  to the lower two single-precision, floating-point values of the result. The upper two single-precision, floating-point values of a are passed through to the result.</p>
+<p>将 b 的高 64 位移至结果的低 64 位， a 的高 64 位传递给结果。</p>
+<p>如：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">r = __m128 _mm_movehl_ps( __m128 a, __m128 b ); <span class="comment">//r = &#123;a3, a2, b3, b2&#125; // 高 — 低</span></span><br><span class="line"></span><br><span class="line">s = _mm_movehl_ps( x , x );<span class="comment">// 高-- 低s = &#123;x3, x2, x3, x2&#125;</span></span><br></pre></td></tr></table></figure></p>
+<h1 id="关于指令集的一些问题集中回答"><a href="#关于指令集的一些问题集中回答" class="headerlink" title="关于指令集的一些问题集中回答"></a>关于指令集的一些问题集中回答</h1><h2 id="几个问题"><a href="#几个问题" class="headerlink" title="几个问题"></a>几个问题</h2><p>（1）浮点计算 vs 整数计算：为什么要分开讲呢？因为在指令集中也是分开的，另外，由于浮点数占4个字节或者8个字节，而整数却可以分别占1,2,4个字节按照应用场合不同使用的不同，因此向量化加速也不同。因此一个指令最多完成4个浮点数计算。而可以完成16个int8_t数据的计算。</p>
+<p>（2）优化技巧：注意指令的顺序，为什么呢，因为CPU是流水线工作的，因此相邻的指令开始的执行的时间并非一个指令执行完毕之后才会开始，但是一旦遇到数据联系，这时候会发生阻塞，如果我们很好的安排指令的顺序，使得数据相关尽量少发生，或者发生的时候上一个指令已经执行完了。因此注意稍微修改指令的执行顺序就会使得代码变快。</p>
+<h2 id="指令集的一些问题"><a href="#指令集的一些问题" class="headerlink" title="指令集的一些问题"></a>指令集的一些问题</h2><p>（1）没有统一的移植标准。</p>
+<p>就以SSE指令而言。SSE的指令集是X86架构CPU特有的，对于ARM架构、MIPS架构等CPU是不支持的，所以使用了SSE指令集的程序，是不具备可移植标准的。</p>
+<p>不仅如此，前面说过Intel和AMD对于同样的128bit向量的指令语法是不一样的，所以，在Intel之下所写的代码并不能一直到AMD的机器上进行指令集加速，其它的也一样，也就是说，写的某一种指令加速代码，不具备完全的可移植性。</p>
+<p>SIMD指令，可以一次性装载多个元素到寄存器。如果是128位宽度，则可以一次装载4个单精度浮点数。这4个float可以一次性地参与乘法计算，理论上可提速4倍。不同的平台有不同的SIMD指令集，如Intel平台的指令集有MMX、SSE、AVX2、AVX512等（后者是对前者的扩展，本质一样），ARM平台是128位的NEON指令集。如果你希望用SIMD给算法加速，你首先需要学习不同平台的SIMD指令集，并为不同的平台写不同的代码，最后逐个测试准确性。这样无法实现write once, run anywhere的目标。</p>
+<p>（2）针对指令集没办法转移的解决方案</p>
+<p>OpenCV 4.x中提供了强大的统一向量指令（universal intrinsics），使用这些指令可以方便地为算法提速。所有的计算密集型任务皆可使用这套指令加速，并不是专门针对计算机视觉算法。目前OpenCV的代码加速实现基本上都基于这套指令。OpenCV设计了一套统一的向量指令universal intrinsics，可以让你写一份代码，在不同平台上都可以实现向量加速</p>
+<h2 id="指令集优化代码的一般步骤"><a href="#指令集优化代码的一般步骤" class="headerlink" title="指令集优化代码的一般步骤"></a>指令集优化代码的一般步骤</h2><ol>
+<li>第一步：即所谓的load步骤。指的是需要将数据从内存加载（load）到CPU的内存储里面；</li>
+<li>第二步：即所谓的运算。将加载进来的数据进行加减乘除等等运算；</li>
+<li>第三步：即所谓的store步骤。将运算的结果需要重新存储到内存里面；</li>
+</ol>
+<h1 id="SSE指令集的使用说明"><a href="#SSE指令集的使用说明" class="headerlink" title="SSE指令集的使用说明"></a>SSE指令集的使用说明</h1><p>SSE本质上类似于一个向量处理器，所谓的向量处理器实际上就是进行向量的运算，</p>
+<p>包括了4个主要部分：单精确度浮点数运算指令、整数运算指令(为MMX的延伸，并与MMX使用同样的暂存器)、Cache控制指令、状态控制指令。</p>
+<h2 id="如何使用SSE指令"><a href="#如何使用SSE指令" class="headerlink" title="如何使用SSE指令"></a>如何使用SSE指令</h2><p>使用SSE指令有两种方式：</p>
+<ul>
+<li>一是直接在C/C++中嵌入（汇编）指令；</li>
+<li>二是使用Intel C++ Compiler或是Microsoft Visual C++中提供的支持SSE指令集的intrinsics内联函数。</li>
+</ul>
+<p>从代码可读和维护角度讲，推荐使用intrinsics内联函数的形式。intrinsics是对MMX、SSE等指令集的一种封装，以函数的形式提供，使得程序员更容易编写和使用这些高级指令，在编译的时候，这些函数会被内联为汇编，不会产生函数调用的开销。想要使用SSE指令，则需要包含对应的头文件：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mmintrin.h&gt;</span> <span class="comment">//mmx</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;xmmintrin.h&gt;</span> <span class="comment">//sse</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;emmintrin.h&gt;</span> <span class="comment">//sse2</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;pmmintrin.h&gt;</span> <span class="comment">//sse3</span></span></span><br></pre></td></tr></table></figure></p>
+<p>备注：本文所介绍的是在VS平台中VC++所提供的intrinstic内联函数的使用说明。这样使用起来就很简单了，主要是包含两部分，数据类型和数据操作指令（加载load、运算、存储store），另外，虽然现在SSE已经有了很多个版本，SSE、SSE2、SSE3、SSE4.1、SSSE4.2等等，它们之间有所差别，但是大致的使用以及思想原理是一致的。</p>
+<h2 id="SSE的数据类型"><a href="#SSE的数据类型" class="headerlink" title="SSE的数据类型"></a>SSE的数据类型</h2><p>SSE指令中intrinsics函数的数据类型为：</p>
+<p>（1）<code>__m128</code>（单精度浮点数），如果使用<code>sizeof(__m128)</code>计算该类型大小，结果为16，即等于四个浮点数长度。<code>__declspec(align(16))</code>做为数组定义的修释符，表示该数组是以16字节为边界对齐的，因为SSE指令大部分支持这种格式的内存数据。他的定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">__declspec</span>(intrin_type) __declspec(<span class="built_in">align</span>(<span class="number">16</span>)) __m128 &#123;</span><br><span class="line">    <span class="type">float</span> m128_f32[<span class="number">4</span>];</span><br><span class="line">&#125; __m128;</span><br></pre></td></tr></table></figure>
+<p>除<code>__m128</code>外、还包括</p>
+<p>（2）<code>__m128d</code>（双精度浮点数）</p>
+<p>（3）<code>__m128i</code>（整型）。其中<code>__m128i</code>是一个共用体类型（union），其定义如下 ：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">union</span> <span class="title class_">__declspec</span>(intrin_type) __declspec(<span class="built_in">align</span>(<span class="number">16</span>)) __m128i &#123;</span><br><span class="line">    __int8 m128i_i8[<span class="number">16</span>];</span><br><span class="line">    __int16 m128i_i16[<span class="number">8</span>];</span><br><span class="line">    __int32 m128i_i32[<span class="number">4</span>];</span><br><span class="line">    __int64 m128i_i64[<span class="number">2</span>];</span><br><span class="line">    <span class="type">unsigned</span> __int8 m128i_u8[<span class="number">16</span>];</span><br><span class="line">    <span class="type">unsigned</span> __int16 m128i_u16[<span class="number">8</span>];</span><br><span class="line">    <span class="type">unsigned</span> __int32 m128i_u32[<span class="number">4</span>];</span><br><span class="line">    <span class="type">unsigned</span> __int64 m128i_u64[<span class="number">2</span>];</span><br><span class="line">&#125; __m128i;</span><br></pre></td></tr></table></figure></p>
+<p>注意数据类型前面是两个短的下划线哦！！！</p>
+<h2 id="数据操作指令的一般格式（包括了数据加载load、数据运算、数据存储store）"><a href="#数据操作指令的一般格式（包括了数据加载load、数据运算、数据存储store）" class="headerlink" title="数据操作指令的一般格式（包括了数据加载load、数据运算、数据存储store）"></a>数据操作指令的一般格式（包括了数据加载load、数据运算、数据存储store）</h2><p>SSE指令通常由三部分构成：</p>
+<ul>
+<li>第一部分为前缀<code>_mm</code>（多媒体扩展指令集），表示该函数属于SSE指令集（前面只有一个短下划线）</li>
+<li>第二部分为指令的操作类型，<ul>
+<li>如加载数据一般是_load以及它的变种</li>
+<li>如_add、_mul等以及这些运算的变种（一个短下划线）</li>
+<li>存储数据_store以及它的一些变种</li>
+</ul>
+</li>
+<li>第三部分通常由一个短下划线加上两个字母组成。<ul>
+<li>第一个字母表示对结果变量的影响方式，为p或s。<ul>
+<li>p(packed：包裹指令) ：该指令对xmm寄存器中的每个元素进行运算，即一次对四个浮点数(data0~data3)均进行计算；</li>
+<li>s(scalar：标量指令)：该指令对寄存器中的第一个元素进行运算，即一次只对xmm寄存器中的data0进行计算。</li>
+<li>如果针对SSE的四个数所组成的向量，如果是packed模式，则进行向量运算，如果是scalar模式，只会对第一组数据进行运算。</li>
+</ul>
+</li>
+<li>第二个字母表示参与运算的数据类型，<ul>
+<li>s表示32位浮点数，</li>
+<li>d表示64位浮点数，</li>
+<li>i32表示带符号32位整型，</li>
+<li>i64表示带符号64位整型，</li>
+<li>u32表示无符号32位整型，</li>
+</ul>
+</li>
+<li>第三部分还可以是<code>_pi**</code>格式或者是<code>_*pi**</code>格式。<ul>
+<li><code>_pi**</code>（<code>**</code>为长度，可以是8，16，32，64）packed操作所有的<code>**</code>位有符号整数，使用的寄存器长度为64位；</li>
+<li><code>_epi**</code>（<code>**</code>为长度）packed操作所有的<code>**</code>位的有符号整数，使用的寄存器长度为128位；</li>
+<li><code>_epu**</code>同样的道理 packed操作所有的<code>**</code>位的无符号整数；</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>以此类推。由于SSE只支持32位浮点数的运算，所以你可能会在这些指令封装函数中找不到包含非s修饰符的，但你可以在MMX和SSE2的指令集中去认识它们。</p>
+<h2 id="使用SSE指令注意的问题"><a href="#使用SSE指令注意的问题" class="headerlink" title="使用SSE指令注意的问题"></a>使用SSE指令注意的问题</h2><p>（1）SSE指令的内存对齐要求</p>
+<p>SSE中大部分指令要求地址是16bytes对齐的，要理解这个问题，以<code>_mm_load_ps</code>函数来解释，这个函数对应于loadps的SSE指令。其原型为：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> __m128 _mm_load_ps(<span class="type">float</span> <span class="type">const</span>*_A);</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，它的输入是一个指向float的指针，返回的就是一个<code>__m128</code>类型的数据，从函数的角度理解，就是把一个float数组的四个元素依次读取，返回一个组合的<code>__m128</code>类型的SSE数据类型，从而可以使用这个返回的结果传递给其它的SSE指令进行运算，比如加法等；从汇编的角度理解，它对应的就是读取内存中连续四个地址的float数据，将其放入SSE新的暂存器中，从而给其他的指令准备好数据进行计算。其使用示例如下：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> input[<span class="number">4</span>] = &#123; <span class="number">1.0f</span>, <span class="number">2.0f</span>, <span class="number">3.0f</span>, <span class="number">4.0f</span> &#125;;</span><br><span class="line">__m128 a = _mm_load_ps(input);</span><br></pre></td></tr></table></figure></p>
+<p>这里加载正确的前提是：input这个浮点数阵列都是对齐在16 bytes的边上。否则加载的结果和预期的不一样。如果没有对齐，就需要使用<code>_mm_loadu_ps</code>函数，这个函数用于处理没有对齐在16bytes上的数据，但是其速度会比较慢。</p>
+<p>关于内存对齐的问题，这里就不详细讨论什么是内存对齐了，以及如何指定内存对齐方式。这里主要提一下，SSE的intrinsics函数中的扩展的方式：</p>
+<ul>
+<li>对于上面的例子，如果要将input指定为16bytes对齐，可以采用的方式是：<code>__declspec(align(16)) float input[4];</code></li>
+<li>为了简化，在xmmintrin.h中定义了一个宏<code>_MM_ALIGN16</code>来表示上面的含义，即：<code>_MM_ALIGN16 float input[4];</code></li>
+</ul>
+<p>（2）大小端问题：</p>
+<p>这个只是使用SSE指令的时候要注意一下，我们知道，x86的little-endian特性，位址较低的byte会放在暂存器的右边。也就是说，若以上面的input为例，即<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> input[<span class="number">4</span>] = &#123; <span class="number">1.0f</span>, <span class="number">2.0f</span>, <span class="number">3.0f</span>, <span class="number">4.0f</span> &#125;;</span><br><span class="line">__m128 a = _mm_load_ps(input);</span><br></pre></td></tr></table></figure></p>
+<p>在载入到XMM暂存器后，暂存器中的 DATA0会是1.0，而DATA1是2.0，DATA2是3.0，DATA3是4.0。如下：</p>
+<p>如果需要以相反的顺序载入的话，可以用_mm_loadr_ps 这个intrinsic，根据需要进行选择。</p>
+<h2 id="常用的一些SSE指令简介"><a href="#常用的一些SSE指令简介" class="headerlink" title="常用的一些SSE指令简介"></a>常用的一些SSE指令简介</h2><p>（1）load系列，用于加载数据（从内存到暂存器），大部分需要16字节对齐<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">__m128 _mm_load_ss(<span class="type">float</span> *p) <span class="comment">//将一个单精度浮点数加载到寄存器的第一个字节，其它三个字节清零（r0 := *p, r1 := r2 := r3 := 0.0）</span></span><br><span class="line">__m128 _mm_load_ps(<span class="type">float</span> *p) <span class="comment">//将四个单精度浮点数加载到寄存器（r0 := p[0], r1 := p[1], r2 := p[2], r3 := p[3]）</span></span><br><span class="line">__m128 _mm_load1_ps(<span class="type">float</span> *p)<span class="comment">//将p地址的值加载到暂存器的四个字节，需要多条指令完成。从性能考虑，在内层循环不要使用这类指令（r0 := r1 := r2 := r3 := *p）</span></span><br><span class="line"></span><br><span class="line">__m128 _mm_loadh_pi(__m128 a, __m64 *p)<span class="comment">//</span></span><br><span class="line">__m128 _mm_loadl_pi(__m128 a, __m64 *p)<span class="comment">//</span></span><br><span class="line">__m128 _mm_loadr_ps(<span class="type">float</span> *p)<span class="comment">//以_mm_load_ps反向的顺序加载，需要多条指令完成。（r0 := p[3], r1 := p[2], r2 := p[1], r3 := p[0]）</span></span><br><span class="line">__m128 _mm_loadu_ps(<span class="type">float</span> *p)<span class="comment">//_mm_load_ps一样的加载，但是不要求地址是16字节对齐</span></span><br></pre></td></tr></table></figure></p>
+<p>（2）set系列，用于加载数据，类似于load操作，但是大部分需要多条指令完成，可能不需要16字节对齐<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">__m128 _mm_set_ss(<span class="type">float</span> w)<span class="comment">//对应于_mm_load_ss的功能，不需要字节对齐，需要多条指令（r0 = w, r1 = r2 = r3 = 0.0）</span></span><br><span class="line">__m128 _mm_set_ps(<span class="type">float</span> z, <span class="type">float</span> y, <span class="type">float</span> x, <span class="type">float</span> w)<span class="comment">//对应于_mm_load_ps的功能，参数是四个单独的单精度浮点数，所以也不需要字节对齐，需要多条指令。（r0=w, r1 = x, r2 = y, r3 = z，注意顺序）</span></span><br><span class="line">__m128 _mm_set1_ps(<span class="type">float</span> w)<span class="comment">//对应于_mm_load1_ps的功能，不需要字节对齐，需要多条指令。（r0 = r1 = r2 = r3 = w）</span></span><br><span class="line">__m128 _mm_setr_ps(<span class="type">float</span> z, <span class="type">float</span> y, <span class="type">float</span> x, <span class="type">float</span> w)<span class="comment">//对应于_mm_loadr_ps功能，不需要字节对齐，需要多条指令。（r0=z, r1 = y, r2 = x, r3 = w，注意顺序）</span></span><br><span class="line">__m128 _mm_setzero_ps()<span class="comment">//清0操作，只需要一条指令。（r0 = r1 = r2 = r3 = 0.0）</span></span><br></pre></td></tr></table></figure></p>
+<p>（3）store系列，将计算结果等SSE暂存器的数据保存到内存中，与load系列函数的功能对应，基本上都是一个反向的过程。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> _mm_store_ss(<span class="type">float</span> *p, __m128 a) <span class="comment">//一条指令，*p = a0</span></span><br><span class="line"><span class="type">void</span> _mm_store_ps(<span class="type">float</span> *p, __m128 a) <span class="comment">//一条指令，p[i] = a[i]</span></span><br><span class="line"><span class="type">void</span> _mm_store1_ps(<span class="type">float</span> *p, __m128 a) <span class="comment">//多条指令，p[i] = a0</span></span><br><span class="line"><span class="type">void</span> _mm_storeh_pi(__m64 *p, __m128 a) <span class="comment">//</span></span><br><span class="line"><span class="type">void</span> _mm_storel_pi(__m64 *p, __m128 a) <span class="comment">//</span></span><br><span class="line"><span class="type">void</span> _mm_storer_ps(<span class="type">float</span> *p, __m128 a) <span class="comment">//反向，多条指令</span></span><br><span class="line"><span class="type">void</span> _mm_storeu_ps(<span class="type">float</span> *p, __m128 a) <span class="comment">//一条指令，p[i] = a[i]，不要求16字节对齐</span></span><br><span class="line"><span class="type">void</span> _mm_stream_ps(<span class="type">float</span> *p, __m128 a) <span class="comment">//直接写入内存，不改变cache的数据</span></span><br></pre></td></tr></table></figure></p>
+<p>（4）算数指令系列，SSE提供了大量的浮点运算指令，包括加法、减法、乘法、除法、开方、最大值、最小值等等<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">__m128 _mm_add_ss (__m128 a, __m128 b)</span><br><span class="line">__m128 _mm_add_ps (__m128 a, __m128 b)</span><br></pre></td></tr></table></figure></p>
+<p>当然算数指令有很多，这里只列举了两个，应该说主要是算术运算指令。</p>
+<p>（5）数据类型转换系列<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">__mm_cvtss_si32 <span class="comment">//单精度浮点数转换为有符号32位整数</span></span><br><span class="line">__mm_cvttss_si32 <span class="comment">//单精度浮点数转换为有符号32位整数（带截断操作）</span></span><br><span class="line">__mm_cvtpi16_ps <span class="comment">//16位有符号整数转换为单精度浮点数</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="SSE指令的加速效果"><a href="#SSE指令的加速效果" class="headerlink" title="SSE指令的加速效果"></a>SSE指令的加速效果</h2><p>（1）对于scalar模式的SSE加速</p>
+<p>是不是只要采用SSE进行加速就一定会加快运行速度呢？当然不是了，SSE包含packed和scalar两种方式，我们采用scalar运算由于每一次只计算一个值，通过实验对比，使用SSE的scalar加速反而还没有原始的C代码速度快，</p>
+<p>（2）对于packed模式的加速</p>
+<p>使用packed模式加速，虽然每一次运算4个单精度浮点数，使用SSE优化之后，我们的代码不一定会得到4倍速的提升，因为编译器可能已经自动对某些代码进行SSE优化了。</p>
+<h1 id="SSE优化的具体实例"><a href="#SSE优化的具体实例" class="headerlink" title="SSE优化的具体实例"></a>SSE优化的具体实例</h1><p>案例说明，比如我要经过两个矩阵的逐元素乘积，我分别通过三种方式来对比</p>
+<ul>
+<li>方式一：原生的C/C++代码</li>
+<li>方式二：使用SSE的scalar进行优化</li>
+<li>方式三：使用OpenCV自带的mul函数</li>
+</ul>
+<h2 id="方式一：原生的C-C-代码"><a href="#方式一：原生的C-C-代码" class="headerlink" title="方式一：原生的C/C++代码"></a>方式一：原生的C/C++代码</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将Mat1和Mat2矩阵元素乘积之后更新到Mat2</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">mat_multi</span><span class="params">(Mat m1, Mat m2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; m1.rows; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">float</span> * pixel_1 = (<span class="type">float</span> *)m1.data + i * m1.step / <span class="number">4</span>; <span class="comment">//32f</span></span><br><span class="line">        <span class="type">float</span> * pixel_2 = (<span class="type">float</span> *)m2.data + i * m2.step / <span class="number">4</span>; <span class="comment">//32f</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; m1.cols; j++)</span><br><span class="line">        &#123;</span><br><span class="line">            *pixel_2 = (*pixel_1) * (*pixel_2);</span><br><span class="line">            pixel_1 += <span class="number">1</span>;</span><br><span class="line">            pixel_2 += <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="方式二：使用SSE的scalar进行优化"><a href="#方式二：使用SSE的scalar进行优化" class="headerlink" title="方式二：使用SSE的scalar进行优化"></a>方式二：使用SSE的scalar进行优化</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">sse_mat_multi</span><span class="params">(Mat m1, Mat m2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; m1.rows; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">float</span> * pixel_1 = (<span class="type">float</span> *)m1.data + i * m1.step / <span class="number">4</span>; <span class="comment">//32f</span></span><br><span class="line">        <span class="type">float</span> * pixel_2 = (<span class="type">float</span> *)m2.data + i * m2.step / <span class="number">4</span>; <span class="comment">//32f</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; m1.cols; j++)</span><br><span class="line">        &#123;</span><br><span class="line">            __m128 sse_1 = _mm_load_ps(pixel_1); <span class="comment">//将a地址指向的值复制给SSEA</span></span><br><span class="line">            __m128 sse_2 = _mm_load_ps(pixel_2); <span class="comment">//将b地址指向的值复制给SSEB</span></span><br><span class="line">            __m128 h = _mm_mul_ss(sse_1, sse_2); <span class="comment">//声明了变量并赋值（1.0f）</span></span><br><span class="line">            _mm_storer_ps(pixel_2, h);</span><br><span class="line">            pixel_1 += <span class="number">1</span>;</span><br><span class="line">            pixel_2 += <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果测试<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argv, <span class="type">char</span> *args[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">clock_t</span> start, end;</span><br><span class="line">    Mat m1 = <span class="built_in">Mat</span>(<span class="built_in">Size</span>(<span class="number">10000</span>, <span class="number">10000</span>), CV_32FC1);</span><br><span class="line">    m1.<span class="built_in">setTo</span>(<span class="number">1</span>);</span><br><span class="line">    Mat m2 = <span class="built_in">Mat</span>(<span class="built_in">Size</span>(<span class="number">10000</span>, <span class="number">10000</span>), CV_32FC1);</span><br><span class="line">    m1.<span class="built_in">setTo</span>(<span class="number">2</span>);</span><br><span class="line">    start = <span class="built_in">clock</span>();</span><br><span class="line">    <span class="built_in">mat_multi</span>(m1, m2);</span><br><span class="line">    end = <span class="built_in">clock</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;mat multi is : &quot;</span> &lt;&lt; (<span class="type">double</span>)(end - start) &lt;&lt; std::endl;</span><br><span class="line">    start = <span class="built_in">clock</span>();</span><br><span class="line">    <span class="built_in">sse_mat_multi</span>(m1, m2);</span><br><span class="line">    end = <span class="built_in">clock</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;sse mat multi is : &quot;</span> &lt;&lt; (<span class="type">double</span>)(end - start) &lt;&lt; std::endl;</span><br><span class="line">    start = <span class="built_in">clock</span>();</span><br><span class="line">    m1.<span class="built_in">mul</span>(m2);</span><br><span class="line">    end = <span class="built_in">clock</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;opencv mul is : &quot;</span> &lt;&lt; (<span class="type">double</span>)(end - start) &lt;&lt; std::endl;</span><br><span class="line">    <span class="built_in">getchar</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*运行结果为：</span></span><br><span class="line"><span class="comment">mat multi is : 198</span></span><br><span class="line"><span class="comment">sse mat multi is : 259</span></span><br><span class="line"><span class="comment">opencv mul is : 0</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure></p>
+<p>结论：由此可见自己写的基于scalar模式下的SSE优化反而变得慢了，而OpenCV原本的矩阵运算非常迅速，速度快的不是一点点，因为现在OpenCV4以上的版本，OpenCV使用了非常多的优化手段，比如parallel，SSE指令集加速，所以我们一般不要自己重写OpenCV已经有了的运算。</p>
+<h1 id="SSE优化使用VC-提供的指令集优化对比汇编指令优化"><a href="#SSE优化使用VC-提供的指令集优化对比汇编指令优化" class="headerlink" title="SSE优化使用VC++提供的指令集优化对比汇编指令优化"></a>SSE优化使用VC++提供的指令集优化对比汇编指令优化</h1><p>（1）原生态的C/C++<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CSSETestDlg::ComputeArrayCPlusPlus</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">float</span>* pArray1, <span class="comment">// [in] first source array</span></span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">float</span>* pArray2, <span class="comment">// [in] second source array</span></span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">float</span>* pResult, <span class="comment">// [out] result array</span></span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">int</span> nSize)</span> <span class="comment">// [in] size of all arrays</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line">    <span class="type">float</span>* pSource1 = pArray1;</span><br><span class="line">    <span class="type">float</span>* pSource2 = pArray2;</span><br><span class="line">    <span class="type">float</span>* pDest = pResult;</span><br><span class="line">    <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; nSize; i++ )</span><br><span class="line">    &#123;</span><br><span class="line">        *pDest = (<span class="type">float</span>)<span class="built_in">sqrt</span>((*pSource1) * (*pSource1) + (*pSource2)</span><br><span class="line">        * (*pSource2)) + <span class="number">0.5f</span>;</span><br><span class="line">        pSource1++;</span><br><span class="line">        pSource2++;</span><br><span class="line">        pDest++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>（2）使用VC++的SSE头文件来实现<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CSSETestDlg::ComputeArrayCPlusPlusSSE</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">float</span>* pArray1, <span class="comment">// [in] first source array</span></span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">float</span>* pArray2, <span class="comment">// [in] second source array</span></span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">float</span>* pResult, <span class="comment">// [out] result array</span></span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">int</span> nSize)</span> <span class="comment">// [in] size of all arrays</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> nLoop = nSize/ <span class="number">4</span>;</span><br><span class="line">    __m128 m1, m2, m3, m4;</span><br><span class="line">    __m128* pSrc1 = (__m128*) pArray1;</span><br><span class="line">    __m128* pSrc2 = (__m128*) pArray2;</span><br><span class="line">    __m128* pDest = (__m128*) pResult;</span><br><span class="line">    __m128 m0_5 = _mm_set_ps1(<span class="number">0.5f</span>); <span class="comment">// m0_5[0, 1, 2, 3] = 0.5</span></span><br><span class="line">    <span class="keyword">for</span> ( <span class="type">int</span> i = <span class="number">0</span>; i &lt; nLoop; i++ )</span><br><span class="line">    &#123;</span><br><span class="line">        m1 = _mm_mul_ps(*pSrc1, *pSrc1); <span class="comment">// m1 = *pSrc1 * *pSrc1</span></span><br><span class="line">        m2 = _mm_mul_ps(*pSrc2, *pSrc2); <span class="comment">// m2 = *pSrc2 * *pSrc2</span></span><br><span class="line">        m3 = _mm_add_ps(m1, m2); <span class="comment">// m3 = m1 + m2</span></span><br><span class="line">        m4 = _mm_sqrt_ps(m3); <span class="comment">// m4 = sqrt(m3)</span></span><br><span class="line">        *pDest = _mm_add_ps(m4, m0_5); <span class="comment">// *pDest = m4 + 0.5</span></span><br><span class="line">        pSrc1++;</span><br><span class="line">        pSrc2++;</span><br><span class="line">        pDest++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>（3）直接使用SSE的汇编指令，将汇编指令嵌入到C/C++里面<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CSSETestDlg::ComputeArrayAssemblySSE</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">float</span>* pArray1, <span class="comment">// [输入] 源数组1</span></span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">float</span>* pArray2, <span class="comment">// [输入] 源数组2</span></span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">float</span>* pResult, <span class="comment">// [输出] 用来存放结果的数组</span></span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">int</span> nSize)</span> <span class="comment">// [输入] 数组的大小</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> nLoop = nSize/<span class="number">4</span>;</span><br><span class="line">    <span class="type">float</span> f = <span class="number">0.5f</span>;</span><br><span class="line">    _asm</span><br><span class="line">    &#123;</span><br><span class="line">        movss xmm2, f <span class="comment">// xmm2[0] = 0.5</span></span><br><span class="line">        shufps xmm2, xmm2, <span class="number">0</span> <span class="comment">// xmm2[1, 2, 3] = xmm2[0]</span></span><br><span class="line">        mov esi, pArray1 <span class="comment">// 输入的源数组1的地址送往esi</span></span><br><span class="line">        mov edx, pArray2 <span class="comment">// 输入的源数组2的地址送往edx</span></span><br><span class="line">        mov edi, pResult <span class="comment">// 输出结果数组的地址保存在edi</span></span><br><span class="line">        mov ecx, nLoop <span class="comment">//循环次数送往ecx</span></span><br><span class="line">        start_loop:</span><br><span class="line">        movaps xmm0, [esi] <span class="comment">// xmm0 = [esi]</span></span><br><span class="line">        mulps xmm0, xmm0 <span class="comment">// xmm0 = xmm0 * xmm0</span></span><br><span class="line">        movaps xmm1, [edx] <span class="comment">// xmm1 = [edx]</span></span><br><span class="line">        mulps xmm1, xmm1 <span class="comment">// xmm1 = xmm1 * xmm1</span></span><br><span class="line">        addps xmm0, xmm1 <span class="comment">// xmm0 = xmm0 + xmm1</span></span><br><span class="line">        sqrtps xmm0, xmm0 <span class="comment">// xmm0 = sqrt(xmm0)</span></span><br><span class="line">        addps xmm0, xmm2 <span class="comment">// xmm0 = xmm1 + xmm2</span></span><br><span class="line">        movaps [edi], xmm0 <span class="comment">// [edi] = xmm0</span></span><br><span class="line">        add esi, <span class="number">16</span> <span class="comment">// esi += 16</span></span><br><span class="line">        add edx, <span class="number">16</span> <span class="comment">// edx += 16</span></span><br><span class="line">        add edi, <span class="number">16</span> <span class="comment">// edi += 16</span></span><br><span class="line">        dec ecx <span class="comment">// ecx--</span></span><br><span class="line">        jnz start_loop <span class="comment">//如果不为0则转向start_loop</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="SIMD-1"><a href="#SIMD-1" class="headerlink" title="SIMD"></a>SIMD</h1><p><strong>First Intrinsic Function Demo</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __AVX__</span></span><br><span class="line">  <span class="meta">#<span class="keyword">include</span> <span class="string">&lt;immintrin.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">  <span class="meta">#<span class="keyword">warning</span> No AVX support - will not compile</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    __m256 a = _mm256_set_ps(<span class="number">8.0</span>, <span class="number">7.0</span>, <span class="number">6.0</span>, <span class="number">5.0</span>, </span><br><span class="line">                             <span class="number">4.0</span>, <span class="number">3.0</span>, <span class="number">2.0</span>, <span class="number">1.0</span>);</span><br><span class="line">    __m256 b = _mm256_set_ps(<span class="number">18.0</span>, <span class="number">17.0</span>, <span class="number">16.0</span>, <span class="number">15.0</span>, </span><br><span class="line">                             <span class="number">14.0</span>, <span class="number">13.0</span>, <span class="number">12.0</span>, <span class="number">11.0</span>);</span><br><span class="line">    __m256 c = _mm256_add_ps(a, b);</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> d[<span class="number">8</span>];</span><br><span class="line">    _mm256_storeu_ps(d, c);</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;result equals &quot;</span> &lt;&lt; d[<span class="number">0</span>] &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt; d[<span class="number">1</span>]</span><br><span class="line">              &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt; d[<span class="number">2</span>] &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt; d[<span class="number">3</span>] &lt;&lt; <span class="string">&quot;,&quot;</span></span><br><span class="line">              &lt;&lt; d[<span class="number">4</span>] &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt; d[<span class="number">5</span>] &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt; d[<span class="number">6</span>] &lt;&lt; <span class="string">&quot;,&quot;</span></span><br><span class="line">              &lt;&lt; d[<span class="number">7</span>] &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># g++ --std=c++14 -O2 -mavx avx.cpp -o demo</span><br></pre></td></tr></table></figure>
+<p>运行</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># ./avx </span><br><span class="line">result equals 12,14,16,18,20,22,24,26</span><br></pre></td></tr></table></figure>
+<h2 id="AVX2-Instruction-amp-Intrinsic-Function"><a href="#AVX2-Instruction-amp-Intrinsic-Function" class="headerlink" title="AVX2 Instruction &amp; Intrinsic Function"></a><strong>AVX2 Instruction &amp; Intrinsic Function</strong></h2><p>本节主要罗列了几种不同功能的指令集和对应的 intrinsic function，没细看的必要，随用随看吧。</p>
+<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Intrinsic Function</th>
+<th>Operation</th>
+<th>AVX2 Instruction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_mm256_set1_pd</td>
+<td>Set all four words with the same value</td>
+<td>Composite</td>
+</tr>
+<tr>
+<td>_mm256_set_pd</td>
+<td>Set four values</td>
+<td>Composite</td>
+</tr>
+<tr>
+<td>_mm256_setr_pd</td>
+<td>Set four values, in reverse order</td>
+<td>Composite</td>
+</tr>
+<tr>
+<td>_mm256_setzero_pd</td>
+<td>Clear all four values</td>
+<td>VXORPD</td>
+</tr>
+<tr>
+<td>_mm256_set_m128d</td>
+<td>Set lower and higher 128-bit part</td>
+<td>VINSERTF128</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="Load"><a href="#Load" class="headerlink" title="Load"></a><strong>Load</strong></h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Intrinsic Function</th>
+<th>Operation</th>
+<th>AVX2 Instruction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_mm256_load_pd</td>
+<td>Load four double values, address aligned</td>
+<td>VMOVAPD ymm, mem</td>
+</tr>
+<tr>
+<td>_mm256_loadu_pd</td>
+<td>Load four double values, address unaligned</td>
+<td>VMOVUPD ymm, mem</td>
+</tr>
+<tr>
+<td>_mm256_maskload_pd</td>
+<td>Load four double values using mask</td>
+<td>VMASKMOVPD ymm, mem</td>
+</tr>
+<tr>
+<td>_mm256_broadcast_sd</td>
+<td>Load one double value into all four words</td>
+<td>VBROADCASTSD ymm, mem</td>
+</tr>
+<tr>
+<td>_mm256_broadcast_pd</td>
+<td>Load a pair of double values into the lower and higher part of vector.</td>
+<td>VBROADCASTSD ymm, mem</td>
+</tr>
+<tr>
+<td>_mm256_i64gather_pd</td>
+<td>Load double values from memory using indices.</td>
+<td>VGATHERPD ymm, mem, ymm</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="Store"><a href="#Store" class="headerlink" title="Store"></a>Store</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Intrinsic Function</th>
+<th>Operation</th>
+<th>AVX2 Instruction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_mm256_store_pd</td>
+<td>Store four values, address aligned</td>
+<td>VMOVAPD</td>
+</tr>
+<tr>
+<td>_mm256_storeu_pd</td>
+<td>Store four values, address unaligned</td>
+<td>VMOVUPD</td>
+</tr>
+<tr>
+<td>_mm256_maskstore_pd</td>
+<td>Store four values using mask</td>
+<td>VMASKMOVPD</td>
+</tr>
+<tr>
+<td>_mm256_storeu2_m128d</td>
+<td>Store lower and higher 128-bit parts into different memory locations</td>
+<td>Composite</td>
+</tr>
+<tr>
+<td>_mm256_stream_pd</td>
+<td>Store values without caching, address aligned</td>
+<td>VMOVNTPD</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="Math"><a href="#Math" class="headerlink" title="Math"></a>Math</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Intrinsic Function</th>
+<th>Operation</th>
+<th>AVX2 Instruction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_mm256_add_ps</td>
+<td>Addition</td>
+<td>VADDPS</td>
+</tr>
+<tr>
+<td>_mm256_sub_ps</td>
+<td>Subtraction</td>
+<td>VSUBPS</td>
+</tr>
+<tr>
+<td>_mm256_addsub_ps</td>
+<td>Alternatively add and subtract</td>
+<td>VADDSUBPS</td>
+</tr>
+<tr>
+<td>_mm256_hadd_ps</td>
+<td>Half addition</td>
+<td>VHADDPS</td>
+</tr>
+<tr>
+<td>_mm256_hsub_pd</td>
+<td>Half subtraction</td>
+<td>VHSUBPD</td>
+</tr>
+<tr>
+<td>_mm256_mul_pd</td>
+<td>Multiplication</td>
+<td>VMULPD</td>
+</tr>
+<tr>
+<td>_mm256_sqrt_pd</td>
+<td>Squared Root</td>
+<td>VSQRTPD</td>
+</tr>
+<tr>
+<td>_mm256_max_pd</td>
+<td>Computes Maximum</td>
+<td>VMAXPD</td>
+</tr>
+<tr>
+<td>_mm256_min_pd</td>
+<td>Computes Minimum</td>
+<td>VMINPD</td>
+</tr>
+<tr>
+<td>_mm256_ceil_pd</td>
+<td>Computes Ceil</td>
+<td>VROUNDPD</td>
+</tr>
+<tr>
+<td>_mm256_floor_pd</td>
+<td>Computes Floor</td>
+<td>VROUNDPD</td>
+</tr>
+<tr>
+<td>_mm256_round_pd</td>
+<td>Round</td>
+<td>VROUNDPD</td>
+</tr>
+<tr>
+<td>_mm256_dp_ps</td>
+<td>Single precision dot product</td>
+<td>VDPPS</td>
+</tr>
+<tr>
+<td>_mm256_fmadd_pd</td>
+<td>Fused multiply-add</td>
+<td>VFMADD132pd</td>
+</tr>
+<tr>
+<td>_mm256_fmsub_pd</td>
+<td>Fused multiply-subtract</td>
+<td>VFMSUB132pd</td>
+</tr>
+<tr>
+<td>_mm256_fmaddsub_pd</td>
+<td>Alternatively fmadd, fmsub</td>
+<td>VFMADDSUB132pd</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>示例代码</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// n a multiple of 4, x is 32-byte aligned</span><br><span class="line">void addindex_vec2(double *x, int n) &#123;</span><br><span class="line">  __m256d x_vec, init, incr, ind;</span><br><span class="line">  ind = _mm256_set_pd(3, 2, 1, 0);</span><br><span class="line">  incr = _mm256_set1_pd(4);</span><br><span class="line">  for (int i = 0; i &lt; n; i+=4) &#123;</span><br><span class="line">    x_vec = _mm256_load_pd(x+i); // load 4 doubles</span><br><span class="line">    x_vec = _mm256_add_pd(x_vec, ind); // add the two</span><br><span class="line">    ind = _mm256_add_pd(ind, incr); // update ind</span><br><span class="line">    _mm256_store_pd(x+i, x_vec); // store back</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Compare"><a href="#Compare" class="headerlink" title="Compare"></a>Compare</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Intrinsic Function &amp; Instruction</th>
+<th>Macro For Operation</th>
+<th>Operation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_mm256_cmp_pd / VCMPPD</td>
+<td>_CMP_EQ_OQ</td>
+<td>Equal</td>
+</tr>
+<tr>
+<td></td>
+<td>_CMP_EQ_UQ</td>
+<td>Equal (unordered)</td>
+</tr>
+<tr>
+<td></td>
+<td>_CMP_GE_OQ</td>
+<td>Greater Than or Equal</td>
+</tr>
+<tr>
+<td></td>
+<td>_CMP_GT_OQ</td>
+<td>Greater Than</td>
+</tr>
+<tr>
+<td></td>
+<td>_CMP_LE_OQ</td>
+<td>Less Than or Equal</td>
+</tr>
+<tr>
+<td></td>
+<td>_CMP_LT_OQ</td>
+<td>Less Than</td>
+</tr>
+<tr>
+<td></td>
+<td>_CMP_NEQ_OQ</td>
+<td>Not Equal</td>
+</tr>
+<tr>
+<td></td>
+<td>_CMP_NEQ_UQ</td>
+<td>Not Equal (unordered)</td>
+</tr>
+<tr>
+<td></td>
+<td>_CMP_NGE_UQ</td>
+<td>Not Greater Than or Equal (unordered)</td>
+</tr>
+<tr>
+<td></td>
+<td>_CMP_NGT_UQ</td>
+<td>Not Greater Than (unordered)</td>
+</tr>
+<tr>
+<td></td>
+<td>_CMP_NLE_UQ</td>
+<td>Not Less Than or Equal (unordered)</td>
+</tr>
+<tr>
+<td></td>
+<td>_CMP_NLT_UQ</td>
+<td>Not Less Than (unordered)</td>
+</tr>
+<tr>
+<td></td>
+<td>_CMP_TRUE_UQ</td>
+<td>True (unordered)</td>
+</tr>
+<tr>
+<td></td>
+<td>_CMP_FALSE_OQ</td>
+<td>False</td>
+</tr>
+<tr>
+<td></td>
+<td>_CMP_ORD_Q</td>
+<td>Ordered</td>
+</tr>
+<tr>
+<td></td>
+<td>_CMP_UNORD_Q</td>
+<td>Unordered</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>示例代码</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;xmmintrin.h&gt;</span><br><span class="line">void fcond_vec1(double *x, size_t n) &#123;</span><br><span class="line">  int i;</span><br><span class="line">  __m256d vt, vmask, vp, vm, vr, ones, mones, thresholds;</span><br><span class="line">  ones = _mm256_set1_pd(1.);</span><br><span class="line">  mones = _mm256_set1_pd(-1.);</span><br><span class="line">  thresholds = _mm256_set1_pd(0.5);</span><br><span class="line">  for(i = 0; i &lt; n; i+=4) &#123;</span><br><span class="line">    vt = _mm256_load_pd(x+i);</span><br><span class="line">    vmask = _mm256_cmp_pd(vt, thresholds, _CMP_GT_OQ);</span><br><span class="line">    vp = _mm256_and_pd(vmask, ones);</span><br><span class="line">    vm = _mm256_andnot_pd(vmask, mones);</span><br><span class="line">    vr = _mm256_add_pd(vt, _mm256_or_pd(vp, vm));</span><br><span class="line">    _mm256_store_pd(x+i, vr);</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Convert"><a href="#Convert" class="headerlink" title="Convert"></a>Convert</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Intrinsic Function</th>
+<th>Operation</th>
+<th>AVX2 Instruction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_mm256_cvtepi32_pd</td>
+<td>Convert from 32-bit integer</td>
+<td>VCVTDQ2PD</td>
+</tr>
+<tr>
+<td>_mm256_cvtepi32_ps</td>
+<td>Convert from 32-bit integer</td>
+<td>VCVTDQ2PD</td>
+</tr>
+<tr>
+<td>_mm256_cvtpd_epi32</td>
+<td>Convert to 32-bit integer</td>
+<td>VCVTPD2DQ</td>
+</tr>
+<tr>
+<td>_mm256_cvtps_epi32</td>
+<td>Convert to 32-bit integer</td>
+<td>VCVTPS2DQ</td>
+</tr>
+<tr>
+<td>_mm256_cvtps_pd</td>
+<td>Convert from floats</td>
+<td>VCVTPS2PD</td>
+</tr>
+<tr>
+<td>_mm256_cvtpd_ps</td>
+<td>Convert to floats</td>
+<td>VCVTPD2PS</td>
+</tr>
+<tr>
+<td>_mm256_cvttpd_epi32</td>
+<td>Convert to 32-bit integer with truncation</td>
+<td>VCVTPD2DQ</td>
+</tr>
+<tr>
+<td>_mm256_cvtsd_f64</td>
+<td>Extract</td>
+<td>MOVSD</td>
+</tr>
+<tr>
+<td>_mm256_cvtss_f32</td>
+<td>Extract</td>
+<td>MOVSS</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><img src="/img/v2-f184fe55254b04164c53f6e8a0a84561_1440w.webp" alt="img"></p>
+<h3 id="Shuffles"><a href="#Shuffles" class="headerlink" title="Shuffles"></a><strong>Shuffles</strong></h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Intrinsic Function</th>
+<th>Operation</th>
+<th>AVX2 Instruction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_mm256_unpackhi_pd</td>
+<td>Unpack High</td>
+<td>VUNPCKHPD</td>
+</tr>
+<tr>
+<td>_mm256_unpacklo_pd</td>
+<td>Unpack Low</td>
+<td>VUNPCKLPD</td>
+</tr>
+<tr>
+<td>_mm256_movemask_pd</td>
+<td>Create four-bit mask</td>
+<td>VMOVMSKPD</td>
+</tr>
+<tr>
+<td>_mm256_movedup_pd</td>
+<td>Duplicates</td>
+<td>VMOVDDUP</td>
+</tr>
+<tr>
+<td>_mm256_blend_pd</td>
+<td>Selects data from 2 sources using constant mask</td>
+<td>VBLENDPD</td>
+</tr>
+<tr>
+<td>_mm256_blendv_pd</td>
+<td>Selects data from 2 sources using variable mask</td>
+<td>VBLENDVPD</td>
+</tr>
+<tr>
+<td>_mm256_insertf128_pd</td>
+<td>Insert 128-bit value into packed array elements selected by index.</td>
+<td>VINSERTF128</td>
+</tr>
+<tr>
+<td>_mm256_extractf128_pd</td>
+<td>Extract 128-bits selected by index.</td>
+<td>VEXTRACTF128</td>
+</tr>
+<tr>
+<td>_mm256_shuffle_pd</td>
+<td>Shuffle</td>
+<td>VSHUFPD</td>
+</tr>
+<tr>
+<td>_mm256_permute_pd</td>
+<td>Permute</td>
+<td>VPERMILPD</td>
+</tr>
+<tr>
+<td>_mm256_permute4x64_pd</td>
+<td>Permute 64-bits elements</td>
+<td>VPERMPD</td>
+</tr>
+<tr>
+<td>_mm256_permute2f128_pd</td>
+<td>Permute 128-bits elements</td>
+<td>VPERM2F128</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><img src="/img/v2-7ffb174473ad7b96fcebbc2fddf7678c_1440w.webp" alt="img"></p>
+<p><img src="/img/v2-bf61297f49fbcaa226c7e31b9d89b256_1440w.webp" alt="img"></p>
+<p>示例代码</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">void fcond(double *x, size_t n) &#123;</span><br><span class="line">  int i;</span><br><span class="line">  for(i = 0; i &lt; n; i++) &#123;</span><br><span class="line">    if(x[i] &gt; 0.5)</span><br><span class="line">      x[i] += 1.;</span><br><span class="line">    else </span><br><span class="line">      x[i] -= 1.;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;immintrin.h&gt;</span><br><span class="line">void fcond_vec2(double *x, size_t n) &#123;</span><br><span class="line">  int i;</span><br><span class="line">  __m256d vt, vmask, vp, vm, vr, ones, mones, thresholds;</span><br><span class="line">  ones = _mm256_set1_pd(1.);</span><br><span class="line">  mones = _mm256_set1_pd(-1.);</span><br><span class="line">  thresholds = _mm256_set1_pd(0.5);</span><br><span class="line">  for(i = 0; i &lt; n; i+=4) &#123;</span><br><span class="line">    vt = _mm256_load_pd(x+i);</span><br><span class="line">    vmask = _mm256_cmp_pd(vt, thresholds, _CMP_GT_OQ);</span><br><span class="line">    vb = _mm256_blendv_pd(mones, ones, vmask);</span><br><span class="line">    vr = _mm256_add_pd(vt, vb);</span><br><span class="line">    _mm256_store_pd(x+i, vr);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="AVX2-Samples"><a href="#AVX2-Samples" class="headerlink" title="AVX2 Samples"></a><strong>AVX2 Samples</strong></h2><p>上一节中，罗列了一堆无聊的 AVX2 指令和对应的 <strong>Intrinsic Function，</strong>下面我们通过一些具体的例子来演示如何<strong>使用Intrinsic Function进行编程。</strong></p>
+<h3 id="Gelu"><a href="#Gelu" class="headerlink" title="Gelu"></a>Gelu</h3><p><a href="https://link.zhihu.com/?target=https%3A//www.paddlepaddle.org.cn/documentation/docs/zh/api/paddle/nn/GELU_cn.html">Gelu</a> 是一类激活算子，其函数定义如下：</p>
+<p><img src="/img/v2-2dc629f6eea019046bb8ceae8a8c1cc8_1440w.webp" alt="img"></p>
+<p>注意，Gelu 中包含了一个三角函数 tanh 操作，但是如果不使用Intel c++ compiler，编译器可能不支持相应的 AVX2 指令；因此，为了完成 tanh 和其他的科学计算函数如三角函数、指数等操作，可以使用两种方式来解决</p>
+<ol>
+<li>直接编写科学计算函数的近似实现，平滑替换；</li>
+<li>使用 <a href="https://link.zhihu.com/?target=https%3A//github.com/shibatch/sleef">https://github.com/shibatch/sleef</a> 或者 <a href="https://link.zhihu.com/?target=https%3A//github.com/vectorclass/version2">https://github.com/vectorclass/version2</a> 提供的高效实现；</li>
+</ol>
+<p>方法 1 在用法上较为方便，省去了学习第三方库的时间成本，但是本质上是一种重复造轮子的行为；方法2 中介绍的两个库也算轻量，并不存在陡峭的学习曲线，十分推荐；不过在本文中，主要目的是介绍 intrinsic function 的使用，所以尽量不调用第三方库。</p>
+<p>Tanh 函数的近似实现为</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">float fast_tanh(float x) &#123;</span><br><span class="line">  float x2 = x * x;</span><br><span class="line">  float a = x * (135135.0f + x2 * (17325.0f + x2 * (378.0f + x2)));</span><br><span class="line">  float b = 135135.0f + x2 * (62370.0f + x2 * (3150.0f + x2 * 28.0f));</span><br><span class="line">  return a / b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>相应的实现为</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">void _AVX_Gelu(float* dst, const float* src, size_t size) &#123;</span><br><span class="line">  auto var1 = _mm256_set1_ps(0.044715f);</span><br><span class="line">  auto var2 = _mm256_set1_ps(0.79788458f);</span><br><span class="line">  auto var3 = _mm256_set1_ps(378.f);</span><br><span class="line">  auto var4 = _mm256_set1_ps(17325.f);</span><br><span class="line">  auto var5 = _mm256_set1_ps(135135.f);</span><br><span class="line">  auto var6 = _mm256_set1_ps(28.f);</span><br><span class="line">  auto var7 = _mm256_set1_ps(3150.f);</span><br><span class="line">  auto var8 = _mm256_set1_ps(62370.f);</span><br><span class="line">  auto var9 = _mm256_set1_ps(135135.f);</span><br><span class="line">  auto var10 = _mm256_set1_ps(0.5);</span><br><span class="line">  auto varOne = _mm256_set1_ps(1.f);</span><br><span class="line">  auto varNegOne = _mm256_set1_ps(-1.f);</span><br><span class="line"></span><br><span class="line">  for (int i = 0; i &lt; size; i++) &#123;</span><br><span class="line">    // 计算 x^3</span><br><span class="line">    auto x = _mm256_loadu_ps(src + i * 8);</span><br><span class="line">    auto y = _mm256_mul_ps(x, x);</span><br><span class="line">    y = _mm256_mul_ps(y, x);</span><br><span class="line">    // 计算 0.044715 * x^3</span><br><span class="line">    y = _mm256_mul_ps(y, var1);</span><br><span class="line">    // 计算 0.044715 * x^3 + x</span><br><span class="line">    y = _mm256_add_ps(y, x);</span><br><span class="line">    // 计算 sqrt(2 / PI) * (0.044715 * x^3 + x)</span><br><span class="line">    y = _mm256_mul_ps(y, var2);</span><br><span class="line"></span><br><span class="line">    // y = tanh(y)</span><br><span class="line">    &#123;</span><br><span class="line">      auto y2 = _mm256_mul_ps(y, y);</span><br><span class="line">      auto w = _mm256_add_ps(y2, var3);</span><br><span class="line">      w = _mm256_mul_ps(w, y2);</span><br><span class="line">      w = _mm256_add_ps(w, var4);</span><br><span class="line">      w = _mm256_mul_ps(w, y2);</span><br><span class="line">      w = _mm256_add_ps(w, var5);</span><br><span class="line">      w = _mm256_mul_ps(w, y);</span><br><span class="line">      auto z = _mm256_mul_ps(y2, var6);</span><br><span class="line">      z = _mm256_add_ps(z, var7);</span><br><span class="line">      z = _mm256_mul_ps(z, y2);</span><br><span class="line">      z = _mm256_add_ps(z, var8);</span><br><span class="line">      z = _mm256_mul_ps(z, y2);</span><br><span class="line">      z = _mm256_add_ps(z, var9);</span><br><span class="line">      z = _mm256_div_ps(w, z);</span><br><span class="line">      z = _mm256_max_ps(z, varNegOne);</span><br><span class="line">      y = _mm256_min_ps(z, varOne);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    y = _mm256_add_ps(y, varOne);</span><br><span class="line">    y = _mm256_mul_ps(y, x);</span><br><span class="line">    y = _mm256_mul_ps(y, var10);</span><br><span class="line">    _mm256_storeu_ps(dst + i * 8, y);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码都十分直白，不言自明。</p>
+<h3 id="MatrixAdd"><a href="#MatrixAdd" class="headerlink" title="MatrixAdd"></a>MatrixAdd</h3><p>下面的例子演示了如何使用 intrinsic function 做 col-major 矩阵的加法运算，由于 AVX2 指令集可以一次打包 8 个浮点数运算，所以代码中将 PACK_UNIT 设置为 8。</p>
+<p>代码的逻辑十分简单，按行循环遍历，按列打包浮点数运算。出于方便考虑，默认代码中 cols 是8的倍数，可以省去尾数处理的逻辑。显而易见，该实现没有考虑矩阵的规模进行针对性优化，比如运算矩阵和结果矩阵有多大，直接存取会发生多少次cache miss？如何进行循环展开。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#define PACK_UNIT 8</span><br><span class="line"></span><br><span class="line">void MatrixAdd(float* C, const float* A, const float* B, const size_t cs,</span><br><span class="line">               const size_t as, const size_t bs, const size_t rows,</span><br><span class="line">               const size_t cols) &#123;</span><br><span class="line">  for (int row = 0; row &lt; rows; ++row) &#123;</span><br><span class="line">    auto a = A + as * row;</span><br><span class="line">    auto b = B + bs * row;</span><br><span class="line">    auto c = C + cs * row;</span><br><span class="line"></span><br><span class="line">    for (int col = 0; col &lt; cols; col += PACK_UNIT) &#123;</span><br><span class="line">      _mm256_storeu_ps(c + PACK_UNIT * col,</span><br><span class="line">                       _mm256_add_ps(_mm256_loadu_ps(b + PACK_UNIT * col),</span><br><span class="line">                                     _mm256_loadu_ps(a + PACK_UNIT * col)));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">g++ --std=c++14 -O2 -mavx2 matrixadd.cc -o madd</span><br></pre></td></tr></table></figure>
+<h3 id="MatrixTranspose"><a href="#MatrixTranspose" class="headerlink" title="MatrixTranspose"></a>MatrixTranspose</h3><p>以下代码用以演示如何使用 intrinsic function 进行 8 x 8 矩阵的转换，重点在于理解 <strong>mm256_unpacklo_ps 、</strong>mm256_unpackhi_ps 和 __mm256_shuffle_ps 指令的使用。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">void matrixTranspose(float* dst, const float* src) &#123;</span><br><span class="line">  __m256 r0, r1, r2, r3, r4, r5, r6, r7;</span><br><span class="line">  __m256 t0, t1, t2, t3, t4, t5, t6, t7;</span><br><span class="line"></span><br><span class="line">  r0 =_mm256_insertf128_ps(_mm256_castps128_ps256(_mm_load_ps(&amp;src[0 * 8 + 0])),</span><br><span class="line">                            _mm_load_ps(&amp;src[4 * 8 + 0]), 1);</span><br><span class="line">  r1 =_mm256_insertf128_ps(_mm256_castps128_ps256(_mm_load_ps(&amp;src[1 * 8 + 0])),</span><br><span class="line">                            _mm_load_ps(&amp;src[5 * 8 + 0]), 1);</span><br><span class="line">  r2 =_mm256_insertf128_ps(_mm256_castps128_ps256(_mm_load_ps(&amp;src[2 * 8 + 0])),</span><br><span class="line">                            _mm_load_ps(&amp;src[6 * 8 + 0]), 1);</span><br><span class="line">  r3 =_mm256_insertf128_ps(_mm256_castps128_ps256(_mm_load_ps(&amp;src[3 * 8 + 0])),</span><br><span class="line">                            _mm_load_ps(&amp;src[7 * 8 + 0]), 1);</span><br><span class="line">  r4 =_mm256_insertf128_ps(_mm256_castps128_ps256(_mm_load_ps(&amp;src[0 * 8 + 4])),</span><br><span class="line">                            _mm_load_ps(&amp;src[4 * 8 + 4]), 1);</span><br><span class="line">  r5 =_mm256_insertf128_ps(_mm256_castps128_ps256(_mm_load_ps(&amp;src[1 * 8 + 4])),</span><br><span class="line">                            _mm_load_ps(&amp;src[5 * 8 + 4]), 1);</span><br><span class="line">  r6 =_mm256_insertf128_ps(_mm256_castps128_ps256(_mm_load_ps(&amp;src[2 * 8 + 4])),</span><br><span class="line">                            _mm_load_ps(&amp;src[6 * 8 + 4]), 1);</span><br><span class="line">  r7 =_mm256_insertf128_ps(_mm256_castps128_ps256(_mm_load_ps(&amp;src[3 * 8 + 4])),</span><br><span class="line">                            _mm_load_ps(&amp;src[7 * 8 + 4]), 1);</span><br><span class="line"></span><br><span class="line">  t0 = _mm256_unpacklo_ps(r0, r1);</span><br><span class="line">  t1 = _mm256_unpackhi_ps(r0, r1);</span><br><span class="line">  t2 = _mm256_unpacklo_ps(r2, r3);</span><br><span class="line">  t3 = _mm256_unpackhi_ps(r2, r3);</span><br><span class="line">  t4 = _mm256_unpacklo_ps(r4, r5);</span><br><span class="line">  t5 = _mm256_unpackhi_ps(r4, r5);</span><br><span class="line">  t6 = _mm256_unpacklo_ps(r6, r7);</span><br><span class="line">  t7 = _mm256_unpackhi_ps(r6, r7);</span><br><span class="line"></span><br><span class="line">  r0 = _mm256_shuffle_ps(t0, t2, 0x44);</span><br><span class="line">  r1 = _mm256_shuffle_ps(t0, t2, 0xEE);</span><br><span class="line">  r2 = _mm256_shuffle_ps(t1, t3, 0x44);</span><br><span class="line">  r3 = _mm256_shuffle_ps(t1, t3, 0xEE);</span><br><span class="line">  r4 = _mm256_shuffle_ps(t4, t6, 0x44);</span><br><span class="line">  r5 = _mm256_shuffle_ps(t4, t6, 0xEE);</span><br><span class="line">  r6 = _mm256_shuffle_ps(t5, t7, 0x44);</span><br><span class="line">  r7 = _mm256_shuffle_ps(t5, t7, 0xEE);</span><br><span class="line"></span><br><span class="line">  _mm256_store_ps(&amp;dst[0 * 8], r0);</span><br><span class="line">  _mm256_store_ps(&amp;dst[1 * 8], r1);</span><br><span class="line">  _mm256_store_ps(&amp;dst[2 * 8], r2);</span><br><span class="line">  _mm256_store_ps(&amp;dst[3 * 8], r3);</span><br><span class="line">  _mm256_store_ps(&amp;dst[4 * 8], r4);</span><br><span class="line">  _mm256_store_ps(&amp;dst[5 * 8], r5);</span><br><span class="line">  _mm256_store_ps(&amp;dst[6 * 8], r6);</span><br><span class="line">  _mm256_store_ps(&amp;dst[7 * 8], r7);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Softmax"><a href="#Softmax" class="headerlink" title="Softmax"></a>Softmax</h3><p>softmax 的函数方程并不复杂，实现时关键点在于如何实现 exp ，下面的实现中参考了 <a href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/48863719/fastest-implementation-of-exponential-function-using-avx">Fastest Implementation of Exponential Function Using AVX</a> ，可以一起研究下。</p>
+<p><img src="/img/v2-9096aea74645d1f6ef698c914d507776_1440w.webp" alt="img"></p>
+<p>关于如何快速计算</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line">void _AVX_Softmax(float* dest, const float* source, size_t size) &#123;</span><br><span class="line">  float tmpfloat8[8];</span><br><span class="line">  int count = size / 8;</span><br><span class="line"></span><br><span class="line">  // step 1: get maxValue</span><br><span class="line">  float maxValue = source[0];</span><br><span class="line">  if (count &gt; 0) &#123;</span><br><span class="line">    auto maxVal = _mm256_loadu_ps(source);</span><br><span class="line">    for (int i = 1; i &lt; count; i++) &#123;</span><br><span class="line">      maxVal = _mm256_max_ps(maxVal, _mm256_loadu_ps(source + i * 8));</span><br><span class="line">    &#125;</span><br><span class="line">    _mm256_storeu_ps(tmpfloat8, maxVal);</span><br><span class="line">    maxValue = tmpfloat8[0] &gt; tmpfloat8[1] ? tmpfloat8[0] : tmpfloat8[1];</span><br><span class="line">    for (int i = 2; i &lt; 8; i++) &#123;</span><br><span class="line">      maxValue = maxValue &gt; tmpfloat8[i] ? maxValue : tmpfloat8[i];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // step 2: get exp(x - maxValue) and sum(exp(x - maxValue))</span><br><span class="line">  float sumValue = 0.f;</span><br><span class="line">  if (count &gt; 0) &#123;</span><br><span class="line">    auto sumVal = _mm256_set1_ps(0.f);</span><br><span class="line">    auto p0 = _mm256_set1_ps(0.6931471805599453);</span><br><span class="line">    auto p1 = _mm256_set1_ps(1.4426950408889634);</span><br><span class="line">    auto p2 = _mm256_set1_ps(1.f);</span><br><span class="line">    auto p3 = _mm256_set1_ps(1.f);</span><br><span class="line">    auto p4 = _mm256_set1_ps(0.5);</span><br><span class="line">    auto p5 = _mm256_set1_ps(0.1666666666666666);</span><br><span class="line">    auto p6 = _mm256_set1_ps(0.041666666666666664);</span><br><span class="line">    auto p7 = _mm256_set1_ps(0.008333333333333333);</span><br><span class="line">    auto xMax = _mm256_set1_ps(87);</span><br><span class="line">    auto xMin = _mm256_set1_ps(-87);</span><br><span class="line">    auto basic = _mm256_set1_epi32(1 &lt;&lt; 23);</span><br><span class="line">    auto temp127 = _mm256_set1_epi32(127);</span><br><span class="line"></span><br><span class="line">    for (int i = 0; i &lt; count; ++i) &#123;</span><br><span class="line">      auto x = _mm256_sub_ps(_mm256_loadu_ps(source + i * 8),</span><br><span class="line">                             _mm256_set1_ps(maxValue));</span><br><span class="line">      x = _mm256_max_ps(x, xMin);</span><br><span class="line">      x = _mm256_min_ps(x, xMax);</span><br><span class="line">      auto div = _mm256_mul_ps(x, p1);</span><br><span class="line">      auto divInt = _mm256_cvtps_epi32(div);</span><br><span class="line">      div = _mm256_cvtepi32_ps(divInt);</span><br><span class="line">      auto div2 = _mm256_add_epi32(divInt, temp127);</span><br><span class="line">      div2 = _mm256_mullo_epi32(div2, basic);</span><br><span class="line">      auto expBasic = _mm256_castsi256_ps(div2);</span><br><span class="line">      auto xReamin = _mm256_sub_ps(x, _mm256_mul_ps(div, p0));</span><br><span class="line">      auto t = xReamin;</span><br><span class="line">      auto c0 = _mm256_mul_ps(p7, t);</span><br><span class="line">      auto c1 = _mm256_add_ps(c0, p6);</span><br><span class="line">      auto c2 = _mm256_mul_ps(c1, t);</span><br><span class="line">      auto c3 = _mm256_add_ps(c2, p5);</span><br><span class="line">      auto c4 = _mm256_mul_ps(c3, t);</span><br><span class="line">      auto c5 = _mm256_add_ps(c4, p4);</span><br><span class="line">      auto c6 = _mm256_mul_ps(c5, t);</span><br><span class="line">      auto c7 = _mm256_add_ps(c6, p3);</span><br><span class="line">      auto c8 = _mm256_mul_ps(c7, t);</span><br><span class="line">      auto c9 = _mm256_add_ps(c8, p2);</span><br><span class="line">      auto expRemain = c9;</span><br><span class="line">      auto expRes = _mm256_mul_ps(expBasic, expRemain);</span><br><span class="line">      sumVal = _mm256_add_ps(expRes, sumVal);</span><br><span class="line">      _mm256_storeu_ps(dest + 8 * i, expRes);</span><br><span class="line">    &#125;</span><br><span class="line">    _mm256_storeu_ps(tmpfloat8, sumVal);</span><br><span class="line">    for (int i = 0; i &lt; 8; i++) &#123;</span><br><span class="line">      sumValue += tmpfloat8[i];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  auto param = 0.6931471805599453;</span><br><span class="line">  float xLimit = 87;</span><br><span class="line"></span><br><span class="line">  // step 3: get x / sum and store</span><br><span class="line">  for (int i = 0; i &lt; count; ++i) &#123;</span><br><span class="line">    // using  1 / ((1 / x) * sum) instead x * (1 / sum) or x / sum for some bugs</span><br><span class="line">    // in intel cpu</span><br><span class="line">    auto x = _mm256_rcp_ps(_mm256_loadu_ps(dest + 8 * i));</span><br><span class="line">    auto y = _mm256_set1_ps(sumValue);</span><br><span class="line">    auto z = _mm256_rcp_ps(_mm256_mul_ps(x, y));</span><br><span class="line">    _mm256_storeu_ps(dest + 8 * i, z);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本文介绍的内容和示例终究是小打小闹，真正有价值的工作还是在GEMM和Conv 这类计算密集型的热点算子上做出深度优化。后面有计划再介绍vectorclass 和 xbyak ，然后通过深度学习推理框架中GEMM算子为例来演示如何进行分块、打包、寄存器优化等技术。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag"># 积累</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/03/07/Intel_TBB/" rel="next" title="Intel Thread Building Blocks (TBB)">
+                <i class="fa fa-chevron-left"></i> Intel Thread Building Blocks (TBB)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/03/19/Leetcode1701_1800/" rel="prev" title="Leetcode1701 - 1800">
+                Leetcode1701 - 1800 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SSE%E6%8A%80%E6%9C%AF%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">SSE技术简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Intel-x86-64-SIMD-%E6%8C%87%E4%BB%A4%E9%9B%86"><span class="nav-number">1.0.1.</span> <span class="nav-text">Intel x86-64 SIMD 指令集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%91%E9%87%8F%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">1.0.2.</span> <span class="nav-text">向量寄存器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SSE%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%A6%E7%BB%86%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">SSE程序设计详细介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%88%86%E7%BB%84%EF%BC%88Data-Alignment%EF%BC%89"><span class="nav-number">2.1.</span> <span class="nav-text">数据分组（Data Alignment）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#m128-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.2.</span> <span class="nav-text">__m128 数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E7%A8%8B%E5%AE%9E%E4%BE%8B"><span class="nav-number">2.3.</span> <span class="nav-text">编程实例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SIMD"><span class="nav-number">3.</span> <span class="nav-text">SIMD</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E4%B8%8E%E6%8C%87%E4%BB%A4%E6%95%B0%E6%8D%AE%E7%BB%86%E8%8A%82"><span class="nav-number">3.1.</span> <span class="nav-text">寄存器与指令数据细节</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.2.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90"><span class="nav-number">3.3.</span> <span class="nav-text">内存对齐</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.4.</span> <span class="nav-text">工作模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">3.5.</span> <span class="nav-text">环境配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">3.6.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%91%BD%E5%90%8D"><span class="nav-number">3.7.</span> <span class="nav-text">函数命名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84-Intrinsic-%E6%8C%87%E4%BB%A4"><span class="nav-number">3.8.</span> <span class="nav-text">常用的 Intrinsic 指令</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mm-prefetch"><span class="nav-number">4.</span> <span class="nav-text">_mm_prefetch</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mm-movehl-ps"><span class="nav-number">5.</span> <span class="nav-text">_mm_movehl_ps</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E6%8C%87%E4%BB%A4%E9%9B%86%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98%E9%9B%86%E4%B8%AD%E5%9B%9E%E7%AD%94"><span class="nav-number">6.</span> <span class="nav-text">关于指令集的一些问题集中回答</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%A0%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="nav-number">6.1.</span> <span class="nav-text">几个问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%9B%86%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98"><span class="nav-number">6.2.</span> <span class="nav-text">指令集的一些问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%9B%86%E4%BC%98%E5%8C%96%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E8%88%AC%E6%AD%A5%E9%AA%A4"><span class="nav-number">6.3.</span> <span class="nav-text">指令集优化代码的一般步骤</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SSE%E6%8C%87%E4%BB%A4%E9%9B%86%E7%9A%84%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E"><span class="nav-number">7.</span> <span class="nav-text">SSE指令集的使用说明</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8SSE%E6%8C%87%E4%BB%A4"><span class="nav-number">7.1.</span> <span class="nav-text">如何使用SSE指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SSE%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">7.2.</span> <span class="nav-text">SSE的数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C%E6%8C%87%E4%BB%A4%E7%9A%84%E4%B8%80%E8%88%AC%E6%A0%BC%E5%BC%8F%EF%BC%88%E5%8C%85%E6%8B%AC%E4%BA%86%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BDload%E3%80%81%E6%95%B0%E6%8D%AE%E8%BF%90%E7%AE%97%E3%80%81%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8store%EF%BC%89"><span class="nav-number">7.3.</span> <span class="nav-text">数据操作指令的一般格式（包括了数据加载load、数据运算、数据存储store）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8SSE%E6%8C%87%E4%BB%A4%E6%B3%A8%E6%84%8F%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">7.4.</span> <span class="nav-text">使用SSE指令注意的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E4%B8%80%E4%BA%9BSSE%E6%8C%87%E4%BB%A4%E7%AE%80%E4%BB%8B"><span class="nav-number">7.5.</span> <span class="nav-text">常用的一些SSE指令简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SSE%E6%8C%87%E4%BB%A4%E7%9A%84%E5%8A%A0%E9%80%9F%E6%95%88%E6%9E%9C"><span class="nav-number">7.6.</span> <span class="nav-text">SSE指令的加速效果</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SSE%E4%BC%98%E5%8C%96%E7%9A%84%E5%85%B7%E4%BD%93%E5%AE%9E%E4%BE%8B"><span class="nav-number">8.</span> <span class="nav-text">SSE优化的具体实例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E5%BC%8F%E4%B8%80%EF%BC%9A%E5%8E%9F%E7%94%9F%E7%9A%84C-C-%E4%BB%A3%E7%A0%81"><span class="nav-number">8.1.</span> <span class="nav-text">方式一：原生的C&#x2F;C++代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E5%BC%8F%E4%BA%8C%EF%BC%9A%E4%BD%BF%E7%94%A8SSE%E7%9A%84scalar%E8%BF%9B%E8%A1%8C%E4%BC%98%E5%8C%96"><span class="nav-number">8.2.</span> <span class="nav-text">方式二：使用SSE的scalar进行优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SSE%E4%BC%98%E5%8C%96%E4%BD%BF%E7%94%A8VC-%E6%8F%90%E4%BE%9B%E7%9A%84%E6%8C%87%E4%BB%A4%E9%9B%86%E4%BC%98%E5%8C%96%E5%AF%B9%E6%AF%94%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4%E4%BC%98%E5%8C%96"><span class="nav-number">9.</span> <span class="nav-text">SSE优化使用VC++提供的指令集优化对比汇编指令优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SIMD-1"><span class="nav-number">10.</span> <span class="nav-text">SIMD</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#AVX2-Instruction-amp-Intrinsic-Function"><span class="nav-number">10.1.</span> <span class="nav-text">AVX2 Instruction &amp; Intrinsic Function</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Set"><span class="nav-number">10.1.1.</span> <span class="nav-text">Set</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Load"><span class="nav-number">10.1.2.</span> <span class="nav-text">Load</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Store"><span class="nav-number">10.1.3.</span> <span class="nav-text">Store</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Math"><span class="nav-number">10.1.4.</span> <span class="nav-text">Math</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Compare"><span class="nav-number">10.1.5.</span> <span class="nav-text">Compare</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Convert"><span class="nav-number">10.1.6.</span> <span class="nav-text">Convert</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Shuffles"><span class="nav-number">10.1.7.</span> <span class="nav-text">Shuffles</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AVX2-Samples"><span class="nav-number">10.2.</span> <span class="nav-text">AVX2 Samples</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Gelu"><span class="nav-number">10.2.1.</span> <span class="nav-text">Gelu</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MatrixAdd"><span class="nav-number">10.2.2.</span> <span class="nav-text">MatrixAdd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MatrixTranspose"><span class="nav-number">10.2.3.</span> <span class="nav-text">MatrixTranspose</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Softmax"><span class="nav-number">10.2.4.</span> <span class="nav-text">Softmax</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

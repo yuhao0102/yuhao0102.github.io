@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zn-ch">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Linux," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="IO体系结构和设备驱动程序IO体系结构总线担当计算机内部主通信通道的作用。所有计算机都拥有一条系统总线，它连接大部分内部硬件设备。一种典型的系统总线是PCI（Peripheral Component Interconnect）总线。目前使用其他类型的总线也很多，如ISA、EISA、MCA、SCSI和USB。 典型的情况是，一台计算机包括几种不同类型的总线，它们通过被称作桥的硬件设备连接在一起。两条">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Linux内核13-15章">
+<meta property="og:url" content="http://yoursite.com/2020/10/23/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B05/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="IO体系结构和设备驱动程序IO体系结构总线担当计算机内部主通信通道的作用。所有计算机都拥有一条系统总线，它连接大部分内部硬件设备。一种典型的系统总线是PCI（Peripheral Component Interconnect）总线。目前使用其他类型的总线也很多，如ISA、EISA、MCA、SCSI和USB。 典型的情况是，一台计算机包括几种不同类型的总线，它们通过被称作桥的硬件设备连接在一起。两条">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/img/1603467866.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603468013.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603468456.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603473589.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603474189.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603474575.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603474576.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603558146.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603558413.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603562433.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603609958.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603612463.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603628853.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603628854.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603635030.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603635454.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603635455.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603715460.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603715464.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603716005.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603716007.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603716009.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603716010.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603716011.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603716014.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603792543.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603792545.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603965962.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603965967.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603966548.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603966615.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603966616.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1603966619.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1604040652.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1604052162.jpg">
+<meta property="article:published_time" content="2020-10-23T08:00:00.000Z">
+<meta property="article:modified_time" content="2020-10-31T08:17:31.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/1603467866.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/10/23/深入理解Linux内核 笔记5/"/>
+
+
+
+
+
+  <title>深入理解Linux内核13-15章 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zn-ch">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hao Yu's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">The program monkey was eaten by the siege lion.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/23/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B05/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入理解Linux内核13-15章</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-10-23T16:00:00+08:00">
+                2020-10-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="IO体系结构和设备驱动程序"><a href="#IO体系结构和设备驱动程序" class="headerlink" title="IO体系结构和设备驱动程序"></a>IO体系结构和设备驱动程序</h1><h2 id="IO体系结构"><a href="#IO体系结构" class="headerlink" title="IO体系结构"></a>IO体系结构</h2><p><strong>总线担当计算机内部主通信通道的作用</strong>。所有计算机都拥有一条<strong>系统总线</strong>，它连接大部分内部硬件设备。一种典型的系统总线是<strong>PCI</strong>（Peripheral Component Interconnect）总线。目前使用其他类型的总线也很多，如ISA、EISA、MCA、SCSI和USB。</p>
+<p>典型的情况是，一台计算机包括几种不同类型的总线，它们通过被称作<strong>桥</strong>的硬件设备连接在一起。两条高速总线用于在内存芯片上来回传送数据：<strong>前端总线将CPU连接到RAM控制器上，而后端总线将CPU直接连接到外部硬件的高速缓存上</strong>。主机上的桥将系统总线和前端总线连接在一起。</p>
+<p>CPU和I/O设备之间的数据通路通常称为<strong>I/O总线</strong>。80x86微处理器使用16位的地址总线对I/O设备进行寻址，<strong>使用8位、16位或32位的数据总线传输数据</strong>。每个I/O设备依次连接到I/O总线上，这种连接使用了包含3个元素的硬件组织层次：<strong>I/O端口</strong>、<strong>接口</strong>和<strong>设备控制器</strong>。下图显示了I/O体系结构的这些成分：<br><img src="/img/1603467866.jpg" alt=""></p>
+<h3 id="I-O端口"><a href="#I-O端口" class="headerlink" title="I/O端口"></a>I/O端口</h3><p>每个连接到I/O总线上的设备都有自己的<strong>I/O地址集</strong>，通常称为<strong>I/O端口</strong>（I/O port）。在IBM PC体系结构中，I/O地址空间一共提供了65536个8位的I/O端口。可以<strong>把两个连续的8位端口看成一个16位端口</strong>，但是<strong>这必须从偶数地址开始</strong>。同理，也可以把两个连续的16位端口看成一个32位端口，但是这必须是<strong>从4的整数倍地址开始</strong>。</p>
+<p>有四条专用的汇编语言指令可以允许CPU对I/O端口进行读写，它们是<code>in</code>、<code>ins</code>、<code>out</code>和<code>outs</code>。在执行其中的一条指令时，CPU使用地址总线选择所请求的I/O端口，使用数据总线在CPU寄存器和端口之间传送数据。</p>
+<p><strong>I/O端口还可以被映射到物理地址空间</strong>。因此，<strong>处理器和I/O设备之间的通信就可以使用对内存直接进行操作的汇编语言指令</strong>（例如，<code>mov</code>、<code>and</code>、<code>or</code>等等）。现代的硬件设备更倾向于映射的I/O，因为这样处理的速度较快，并可以和DMA结合起来。</p>
+<p>系统设计者的主要目的是<strong>对I/O编程提供统一的方法，但又不牺牲性能</strong>。为了达到这个目的，每个设备的I/O端口都被组织成如下图所示的一组专用寄存器。CPU把要发送给设备的命令写入<strong>设备控制寄存器</strong>，并从<strong>设备状态寄存器</strong>中读出表示设备内部状态的值。CPU还可以通过读取<strong>设备输入寄存器</strong>的内容从设备取得数据，也可以通过向<strong>设备输出寄存器</strong>中写入字节而把数据输出到设备。<br><img src="/img/1603468013.jpg" alt=""></p>
+<p><code>in</code>、<code>out</code>、<code>ins</code>和<code>outs</code>汇编语言指令都可以访问I/O端口。内核中包含了以下辅助函数来简化这种访问：</p>
+<ul>
+<li><code>inb()</code>，<code>inw()</code>，<code>inl()</code>：分别从I/O端口读取1、2或4个连续字节。后缀“b”、“w”、“l”，分别代表一个字节（8位）、一个字（16位）以及一个长整型（32位）。</li>
+<li><code>inb_p()</code>，<code>inw_p()</code>，<code>inl_p()</code>：分别从I/O端口读取1、2或4个连续字节，然后执行一条“哑元（dummy，即空指令）”指令使CPU暂停。</li>
+<li><code>outb()</code>，<code>outw()</code>，<code>outl()</code>：分别向一个I/O端口写入1、2或4个连续字节。</li>
+<li><code>outb_p()</code>，<code>outw_p()</code>，<code>outl_p()</code>：分别向一个I/O端口写入1、2或4个连续字节，然后执行一条“哑元”指令使CPU暂停。</li>
+<li><code>insb()</code>，<code>insw()</code>，<code>insl()</code>：分别从I/O端口读取以1、2或4个字节为一组的连续字节序列。字节序列的长度由该函数的参数给出。</li>
+<li><code>outsb()</code>，<code>outsw()</code>，<code>outsl()</code>：分别向I/O端口写入以1、2或4个字节为一组的连续字节序列。</li>
+</ul>
+<p><strong>资源</strong>表示某个实体的一部分，这部分被<strong>互斥地分配给设备驱动程序</strong>。在我们的情况中，<strong>一个资源表示I/O端口地址的一个范围</strong>。每个资源对应的信息存放在resource数据结构中。所有的同种资源都插入到一个树型数据结构中；例如，表示I/O端口地址范围的所有资源都包含在一个根节点为<code>ioport_resource</code>的树中：<br><img src="/img/1603468456.jpg" alt=""></p>
+<p>节点的孩子被收集到一个链表中，其第一个元素由<code>child</code>指向。<code>sibling</code>字段指向链表中的下一个节点。</p>
+<p>一般来说，树中的每个节点肯定相当于父节点对应范围的一个子范围。I/O端口资源树（ioport_resource）的根节点跨越了整个I/O地址空间（从端口0~65535）。一个典型的PC I/O端口资源分配如下：</p>
+<ul>
+<li>0000～000F：DMA控制器1</li>
+<li>0020～0021：主中断控制器</li>
+<li>0040～0043：系统时钟</li>
+<li>0060：键盘控制器控制状态口</li>
+<li>0061：系统扬声器</li>
+<li>0064：键盘控制器数据口</li>
+<li>0070～0071：系统CMOS/实时钟</li>
+<li>0080～0083：DMA控制器1</li>
+<li>0087～0088：DMA控制器1</li>
+<li>0089～008B：DMA控制器1</li>
+<li>00A0～00A1：从中断控制器</li>
+<li>00C0～00DF：DMA控制器2</li>
+<li>00F0～00FF：数值协处理器</li>
+<li>0170～0117：标准IDE/ESDI硬盘控制器</li>
+<li>01F0～01FF：标准IDE/ESDI硬盘控制器</li>
+<li>0200～0207：游戏口</li>
+<li>0274～0277：ISA即插即用计数器</li>
+<li>0278～027F：并行打印机口</li>
+<li>02F8～02FF：串行通信口2（COM2）</li>
+<li>0376：第二个IDE硬盘控制器</li>
+<li>0378～037F：并行打印口1</li>
+<li>03B0～03BB：VGA显示适配器</li>
+<li>03C0～03DF：VGA显示适配器</li>
+<li>03D0～03DF：彩色显示器适配器</li>
+<li>03F2～03F5：软磁盘控制器</li>
+<li>03F6：第一个硬盘控制器</li>
+<li>03F8～03FF：串行通信口1（COM1）</li>
+<li>0400～FFFF没有指明端口，供用户扩展使用</li>
+</ul>
+<p>任何设备驱动程序都可以使用下面三个函数，传递给它们的参数为资源树的根节点和要插入的新资源数据结构的地址：</p>
+<ul>
+<li><code>request_resource()</code>：把一个给定范围分配给一个I/O设备。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">request_resource</span><span class="params">(<span class="keyword">struct</span> resource *root, <span class="keyword">struct</span> resource *new)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">resource</span> *<span class="title">conflict</span>;</span></span><br><span class="line"></span><br><span class="line">    write_lock(&amp;resource_lock);</span><br><span class="line">    conflict = __request_resource(root, new);</span><br><span class="line">    write_unlock(&amp;resource_lock);</span><br><span class="line">    <span class="keyword">return</span> conflict ? -EBUSY : <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">resource</span> * __<span class="title">request_resource</span>(<span class="keyword">struct</span> <span class="title">resource</span> *<span class="title">root</span>, <span class="keyword">struct</span> <span class="title">resource</span> *<span class="title">new</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="type">resource_size_t</span> start = new-&gt;start;</span><br><span class="line">    <span class="type">resource_size_t</span> end = new-&gt;end;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">resource</span> *<span class="title">tmp</span>, **<span class="title">p</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (end &lt; start)</span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    <span class="keyword">if</span> (start &lt; root-&gt;start)</span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    <span class="keyword">if</span> (end &gt; root-&gt;end)</span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    p = &amp;root-&gt;child;</span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        tmp = *p;</span><br><span class="line">        <span class="keyword">if</span> (!tmp || tmp-&gt;start &gt; end) &#123;</span><br><span class="line">            new-&gt;sibling = tmp;</span><br><span class="line">            *p = new;</span><br><span class="line">            new-&gt;parent = root;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        p = &amp;tmp-&gt;sibling;</span><br><span class="line">        <span class="keyword">if</span> (tmp-&gt;end &lt; start)</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        <span class="keyword">return</span> tmp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>allocate_resource()</code>：在资源树中寻找一个给定大小和排列方式的可用范围；若存在，就将这个范围分配给一个I/O设备（主要由PCI设备驱动程序使用，这种驱动程序可以配置成使用任意的端口号和主板上的内存地址对其进行配置）。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">allocate_resource</span><span class="params">(<span class="keyword">struct</span> resource *root, <span class="keyword">struct</span> resource *new,</span></span><br><span class="line"><span class="params">              <span class="type">resource_size_t</span> size, <span class="type">resource_size_t</span> min,</span></span><br><span class="line"><span class="params">              <span class="type">resource_size_t</span> max, <span class="type">resource_size_t</span> align,</span></span><br><span class="line"><span class="params">              <span class="type">void</span> (*alignf)(<span class="type">void</span> *, <span class="keyword">struct</span> resource *,</span></span><br><span class="line"><span class="params">                     <span class="type">resource_size_t</span>, <span class="type">resource_size_t</span>),</span></span><br><span class="line"><span class="params">              <span class="type">void</span> *alignf_data)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> err;</span><br><span class="line"></span><br><span class="line">    write_lock(&amp;resource_lock);</span><br><span class="line">    err = find_resource(root, new, size, min, max, align, alignf, alignf_data);</span><br><span class="line">    <span class="keyword">if</span> (err &gt;= <span class="number">0</span> &amp;&amp; __request_resource(root, new))</span><br><span class="line">        err = -EBUSY;</span><br><span class="line">    write_unlock(&amp;resource_lock);</span><br><span class="line">    <span class="keyword">return</span> err;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">find_resource</span><span class="params">(<span class="keyword">struct</span> resource *root, <span class="keyword">struct</span> resource *new,</span></span><br><span class="line"><span class="params">             <span class="type">resource_size_t</span> size, <span class="type">resource_size_t</span> min,</span></span><br><span class="line"><span class="params">             <span class="type">resource_size_t</span> max, <span class="type">resource_size_t</span> align,</span></span><br><span class="line"><span class="params">             <span class="type">void</span> (*alignf)(<span class="type">void</span> *, <span class="keyword">struct</span> resource *,</span></span><br><span class="line"><span class="params">                    <span class="type">resource_size_t</span>, <span class="type">resource_size_t</span>),</span></span><br><span class="line"><span class="params">             <span class="type">void</span> *alignf_data)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">resource</span> *<span class="title">this</span> =</span> root-&gt;child;</span><br><span class="line"></span><br><span class="line">    new-&gt;start = root-&gt;start;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * Skip past an allocated resource that starts at 0, since the assignment</span></span><br><span class="line"><span class="comment">     * of this-&gt;start - 1 to new-&gt;end below would cause an underflow.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">if</span> (this &amp;&amp; this-&gt;start == <span class="number">0</span>) &#123;</span><br><span class="line">        new-&gt;start = this-&gt;end + <span class="number">1</span>;</span><br><span class="line">        this = this-&gt;sibling;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(;;) &#123;</span><br><span class="line">        <span class="keyword">if</span> (this)</span><br><span class="line">            new-&gt;end = this-&gt;start - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            new-&gt;end = root-&gt;end;</span><br><span class="line">        <span class="keyword">if</span> (new-&gt;start &lt; min)</span><br><span class="line">            new-&gt;start = min;</span><br><span class="line">        <span class="keyword">if</span> (new-&gt;end &gt; max)</span><br><span class="line">            new-&gt;end = max;</span><br><span class="line">        new-&gt;start = ALIGN(new-&gt;start, align);</span><br><span class="line">        <span class="keyword">if</span> (alignf)</span><br><span class="line">            alignf(alignf_data, new, size, align);</span><br><span class="line">        <span class="keyword">if</span> (new-&gt;start &lt; new-&gt;end &amp;&amp; new-&gt;end - new-&gt;start &gt;= size - <span class="number">1</span>) &#123;</span><br><span class="line">            new-&gt;end = new-&gt;start + size - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!this)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        new-&gt;start = this-&gt;end + <span class="number">1</span>;</span><br><span class="line">        this = this-&gt;sibling;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -EBUSY;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>release_resource()</code>：释放以前分配给I/O设备的给定范围。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">release_resource</span><span class="params">(<span class="keyword">struct</span> resource *old)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> retval;</span><br><span class="line"></span><br><span class="line">    write_lock(&amp;resource_lock);</span><br><span class="line">    retval = __release_resource(old);</span><br><span class="line">    write_unlock(&amp;resource_lock);</span><br><span class="line">    <span class="keyword">return</span> retval;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">static</span> <span class="type">int</span> __release_resource(<span class="keyword">struct</span> resource *old)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">resource</span> *<span class="title">tmp</span>, **<span class="title">p</span>;</span></span><br><span class="line"></span><br><span class="line">    p = &amp;old-&gt;parent-&gt;child;</span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        tmp = *p;</span><br><span class="line">        <span class="keyword">if</span> (!tmp)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">if</span> (tmp == old) &#123;</span><br><span class="line">            *p = tmp-&gt;sibling;</span><br><span class="line">            old-&gt;parent = <span class="literal">NULL</span>;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        p = &amp;tmp-&gt;sibling;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -EINVAL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>内核也为以上应用于I/O端口的函数定义了一些快捷函数：<code>request_region()</code>分配I/O端口的给定范围，<code>release_region()</code>释放以前分配给I/O端口的范围。当前分配给I/O设备的所有I/O地址的树都可以从<code>/proc/ioports</code>文件中获得。</p>
+<h3 id="I-O接口"><a href="#I-O接口" class="headerlink" title="I/O接口"></a>I/O接口</h3><p><strong>I/O接口</strong>是处于一组I/O端口和对应的设备控制器之间的一种硬件电路。它起翻译器的作用，即<strong>把I/O端口中的值转换成设备所需要的命令和数据</strong>。在相反的方向上，它检测设备状态的变化，并对起状态寄存器作用的I/O端口进行相应的更新。还可以通过一条IRQ线把这种电路连接到可编程中断控制器上，以使它代表相应的设备发出中断请求。</p>
+<h4 id="专用I-O接口"><a href="#专用I-O接口" class="headerlink" title="专用I/O接口"></a>专用I/O接口</h4><p>专门用于一个特定的硬件设备。在一些情况下，设备控制器与这种I/O接口处于同一块卡中。连接到专用I/O接口上的设备可以是内部设备，也可以是外部设备。</p>
+<p>专用I/O接口的种类很多，因此目前已装在PC上设备的种类也很多，我们无法一一列出，在此只列出一些最通用的接口：</p>
+<ul>
+<li><strong>键盘接口</strong>：连接到一个键盘控制器上，这个控制器包含一个专用微处理器。这个微处理器对按下的组合键进行译码，产生一个中断并把相应的键盘扫描码写人输入寄存器。</li>
+<li><strong>图形接口</strong>：和图形卡中对应的控制器封装在一起，图形卡有自己的帧缓冲区，还有一个专用处理器以及存放在只读存储器（ROM）芯片中的一些代码。帧缓冲区是显卡上固化的存储器，其中存放的是当前屏幕内容的图形描述。</li>
+<li><strong>磁盘接口</strong>：由一条电缆连接到磁盘控制器，通常磁盘控制器与磁盘放在一起。例如，IDE接口由一条40线的带形电缆连接到智能磁盘控制器上，在磁盘本身就可以找到这个控制器。</li>
+<li><strong>总线鼠标接口</strong>：由一条电缆把接口和控制器连接在一起，控制器就包含在鼠标中。</li>
+<li><strong>网络接口</strong>：与网卡中的相应控制器封装在一起，用以接收或发送网络报文。虽然广泛采用的网络标准很多，但还是以太网（IEEE 802.3)最为通用。</li>
+</ul>
+<h4 id="通用I-O接口"><a href="#通用I-O接口" class="headerlink" title="通用I/O接口"></a>通用I/O接口</h4><p><strong>用来连接多个不同的硬件设备</strong>。连接到通用I/O接口上的设备通常都是外部设备。现代PC都包含连接很多外部设备的几个通用I/O接口。最常用的接口有：</p>
+<ul>
+<li><strong>并口</strong>：传统上用于连接打印机，它还可以用来连接可移动磁盘、扫描仪、备份设备、其他计算机等等。数据的传送以每次1字节（8位）为单位进行。</li>
+<li><strong>串口</strong>：与并口类似，但<strong>数据的传送是逐位进行的</strong>。串口包括一个通用异步收发器（UART）芯片，它可以把要发送的字节信息拆分成位序列，也可以把接收到的位流重新组装成字节信息。由于串口本质上速度低于并口，因此主要用于连接那些不需要高速操作的外部设备，如调制解调器、鼠标以及打印机。</li>
+<li><strong>PCMCIA接口</strong>：大多数便携式计算机都包含这种接口。在不重新启动系统的情况下，这种形状类似于信用卡的外部设备可以被插入插槽或从插槽中拔走。最常用的PCMCIA设备是硬盘、调制解调器、网卡和扩展RAM。</li>
+<li><strong>SCSI（小型计算机系统接口）接口</strong>：是把PC主总线连接到次总线（称为SCSI总线）的电路。SCSI-2总线允许一共8个PC和外部设备（硬盘、扫描仪、CR-ROM刻录机等等）连接在一起。如果有附加接口，宽带SCSI-2和新的SCSI-3接口可以允许你连接多达16个以上的设备。SCSI标准是通过SCSI总线连接设备的通信协议。</li>
+<li><strong>通用串行总线（USB）</strong>：高速运转的通用I/O接口，可用于连接外部设备，代替传统的并口、串口以及SCSI接口。</li>
+</ul>
+<h3 id="设备控制器"><a href="#设备控制器" class="headerlink" title="设备控制器"></a>设备控制器</h3><p>复杂的设备可能需要一个<strong>设备控制器</strong>来驱动。从本质上说，控制器起两个重要作用：</p>
+<ul>
+<li>对从I/O接口接收到的高级命令进行解释，并通过向设备发送适当的电信号序列强制设备执行特定的操作。</li>
+<li>对从设备接收到的电信号进行转换和适当地解释，并修改（通过I/O接口）状态寄存器的值。</li>
+</ul>
+<p>很多硬件设备都有自己的存储器，通常称之为<strong>I/O共享存储器</strong>。例如，所有比较新的图形卡在帧缓冲区中都有几MB的RAM，用它来存放要在屏幕上显示的屏幕映像。</p>
+<h2 id="设备驱动程序模型"><a href="#设备驱动程序模型" class="headerlink" title="设备驱动程序模型"></a>设备驱动程序模型</h2><p><strong>系统中所有硬件设备由内核全权负责电源管理</strong>。例如，在以电池供电的计算机进入“待机”状态时，内核应立刻强制每个硬件设备处于低功率状态。因此，每个能够响应“待机”状态的设备驱动程序必须包含一个回调函数，它能够使得硬件设备处于低功率状态。而且，硬件设备必须按准确的顺序进入“待机”状态，否则一些设备可能会处于错误的电源状态。例如，内核必须首先将硬盘置于“待机”状态，然后才是它们的磁盘控制器，因为若按照相反的顺序执行，磁盘控制器就不能向硬盘发送命令。Linux 2.6提供了一些数据结构，为系统中的设备提供一个统一的视图，这个框架叫做<strong>设备驱动程序模型</strong>。</p>
+<h3 id="sysfs文件系统"><a href="#sysfs文件系统" class="headerlink" title="sysfs文件系统"></a>sysfs文件系统</h3><p>虽然设备模型的初衷是为了方便电源管理而提供出的一种设备拓扑结构，但是，为了方便调试，设备模型的开发者决定<strong>将设备结构树导出为一个文件系统</strong>，这就是<strong>sysfs文件系统</strong>，它可以帮助用户以一个简单文件系统的方式来观察系统中各种设备的拓扑结构。</p>
+<p>sysfs文件系统是一种特殊的文件系统。被安装于<code>sys</code>目录下的<code>/proc</code>文件系统相似。<code>/proc</code>文件系统是<strong>首次被设计成允许用户态应用程序访问内核内部数据结构的文件系统</strong>。sysfs文件系统展现了设备驱动程序模型组件的层次关系。</p>
+<ul>
+<li><code>block</code>：块设备，独立于所连接的总线</li>
+<li><code>devices</code>：所有被内核识别的硬件设备，依照连接它们的总线对其进行组织</li>
+<li><code>bus</code>：系统中用于连接设备的总线</li>
+<li><code>drivers</code>：在内核中注册的设备驱动程序</li>
+<li><code>class</code>：系统中设备的类型（声卡、网卡、显卡等等）；同一类可能包含由不同总线连接的设备，于是由不同的驱动程序驱动。</li>
+<li><code>power</code>：处理一些硬件设备电源状态的文件</li>
+<li><code>firmware</code>：处理一些硬件设备的固件的文件</li>
+</ul>
+<p>sysfs文件系统中所表示的设备驱动程序模型组件之间的关系就像目录和文件之间符号链接的关系一样。sysfs文件系统中普通文件的主要作用是表示驱动程序和设备的属性。</p>
+<h3 id="kobject"><a href="#kobject" class="headerlink" title="kobject"></a>kobject</h3><p>设备驱动程序模型的核心数据结构是<code>kobject</code>，每个<code>kobject</code>对应于sysfs文件系统中的一个目录。<code>kobject</code>被嵌入到一个叫做<strong>容器</strong>的更大对象中，容器描述设备驱动程序模型中的组件，典型的容器例子有总线、设备及驱动程序的描述符。</p>
+<p>将一个<code>kobject</code>嵌入容器中允许内核：</p>
+<ul>
+<li>为容器保持一个引用计数器</li>
+<li>维持容器的层次列表或组</li>
+<li>为容器的属性提供一种用户态查看的视图</li>
+</ul>
+<p>每个<code>kobject</code>由<code>kobject</code>数据结构描述：<br><img src="/img/1603473589.jpg" alt=""></p>
+<p><code>ktype</code>字段指向<code>kobj_type</code>对象，该对象描述了<code>kobject</code>的“类型”。本质上，它描述的是包括<code>kobject</code>的容器的类型。<code>kobj_type</code>包含三个字段：</p>
+<ul>
+<li><code>void (*release)(struct kobject *);</code>：当<code>kobject</code>被释放时执行</li>
+<li><code>struct sysfs_ops    * sysfs_ops;</code>：指向<code>sysfs</code>操作表的<code>sysfs_ops</code>指针</li>
+<li><code>struct attribute    ** default_attrs;</code>：<code>sysfs</code>文件系统的缺省属性链表</li>
+</ul>
+<p>字段<code>kref</code>字段是一个<code>k_ref</code>类型结构，仅有一个<code>refcount</code>字段。该字段是<code>kobject</code>的引用计数器。但它也可以作为<code>kobject</code>容器的引用计数器。<code>kobject_get()</code>和<code>kobject_put()</code>分别用于增加和减少引用计数器的值，如果该计数器为0，则释放<code>kobject</code>使用的资源并执行<code>release</code>方法，释放容器本身。</p>
+<p><code>kset</code>数据结构可以将<code>kobjects</code>组织成一棵层次树。<code>kset</code>是同类型的<code>kobject</code>的集合体，相关的<code>kobject</code>包含在同类型的容器里。<br><img src="/img/1603474189.jpg" alt=""></p>
+<p><code>struct list_head list;</code>是包含在<code>kset</code>中的<code>kobject</code>双向循环链表的首部。<code>ktype</code>是指向<code>kset</code>的<code>kob_type</code>类型描述符的指针，该描述符被<code>kset</code>中所有<code>kobject</code>共享。</p>
+<p>字段<code>kobj</code>是嵌入在<code>kset</code>中的<code>kobject</code>，而位于<code>kset</code>中的<code>kobject</code>，其<code>parent</code>字段指向这个内嵌的<code>kobject</code>结构。一个<code>kset</code>是<code>kobject</code>集合体，但是它依赖于层次树中用于引用计数和连接的更高层<code>kobject</code>。这种编码效率很高，灵活性很高。</p>
+<p>分别用于增加和减少<code>kset</code>引用计数器值的<code>kset_get()</code>和<code>kset_put()</code>，只需简单的调用内嵌<code>kobject</code>结构的<code>kobject_get()</code>和<code>kobject_put()</code>即可，因为<code>kset</code>的引用计数器即是其内嵌<code>kobject</code>的引用计数器。而且有了内嵌的<code>kobject</code>结构，<code>kset</code>数据结构可以嵌入到”容器”对象中，非常类似嵌入的<code>kobject</code>数据结构。最后<code>kset</code>可以作为其他<code>kset</code>的一个成员：它足以将内嵌的<code>kobject</code>插入到更高层次的<code>kset</code>中。</p>
+<p><code>subsystem</code>是<code>kset</code>的集合，一个<code>subsystem</code>可以包含不同类型的<code>kset</code>，包含两个字段：</p>
+<ul>
+<li><code>kset</code>：内嵌的<code>kset</code>结构，用于存放<code>subsystem</code>的<code>kset</code></li>
+<li><code>rwsem</code>：读写信号量，保护递归地包含于<code>subsystem</code>中的所有<code>kset</code>和<code>kobject</code></li>
+</ul>
+<p>bus子系统包含一个pci子系统，pci子系统又依次包含驱动程序的一个<code>kset</code>，这个<code>kset</code>包含一个串口<code>kobject</code>。<br><img src="/img/1603474575.jpg" alt=""></p>
+<h3 id="注册kobject、kset和subsystem"><a href="#注册kobject、kset和subsystem" class="headerlink" title="注册kobject、kset和subsystem"></a>注册kobject、kset和subsystem</h3><p>一般来讲，如果想让<code>kobject</code>、<code>kset</code>或<code>subsystem</code>出现在sysfs子树中，就必须首先注册它们。与<code>kobject</code>对应的目录总是出现在其父<code>kobject</code>的目录中，例如，位于同一个<code>kset</code>中的<code>kobject</code>的目录就出现在<code>kset</code>本身的目录中（<code>kobject-&gt;parent</code>指向其所在<code>kset</code>的内嵌<code>kobject</code>）。因此<strong>sysfs子树的结构就描述了各种已注册<code>kobject</code>之间以及各种容器对象之间的层次关系</strong>。</p>
+<p><strong>sysfs文件系统的上层目录肯定是已注册的<code>subsystem</code></strong>。常用的函数有：</p>
+<ul>
+<li><code>kobject_register(struct kobject * kobj)</code>：用于初始化<code>kobject</code>，并将其相应的目录增加到sysfs文件系统中，在调用该函数之前，调用程序应先设置<code>kobject</code>中的<code>kset</code>字段，使它指向其父<code>kset</code>（如果存在）。</li>
+<li><code>kobject_unregister(struct kobject * kobj)</code>：将<code>kobject</code>目录从sysfs文件系统中移走</li>
+<li><code>kset_register(struct kset * k)</code></li>
+<li><code>kset_unregister(struct kset * k)</code></li>
+<li><code>subsystem_register()</code></li>
+<li><code>subsystem_unregister()</code></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">subsystem_register</span><span class="params">(<span class="keyword">struct</span> kset *s)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> kset_register(s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">subsystem_unregister</span><span class="params">(<span class="keyword">struct</span> kset *s)</span></span><br><span class="line">&#123;</span><br><span class="line">    kset_unregister(s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>许多<code>kobject</code>目录都包括称为<code>attribute</code>的普通文件。<code>sysfs_create_file()</code>函数接收<code>kobject</code>的地址和属性描述符作为参数，并创建特殊文件。sysfs文件系统中所面熟的对象间的其他关系可以通过符号链接的方式建立：<code>sysfd_create_link()</code>为目录中与其他<code>kobject</code>相关联的特定<code>kobject</code>创建一个符号链接。</p>
+<h3 id="设备驱动程序模型组件"><a href="#设备驱动程序模型组件" class="headerlink" title="设备驱动程序模型组件"></a>设备驱动程序模型组件</h3><p>设备驱动程序模型建立在以下几个基本数据结构之上：</p>
+<h4 id="设备"><a href="#设备" class="headerlink" title="设备"></a>设备</h4><p>设备驱动程序模型中每个设备对应一个<code>device</code>对象。<br><img src="/img/1603474576.jpg" alt=""></p>
+<p><code>device</code>对象全部收集在<code>devices_subsys</code>子系统中，该子系统对应的目录是<code>/sys/devices</code>。设备是按照层次关系组织的：一个设备是某个“孩子”的父亲，其条件为<strong>子设备离开父设备无法正常工作</strong>。例如在基于PCI总线的计算机上，位于PCI总线和USB总线之间的桥就是连接在USB总线上所有设备的父设备。</p>
+<p>每个设备驱动程序都保持一个<code>device</code>对象链表，其中链接了所有可被管理的设备；<code>device</code>对象的<code>driver_list</code>字段存放指向相邻对象的指针，而<code>driver</code>字段指向设备驱动程序的描述符。对于任何总线类型来说都有一个链表存放连接到该类型总线上的所有设备；<code>device</code>对象的<code>bus_list</code>字段存放指向相邻对象的指针，而<code>bus</code>字段指向总线类型描述符。</p>
+<p>引用计数器记录<code>device</code>对象的使用情况，它包含在<code>kobject</code>类型的<code>kobj</code>中，通过<code>get_device()</code>和<code>put_device()</code>函数分别增加和减少该计数器的值。<code>device_register()</code>函数的功能是往设备驱动程序模型中插入一个新的<code>device</code>对象，并自动地在<code>/sys/devices</code>目录下为其创建一个新目录。<code>device_unregister()</code>的功能是从设备驱动程序模型中移走一个设备。</p>
+<h4 id="驱动程序"><a href="#驱动程序" class="headerlink" title="驱动程序"></a>驱动程序</h4><p>设备驱动程序模型中的每个驱动程序都可由<code>device_driver</code>对象描述：<br><img src="/img/1603558146.jpg" alt=""></p>
+<p><code>device_driver</code>对象包括四个方法，它们用于处理<strong>热插拔</strong>、<strong>即插即用</strong>和<strong>电源管理</strong>。当总线设备驱动程序发现一个可能由它处理的设备时就会调用<code>probe</code>方法；相应的函数将会探测该硬件，从而对该设备进行更进一步的检查。当移走一个可热插拔的设备时，驱动程序会调用<code>remove</code>方法；而驱动程序本身被卸载时，它所处理的每个设备也都会调用<code>remove()</code>方法。当内核必须改变设备的供电状态时，设备会调用<code>shutdown</code>、<code>suspend</code>和<code>resume</code>三个方法。</p>
+<p>内嵌在描述符中的<code>kobject</code>类型的<code>kobj</code>所包含的引用计数器用于记录<code>device_driver</code>对象的使用情况，相应函数<code>get_driver()</code>和<code>put_driver()</code>分别增加和减少该计数器的值。</p>
+<p><code>dirver_register()</code>函数的功能是<strong>往设备驱动程序模型中插入一个新的<code>device_driver</code>对象，并自动地在sysfs文件系统下为其创建一个新的目录</strong>。相反的，<code>driver_unregister()</code>用于从设备驱动程序模型中移走一个设备驱动对象。</p>
+<h4 id="总线"><a href="#总线" class="headerlink" title="总线"></a>总线</h4><p>内核支持的每一种总线类型都是由一个<code>bus_type</code>对象描述<br><img src="/img/1603558413.jpg" alt=""></p>
+<p>每个<code>bus_type</code>对象都包含一个内嵌的子系统。存放在<code>bus_subsys</code>成员中的子系统把嵌入在<code>bus_type</code>对象中的所有子系统都集合在一起。<code>bus_subsys</code>子系统与目录<code>/sys/bus</code>是对应的，例如，有一个<code>/sys/bus/pci</code>目录与pci总线类型相对应。每种总线的子系统分为2类<code>kset</code>：<code>drivers</code>和<code>devices</code>，分别对应于<code>bus_type</code>对象中的<code>drivers</code>和<code>devices</code>字段。</p>
+<p>名为<code>drivers</code>的<code>kset</code>包含描述符<code>device_driver</code>，描述与该总线类型相关的所有设备驱动，名为<code>devices</code>的<code>kset</code>包含描述符<code>device</code>，描述与给定总线类型上连接的所与设备。因为设备的<code>kobject</code>目录已经出现在<code>/sys/devices</code>下的sysfs中，所以每种总线子系统的<code>devices</code>目录存放了指向<code>/sys/devices</code>下目录的符号链接。</p>
+<p>函数<code>bus_for_each_drv()</code>和<code>bus_for_each_dev()</code>分别用于循环扫描<code>drivers</code>和<code>devices</code>链表中所有元素。</p>
+<p>当内核检查一个给定设备是否可以由给定的驱动处理时，执行<code>match</code>方法。对于连接设备的总线而言，即使其上每个设备的标识符都拥有一个特定的格式。在设备驱动程序模型中注册某个设备时会执行<code>hotplug</code>方法；实现函数应该通过环境变量把总线的具体信息传递给用户态程序，以通告一个新的可用设备。特定类型总线的设备必须改变供电状态时会执行<code>suspend</code>和<code>resume</code>方法。</p>
+<h4 id="类"><a href="#类" class="headerlink" title="类"></a>类</h4><p>每个类是由一个<code>class</code>对象描述的。所有的类对象都属于与<code>/sys/class</code>目录相对应的<code>class_subsys</code>的子系统。此外，每个类对象还包括一个内嵌的子系统，因此对于<code>/sys/class/input</code>目录，它就与设备驱动程序模型的<code>input</code>类相对应。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * device classes</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="keyword">class</span> &#123;</span></span><br><span class="line">	<span class="type">const</span> <span class="type">char</span>		* name;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">module</span>		* <span class="title">owner</span>;</span></span><br><span class="line"> </span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">kset</span>		<span class="title">subsys</span>;</span><span class="comment">//通过subsys.kobj.kset = &amp;class_subsys把该类注册到class_sybsys中</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">children</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">devices</span>;</span>     <span class="comment">/*属于该类对象的class_dev描述符链表，每个描述符描述了一个属于该</span></span><br><span class="line"><span class="comment">类的单独逻辑设备*/</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">interfaces</span>;</span>  <span class="comment">/*一个硬件设备可能包括几个不同的子设备，每个子设备都需要一个不同</span></span><br><span class="line"><span class="comment">的用户态接口*/</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">kset</span>		<span class="title">class_dirs</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">semaphore</span>	<span class="title">sem</span>;</span>	<span class="comment">/* locks both the children and interfaces lists */</span></span><br><span class="line"> </span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">class_attribute</span>		* <span class="title">class_attrs</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">class_device_attribute</span>	* <span class="title">class_dev_attrs</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">device_attribute</span>		* <span class="title">dev_attrs</span>;</span></span><br><span class="line"> </span><br><span class="line">	<span class="type">int</span>	(*uevent)(<span class="keyword">struct</span> class_device *dev, <span class="keyword">struct</span> kobj_uevent_env *env);</span><br><span class="line">	<span class="type">int</span>	(*dev_uevent)(<span class="keyword">struct</span> device *dev, <span class="keyword">struct</span> kobj_uevent_env *env);</span><br><span class="line"> </span><br><span class="line">	<span class="type">void</span>	(*release)(<span class="keyword">struct</span> class_device *dev);</span><br><span class="line">	<span class="type">void</span>	(*class_release)(<span class="keyword">struct</span> class *class);</span><br><span class="line">	<span class="type">void</span>	(*dev_release)(<span class="keyword">struct</span> device *dev);</span><br><span class="line"> </span><br><span class="line">	<span class="type">int</span>	(*suspend)(<span class="keyword">struct</span> device *, <span class="type">pm_message_t</span> state);</span><br><span class="line">	<span class="type">int</span>	(*resume)(<span class="keyword">struct</span> device *);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>每个类对象包括一个属于该类对象的<code>class_dev</code>描述符链表，每个描述符描述了一个属于该类的单独逻辑设备。在<code>class_device</code>结构中包含一个<code>dev</code>字段，它指向一个设备描述符，因此<strong>一个逻辑设备总是对应于设备驱动模型中的一个给定设备</strong>，然而，可以存在多个<code>class_device</code>描述符对应同一个设备。</p>
+<p>同一类中的设备驱动程序可以对用户态应用程序提供相同的功能；<strong>设备驱动程序模型中的类本质上是要提供一个标准的方法，从而为向用户态应用程序导出逻辑设备的接口</strong>。每个<code>class_device</code>中内嵌一个<code>kobject</code>，这是一个名为<code>dev</code>的属性（特殊文件）。该属性存放设备文件的主设备号和次设备号，通过它们可以访问相应的逻辑设备。</p>
+<h3 id="设备文件"><a href="#设备文件" class="headerlink" title="设备文件"></a>设备文件</h3><p>类Unix系统都是基于文件概念的，可以<strong>把I/O设备当作设备文件这种特殊文件来处理</strong>，这样，与磁盘上的普通文件进行交互所用的同一系统调用可直接用于I/O设备。</p>
+<p>根据设备驱动程序的基本特性，设备文件可以分为以下几种：</p>
+<ol>
+<li>块设备的数据可以被随机访问，而且从用户观点看，传送任何数据块所需的时间都是较少且大致相同的。</li>
+<li>字符设备的数据或者不可以随机访问，或者可以被随机访问，但是访问随机数据所需的时间很大程度上依赖于数据在设备内的位置（例如，磁带驱动器）</li>
+<li>网络设备（网卡），网络设备没有对应的设备文件，不直接与设备文件对应。</li>
+</ol>
+<p>设备文件是<strong>存放在文件系统中的实际文件</strong>，然而，它的<strong>索引节点并不包含指向磁盘上数据块（文件的数据）的指针</strong>，因为它们是空的。相反，索引节点必须包含硬件设备的一个标识符，它对应字符或块设备文件。</p>
+<p>传统上，设备标识符由设备文件的类型（字符或块）和一对参数组成。</p>
+<ul>
+<li>第一个参数称为主设备号（major number），它标识了设备的类型。通常，具有相同主设备号和类型的所有设备文件共享相同的文件操作集合，因为它们是由同一个设备驱动程序处理的。</li>
+<li>第二个参数成为次设备号（minor number），它标识了主设备号相同的设备组中的一个特定设备。</li>
+</ul>
+<p><code>mknod()</code>系统调用用来创建设备文件，其参数有设备文件名、设备类型、主设备号及次设备号，设备文件通常包含在<code>/dev</code>目录中。<br><img src="/img/1603562433.jpg" alt=""></p>
+<p><strong>设备文件通常与硬件设备（如硬盘/dev/hda），或硬件设备的某一物理或逻辑分区（如磁盘分区/dev/hda2）相对应</strong>。在某些情况下，设备文件不会和任何实际的硬件对应，而是表示一个虚拟的逻辑设备，例如/dev/null就是一个和“黑洞”对应的设备文件。</p>
+<h3 id="设备文件的用户态处理"><a href="#设备文件的用户态处理" class="headerlink" title="设备文件的用户态处理"></a>设备文件的用户态处理</h3><p>传统的Unix系统中(以及Linux的早期版本中)，设备文件的主设备号和次设备号都只有8位长，在高端系统中并不够用，例如大型集群系统中需要大量的SCSI盘，每个SCSI盘上有15个分区的情况</p>
+<p>真正的问题是<strong>设备文件被分配一次且永远保存在/dev目录中</strong>：因此，<strong>系统中每个逻辑设备都应该有一个与其相对应的、明确定义了设备号的设备文件</strong>。<code>Documentation/devices.txt</code>文件存放了官方注册的已分配设备号和<code>/dev</code>目录节点；<code>include/linux/major.h</code>文件也可能包含设备的主设备号对应的宏。但由于硬件设备数量惊人，官方注册的设备号不能很好的适用于大规模系统。</p>
+<p>为解决上述问题，Linux2.6已增加设备号的编码大小：目前主设备号的编码为12位，次设备号的编码为20位。通常把这两个参数合并成一个32位的<code>dev_t</code>变量。使用的宏有：<code>MAJOR()</code>、<code>MINOR()</code>用于分别提取主设备号和次设备号，<code>MKDEV()</code>用于把这两个参数合并成一个32位的<code>dev_t</code>变量。</p>
+<h4 id="动态分配设备号"><a href="#动态分配设备号" class="headerlink" title="动态分配设备号"></a>动态分配设备号</h4><p>每个设备驱动程序在注册阶段都会指定它将要处理的设备号范围，驱动程序可以只指定设备号的分配范围，无需指定精确值，在这种情况下，<strong>内核会分配一个合适的设备号范围给驱动程序</strong>。因此，新的硬件设备驱动程序不再需要从官方注册表中分配的一个设备号；它们可以仅仅使用当前系统中空闲的设备号。</p>
+<p>然而这种情形下，就不能永久的创建设备文件，它<strong>只在设备驱动程序初始化一个主设备号和次设备号时才创建</strong>。因此，这就需要一个标准的方法将每个驱动程序所使用的设备号输出到用户态应用程序中，为此，设备驱动程序模型提供了一个非常好的解决办法：<strong>把主设备号和次设备号存放在<code>/sys/class</code>子目录下的<code>dev</code>属性中</strong>。</p>
+<h4 id="动态创建设备文件"><a href="#动态创建设备文件" class="headerlink" title="动态创建设备文件"></a>动态创建设备文件</h4><p>Linux内核可以动态地创建设备文件。系统中必须安装一组<code>udev</code>工具集的用户态程序。</p>
+<ul>
+<li>当系统启动时，<code>/dev</code>目录是清空的，这时<code>udev</code>程序将扫描<code>/sys/class</code>子目录来寻找<code>dev</code>文件。</li>
+<li>对每一个这样的文件（主设备号和次设备号的组合表示一个内核所支持的逻辑设备文件），<code>udev</code>程序都会在<code>/dev</code>目录下为它创建一个相应的设备文件。</li>
+<li><code>udev</code>程序也会根据配置文件为其分配一个文件名并创建一个符号链接。</li>
+<li>最后，<code>/dev</code>目录里只存放了<strong>系统中内核所支持的所有设备的设备文件</strong>，而没有任何其他的文件。</li>
+</ul>
+<h3 id="设备文件的VFS处理"><a href="#设备文件的VFS处理" class="headerlink" title="设备文件的VFS处理"></a>设备文件的VFS处理</h3><p>虽然设备文件也在系统的目录树中，但是它们和普通文件及目录文件有根本的不同。当进程访问普通文件时，它会通过文件系统访问磁盘分区中的一些数据块；而在进程访问设备文件时，它只要驱动硬件设备就可以了。</p>
+<p>为了做到这点，VFS在设备文件打开时改变其缺省文件操作；因此，可<strong>把设备文件的每个系统调用都转换成与设备相关的函数的调用</strong>，而不是对主文件系统相应函数的调用。</p>
+<p>假定<code>open()</code>一个设备文件，从本质上来说，<strong>相应的服务例程解析到设备文件的路径名，并建立相应的索引节点对象、目录项对象和文件对象</strong>。</p>
+<ul>
+<li>通过适当的文件系统函数（通常为<code>ext2_read_inode()</code>或<code>ext3_read_inode()</code>）读取磁盘上的相应的索引节点来对索引节点对象进行初始化。</li>
+<li>当这个函数确定磁盘索引节点与设备文件对应时，则调用<code>init_special_inode()</code>，该函数把索引节点对象的<code>i_rdev</code>字段初始化为设备文件的主设备号和次设备号，而把索引节点对象的<code>i_fop</code>字段设置为<code>def_blk_fops</code>或者<code>def_chr_fops</code>文件操作表的地址。</li>
+<li>因此，<code>open()</code>系统调用的服务例程也调用<code>dentry_open()</code>函数，后者分配一个新的文件对象并把其<code>f_op</code>字段设置为<code>i_fop</code>中存放的地址，即再一次指向<code>def_blk_fops</code>或者<code>def_chr_fops</code>的地址。正是这两个表的引入，才使得在设备文件上所发出的任何系统调用都将激活设备驱动程序的函数而不是基本文件系统的函数。</li>
+</ul>
+<h2 id="设备驱动程序"><a href="#设备驱动程序" class="headerlink" title="设备驱动程序"></a>设备驱动程序</h2><p>设备驱动程序是内核例程的集合，<strong>它使得硬件设备响应控制设备的编程接口</strong>，而该接口是一组<strong>规范的VFS函数集</strong>（open、read、lseek、ioctl等等）。这些函数的实际实现由设备驱动程序全权负责。由于每个设备都有一个唯一的I/O控制器，因此就有唯一的命令和唯一的状态信息，所以大部分I/O设备都有自己的驱动程序。</p>
+<p>在使用设备驱动程序之前，有几个活动是肯定要发生的。</p>
+<h3 id="注册设备驱动程序"><a href="#注册设备驱动程序" class="headerlink" title="注册设备驱动程序"></a>注册设备驱动程序</h3><p>在设备文件上发出的每个系统调用都由内核转化为相应设备驱动程序对应函数的调用，为完成这个操作，设备驱动程序必须注册自己，即<strong>分配一个<code>device_driver</code>描述符，将其插入到设备驱动程序模型的数据结构中，并把它与对应的设备文件（可能是多个设备文件）连接起来</strong>。如果设备文件对应的驱动程序之前没有注册，则对该设备文件的访问会返回错误码-ENODEV。</p>
+<p>对PCI设备，其驱动程序必须分配一个<code>pci_driver</code>类型描述符，PCI内核层使用该描述符来处理设备，初始化该描述符的一些字段后，设备驱动程序就会调用<code>pci_register_driver()</code>。</p>
+<p>事实上，<code>pci_driver</code>描述符包括一个内嵌的<code>device_driver</code>描述符，<code>pci_register_driver()</code>仅仅初始化内嵌的驱动程序描述符的字段，然后调用<code>driver_register()</code>把驱动程序插入设备驱动程序模型的数据结构中。</p>
+<p>注册设备驱动程序时，内核会<strong>寻找可能由该驱动程序处理但还尚未获得支持的硬件设备</strong>。为做到这点，内核主要依靠相关的总线类型描述符<code>bus_type</code>的<code>match</code>方法，以及<code>device_driver</code>对象的<code>probe()</code>方法。如果探测到可被驱动程序处理的硬件设备，然后调用<code>device_register()</code>函数把设备插入到设备驱动程序模型中。</p>
+<h3 id="初始化设备驱动程序"><a href="#初始化设备驱动程序" class="headerlink" title="初始化设备驱动程序"></a>初始化设备驱动程序</h3><p>为确保资源在需要时能够获得，在获得后不再被请求，设备驱动程序通常采用下列模式：</p>
+<ol>
+<li><strong>引用计数器记录当前访问设备文件的进程数</strong>。在设备文件的<code>open</code>方法中计数器被增加，在<code>release</code>方法中被减少（更确切的说，引用计数器记录引用设备文件的文件对象的个数，因为子进程可能共享文件对象）。</li>
+<li><code>open()</code>方法在增加引用计数器的值之前应先检查它，如果计数器为0，则设备驱动必须分配资源并激活硬件设备上的中断和DMA。</li>
+<li><code>release()</code>方法在减少使用计数器的值之后检查它，如果计数器为0，说明已经没有进程使用这个硬件设备。如果是这样，该方法将禁止I/O控制器上的中断和DMA，然后释放所分配的资源。</li>
+</ol>
+<h3 id="监控I-O操作"><a href="#监控I-O操作" class="headerlink" title="监控I/O操作"></a>监控I/O操作</h3><p>监控I/O操作结束的两种可用技术：<strong>轮询模式</strong>(polling mode)和<strong>中断模式</strong>(interrupt mode)。</p>
+<h4 id="轮询模式"><a href="#轮询模式" class="headerlink" title="轮询模式"></a>轮询模式</h4><p>CPU轮询设备的状态寄存器，直到寄存器的值表明I/O操作已经完成为止。I/O轮询技术比较巧妙，因为驱动程序还必须记住检查可能的超时。记录超时的方法：</p>
+<ol>
+<li>counter计数</li>
+<li>在每次循环时读取节拍计数器jiffies的值，并将它与开始等待循环之前读取的原值进行比较</li>
+<li>如果完成I/O操作需要时间相对较多，比如毫秒级，那么上述方式比较低效，因为CPU花费宝贵的机器周期去等待I/O操作的完成。在这种情况下，在每次轮询操作之后，可以把<code>schedule()</code>的调用插入到循环内部来自愿放弃CPU。</li>
+</ol>
+<h4 id="中断模式"><a href="#中断模式" class="headerlink" title="中断模式"></a>中断模式</h4><p>如果I/O控制器能够通过IRQ线发出I/O操作结束的信号，那么中断模式才能被使用。举例如下：当用户在某字符设备的相应的设备文件上发出<code>read()</code>系统调用时，一条输入命令被发往设备的控制寄存器。在一个不可预知的长时间间隔后，设备把一个字节的数据放进输入寄存器。设备驱动程序然后将这个字节作为<code>read()</code>系统调用的结果返回。</p>
+<p>实质上，驱动程序包含两个函数：</p>
+<ol>
+<li>实现文件对象<code>read方法的</code>foo_read()`函数；</li>
+<li>处理中断的<code>foo_interrupt()</code>函数；</li>
+</ol>
+<p>只要用户读设备文件，<code>foo_read()</code>函数就被触发：<br><img src="/img/1603609958.jpg" alt=""></p>
+<p>设备驱动程序依赖类型为<code>foo_dev_t</code>的自定义描述符；它包含信号量<code>sem</code>(保护硬件设备免受并发访问)、等待队列<code>wait</code>、标志<code>intr</code>(当设备发出一个中断时设置)及单个字节缓冲区<code>data</code>(由中断处理程序写入且由<code>read</code>方法读取)。一般而言，所有使用中断的I/O驱动程序都依赖中断处理程序及<code>read</code>和<code>write</code>方法均访问的数据结构。<code>foo_dev_t</code>描述符的地址通常存放在设备文件的文件对象的<code>private_data</code>字段中或一个全局变量中。</p>
+<p><code>foo_read()</code>函数主要操作如下：</p>
+<ol>
+<li>获取<code>foo_dev-&gt;sem</code>信号量，因此确保没有其他进程访问该设备；</li>
+<li>清<code>intr</code>标志；</li>
+<li>对I/O设备发出读命令；</li>
+<li>执行<code>wait_event_interruptible</code>以挂起进程，直到<code>intr</code>标志变为1.</li>
+</ol>
+<p>一定时间后，设备发出中断信号以通知I/O操作已经完成，数据已经放在适当的<code>DEV_FOO_DATA_PORT</code>数据端口。中断处理程序置<code>intr</code>标志并唤醒进程。当调度程序决定重新执行该进程时，<code>foo_read()</code>的第二部分被执行，步骤如下：</p>
+<ol>
+<li>把准备在<code>foo_dev-&gt;data</code>变量中的字符拷贝到用户地址空间；</li>
+<li>释放<code>foo_dev-&gt;sem</code>信号量</li>
+</ol>
+<p>实际设备驱动会使用超时控制，一般来说，超时控制是通过静态或动态定时器实现的；定时器必须设置为启动I/O操作后正确的时间，并在操作结束时删除。</p>
+<p>函数foo_interrupt()：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">foo_interrupt</span><span class="params">(<span class="type">int</span> irq, <span class="type">void</span> *dev_id, <span class="keyword">struct</span> pt_regs *regs)</span> &#123;</span><br><span class="line">    foo-&gt;data = inb(DEV_FOO_DATA_PORT);</span><br><span class="line">    foo-&gt;intr = <span class="number">1</span>;</span><br><span class="line">    wake_up_interruptible(&amp;foo-&gt;wait);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>注意：三个参数中没有一个被中断处理程序使用，这是相当普遍的情况。</p>
+<h3 id="访问I-O共享存储器"><a href="#访问I-O共享存储器" class="headerlink" title="访问I/O共享存储器"></a>访问I/O共享存储器</h3><p>根据设备和总线的类型，PC体系结构里的I/O共享存储器可以被映射到不同的物理地址范围。主要有：</p>
+<ul>
+<li><strong>对于连接到ISA总线上的大多数设备</strong>I/O共享存储器通常被映射到0xa0000~0xfffff的16位物理地址范围；这就在640KB和1MB之间留出了一段空间。即物理内存布局中的“空洞”</li>
+<li><strong>对于连接到PCI总线上的设备</strong>I/O共享存储器被映射到接近4GB的32位物理地址范围。</li>
+</ul>
+<p>设备驱动程序如何访问一个I/O共享存储器单元？</p>
+<p>先以简单的PC体系结构开始，不要忘了内核程序作用于线性地址，因此I/O共享存储器单元必须表示成大于<code>PAGE_OFFSET</code>的地址，在后续讨论时，先假设<code>PAGE_OFFSET</code>为0xc0000000，也就是说内核线性地址为第4个GB.</p>
+<p><strong>设备驱动程序必须把I/O共享存储器单元的物理地址转换成内核空间的线性地址</strong>。在PC体系结构中，可简单的把32位物理地址和0xc0000000常量进行或运算得到。例如内核把物理地址为0x000b0fe4的I/O单元的值存放在t1中，把物理地址为0xfc000000的I/O单元的值存放在t2中。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">t1 = *((<span class="type">unsigned</span> <span class="type">char</span> *)(<span class="number">0xc00b0fe4</span>));</span><br><span class="line">t2 = *((<span class="type">unsigned</span> <span class="type">char</span> *)(<span class="number">0xfc000000</span>));</span><br></pre></td></tr></table></figure></p>
+<p>在初始化阶段，内核已经把可用的RAM物理地址映射到线性地址空间第4个GB的开始部分。因此，分页单元把出现在第一个语句中的线性地址0xc00b0fe4映射回原来的I/O物理地址0x000b0fe4，这正好落在从640KB到1MB的这段”ISA洞中”。这工作的很好。</p>
+<p>但对于第二个语句来说，有一个问题，因为其I/O物理地址超过了系统RAM的最大物理地址。因此，线性地址0xfc000000就不需要与物理地址0xfc000000相对应。在这种情况下，为了在内核页表中包括对这个I/O物理地址进行映射的线性地址，必须对页表进行修改。这可以通过调用<code>ioremap()</code>或<code>ioremap_nocache()</code>函数来实现。第一个函数与<code>vmalloc()</code>函数类似，都调用<code>get_vm_area()</code>为所请求的I/O共享存储区的大小建立一个新的<code>vm_struct</code>描述符。然后，这两个函数适当地更新常规内核页表中的对应页表项。<code>ioremap_nocache()</code>不同于<code>ioremap()</code>，因为前者在适当地引用再映射的线性地址时还使硬件高速缓存内容失效。</p>
+<p>因此，第二个语句的正确形式应该为：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">io_mem = ioremap(<span class="number">0xfb000000</span>, <span class="number">0x200000</span>);</span><br><span class="line">t2 = *((<span class="type">unsigned</span> <span class="type">char</span> *)(io_mem + <span class="number">0x100000</span>));</span><br></pre></td></tr></table></figure><br>第一条语句建立一个2MB的新的线性地址区间，该区间映射了从0xfb000000开始的物理地址；第二条语句读取地址为0xfc000000的内存单元。设备驱动程序以后要取消这种映射，就必须要使用<code>iounmap()</code>函数。</p>
+<p>在其他体系结构上，简单地间接引用物理内存单元的线性地址并不能正确访问I/O共享存储器。因此，Linux定义了下列依赖于体系结构的函数，当访问I/O共享存储器时来使用它们：</p>
+<ul>
+<li><code>readb()</code>、<code>readw()</code>、<code>readl()</code>：分别从一个I/O共享存储器单元读取1、2或者4个字节</li>
+<li><code>writeb()</code>、<code>writew()</code>、<code>writel()</code>：分别向一个I/O共享存储器单元写入1、2或者4个字节</li>
+<li><code>memcpy_fromio()</code>、<code>memcpy_toio()</code>：把一个数据块从一个I/O共享存储器单元拷贝到动态内存中，另一个函数正好相反</li>
+<li><code>memset_io()</code>：用一个固定的值填充一个I/O共享存储器区域</li>
+</ul>
+<p>因此，对应0xfc000000I/O单元的访问推荐使用如下方法：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">io_mem = ioremap(<span class="number">0xfb000000</span>, <span class="number">0x200000</span>);</span><br><span class="line">t2 = readb(io_mem + <span class="number">0x100000</span>);</span><br></pre></td></tr></table></figure><br>正是由于这些函数，就可以隐藏不同平台访问I/O共享存储器所用方法的差异。</p>
+<h3 id="直接内存访问-DMA"><a href="#直接内存访问-DMA" class="headerlink" title="直接内存访问(DMA)"></a>直接内存访问(DMA)</h3><p>所有的PC都包含一个辅助的DMA电路用来控制在RAM和I/O设备之间数据的传送。</p>
+<p><strong>DMA一旦被CPU激活，就可以自行传递数据；当数据传送完成之后，DMA发出一个中断请求</strong>。当CPU和DMA同时访问同一内存单元时，所产生的冲突由一个名为<strong>内存仲裁器</strong>的硬件电路来解决。</p>
+<p>使用DMA最多的是磁盘驱动器和其他需要一次传送大量字节的设备，因为DMA设置时间较长，所以传送少量数据时直接使用CPU效率更高。</p>
+<h4 id="同步DMA和异步DMA"><a href="#同步DMA和异步DMA" class="headerlink" title="同步DMA和异步DMA"></a>同步DMA和异步DMA</h4><p>设备驱动程序可以采用两种方式使用DMA：<strong>同步DMA</strong>和<strong>异步DMA</strong>。第一种方式，数据的传送是由进程触发的；第二种方式，数据的传送是由硬件设备触发的。</p>
+<p>采用同步DMA的如声卡，用户应用程序将声音数据写入与声卡数字信号处理器DSP对应的设备文件中，声卡驱动把写入的这些样本收集在内核缓冲区。同时，驱动程序命令声卡把这些样本从内核缓冲区拷贝到预先定时的DSP中。当声卡完成数据传送时，会引发一个中断，然后驱动程序会检查内核缓冲区是否还有要播放的样本；如果有，驱动程序就再启动一次DMA数据传送。</p>
+<p>采用异步DMA的如网卡，它从一个LAN中接收帧，网卡将接收到的帧存储在自己的I/O共享存储器中，然后引发一个中断。其驱动程序确认该中断后，命令网卡将接收到的帧从I/O共享存储器拷贝到内核缓冲区。当数据传送完成后，网卡会引发新的中断，然后驱动程序将这个新帧通知给上层内核层。</p>
+<h4 id="DMA传送的辅助函数"><a href="#DMA传送的辅助函数" class="headerlink" title="DMA传送的辅助函数"></a>DMA传送的辅助函数</h4><p>DMA辅助函数有两个子集：<strong>老式的子集为PCI设备提供了与体系结构无关的函数</strong>；<strong>新的子集则保证了与总线和体系结构两者都无关</strong>。介绍如下：</p>
+<p><strong>总线地址</strong>：DMA的每次数据传送(至少)需要一个内存缓冲区，它包含硬件设备要读出或写入的数据。一般而言，启动一次数据传送前，设备驱动程序必须<strong>确保DMA电路可以直接访问RAM内存单元</strong>。</p>
+<p>现已区分三类存储器地址：<strong>逻辑地址</strong>、<strong>线性地址</strong>以及<strong>物理地址</strong>，前两个在CPU内部使用，最后一个是CPU从物理上驱动数据总线所用的存储器地址。但还有第四种存储器地址，称为<strong>总线地址</strong>(bus address)，它是<strong>除CPU之外的硬件设备驱动数据总线时所用的存储器地址</strong>。</p>
+<p>当内核开始DMA操作时，必须把所涉及的内存缓冲区总线地址或写入DMA适当的I/O端口，或写入I/O设备适当的I/O端口。</p>
+<p>不同的总线具有不同的总线地址大小，ISA的总线地址是24位长，因此在80x86体系结构中，可在物理内存的低16MB中完成DMA传送——这就是为什么DMA使用的内存缓冲区分配在<code>ZONE_DMA</code>内存区中（设置了<code>GFP_DMA</code>标志）。原来的PCI标准定义了32位总线地址；但是，一些PCI硬件设备最初是为ISA总线设计的，因此它们仍然访问不了物理地址0x00ffffff以上的RAM内存单元。新的PCI-X标准采用64位的总线地址并允许DMA电路可以直接寻址更高的内存。</p>
+<p>在Linux中，数据类型<code>dma_addr_t</code>代表一个通用的总线地址。在80x86体系结构中，<code>dma_addr_t</code>对应一个32位长的整数，除非内核支持PAE，在这种情况下，<code>dma_addr_t</code>代表一个64位整数。</p>
+<p><code>pci_set_dma_mask()</code>和<code>dma_set_mask()</code>辅助函数用于检查总线是否可以接收给定大小的总线地址(mask)，如果可以，则通知总线层给定的外围设备将使用该大小的总线地址。</p>
+<p><strong>高速缓存的一致性</strong>：系统体系结构没有必要在硬件级为硬件高速缓存与DMA电路之间提供一个一致性协议，因此，执行DMA映射操作时，<strong>DMA辅助函数必须考虑硬件高速缓存</strong>。设备驱动开发人员可采用2种方法来处理DMA缓冲区，即两种DMA映射类型中进行选择：</p>
+<ul>
+<li><strong>一致性DMA映射</strong>：CPU在RAM内存单元上所执行的每个写操作对硬件设备而言都是立即可见的。反之也一样。</li>
+<li><strong>流式DMA映射</strong>：这种映射方式，设备驱动程序必须注意小心高速缓存一致性问题，这可以使用适当的同步辅助函数来解决，也称为“异步的”</li>
+</ul>
+<p>一般来说，如果CPU和DMA处理器以不可预知的方式去访问一个缓冲区，那么必须强制使用<strong>一致性DMA映射方式</strong>。其他情形下，流式DMA映射方式更可取，因为在一些体系结构中处理一致性DMA映射是很麻烦的，并可能导致更低的系统性能。</p>
+<h4 id="一致性DMA映射的辅助函数"><a href="#一致性DMA映射的辅助函数" class="headerlink" title="一致性DMA映射的辅助函数"></a>一致性DMA映射的辅助函数</h4><p>为分配内存缓冲区和建立一致性DMA映射，内核提供了依赖体系结构的<code>pci_alloc_consistent()</code>和<code>dma_alloc_coherent()</code>两个函数。它们均返回新缓冲区的线性地址和总线地址。在80x86体系结构中，它们返回新缓冲区的线性地址和物理地址。为了释放映射和缓冲区，内核提供了<code>pci_free_consistent()</code>和<code>dma_free_coherent()</code>两个函数。</p>
+<h4 id="流式DMA映射的辅助函数"><a href="#流式DMA映射的辅助函数" class="headerlink" title="流式DMA映射的辅助函数"></a>流式DMA映射的辅助函数</h4><p>流式DMA映射的内存缓冲区通常在数据传送之前被映射，在传送之后被取消映射。也有可能在几次DMA传送过程中保持相同的映射，但是在这种情况下，设备驱动开发人员必须知道位于内存和外围设备之间的硬件高速缓存。</p>
+<p>为了启动一次流式DMA数据传送，驱动程序必须首先<strong>利用分区页框分配器或通用内存分配器来动态地分配内存缓冲区</strong>。然后驱动程序调用<code>pci_map_single()</code>或者<code>dma_map_single()</code>建立流式DMA映射，这两个函数接收缓冲区的线性地址作为其参数并返回相应的总线地址。为了释放该映射，驱动程序调用相应的<code>pci_unmap_single()</code>或<code>dma_unmap_single()</code>函数。</p>
+<p>为避免高速缓存一致性问题，驱动程序在开始从RAM到设备的DMA数据传送之前，如果有必要，应该调用<code>pci_dma_sync_single_for_device()</code>或<code>dma_sync_single_for_device()</code><strong>刷新与DMA缓冲区对应的高速缓存行</strong>。同样的，从设备到RAM的一次DMA数据传送完成之前设备驱动程序是不可以访问内存缓冲区的：相反，如果有必要，在读缓冲区之前，驱动程序应该调用<code>pci_dma_sync_single_for_cpu()</code>或<code>dma_sync_single_for_cpu()</code>使相应的硬件高速缓存行无效。在80x86体系结构中，上述函数几乎不做任何事情，因为硬件高速缓存和DMA之间的一致性是由硬件来维护的。</p>
+<p>即使是高端内存的缓冲区也可以用于DMA传送；开发人员使用<code>pci_map_page()</code>或<code>dma_map_page()</code>函数，给其传递的参数为缓冲区所在页的描述符地址和页中缓冲区的偏移地址。相应地，为了释放高端内存缓冲区的映射，开发人员使用<code>pci_unmap_page()</code>或<code>dma_unmap_page()</code>函数。</p>
+<h3 id="内核支持的级别"><a href="#内核支持的级别" class="headerlink" title="内核支持的级别"></a>内核支持的级别</h3><p>Linux内核并不完全支持所有可能存在的I/O设备，一般来说，有三种可能方式支持硬件设备：</p>
+<ul>
+<li>根本不支持：应用程序使用适当的<code>in</code>和<code>out</code>汇编语言指令直接与设备的I/O端口进行交互。</li>
+<li>最小支持：内核不识别硬件设备，但能识别它的I/O接口。用户程序把I/O接口视为能够读写字符流的顺序设备。</li>
+<li>扩展支持：内核识别硬件设备，并处理I/O接口本身。事实上，这种设备可能就没有对应的设备文件。</li>
+</ul>
+<p>第一种方式与内核设备驱动程序毫无关系，这种方式效率高，但限制了X服务器使用I/O设备产生的硬件中断。</p>
+<p>最小支持方法是用来处理连接到通用I/O接口上的外部硬件设备的。内核通过提供设备文件来处理I/O接口，应用程序通过读写设备文件来处理外部硬件设备。</p>
+<p>最小支持优于扩展支持，因为它保持内核尽可能小。但PC中，仅串/并口处理使用了这种方法。最小支持的应用范围是有限的，因为当外设必须频繁地与内核内部数据结构进行交互时不能使用这种方法。这种情况下就必须使用扩展支持。</p>
+<p>一般情况下，直接连接到I/O总线上的任何硬件设备（如内置硬盘）都要根据扩展支持方法进行处理：<strong>内核必须为每个这样的设备提供一个设备驱动程序</strong>。USB、PCMCIA或者SCSI接口，简而言之，除串口和并口之外的所有通用I/O接口之上连接的外部设备都需要扩展支持。</p>
+<p>值得注意的是，与标准文件相关的系统调用，如<code>open()</code>、<code>read()</code>和<code>write()</code>，并不总让应用程序完全控制底层硬件设备。事实上，VFS的“最小公分母”方法没有包含某些设备所需的特殊命令，或不让应用程序检查设备是否处于某一特殊的内部状态。</p>
+<p>已引入的<code>ioctl()</code>系统调用可以满足这样的需要。这个系统调用除了设备文件的文件描述符和另一个表示请求的32位参数之外，还可以接收任意多个额外的参数。例如，特殊的<code>ioctl()</code>请求可以用来获得CD-ROM的音量或弹出CD-ROM介质。应用程序可以用这类<code>ioctl()</code>请求提供一个CD播放器的用户接口。</p>
+<h2 id="字符设备驱动程序"><a href="#字符设备驱动程序" class="headerlink" title="字符设备驱动程序"></a>字符设备驱动程序</h2><p>处理字符设备相对比较容易，因为通常不需要很复杂的缓冲策略。字符设备驱动程序是由一个<code>cdev</code>结构描述的。<br><img src="/img/1603612463.jpg" alt=""></p>
+<p><code>list</code>字段是双向循环链表的首部，该链表用于收集相同字符设备驱动程序所对应的字符设备文件的索引节点。可能很多设备文件具有相同的设备号，并对应于相同的字符设备。此外，<strong>一个设备驱动程序对应的设备号可以是一个范围，而不仅仅是一个号</strong>；设备号位于同一范围内的所有设备文件均由同一个字符设备驱动程序处理。设备号范围的大小存放在<code>count</code>字段中。</p>
+<p><code>cdev_alloc()</code>函数的功能是<strong>动态地分配<code>cdev</code>描述符，并初始化内嵌的<code>kobject</code>数据结构</strong>，因此在引用计数器的值变为0时会自动释放该描述符。</p>
+<p><code>cdev_add()</code>函数的功能是<strong>在设备驱动程序模型中注册一个<code>cdev</code>描述符</strong>。它初始化<code>cdev</code>描述符中的<code>dev</code>和<code>count</code>字段，然后调用<code>kobj_map()</code>函数。<code>kobj_map()</code>则依次建立设备驱动程序模型的数据结构，把设备号范围复制到设备驱动程序的描述符中。</p>
+<p>设备驱动程序模型为字符设备定义了一个<code>kobject</code>映射域，该映射域由一个<code>kobject</code>类型的描述符描述，并由全局变量<code>cdev_map</code>引用。<code>kobj_map</code>描述符包括一个散列表，它有255个表项，并由0-255范围的主设备号进行索引。散列表存放<code>probe</code>类型的对象，每个对象都拥有一个已注册的主设备号和次设备号：<br><img src="/img/1603628853.jpg" alt=""></p>
+<p>调用<code>kobj_map()</code>函数时，<strong>把指定的设备号范围加入到散列表中</strong>。相应的<code>probe</code>对象的<code>data</code>字段指向设备驱动程序的<code>cdev</code>描述符。执行<code>get</code>和<code>lock</code>方法时把<code>data</code>字段的值传递给它们。在这种情况下，<code>get</code>方法通过一个简捷函数实现，其返回值为<code>cdev</code>描述符中内嵌的<code>kobject</code>数据结构的地址；相反，<code>lock</code>方法本质上用于增加内嵌的<code>kobject</code>数据结构的引用计数器的值。</p>
+<p><code>kobj_lookup()</code>函数接收<code>kobject</code>映射域和设备号作为输入参数；它搜索散列表，如果找到，则返回该设备号所在范围的拥有者的<code>kobject</code>的地址。当这个函数应用到字符设备的映射域时，就返回设备驱动程序描述符中所嵌入的<code>kobject</code>的地址。</p>
+<h3 id="分配设备号"><a href="#分配设备号" class="headerlink" title="分配设备号"></a>分配设备号</h3><p>为了记录目前已经分配了哪些字符设备号，内核使用散列表<code>chrdevs</code>，表的大小不超过设备号范围。两个不同的设备号范围可能共享同一个主设备号，但是范围不能重叠，因此<strong>它们的次设备号应该完全不同</strong>。<code>chrdevs</code>包含255个表项，由于散列函数屏蔽了主设备号的高四位，因此，主设备号的个数少于255个，它们被散列到不同的表项中。</p>
+<p>每个表项指向冲突链表的第一个元素，而该链表是按主、次设备号的递增顺序进行排序的。冲突链表中的每个元素是一个<code>char_device_struct</code>结构：<br><img src="/img/1603628854.jpg" alt=""></p>
+<p>本质上可以采用两种方法为字符设备驱动程序分配一个范围内的设备号。所有新的设备驱动程序使用第一种方法，该方法使用<code>register_chrdev_region()</code>函数和<code>alloc_chrdev_region()</code>函数<strong>为驱动程序分配任意范围内的设备号</strong>。例如，为了获得从<code>dev</code>（类型为<code>dev_t</code>）开始的大小为<code>size</code>的一个设备号范围：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">register_chrdev_region(dev, size, <span class="string">&quot;foo&quot;</span>);</span><br></pre></td></tr></table></figure><br>上述函数并不执行<code>cdev_add()</code>，因此设备驱动程序在所要求的设备号范围被成功分配时必须执行<code>cdev_add()</code>函数。</p>
+<p>第二种方法使用<code>register_chrdev()</code>函数，它分配一个固定的设备号范围，该范围包含唯一一个主设备号以及255的次设备号。在这种情形下，设备驱动程序不必调用<code>cdev_add()</code>函数。</p>
+<h4 id="register-chrdev-region-函数和alloc-chrdev-region-函数"><a href="#register-chrdev-region-函数和alloc-chrdev-region-函数" class="headerlink" title="register_chrdev_region()函数和alloc_chrdev_region()函数"></a>register_chrdev_region()函数和alloc_chrdev_region()函数</h4><p><code>register_chrdev_region()</code>函数接收三个参数：<strong>初始的设备号</strong>（主设备号和次设备号）、<strong>请求的设备号范围大小</strong>（与次设备号的大小一样）以及<strong>这个范围内的设备号对应的设备驱动程序的名称</strong>。该函数检查请求的设备号范围是否跨越一些次设备号，如果是，则确定其主设备号以及覆羔整个区间的相应设备号范围；然后，在每个相应设备号范围上调用<code>__register_chrdev_region()</code>函数。</p>
+<p><code>alloc_chrdev_region()</code>函数与<code>register_chrdev_region()</code>相似，可以动态分配一个主设备号；因此，该函数接收的参数为<strong>设备号范围内的初始次设备号</strong>、<strong>范围的大小</strong>以及<strong>设备驱动程序的名称</strong>。结束时它也调用<code>__register_chrdev_region()</code>函数。</p>
+<p><code>__register_chrdev_region()</code>函数执行以下步骤：</p>
+<ol>
+<li>分配一个新的<code>char_device_struct</code>结构，并用0填充。</li>
+<li>如果设备号范围内的主设备号为0，那么设备驱动程序请求动态分配一个主设备号。函数从散列表的末尾表项开始继续向后寻找一个与尚未使用的主设备号对应的空冲突链表(NULL指针）。若没有找到空表项，则返回一个错误码。</li>
+<li>初始化<code>char_device_struct</code>中的初始设备号、范围大小和设备驱动程序名称</li>
+<li>执行散列函数计算与主设备号对应的散列表索引。</li>
+<li>遍历冲突链表，为新的<code>char_device_struct</code>结构寻找正确的位置。如果找到与请求的设备号范围重叠的一个范围，则返回错误码。</li>
+<li>将新的<code>char_device_struct</code>描述符插人冲突链表中。</li>
+<li>返回新的<code>char_device_struct</code>描述符的地址。</li>
+</ol>
+<h4 id="register-chrdev-函数"><a href="#register-chrdev-函数" class="headerlink" title="register_chrdev()函数"></a>register_chrdev()函数</h4><p>驱动程序使用<code>register_chrdev()</code>函数时需要一个老式的设备号范围：一个单独的主设备号和0-255的次设备号范围。该函数接收的参数为：请求的主设备号<code>major</code>（如果是0则动态分配）、设备驱动程序的名称<code>name</code>和一个指针<code>fops</code>（它指向设备号范围内的特定字符设备文件的文件操作表）。该函数执行下列操作：</p>
+<ol>
+<li>调用<code>__register_chrdev_region()</code>函数分配请求的设备号范围。如果返回一个错误码（不能分配该范围），函数将终止运行。</li>
+<li>为设备驱动程序分配一个新的<code>cdev</code>结构。</li>
+<li>初始化<code>cdev</code>结构：<ol>
+<li>将内嵌的<code>kobject</code>类型设置为<code>ktype_cdev_dynamic</code>类型的描述符</li>
+<li>将<code>owner</code>字段设置为<code>fops-&gt;owner</code>的内容</li>
+<li>将<code>ops</code>字段设置为文件操作表的地址<code>fops</code></li>
+<li>将设备驱动程序名称拷贝到内嵌的<code>kobject</code>结构里的<code>name</code>字段里</li>
+</ol>
+</li>
+<li>调用<code>cdev_add()</code>函数</li>
+<li>将<code>__register_chrdev_region()</code>函数在第一步中返回的<code>char_device_struct</code>描述符的<code>cdev</code>字段设置为设备驱动程序的<code>cdev</code>描述符的地址</li>
+<li>返回分配的设备号范围的主设备号</li>
+</ol>
+<h3 id="访问字符设备驱动程序"><a href="#访问字符设备驱动程序" class="headerlink" title="访问字符设备驱动程序"></a>访问字符设备驱动程序</h3><p><code>open()</code>系统调用服务例程触发的<code>dentry_open()</code>函数定制字符设备文件的文件对象的<code>f_op</code>字段，以使它指向<code>def_chr_fops</code>表。这个表几乎为空；它仅仅定义了<code>chrdev_open()</code>函数作为设备文件的打开方法。这个方法由<code>dentry_open()</code>直接调用。</p>
+<p><code>chrdev_open()</code>函数接收的参数为索引节点的地址<code>ne</code>、指向所打开文件对象的指针<code>filp</code>。本质上它执行以下操作：</p>
+<ol>
+<li>检查指向设备驱动程序的<code>cdev</code>描述符的指针<code>inode-&gt;i_cdevo</code>，如果该字段不为空，则<code>inode</code>结构已经被访问：增加<code>cdev</code>描述符的引用计数器值并跳转到第6步。</li>
+<li>调用<code>kobj_lookup()</code>函数搜索包括该设备号在内的范围。如果该范围不存在，则返回一个错误码；否则，函数计算与该范围相对应的<code>cdev</code>描述符的地址。</li>
+<li>将<code>inode</code>对象的<code>inode-&gt;i_cdev</code>字段设置为<code>cdev</code>描述符的地址。</li>
+<li>将<code>inode-&gt;i_cindex</code>字段设置为设备驱动程序的设备号范围内的设备号的相关索引（设备号范围内的第一个次设备号的索引值为0，第二个为1，依此类推）</li>
+<li>将<code>inode</code>对象加入到由<code>cdev</code>描述符的<code>list</code>字段所指向的链表中。</li>
+<li>将<code>filp-&gt;f_ops</code>文件操作指针初始化为<code>cdev</code>描述符的<code>ops</code>字段的值。</li>
+<li>如果定义了<code>filp-&gt;f_ops-&gt;open</code>方法，<code>chrdev_open()</code>就会执行该方法，若设备驱动程序处理一个以上的设备号，则<code>chrdev_open()</code>一般会再次设置<code>file</code>对象的文件操作</li>
+<li>成功返回0</li>
+</ol>
+<h3 id="字符设备的缓冲策略"><a href="#字符设备的缓冲策略" class="headerlink" title="字符设备的缓冲策略"></a>字符设备的缓冲策略</h3><p>某些设备在一次单独的1/O操作中能郇传送大量的数据，而有些设备则只能传送几个字符。两种不同的技术做到：</p>
+<ul>
+<li>使用DMA方式传送数据块。</li>
+<li>运用两个或多个元素的循环缓冲区，每个元素具有一个数据块的大小。当一个中断（发送一个信号表明新的数据块已被读入）发生时，中断处理程序把指针移到循环缓冲区的下一个元素，以便将来的数据会存放在一个空元素中。相反，只要驱动程序把数据成功地拷贝到用户地址空间，就释放循环缓冲区中的元素，以便用它来保存从硬件设备传送来的新数据。</li>
+</ul>
+<p><strong>循环缓冲区的作用是消除CPU负载的峰值</strong>；即使接收数据的用户态应用程序因为其他高优先级任务而慢下来，DMA也要能够继续填充循环缓冲区中的元素，因为中断处理程序代表当前运行的进程执行。</p>
+<h1 id="块设备驱动程序"><a href="#块设备驱动程序" class="headerlink" title="块设备驱动程序"></a>块设备驱动程序</h1><h2 id="块设备的处理"><a href="#块设备的处理" class="headerlink" title="块设备的处理"></a>块设备的处理</h2><p>一个进程在某个磁盘文件上发出一个<code>read()</code>系统调用，内核对进程请求回应的一般步骤：<br><img src="/img/1603635030.jpg" alt=""></p>
+<ol>
+<li><code>read()</code>调用一个适当的 VFS 函数，将文件描述符和文件内的偏移量传递给它。<strong>虚拟文件系统位于块设备处理体系结构的上层，提供一个通用的文件系统模型</strong>，Linux 支持的所有系统均采用该模型。</li>
+<li><strong>VFS 函数确定所请求的数据是否已经存在</strong>，如有必要，它决定如何执行 read 操作。有时候没有必要访问磁盘上的数据，因为内核将大多数最近从快速设备读出或写入其中的数据保存在 RAM 中。</li>
+<li>假设内核从块设备读数据，那么它就必须确定数据的物理位置。因此，<strong>内核依赖映射层</strong>执行下面步骤：<ol>
+<li>内核确定该文件所在文件系统的块大小，并根据文件块的大小计算所请求数据的长度。本质上，文件被看作拆分成许多块，因此内核确定请求数据所在的块号（文件开始位置的相对索引）。</li>
+<li><strong>映射层调用一个具体文件系统的函数</strong>，它访问文件的磁盘节点，然后根据逻辑块号确定所请求数据在磁盘上的位置。因为磁盘也被看作拆分成许多块，所以内核必须确定所请求数据的块对应的号。由于一个文件可能存储子磁盘上的不连续块中，因此存放在磁盘索引节点中的数据结构将每个文件块号映射为一个逻辑块号。</li>
+</ol>
+</li>
+<li>现在内核可以对块设备发出读请求。内核利用<strong>通用块层</strong>启动 I/O 操作来传送所请求的数据。一般，每个 I/O 操作只针对磁盘上一组连续操作的块。由于请求的数据不必位于相邻的块中，所以通用层可能启动几次 I/O 操作。<strong>每次 I/O 操作是由一个“块 I/O”结构描述符，它收集底层组件所需要的所有信息以满足所发出的请求</strong>。通用块层为所有的块设备提供一个抽象视图。</li>
+<li>通用块层下面的“I/O 调度程序”根据预先定义的内核策略将待处理的 I/O 数据传送请求进行归类。<ol>
+<li>调度程序的作用是把物理介质上相邻的数据请求聚集在一起。</li>
+</ol>
+</li>
+<li>最后，块设备驱动程序向磁盘控制器的硬件接口发出适当的命令，从而进行实际的数据传送。</li>
+</ol>
+<p>块设备中的数据存储涉及了许多内核组件，每个组件采用不同长度的块管理磁盘数据：</p>
+<ul>
+<li>硬件块设备控制器采用称为<strong>扇区</strong>的固定长度的块传送数据。</li>
+<li>虚拟文件系统、映射层和文件系统存放在<strong>块</strong>逻辑单元中，一个块对应文件系统中的一个最小的磁盘存储单元。</li>
+<li>块设备驱动程序处理数据<strong>段</strong>，一个段就是一个内存页或内存页的一部分，包含磁盘上相邻的数据块。</li>
+<li>硬盘高速高速缓存作用于<strong>页</strong>，每页正好装在一个页框中。</li>
+<li>通用块层将所有的上层和下层的组件组合在一起</li>
+</ul>
+<p>这个具有4096字节的页，上层内核组件将页看成是由4个1024字节组成的块缓冲区。块设备正在传送页中的后3个块，硬盘控制器将该段看成是由6个512字节的扇区组成。<br><img src="/img/1603635454.jpg" alt=""></p>
+<h3 id="扇区"><a href="#扇区" class="headerlink" title="扇区"></a>扇区</h3><p>块设备的每次数据传输都作用于一组称为<strong>扇区</strong>的相邻字节。大部分磁盘设备中，扇区大小为 512 字节。不允许传送少于一个扇区的数据。</p>
+<p>在Linux中，扇区大小按惯例都设为512字节。对存放在块设备上的一组数据是通过它们在磁盘上的位置来标示，即其首个512字节扇区的下标即其扇区的数目。扇区的下标存放在类型为<code>sector_t</code>的32位或64位的变量中。</p>
+<h3 id="块"><a href="#块" class="headerlink" title="块"></a>块</h3><p><strong>块是 VFS 和文件系统传输数据的基本单位</strong>。内核访问文件内容时，需要首先从磁盘上读文件的磁盘索引节点，该块对应磁盘上的多个扇区，而VFS将其看作一个单一的单元。。</p>
+<p>Linux 中，块大小必须是 2 的幂，且不能超过一个页框。此外，它必须是扇区大小的整数倍，因此<strong>每个块必须包含整个扇区</strong>。</p>
+<p>每个块都需要自己的块缓冲区，它是<strong>内核用来存放内容的 RAM 内存区</strong>。内核从磁盘读出一个块时，就用从硬件设备中获得的值填充相应的块缓冲区。写入时则用块缓冲区的实际值更新硬件设备。</p>
+<p>缓冲区的首部是一个与每个缓冲区相关的<code>buffer_head</code>类型的描述符。<code>buffer_head</code>中的某些字段：</p>
+<ul>
+<li><code>b_page</code>：块缓冲区所在页框的页描述符地址。</li>
+<li>如果页框位于高端内存中，那么<code>b_data</code>字段存放页中块缓冲区的偏移量；否则，存放缓冲区本身的起始线性地址。</li>
+<li><code>b_blocknr</code>：存放逻辑块号（如磁盘分区中的块索引）。</li>
+<li><code>b_bdev</code>：标识使用缓冲区首部的块设备。</li>
+</ul>
+<h3 id="段"><a href="#段" class="headerlink" title="段"></a>段</h3><p>对磁盘的每个 I/O 操作就是在磁盘与一些 RAM 单元间相互传送一些相邻扇区是内容。<strong>大多数情况下，磁盘控制器之间采用 DMA 方式进行数据传送</strong>。块设备驱动程序只要向磁盘控制器发送一些适当的命令就可以触发一次数据传送，完成后，控制器会发出一个中断通知块设备驱动程序。</p>
+<p>DMA传送的是磁盘上相邻扇区的数据，虽然可以传送不相邻的扇区，但是效率很低。新的磁盘控制器支持所谓的<strong>分散-聚集</strong>DMA传送方式：磁盘可与一些非连续的内容区相互传送数据。</p>
+<p>启动一次分散-聚集DMA传送，块设备驱动程序需要向磁盘控制器发送：</p>
+<ul>
+<li>要传送的起始磁盘扇区号和总的扇区数</li>
+<li>内存区的描述符链表，其中链表的每项包含一个地址和一个长度</li>
+</ul>
+<p>磁盘控制器负责整个数据传送。</p>
+<p>为了使用分散-聚集 DMA 传送方式，块设备驱动程序必须能处理称为<strong>段</strong>的数据存储单元。<strong>一个段就是一个内存页或内存页中的一部分</strong>，它们包含一些相邻磁盘扇区中的数据。因此，一次分散-聚集 DMA 操作可能同时传送几个段。</p>
+<p>如果不同的段在 RAM 中相应的页框正好是连续的且在磁盘上相应的数据块也是相邻的，那么通用块层可合并它们，产生更大的<strong>物理段</strong>。</p>
+<h2 id="通用块层"><a href="#通用块层" class="headerlink" title="通用块层"></a>通用块层</h2><p><strong>通用块层</strong>是一个内核组件，它处理来自系统中的所有块设备发出的请求。由于该层提供的函数，内核可容易地做到：</p>
+<ul>
+<li><strong>将数据缓冲区放在高端内存</strong>：仅当 CPU 访问时，才将页框映射为内核中的线性地址空间，并在数据访问后取消映射。</li>
+<li>实现<strong>零-复制</strong>模式，<strong>将磁盘数据直接存放在用户态地址空间而不是首先复制到内核内存区</strong>；事实上，内核为 I/O 数据传送使用的缓冲区所在的页框就映射在进程的用户态线性地址空间中。</li>
+<li><strong>管理逻辑卷</strong>，例如由 LVM（逻辑卷管理器）和 RAID（廉价磁盘冗余阵列）使用的逻辑卷：几个磁盘分区，即使位于不同的块设备中，也可被看作一个单一的分区。</li>
+<li><strong>发挥大部分新磁盘控制器的高级特性</strong>，如大主板磁盘高速缓存、增强的 DMA 性能、I/O 传送请求的相关调度等。</li>
+</ul>
+<h3 id="Bio-结构"><a href="#Bio-结构" class="headerlink" title="Bio 结构"></a>Bio 结构</h3><p>通用块的核心数据结构<strong>bio描述符</strong>描述了块设备的 I/O 操作。每个<code>bio</code>结构都包含一个<strong>磁盘存储区标识符</strong>（存储区中的起始扇区号和扇区数目）和一个或多个<strong>描述与与I/O操作相关的内存区的段</strong>。</p>
+<p><code>bio</code>中的某些字段：<br><img src="/img/1603635455.jpg" alt=""></p>
+<p><code>bio</code>中的每个段是由一个<code>bio_vec</code>描述的，各字段如下：<br><img src="/img/1603715460.jpg" alt=""></p>
+<p><code>bio_vec</code>数据结构的第一个元素<code>bi_io_vec</code>指向<code>bio_vec</code>中的第一个元素，<code>bi_vcnt</code>存放了<code>bio_vec</code>数组中当前的元素个数。</p>
+<p>块 I/O 操作器间<code>bio</code>描述符一直保持更新，例如，如果块设备驱动程序在一次分散-聚集 DMA 操作中不能完成全部的数据传送，则<code>bio</code>中的<code>bi_idx</code>会不断更新来指向待传送的第一个段。为了从索引<code>bi_idx</code>指向当前段开始不断重复<code>bio</code>中的段，设备驱动程序可以执行<code>bio_for_each_segment</code>。</p>
+<p>当通用块层启动一次新的 I/O 操作时，调用<code>bio_alloc()</code>分配一个新的<code>bio</code>结构。<code>bio</code>结构由slab分配器分配，内存不足时，内核也会使用一个备用的<code>bio</code>小内存池。内核也为<code>bio_vec</code>分配内存池。</p>
+<p><code>bio_put()</code>减少<code>bi_cnt</code>，等于 0 时，释放<code>bio</code>结构及相关的<code>bio_vec</code>结构。</p>
+<h3 id="磁盘和磁盘分区表示"><a href="#磁盘和磁盘分区表示" class="headerlink" title="磁盘和磁盘分区表示"></a>磁盘和磁盘分区表示</h3><p>磁盘是一个<strong>由通用块层处理的逻辑块设备</strong>。任何情形中，借助通用块层提供的服务，上层内核组件可以同样的方式工作在所在的磁盘上。磁盘由<code>gendisk</code>对象描述，字段：<br><img src="/img/1603715464.jpg" alt=""></p>
+<p><code>flags</code>存放关于磁盘的信息。如果设置<code>GENHD_FL_UP</code>标志，则磁盘将被初始化并可使用。如果为软盘或光盘这样的可移动磁盘，则设置<code>GENHD_FL_REOVABLE</code>标志。<code>gendisk</code>对象的<code>fops</code>字段指向一个表<code>block_device_operations</code>，该表为块设备的主要操作存放了几个指定的方法：<br><img src="/img/1603716005.jpg" alt=""></p>
+<p>通常硬盘被划分成几个逻辑分区。每个块设备文件要么代表整个磁盘，要么代表磁盘中的某个分区。如果将一个磁盘分成几个分区，则分区表保存在<code>hd_struct</code>结构的数组中。该数组的地址存放在<code>gendisk</code>对象的<code>part</code>字段。通过磁盘内分区的相对索引对该数组进行索引。<code>hd_struct</code>中的字段如下表：<br><img src="/img/1603716007.jpg" alt=""></p>
+<p>当内核发现系统中一个新的磁盘时（在启动阶段，或将一个可移动介质插入一个驱动器中时，或在运行器附加一个外置式磁盘时），调用<code>alloc_disk()</code>分配并初始化一个新的<code>gendisk</code>对象，如果新磁盘被分成几个分区，还会分配并初始化一个适当的<code>hd_struct</code>类型的数组。然后调用<code>add_disk()</code>将新的<code>gendisk</code>对象插入到通用块层的数据结构中。</p>
+<h3 id="提交请求"><a href="#提交请求" class="headerlink" title="提交请求"></a>提交请求</h3><p>当向通用块层提交一个 I/O 操作请求时，内核所执行的步骤（假设被请求的数据块在磁盘上相邻，且内核已经知道了它们的物理位置）。</p>
+<ul>
+<li>首先，<code>bio_alloc()</code>分配一个新的<code>bio</code>描述符，然后，内核通过设置一些字段初始化<code>bio</code>描述符：<ul>
+<li><code>bi_sector</code> = 数据的起始扇区号（如果块设备分成了几个分区，那么扇区号是相对于分区的起始位置的）。</li>
+<li><code>bi_size</code> = 涵盖整个数据的扇区数目。</li>
+<li><code>bi_bdev</code> = 块设备描述符的地址。</li>
+<li><code>bi_io_vec</code> = bio_vec 结构数组的起始地址，数组中的每个元素描述了 I/O 操作中的一个段（内存缓存）。</li>
+<li><code>bi_vcnt</code> = bio 中总的段数。</li>
+<li><code>bi_rw</code> = 被请求操作的标志，READ（0）或 WRITE（1）。</li>
+<li><code>bi_end_io</code> = 当 bio 上的 I/O 操作完成时所执行的完成程序的地址。</li>
+</ul>
+</li>
+<li><code>bio</code>描述符被初始化后，内核调用<code>generic_make_request()</code>，它是通用块层的主要入口点，该函数执行下列操作：<ul>
+<li>如果<code>bio-&gt;bi_sector</code>&gt; 块设备的扇区数，<code>bio-&gt;bi_flags = BIO_EOF</code>，打印一条内核出错信息，调用<code>bio_endio()</code>并终止。<code>bio_endio()</code>更新<code>bio</code>描述符中的<code>bi_size</code>和<code>bi_sector</code>，然后调用<code>bio</code>的<code>bi_end_io</code>方法。<code>bi_end_io</code>函数依赖于触发 I/O 数据传送的内核组件。</li>
+<li>获取与块设备请求相关的请求队列<code>q</code>，其地址存放在块设备描述符的<code>bd_disk</code>字段，其中的每个元素由<code>bio-&gt;bi_bdev</code>指向。</li>
+<li>调用<code>block_wait_queue_running()</code>检查当前正在使用的 I/O 调度程序是否可被动态取代；如果可以，则让当前进程睡眠直到启动一个新的 I/O 调度程序。</li>
+<li>调用<code>blk_partition_remap()</code>检查块设备是否指的是一个磁盘分区（<code>bio-&gt;bi_bdev != bio-&gt;bi_dev-&gt;bd_contains</code>）。如果是，从<code>bio-&gt;bi_bdev</code>获取分区的<code>hd_struct</code>描述符，从而执行下面的子操作：<ul>
+<li>根据数据传送的方向，更新<code>hd_struct</code>描述符中的<code>read_sectors</code>和<code>reads</code>值<code>或</code>write_sectors<code>和</code>writes`值。</li>
+<li>调整<code>bio-&gt;bi_sector</code>值，使得把相对于分区的起始扇区号转变为相对于整个磁盘的扇区号。</li>
+<li><code>bio-&gt;bi_bedv = 整个磁盘的块设备描述符（bio-&gt;bd_contains)</code>。</li>
+<li>从现在开始，通用块层、I/O 调度程序及设备驱动程序将忘记磁盘分区的存在，直接作用于整个磁盘。</li>
+</ul>
+</li>
+<li>调用<code>q-&gt;make_request_fn</code>方法将<code>bio</code>请求插入请求队列<code>q</code>中。</li>
+<li>返回。</li>
+</ul>
+</li>
+</ul>
+<p>总结：主要是分配并初始化<code>bio</code>描述符，以描述符 I/O 操作请求；获取请求队列，将相对于磁盘分区的 I/O 操作请求转换为相对于整个磁盘的 I/O 操作请求；I/O 操作请求入队列。</p>
+<h2 id="I-O-调度程序"><a href="#I-O-调度程序" class="headerlink" title="I/O 调度程序"></a>I/O 调度程序</h2><p>只要可能，内核就试图把几个扇区合并在一起，作为一个整体处理，以减少磁头的平均移动时间。</p>
+<p>当内核组件要读或写一些磁盘数据时，会创建一个块设备请求。<strong>请求描述的是所请求的扇区及要对它执行的操作类型（读或写）</strong>。但请求发出后内核不一定会立即满足它，I/O 操作仅仅被调度，执行会向后推迟。当请求传送要给新的数据块时，内核检查能否通过稍微扩展前一个一直处于等待状态的请求而满足新的请求。</p>
+<p>延迟请求复杂化了块设备的处理。因为块设备驱动程序本身不会阻塞，否则会阻塞试图访问同一磁盘的任何其他进程。</p>
+<p><strong>为防止块设备驱动程序被挂起，每个 I/O 操作都是异步处理的</strong>。特别是块设备驱动程序是中断驱动的：</p>
+<ul>
+<li>通用块层调用 I/O 调度程序产生一个新的块设备请求，或扩展一个已有的块设备请求，然后终止。</li>
+<li>激活的块设备驱动程序会调用一个<strong>策略例程</strong>来选择一个待处理的请求，并向磁盘控制器发出一条命令以满足该请求。</li>
+<li>当 I/O 操作终止时，磁盘控制器就产生一个中断，相应的中断处理程序就又调用策略例程去处理队列中的另一个请求。</li>
+</ul>
+<p>每个块设备驱动程序都维持着自己的请求队列，它包含设备待处理的请求链表。如果磁盘控制器正在处理几个磁盘，那么通常每个物理块都有一个请求队列。在每个请求队列上单独执行 I/O 调度，可提供高盘性能。</p>
+<h3 id="请求队列描述符"><a href="#请求队列描述符" class="headerlink" title="请求队列描述符"></a>请求队列描述符</h3><p>请求队列由一个大的数据结构<code>request_queue</code>表示。<br><img src="/img/1603716009.jpg" alt=""></p>
+<p>请求队列是一个<strong>双向链表</strong>，其元素是请求描述符（<code>request</code>数据结构）。<code>queue_head</code>存放链表的头。<code>queuelist</code>把任一请求链接到前一个和后一个元素之间。队列链表中元素的排序方式对每个块设备驱动程序是特定的。IO调度程序提供了几种预先定义的元素排序方式。</p>
+<p><code>backing_dev_info</code>：一个<code>backing_dev_info</code>类型的小对象，存放了关于基本硬件块设备的 I/O 数据流量的信息。</p>
+<h3 id="请求描述符"><a href="#请求描述符" class="headerlink" title="请求描述符"></a>请求描述符</h3><p>每个块设备的待处理请求都是用一个请求描述符表示的，存放于<code>request</code>数据结构。<br><img src="/img/1603716010.jpg" alt=""></p>
+<p>每个请求包含一个或多个<code>bio</code>结构。最初，通用层创建一个仅包含一个<code>bio</code>结构的请求。然后，I/O 调度程序要么向初始<code>bio</code>中增加一个新段，要么将另一个<code>bio</code>结构链接到请求，从而<strong>扩展</strong>该请求。<code>bio</code>字段指向第一个<code>bio</code>结构，<code>biotail</code>指向最后一个<code>bio</code>结构。<code>rq_for_each_bio</code>宏执行一个循环，从而遍历请求中的所有<code>bio</code>结构。</p>
+<p><code>flags</code>：存放很多标志，最重要的一个是<code>REQ_RW</code>，确定数据传送的方向，<code>READ</code>（0）或<code>WRITE</code>（1）。<br><img src="/img/1603716011.jpg" alt=""></p>
+<h3 id="对请求描述符的分配进行管理"><a href="#对请求描述符的分配进行管理" class="headerlink" title="对请求描述符的分配进行管理"></a>对请求描述符的分配进行管理</h3><p>在重负载和磁盘操作频繁时，固定数目的动态内存将成为进程想把新请求加入请求队列<code>q</code>的瓶颈。<br>为解决该问题，每个<code>request_queue</code>描述符包含一个<code>request_list</code>数据结构，其中包括：</p>
+<ul>
+<li><strong>一个指针</strong>，指向请求描述符的内存池。</li>
+<li><strong>两个计数器</strong>，分别记录分配给<code>READ</code>和<code>WRITE</code>请求的请求描述符。</li>
+<li><strong>两个标志</strong>，分别标记读或写请求的分配是否失败。</li>
+<li><strong>两个等待队列</strong>，分别存放了为获得空闲的读和写请求描述符而睡眠的进程。</li>
+<li><strong>一个等待队列</strong>，存放等待一个请求队列被刷新（清空）的进程。</li>
+</ul>
+<p><code>blk_get_request()</code><strong>从一个特定请求队列的内存池中获得一个空闲的请求描述符</strong>；如果内存区不足且内存池已经用完，则挂起当前进程，或返回 NULL（不能阻塞内核控制路径）。如果分配成功，则将请求队列的<code>request_list</code>数据结构的地址存放在请求描述符的<code>rl</code>字段。<code>blk_put_request()</code>释放一个请求描述符；如果该描述符的引用计数器为 0，则将描述符归还回它原来所在的内存池。</p>
+<h3 id="避免请求队列拥塞"><a href="#避免请求队列拥塞" class="headerlink" title="避免请求队列拥塞"></a>避免请求队列拥塞</h3><p><code>request_queue</code>的<code>nr_requests</code>字段存放<strong>每个数据传送方向所允许处理的最大请求数</strong>。缺省情况下，一个队列至多 128 个待处理读请求和 128 个待处理写请求。如果待处理的读（写）请求数超过了<code>nr_requests</code>，设置<code>request_queue</code>的<code>queue_flags</code>字段的<code>QUEUE_FLAG_READFULL</code>（<code>QUEUE_FLAG_WRITEFULL</code>）标志将该队列标记为已满，试图把请求加入某个传送方向的可阻塞进程被放到<code>request_list</code>结构所对应的等待队列中睡眠。</p>
+<p>如果给定传送方向上的待处理请求数超过了<code>request</code>的<code>nr_congestion_on</code>字段中的值（缺省为 113），则<strong>内核认为该队列是拥塞的，并试图降低新请求的创建速率</strong>。<code>blk_congestion_wait()</code>挂起当前进程，直到所请求队列都变为不拥塞或超时已到。</p>
+<h3 id="激活块设备驱动程序"><a href="#激活块设备驱动程序" class="headerlink" title="激活块设备驱动程序"></a>激活块设备驱动程序</h3><p>延迟激活块设备驱动程序有利于集中相邻块的请求。<strong>这种延迟是通过设备插入和设备拔出技术实现的</strong>。块设备驱动程序被插入时，该驱动程序不被激活，即使在驱动程序队列中有待处理的请求。</p>
+<p><code>blk_plug_device()</code><strong>插入一个块设备</strong>：插入到某个块设备驱动程序的请求队列中。参数为一个请求队列描述符的地址<code>q</code>。设置<code>q-&gt;queue_flags</code>字段中的<code>QUEUE_FLAG_PLUGGED</code>位，然后重启<code>q-&gt;unplub_timer</code>字段中的内嵌动态定时器。</p>
+<p><code>blk_remove_plug()</code>拔出一个请求队列<code>q</code>：清除<code>QUEUE_FLAG_PLUGGED</code>标志并取消<code>q-&gt;unplug_timer</code>动态定时器。当所有可合并的请求都被加入请求队列时，内核就会显式调用该函数。此外，如果请求队列中待处理的请求数超过了请求队列描述符的<code>unplug_thresh</code>字段中存放的值（缺省为 4），I/O 调度程序也会去掉该请求队列。</p>
+<p>如果一个设备保持插入的时间间隔为<code>q-&gt;unplug_delay</code>（通常为 3ms），则说明<code>blk_plug_device()</code><strong>激活的动态定时器时间已用完</strong>，因此会执行<code>blk_unplug_timeout()</code>。因而，唤醒内核线程<code>kblocked</code>所操作的工作队列<code>kblocked_workueue</code>。<code>kblocked</code>执行<code>blk_unplug_work()</code>，其地址存放在<code>q-&gt;unplug_work</code>中。接着，该函数会调用请求队列中的<code>q-&gt;unplug_fn</code>方法，该方法通常由<code>generic_unplug_device()</code>实现。</p>
+<p><code>generic_unplug_device()</code>的功能是拔出块设备：</p>
+<ul>
+<li>检查请求队列释放仍然活跃。</li>
+<li>调用<code>blk_remove_plug()</code>。</li>
+<li>执行策略例程<code>reuqest_fn</code>方法开始处理请求队列中的下一个请求。</li>
+</ul>
+<h2 id="I-O-调度算法"><a href="#I-O-调度算法" class="headerlink" title="I/O 调度算法"></a>I/O 调度算法</h2><p>I/O 调度程序也被称为<strong>电梯算法</strong>。</p>
+<p>Linux 2.6 中提供了四种不同类型的 I/O 调度程序或电梯算法，分别为<strong>预期</strong>算法，<strong>最后期限</strong>算法，<strong>CFQ（完全公平队列）</strong>算法，及<strong>Noop（No Operation）</strong>算法。</p>
+<p>对于大多数块设备，内核使用缺省电梯算法可在引导时通过内核参数<code>elevator=&lt;name&gt;</code>进行再设置，其中<code>&lt;name&gt;</code>可取值为：<code>as</code>、<code>deadline</code>、<code>cfg</code>和<code>noop</code>。缺省为<strong>预期I/O调度程序</strong>。设备驱动程序也可定制自己的 I/O 调度算法。</p>
+<p>请求队列中使用的 I/O 调度算法由一个<code>elevator_t</code>类型的<code>elevator</code>对象表示，该对象的地址存放在请求队列描述符的<code>elevator</code>字段。<code>elevator</code>对象包含了几个方法：<strong>链接和断开<code>elevator</code></strong>，<strong>增加和合并队列中的请求</strong>，<strong>从队列中删除请求</strong>，<strong>获得队列中下一个待处理的请求</strong>等。</p>
+<p><code>elevator</code>也存放了一个表的地址，表中包含了处理请求队列所需的所有信息。每个请求描述符包含一个<code>elevator_private</code>字段，指向一个由 I/O 调度程序用来处理请求的附加数据结构。</p>
+<p>一般，所有的算法都使用一个<strong>调度队列</strong>，队列中包含的所有请求按照设备驱动程序应当处理的顺序排序。几乎所有的算法都使用另外的队列对请求进行分类和排序。</p>
+<h3 id="“Noop”算法"><a href="#“Noop”算法" class="headerlink" title="“Noop”算法"></a>“Noop”算法</h3><p>最简单的 I/O 调度算法。没有排序的队列。新的请求被插入到队列的开头或末尾，下一个要处理的总是队列中的第一个请求。</p>
+<h3 id="“CFQ”完全公平队列算法"><a href="#“CFQ”完全公平队列算法" class="headerlink" title="“CFQ”完全公平队列算法"></a>“CFQ”完全公平队列算法</h3><p>目标是<strong>在触发 I/O 请求的所有进程中确保磁盘 I/O 带宽的公平分配</strong>。为此，算法使用多个排序队列（缺省为 64）存放不同进程发出的请求。当处理一个请求时，内核调用一个散列函数将当前进程的线程组标识符换为队列的索引值，然后将一个新的请求插入该队列的末尾。</p>
+<p>算法采用<strong>轮询方式</strong>扫描 I/O 输入队列，选择第一个非空队列，然后将该队列中的一组请求移动到调度队列的末尾。</p>
+<h3 id="“最后期限”算法"><a href="#“最后期限”算法" class="headerlink" title="“最后期限”算法"></a>“最后期限”算法</h3><p>除了调度队列外，还使用了四个队列。其中的<strong>两个排序队列分别包含读请求和写请求</strong>，请求根据起始扇区数排序。另外两个最后期限队列<strong>包含相同的读和写请求</strong>，但根据“最后期限”排序。引入这些队列是<strong>为了避免请求饿死</strong>。最后期限保证了调度程序照顾等待了很久的请求，即使它位于排序队列的末尾。</p>
+<p>补充调度队列时，首先确定下一个请求的数据方向。如果同时要调度读和写两请求，算法会选择“读”方向，除非“写”方向已经被放弃很多次了。</p>
+<p>检查与被选择方向相关的最后期限队列：如果队列中的第一个请求的最后期限已用完，那么将该请求移到调度队列的末尾；也可从超时的那个请求开始移动来自排序队列的一组请求。如果将要移动的请求在磁盘上物理相邻，则组的长度会变长，否则变短。</p>
+<p>如果没有请求超时，算法对来自排序队列的最后一个请求之后的一组请求进行调度。当指针到达排序队列的末尾时，搜索又从头开始（“单方向算法”）。</p>
+<h3 id="“预期”算法"><a href="#“预期”算法" class="headerlink" title="“预期”算法"></a>“预期”算法</h3><p>是 Linux 提供的最复杂的一种 I/O 调度算法。它是“最后期限”算法的一个演变：<strong>两个最后期限队列和两个排序队列</strong>；<strong>I/O 调度程序在读和写请求之间交互扫描排序队列，不过更倾向于读请求</strong>。扫描基本上是连续的，除非某个请求超时。读请求的缺省超时时间是 125ms，写请求为 250ms。算法还遵循一些附加的启发式规则：</p>
+<ul>
+<li>有些情况下，算法可能在排序队列当前位置之后选择一个请求，从而强制磁头从后搜索。这通常发生在该请求之后的搜索距离小于在排序队列当前位置之后对该请求搜索距离的一半时。</li>
+<li>算法统计系统中每个进程触发的 I/O 操作种类。当刚刚调度了由某个进程 p 发出的一个读请求后，立马检查排序队列中下一个请求是否来自同一进程 p。<ul>
+<li>如果是，立即调度下一请求。</li>
+<li>否则，查看关于该进程 p 的统计信息：如果确定 p 可能很快发出另一个读请求，则延迟一小段时间（缺省约 7ms）。</li>
+<li>因此，算法预测进程 p 发出的读请求与刚被调度的请求在磁盘上可能是“近邻”。</li>
+</ul>
+</li>
+</ul>
+<h2 id="向-I-O-调度程序发出请求"><a href="#向-I-O-调度程序发出请求" class="headerlink" title="向 I/O 调度程序发出请求"></a>向 I/O 调度程序发出请求</h2><p><code>generic_make_request()</code>调用请求队列描述符的<code>make_request_fn</code>方法向 I/O 调度程序发送一个请求。通常该方法由<code>__make_request()</code>实现，<code>__make_request()</code>参数为<code>request_queue</code>类型的描述符<code>q</code>、<code>bio</code>结构的描述符<code>bio</code>。执行下列操作：</p>
+<ol>
+<li>如果需要，调用<code>blk_queue_bounce()</code>建立一个回弹缓冲区。然后，对该缓冲区而不是原先的<code>bio</code>结构进行操作。</li>
+<li>调用I/O调度程序的<code>elv_queue_empty()</code>检查请求队列中是否存在待处理请求。调度队列可能是空的，但<code>I/O</code>调度程序的其他队列可能包含待处理请求。如果没有，调用<code>blk_plug_device()</code>插入请求队列，然后跳到第5步。</li>
+<li>插入的请求队列包含待处理请求。调用I/O调度程序的<code>elv_merge()</code>检查新的<code>bio</code>结构是否可以并入已存在的请求中，将返回三个可能值：<ol>
+<li><code>ELEVATOR_NO_MERGE</code>：已经存放在的请求中不能包含<code>bio</code>结构，跳到第5步。</li>
+<li><code>ELEVATOR_BACK_MERGE</code>：<code>bio</code>结构可作为末尾的<code>bio</code>而插入到某个请求<code>req</code>中，调用<code>q-&gt;back_merge_fn</code>方法检查是否可扩展该请求。如果不行，跳到第5步；否则，将<code>bio</code>描述符插入<code>req</code>链表的末尾并更新<code>req</code>的相应字段值。然后，函数试图将该请求与后面的请求合并。</li>
+<li><code>ELEVATOR_FRONT_MERGE</code>：<code>bio</code>结构可作为某个请求<code>req</code>的第一个<code>bio</code>被插入，函数调用<code>q-&gt;front_merge_fn</code>方法检查是否可扩展该请求。如果不行跳到第5步；否则，将<code>bio</code>描述符插入<code>req</code>链表的首部并更新<code>req</code>的相应字段值。然后，试图将该请求与前面的请求合并。</li>
+</ol>
+</li>
+<li><code>bio</code>已经被并入存放在的请求中，跳到第7步终止函数。</li>
+<li><code>bio</code>必须被插入一个新的请求中。分配一个新的请求描述符。如果没有空闲的内存，那么挂起当前进程，直到设置了<code>bio-&gt;bi_rw</code>中的<code>BIO_RW_AHEAD</code>标志，表明这个<code>I/O</code>操作是一次预读；这种情形下，函数调用<code>bio_endio()</code>并终止：不执行数据传输。</li>
+<li>初始化请求描述符中的字段，主要有：<ol>
+<li>根据<code>bio</code>描述符的内容初始化各个字段，包括扇区数、当前<code>bio</code>及当前段。</li>
+<li>设置<code>flags</code>字段中的<code>REQ_CMD</code>标志。</li>
+<li>如果第一个<code>bio</code>段的页框存放在低端内存，则将<code>buffer</code>字段设置为缓冲区的线性地址。</li>
+<li><code>rq_disk = bio-&gt;bi_bdev-&gt;bd_disk的地址</code>。</li>
+<li>将<code>bio</code>插入请求链表。</li>
+<li><code>start_time = jiffies 值</code>。</li>
+</ol>
+</li>
+<li>所有操作都完成。终止前，检查是否设置了<code>bio-&gt;bi_rw</code>中的<code>BIO_RW_SYNC</code>标志，如果是，对请求队列调用<code>generic_unplug_device()</code>卸载设备驱动程序。</li>
+<li>函数终止。</li>
+</ol>
+<p>总结：根据请求队列是否为空，不空时是否与已有请求合并，来确定<code>bio</code>与现有请求合并还是新分配、初始化一个新的<code>bio</code>描述符，并插入请求链表。然后根据需要卸载驱动程序，函数终止。</p>
+<h3 id="blk-queue-bounce"><a href="#blk-queue-bounce" class="headerlink" title="blk_queue_bounce()"></a>blk_queue_bounce()</h3><p>功能是查看<code>q-&gt;bounce_gfp</code>中的标志及<code>q-&gt;bounce_pfn</code>中的阈值，从而确定回弹缓冲区是否必须。通常当请求中的一些缓冲区位于高端内存，而硬件设备不能访问它们时发生该情况。</p>
+<p>当处理老式设备时，块设备驱动程序通常更倾向于直接在<code>ZONE_DMA</code>内存区分配DMA缓冲区。如果硬件设备不能处理高端内存中的缓冲区，则<code>blk_queue_bounce()</code>检查<code>bio</code>中的一些缓冲区是否真的必须是回弹的。如果是，则将<code>bio</code>描述符复制一份，接着创建一个回弹<code>bio</code>；当段中的页框号等于或大于<code>q-&gt;bounce_pfn</code>时，执行下列操作：</p>
+<ul>
+<li>根据分配的标志，在<code>ZONE_NORMAL</code>或<code>ZNOE_DMA</code>内存区中分配一个页框。</li>
+<li>更新回弹<code>bio</code>中段的<code>bv_page</code>字段，使其指向新页框的描述符。</li>
+<li>如果<code>bio-&gt;bio_rw</code>代表一个写操作，则调用<code>kmap()</code>临时将高端内存页映射到内核地址空间中，然后将高端内存页复制到低端内存页上，最后调用<code>kunmap()</code>释放该映射。</li>
+</ul>
+<p>然后<code>blk_queue_bounce()</code>设置回弹<code>bio</code>中的<code>BIO_BOUNCED</code>标志，为其初始化一个特定的<code>bi_end_io</code>方法，最后它将存放在<code>bio</code>的<code>bi_private</code>字段中，该字段指向初始<code>bio</code>的指针。<br>当回弹<code>bio</code>上的 I/O 数据传送终止时，<code>bi_end_io</code>方法将数据复制到高端内存区中（仅适合读操作），并释放该回弹<code>bio</code>结构。</p>
+<h2 id="块设备驱动程序-1"><a href="#块设备驱动程序-1" class="headerlink" title="块设备驱动程序"></a>块设备驱动程序</h2><p>块设备驱动程序是 Linux 块子系统中最底层组件。它们从 I/O 调度程序获得请求，然后按要求处理这些请求。每个块设备驱动程序对应一个<code>device_driver</code>类型描述符。</p>
+<h3 id="块设备"><a href="#块设备" class="headerlink" title="块设备"></a>块设备</h3><p>一个块设备驱动程序可能处理几个块设备。块设备驱动程序必须处理块设备对应的块设备文件上的所有VFS系统调用。每个块设备由一个<code>block_device</code>结构描述符表示。<br><img src="/img/1603716014.jpg" alt=""></p>
+<p>所有块设备的描述符被插入一个全局链表中，链表首部由变量<code>all_bdevs</code>表示；链表链接所用的指针位于块设备描述符的<code>bd_list</code>字段。</p>
+<p>如果块设备描述符对应一个磁盘分区，则<code>bd_contains</code>指向与整个磁盘相关的块设备描述符；<code>bd_part</code>指向<code>hd_struct</code>分区描述符。否则，块设备描述符对应整个磁盘，<code>bd_contains</code>指向块设备描述符本身，<code>bd_part_count</code>记录磁盘上的分区已经被打开了多少次。</p>
+<p><code>bd_holder</code>代表块设备持有者的线性地址。持有者是一个内核组件，典型为安装在该设备上的文件系统。当块设备文件被打开进行互斥访问时，持有者就是对应的文件对象。</p>
+<p><code>bd_claim()</code>将<code>bd_holder</code>设置为一个特定的地址；<code>bd_release()</code>将该字段重新设置为 NULL。同一内核组件可多次调用<code>bd_claim()</code>，每次调用都增加<code>bd_holders</code>值；为释放块设备，内核组件必须调用<code>bd_release()</code>函数<code>bd_holders</code>次。<br><img src="/img/1603792543.jpg" alt=""></p>
+<h3 id="访问块设备"><a href="#访问块设备" class="headerlink" title="访问块设备"></a>访问块设备</h3><p>当内核接收一个打开块设备文件的请求时，必须先确定该设备文件是否已经是打开的。如果是，则内核没必要创建并初始化一个新的块设备描述符，而是更新已存在的块设备描述符。然而，真正的复杂性在于<strong>具有相同主设备号和次设备号但不同路径名的块设备被 VFS 看作不同的文件</strong>。因此，内核无法通过简单地在一个对象的索引节点高速缓存中检查块设备文件的存在就确定相应的块设备已经在使用。</p>
+<p>主、次设备号和相应的块设备描述符之间的关系是通过<code>bdev</code>特殊文件系统来维护的。每个块设备描述符都对应一个<code>bdev</code>特殊文件：块设备描述符的<code>bd_inode</code>字段指向相应的<code>bdev</code>索引节点；而该索引节点将为块设备的主、次设备号和相应描述符的地址进行编码。</p>
+<p><code>bdget()</code>参数为块设备的主设备号和次设备号，在<code>bdev</code>文件系统中查询相关的索引节点；如果不存在这样的节点，则分配一个新索引节点和新块设备描述符。返回一个与给定主、次设备号对应的块设备描述符的地址。</p>
+<p>找到块设备描述符后，内核通过检查<code>bd_openers</code>字段来确定块设备当前是否在使用：如果为正值，则块设备已经在使用（可能通过不同的设备文件）。同时，内核也维护一个与已打开的块设备文件对应的索引节点对象的链表。该链表存放在块设备描述符的<code>bd_inodes</code>字段；索引节点对象的<code>i_devices</code>字段存放于链接链表中的前后元素的指针。</p>
+<h3 id="注册和初始化设备驱动程序"><a href="#注册和初始化设备驱动程序" class="headerlink" title="注册和初始化设备驱动程序"></a>注册和初始化设备驱动程序</h3><h4 id="定义驱动程序描述符"><a href="#定义驱动程序描述符" class="headerlink" title="定义驱动程序描述符"></a>定义驱动程序描述符</h4><p>首先，设备驱动程序需要一个<code>foo_dev_t</code>类型的自定义描述符<code>foo</code>，它拥有驱动硬件设备所需的数据。该描述符存放每个设备的相关信息，如操作设备使用的I/O端口、设备发出中断的 IRQ 线、设备的内部状态等。同时也包含块 I/O 子系统所需的一些字段：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">foo_dev_t</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	[...]</span><br><span class="line">	<span class="type">spinlock_t</span> lock;  </span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">gendisk</span> *<span class="title">gd</span>;</span></span><br><span class="line">	[...]</span><br><span class="line">&#125;；</span><br></pre></td></tr></table></figure><br><code>lock</code>字段是保护<code>foo</code>描述符中字段值的自旋锁，保护对驱动程序而言特定的块IO子系统的数据结构；<code>gd</code>是指向<code>gendisk</code>描述符的指针，该描述符描述由该驱动程序处理的整个块设备</p>
+<h4 id="预定主设备号"><a href="#预定主设备号" class="headerlink" title="预定主设备号"></a>预定主设备号</h4><p>驱动程序通过<code>register_blkdev()</code>预定一个主设备号，传统上通过<code>register_blkdev()</code>完成。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">err = register_blkdev(FOO_MAJOR, &quot;foo&quot;);  </span><br><span class="line">if(err)</span><br><span class="line">	goto error_major_is_busy;</span><br></pre></td></tr></table></figure></p>
+<p>预定主设备号<code>FOO_MAJOR</code>并将设备名称<code>foo</code>赋给它，预定的主设备号和驱动程序之间的数据结构还没有建立连接，结果为产生一个新条目，该条目位于<code>/proc/devices</code>特殊文件的已注册设备号列表中</p>
+<h4 id="初始化自定义描述符"><a href="#初始化自定义描述符" class="headerlink" title="初始化自定义描述符"></a>初始化自定义描述符</h4><p>为初始化于块 I/O 子系统相关的字段，设备驱动程序主要执行下列操作：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spin_lock_init(&amp;foo.lock); </span><br><span class="line">foo.gd = alloc_disk(<span class="number">16</span>);   </span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(!foo.gd)</span><br><span class="line">	<span class="keyword">goto</span> error_no_gendisk;</span><br></pre></td></tr></table></figure></p>
+<p>首先初始化自旋锁，然后分配一个磁盘描述符，<code>alloc_disk()</code>也分配一个存放磁盘分区描述符的数组，所需要的参数是数组中<code>hd_struct</code>结构的元素参数。16表示驱动程序可支持16个磁盘，每个磁盘可包含15个分区（0分区不使用）</p>
+<h4 id="初始化-gendisk-描述符"><a href="#初始化-gendisk-描述符" class="headerlink" title="初始化 gendisk 描述符"></a>初始化 gendisk 描述符</h4><p>接下来，驱动程序初始化<code>gendisk</code>描述符的一些字段：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">foo.gd-&gt;private_data = &amp;foo; </span><br><span class="line">foo.gd-&gt;major = FOO_MAJOR;</span><br><span class="line">foo.gd-&gt;first_minor = <span class="number">0</span>;</span><br><span class="line">foo.gd-&gt;minors = <span class="number">16</span>;</span><br><span class="line"></span><br><span class="line">set_capacity(foo.gd, foo_disk_capacity_in_sectors);</span><br><span class="line"><span class="built_in">strcpy</span>(foo.gd-&gt;disk_name, <span class="string">&quot;foo&quot;</span>);</span><br><span class="line">foo.gd-&gt;fops = &amp;foo_ops;</span><br></pre></td></tr></table></figure></p>
+<p><code>foo</code>描述符的地址存放在<code>gendisk</code>的<code>private_data</code>字段，// 因此被块 I/O 子系统当作方法调用的低级驱动程序函数可迅速查找到驱动程序描述符。如果驱动程序可并发地处理多个磁盘，可提高效率，<code>set_capacity()</code>函数将<code>capacity</code>字段初始化为以 512 字节扇区为单位的磁盘大小，该值也可能在探测硬件并询问磁盘参数时确定。</p>
+<h4 id="初始化块设备操作表"><a href="#初始化块设备操作表" class="headerlink" title="初始化块设备操作表"></a>初始化块设备操作表</h4><p><code>gendisk</code>描述符的<code>fops</code>字段步初始化为自定义的块设备方法表的地址。类似地，设备驱动程序的<code>foo_ops</code>表中包含设备驱动程序的特有函数。例如，如果硬件设备支持可移动磁盘，通用块将调用<code>media_changed</code>方法检测自从最后一次安装或打开该设备以来，磁盘是否被更换。通常通过硬件控制器发送一些低级命令完成该检查，因此，每个设备驱动程序所实现的<code>media_changed</code>方法都不同。</p>
+<p>类似地，仅当通用块层不知道如何处理<code>ioctl</code>命令时才调用<code>ioctl</code>方法。如，当一个<code>ioctl()</code>询问磁盘构造时，即磁盘使用的柱面数、磁道数、扇区数即磁头数时，通常用该方法。因此，每个设备驱动程序所实现的<code>ioctl</code>方法也都不同。</p>
+<h4 id="分配和初始化请求队列"><a href="#分配和初始化请求队列" class="headerlink" title="分配和初始化请求队列"></a>分配和初始化请求队列</h4><p>可通过如下操作建立请求队列：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">foo.gd-&gt;rq = blk_init_queue(foo_strategy, &amp;foo.lock); </span><br><span class="line">if(!foo.gd-&gt;rq)</span><br><span class="line">	goto error_no_request_queue;</span><br><span class="line"></span><br><span class="line">blk_queue_hardsect_size(foo.gd-&gt;rd, foo_hard_sector_size);</span><br><span class="line">blk_queue_max_sectors(foo.gd-&gt;rd, foo_max_sectors);</span><br><span class="line">blk_queue_max_hw_segments(foo.gd-&gt;rd, foo_max_hw_segments);</span><br><span class="line">blk_queue_max_phys_segments(foo.gd-&gt;rd, foo_max_phys_segments);</span><br></pre></td></tr></table></figure></p>
+<p><code>blk_init_queue()</code>分配一个请求队列描述符，并将其中许多字段初始化为缺省值，参数为设备描述符的自旋锁的地址（<code>foo.gd-&gt;rq-&gt;queue_lock</code>）和设备驱动程序的策略例程的地址（<code>foo.gd-&gt;rq-&gt;request_fn</code>），也初始化<code>foo.gd-&gt;rq-&gt;elevator</code>字段为缺省的 I/O 调度算法。接下来使用几个辅助函数将请求队列描述符的不同字段设为设备驱动程序的特征值。</p>
+<h4 id="设置中断处理程序"><a href="#设置中断处理程序" class="headerlink" title="设置中断处理程序"></a>设置中断处理程序</h4><p>设备驱动程序为设备注册 IRQ 线：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">request_irq(foo_irq, foo_interrupt, SA_INTERRUPT | SA_INTERRUPT | SA_SHIRQ, <span class="string">&quot;foo&quot;</span>, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure></p>
+<p><code>foo_interrupt()</code>是设备的中断处理程序。</p>
+<h4 id="注册磁盘"><a href="#注册磁盘" class="headerlink" title="注册磁盘"></a>注册磁盘</h4><p>最后一步是“注册”和激活磁盘，可简单地通过执行下面的操作完成：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add_disk(foo.gd);</span><br></pre></td></tr></table></figure></p>
+<p><code>add_disk()</code>的参数为<code>gendisk</code>描述符的地址，执行下面步骤：</p>
+<ul>
+<li>设置<code>gd-&gt;flags</code>的<code>GENHD_FL_UP</code>标志。</li>
+<li>调用<code>kobj_map()</code>建立设备驱动程序和设备的主设备号（连同相关范围内的次设备号）之间的连接。</li>
+<li>注册设备驱动程序模型的<code>gendisk</code>描述符的<code>kobject</code>结构，它作为设备驱动程序处理的一个新设备（如<code>/sys/block/foo</code>）。</li>
+<li>如果需要，扫描磁盘中的分区表；对于查找到的每个分区，适当地初始化<code>foo.gd-&gt;part</code>数组中相应的<code>hd_struct</code>描述符。</li>
+<li>同时注册设备驱动程序模型中的分区（如<code>/sys/block/foo/foo1</code>）。</li>
+<li>注册设备驱动程序模型的请求队列描述符中内嵌的<code>kobject</code>结构（如<code>/sys/block/foo/queue</code>）。</li>
+</ul>
+<p>一旦<code>add_disk()</code>返回，设备驱动程序就可以工作了。进程初始化的函数终止；策略例程和中断处理程序开始处理 I/O 调度程序传送给设备驱动程序的每个请求。</p>
+<h3 id="策略例程"><a href="#策略例程" class="headerlink" title="策略例程"></a>策略例程</h3><p>策略例程是<strong>块设备驱动程序的一个函数或一组函数</strong>，它与硬件块设备之间相互作用以满足调度队列中的请求。通过请求队列描述符中的<code>request_fn</code>方法可调用策略例程，如<code>foo_strategy()</code>，I/O 调度程序层将请求队列描述符<code>q</code>的地址传给该函数。</p>
+<p><strong>把新的请求插入空的请求队列后，策略例程通常才被启动</strong>。只要块设备驱动程序被激活，就应该对队列中的所有请求进行处理，直到队列为空才结束。</p>
+<p>块设备驱动程序采用如下策略：</p>
+<ul>
+<li>策略例程处理队列中的第一个请求并设置块设备控制器，以便在数据传送完成时产生一个中断。然后策略例程终止。</li>
+<li>当磁盘控制器产生中断时，中断控制器重新调度策略例程。</li>
+<li>策略例程要么为当前请求再启动一次数据传送，要么当请求的所有数据块已经传送完成时，把该请求从调度队列中删除然后开始处理下一个请求。</li>
+</ul>
+<p>请求是由几个<code>bio</code>结构组成的，而每个<code>bio</code>结构又由几个段组成。基本上，块设备驱动程序以以下方式使用 DMA：</p>
+<ul>
+<li>驱动程序建立不同的 DMA 传送方式，为请求的每个<code>bio</code>结构的每个段进行服务。</li>
+<li>驱动程序建立以一种单独的分散-聚集 DMA 传送方式，为请求的所有<code>bio</code>中的所有段服务。</li>
+</ul>
+<p>设备驱动程序策略例程的设计依赖块控制器的特性。如，<code>foo_strategy()</code>策略例程执行下列操作：</p>
+<ul>
+<li>通过调用 I/O 调度程序的辅助函数<code>elv_next_request()</code>从调度队列中获取当前的请求。如果调度队列为空，就结束这个策略例程：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">req = elv_next_request(q);</span><br><span class="line"><span class="keyword">if</span>(!req) </span><br><span class="line">	<span class="keyword">return</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>执行<code>blk_fs_request</code>宏检测是否设置了请求的<code>REQ_CMD</code>标志，即请求是否包含一个标准的读或写操作：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!blk_fs_request(req))</span><br><span class="line">	<span class="keyword">goto</span> handle_special_request;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果块设备控制器支持分散-聚集 DMA，那么对磁盘控制器进行编程，以便为整个请求执行数据传送并再传送完成时产生一个中断。<code>blk_rq_map_sg()</code>辅助函数返回一个可以立即被用来启动数据传送的分散-聚集链表。</p>
+</li>
+<li>否则，设备驱动程序必须一段一段地传送数据。这种情形下，策略例程执行<code>rq_for_each_bio</code>和<code>bio_for_each_segment</code>两个宏，分别遍历<code>bio</code>链表和每个<code>bio</code>中的链表：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">rq_for_each_bio(bio, rq)</span><br><span class="line">	bio_for_each_segment(bvec, bio, i)</span><br><span class="line">	&#123;</span><br><span class="line">		local_irq_save(flags);</span><br><span class="line">		addr = kmap_atomic(bvec-&gt;bv_page, KM_BIO_SRC_IRQ);</span><br><span class="line">		foo_start_dma_transfer(addr+bvec-&gt;bv_offset, bvec-&gt;bv_len);</span><br><span class="line">		kunmap_atomic(bvec-&gt;bv_page, KM_BIO_SRC_IRQ);</span><br><span class="line">		local_irq_restore(flags);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果要传送的数据位于高端内存，<code>kmap_atomic()</code>和<code>kunmap_atomic()</code>是必需的，<code>foo_start_dma_transfer()</code>对硬件设备进行编程，以便启动 DMA 数据传送并在 I/O 操作完成时产生一个中断</li>
+<li>返回。</li>
+</ul>
+<h3 id="中断处理程序"><a href="#中断处理程序" class="headerlink" title="中断处理程序"></a>中断处理程序</h3><p>块设备驱动程序的中断处理程序在 DMA 数据传送结束时被激活。它检查是否已经传送完成请求的所有数据块，如果是，中断处理程序就调用策略例程处理调度队列中的下一个请求；否则，中断处理程序更新请求描述符的相应字段并调用策略例程处理还没有完成的数据传送。</p>
+<p>设备驱动程序<code>foo</code>的中断处理程序的一个典型片段如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">irqreturn_t</span> <span class="title function_">foo_interrupt</span><span class="params">(<span class="type">int</span> irq, <span class="type">void</span> *dev_id, <span class="keyword">struct</span> pt_regs *regs)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">foo_dev_t</span> *<span class="title">p</span> =</span> (<span class="keyword">struct</span> <span class="type">foo_dev_t</span> *)dev_id;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">request_queue</span> *<span class="title">rq</span> =</span> p-&gt;gd-&gt;rq;</span><br><span class="line">	[...]</span><br><span class="line">	<span class="keyword">if</span>(!end_that_request_first(rq, uptodata, nr_seectors))</span><br><span class="line">	&#123;</span><br><span class="line">		blkdev_dequeue_request(rq);</span><br><span class="line">		end_that_request_last(rq);</span><br><span class="line">	&#125;</span><br><span class="line">	rq-&gt;request_fn(rq);</span><br><span class="line">	[...]</span><br><span class="line">	<span class="keyword">return</span> IRQ_HANDLED;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>end_that_request_first()</code>和<code>end_that_request_last()</code>共同承担结束一个请求的任务。</p>
+<p><code>end_that_request_first()</code>接收的参数：</p>
+<ul>
+<li>一个请求描述符</li>
+<li>一个指示 DMA 数据传送完成的标志</li>
+<li>DMA 所传送的扇区数</li>
+</ul>
+<p><code>end_that_request_first()</code>扫描请求中的<code>bio</code>结构及每个<code>bio</code>中的段，然后采用如下方式更新请求描述符的字段值：</p>
+<ul>
+<li>修改<code>bio</code>字段，使其执行请求中的第一个未完成的<code>bio</code>结构。</li>
+<li>修改未完成<code>bio</code>结构的<code>bi_idx</code>字段，使其指向第一个未完成的段。</li>
+<li>修改未完成的<code>bv_offset</code>和<code>bv_len</code>字段，使其指定仍需传送的数据。</li>
+</ul>
+<p><code>end_that_request_first()</code>如果已经完成请求中的所有数据块，则返回0，否则返回1，如果返回1则中断处理程序重新调用策略历程，继续处理该请求。否则，中断处理程序把请求从请求队列中删除（主要由<code>blkdev_dequeue_request()</code>完成），然后调用<code>end_that_request_last()</code>，并再次调用策略例程处理调度队列中的下一个请求。</p>
+<p><code>end_that_request_last()</code>功能是<strong>更新一些磁盘使用统计数，把请求描述符从 I/O 调度程序<code>rq-&gt;elevator</code>的调度队列中删除，唤醒等待请求描述符完成的任一睡眠进程，并释放删除的那个描述符</strong>。</p>
+<h3 id="打开块设备文件"><a href="#打开块设备文件" class="headerlink" title="打开块设备文件"></a>打开块设备文件</h3><p>内核打开一个块设备文件的时机：</p>
+<ul>
+<li>一个文件系统被映射到磁盘或分区上时</li>
+<li>激活一个交换分区时</li>
+<li>用户态进程向块设备文件发出一个 open() 系统调用时</li>
+</ul>
+<p>在所有情况下，内核本质上执行相同的操作：<strong>寻找块设备描述符（如果块设备没有在使用，则分配一个新的描述符），为即将开始的数据传送设置文件操作方法</strong>。</p>
+<p><code>dentry_open()</code>的<code>f_op</code>字段设置为表<code>def_blk_fops</code>的地址：<br><img src="/img/1603792545.jpg" alt=""></p>
+<p>仅考虑<code>open</code>方法，它由<code>dentry_open()</code>调用。<code>blkdev_open()</code>参数为<code>inode</code>和<code>filp</code>，分别为索引节点和文件对象的地址，本质上执行下列操作：</p>
+<ol>
+<li>执行<code>bd_acquire(inode)</code>从而获得块设备描述符<code>bdev</code>的地址。该函数参数为索引节点对象的地址，执行下列主要步骤：<ol>
+<li>如果索引节点对象的<code>inode-&gt;i_bdev</code>字段不为NULL，表明块设备文件已经打开，该字段存放了相应块描述符的地址。增加与块设备相关联的<code>bdev</code>特殊文件系统的<code>inode-&gt;i_bdev-&gt;bd_inode</code>索引节点的引用计数器值，并返回描述符<code>inode-&gt;i_bdev</code>的地址。</li>
+<li>否则，块设备文件没有被打开。根据块设备相关联的主设备号和次设备号，执行<code>bdget(inode-&gt;i_rdev)</code>获取块设备描述符的地址。如果描述符不存在，<code>bdget()</code>就分配一个。</li>
+<li><code>inode-&gt;i_bdev</code> = 块设备描述符的地址，以便加速将来对相同块设备文件的打开操作。</li>
+<li><code>inode-&gt;i_mapping</code>设置为<code>bdev</code>索引节点中相应字段的值。<code>inode-&gt;i_mapping</code>指向地址空间对象。</li>
+<li>把索引节点插入到<code>bdev-&gt;bd_inodes</code>确立的块设备描述符的已打开索引节点链表中。</li>
+<li>返回描述符<code>bdev</code>的地址。</li>
+</ol>
+</li>
+<li><code>filp-&gt;i_mapping</code>设置为<code>inode-&gt;i_mapping</code>。</li>
+<li>获取与这个块设备相关的<code>gendisk</code>描述符的地址：<code>disk = get_gendisk(bdev-&gt;bd_dev, &amp;part);</code><ol>
+<li>如果被打开的块设备是一个分区，则返回的索引值存放在本地变量<code>part</code>中；否则，<code>part</code>为0</li>
+<li><code>get_gendisk()</code>函数在<code>kobject</code>映射域<code>bdev_map</code>上简单地调用<code>kobj_lookup()</code>传递设备的主设备号和次设备号</li>
+</ol>
+</li>
+<li>如果<code>bdev-&gt;bd_openers != 0</code>，说明块设备已经被打开。检查<code>bdev-&gt;bd_contains</code>字段：<ol>
+<li>如果等于<code>bdev</code>，那么块设备是一个整盘：调用块设备方法<code>bdev-&gt;bd_disk-&gt;fops-&gt;open</code>（如果定义了），然后检查<code>bdev-&gt;bd_invalidated</code>的值，需要时调用<code>rescan_partitions()</code>。</li>
+<li>如果不等于<code>bdev</code>，那么块设备是一个分区：<code>bdev-&gt;bd_contains-&gt;bd_part_count++</code>，跳到第 8 步。</li>
+</ol>
+</li>
+<li>这里的块设备是第一次被访问。初始化<code>bdev-&gt;bd_disk</code>为<code>gendisk</code>描述符的地址<code>disk</code>。</li>
+<li>如果块设备是一个整盘（<code>part == 0</code>），则执行下列子步骤：<ol>
+<li>如果定义了<code>disk-&gt;fops-&gt;open</code>块设备方法，就执行它：该方法由块设备驱动程序定义的定制函数，它执行任何特定的最后一分钟初始化。</li>
+<li>从<code>disk-&gt;queue</code>请求队列的<code>hardsect_size</code>字段中获取扇区大小（字节数），用该值适当地设置<code>bdev-&gt;bd_block_size</code>和<code>bdev-&gt;bd_inode-&gt;i_blkbits</code>。同时从<code>disk-&gt;capacity</code>中计算来的磁盘大小设置<code>bdev-&gt;bd_inode-&gt;i_size</code>字段。</li>
+<li>如果设置了<code>bdev-&gt;bd_invalidated</code>标志，则调用<code>rescan_partitions()</code>扫描分区表并更新分区描述符。该标志是由<code>check_disk_change</code>块设备方法设置的，仅适用于可移动设备。</li>
+</ol>
+</li>
+<li>否则，如果块设备是一个分区，则执行下列子步骤：<ol>
+<li>再次调用<code>bdget()</code>，这次是传递<code>disk-&gt;first_minor</code>次设备号，获取整盘的块描述符地址<code>whole</code>。</li>
+<li>对整盘的块设备描述符重复第 3 步 ~ 第 6 步，如果需要则初始化该描述符。</li>
+<li><code>bdev-&gt;bd_contains</code>设置为整盘描述符的地址。</li>
+<li><code>whole-&gt;bd_part_count++</code>，从而说明磁盘分区上新的打开操作。</li>
+<li><code>disk-&gt;part[part-1]</code>中的值设置<code>bdev-&gt;bd_part</code>，<code>disk-&gt;part[part-1]</code>是分区描述符<code>hd_struct</code>的地址。同样，执行<code>kobject_get(&amp;bdev-&gt;bd_part-&gt;kobj)</code>增加分区引用计数器的值。</li>
+<li>与第 6b 步中一样，设置索引节点中表示分区大小和扇区大小的字段。</li>
+</ol>
+</li>
+<li>增加<code>bdev-&gt;bd_openers</code>的值。</li>
+<li>如果块设备文件以独占方式被打开（设置了<code>filp-&gt;f_flags</code>中的<code>O_EXCL</code>标志），则调用<code>bd_claim(bdev, filp)</code>设置块设备的持有者。如果块设备已经有一个持有者，则释放该块设备描述符并返回要给错误码 -EBUSY。</li>
+<li>返回 0（成功）终止。</li>
+</ol>
+<p><code>blkdev_open()</code>一旦中止，<code>open()</code>系统调用如往常一样继续执行。对已打开的文件上将来发出的每个系统调用都将触发一个缺省块设备文件操作。</p>
+<h1 id="页高速缓存"><a href="#页高速缓存" class="headerlink" title="页高速缓存"></a>页高速缓存</h1><p>磁盘高速缓存是一种软件机制，它<strong>允许系统把通常存放在磁盘上的一些数据保留在 RAM 中</strong>，以便对那些数据的进一步访问不用再访问磁盘而能尽快得到满足。</p>
+<h2 id="页高速缓存-1"><a href="#页高速缓存-1" class="headerlink" title="页高速缓存"></a>页高速缓存</h2><p>几乎所有的文件读写操作都依赖于高速缓存，内核的代码和内核数据结构不必从磁盘读，也不必写入磁盘。因此，页高速缓存中的页可能是如下的类型：</p>
+<ul>
+<li>含有普通文件数据的页</li>
+<li>含有目录的页</li>
+<li>含有直接从块设备文件中读出的页</li>
+<li>含有用户态进程数据的页</li>
+<li>属于特殊文件系统文件的页</li>
+</ul>
+<p>只有在<code>O_DIRECT</code>标志被置位，而进程打开文件的情况下才会出现例外。</p>
+<p>内核设计者实现页高速缓存主要满足：</p>
+<ul>
+<li>快速定位含有给定所有者相关数据的特定页</li>
+<li>记录在读或写页中的数据时应当如何处理高速缓存的每个页</li>
+</ul>
+<p>页高速缓存中的信息单位是一个完整的页。一个页包含的磁盘块在物理上不一定相邻，所以不能用设备号和块号标识，而是通过页的所有者和所有者数据中的索引来识别。</p>
+<h3 id="address-space-对象"><a href="#address-space-对象" class="headerlink" title="address_space 对象"></a>address_space 对象</h3><p>页高速缓存的核心数据结构是<code>address_space</code>对象，它是一个<strong>嵌入在页所有者的索引节点对象中的数据结构</strong>。高速缓存中的许多页可能属于同一个所有者，从而可能被链接到同一个<code>address_space</code>对象。该对象还在所有者的页和对这些页的操作之间建立起链接关系。</p>
+<p>每个页描述符都包含把页链接到页高速缓存的两个字段<code>mapping</code>和<code>index</code>。<code>mapping</code>指向拥有页的索引节点的<code>address_space</code>对象；<code>index</code>表示<strong>所有者的地址空间中以页大小为单位的偏移量</strong>，即页中数据在所有者的磁盘映像中的位置。在页高速缓存中查找页时使用这两个字段。</p>
+<p>页高速缓存可包含同一磁盘数据的多个副本。例如可以用下述方式访问普通文件的同一4KB数据块：</p>
+<ul>
+<li>读文件，数据包含在普通文件的索引节点所拥有的页中</li>
+<li>从文件所在的设备文件读取块，因此数据包含在块设备文件的主索引节点所拥有的页中</li>
+</ul>
+<p>因此，两个不同<code>address_space</code>对象所引用的两个不同的页中出现了相同的磁盘数据。<code>address_space</code>的一些字段：<br><img src="/img/1603965962.jpg" alt=""></p>
+<p>如果页高速缓存中页的所有者是一个文件，<code>address_space</code>对象就嵌入在 VFS 索引节点对象的<code>i_data</code>字段中。索引节点的<code>i_mapping</code>字段总是指向索引节点的数据页所拥有的<code>address_space</code>对象。<code>address_space</code>对象的<code>host</code>字段指向其所有者的索引节点对象。因此如果页属于一个文件，那么页的所有者就是文件的索引节点，而且相应的<code>address_space</code>对象存放在VFS索引节点对象的<code>i_data</code>字段中。索引节点的<code>i_mapping</code>字段指向同一个索引节点的<code>i_data</code>字段，而<code>address_space</code>对象的<code>host</code>字段也指向这个索引节点。</p>
+<p>不过，有些时候情况会更复杂。如果页中包含的数据来自块设备文件，即页含有存放着块设备的“原始”数据，那么就把<code>address_space</code>对象嵌入到与该块设备相关的特殊文件系统<code>bdev</code>中文件的“主”索引节点中。因此，块设备文件对应索引节点的<code>i_mapping</code>字段指向主索引节点中的<code>address_space</code>对象。相应地，<code>address_space</code>对象的<code>host</code>字段指向主索引节点。这样，从块设备读取数据的所有页具有相同的<code>address_space</code>对象，即使这些数据位于不同的块设备文件。</p>
+<p><code>backing_dev_info</code>指向<code>backing_dev_info</code>描述符，是对所有者的数据所在块设备进行描述的数据结构。<code>backing_dev_info</code>结构通常嵌入在块设备的请求队列描述符中。</p>
+<p><code>private_list</code>是普通链表的首部，文件系统在实现其特定功能时可随意使用。如，Ext2 文件系统利用该链表收集与索引节点相关的“间接”块的脏缓冲区。当刷新操作把索引节点强行写入磁盘时，内核页同时刷新该链表中的所有缓冲区。</p>
+<p><code>a_ops</code>指向一个类型为<code>address_space_operations</code>的表，表中定义了对所有者的页进行处理的各种方法。<br><img src="/img/1603965967.jpg" alt=""></p>
+<h3 id="基树"><a href="#基树" class="headerlink" title="基树"></a>基树</h3><p>为实现页高速缓存的高效查找，每个<code>address_space</code>对象对应一棵搜索树。</p>
+<p><code>address_space</code>的<code>page_tree</code>字段是基树的根，<strong>包含指向所有者的页描述符的指针</strong>。给定的页索引表表示页在所有者磁盘映像中的位置，内核能通过快速搜索操作确定所需要的页是否在页高速缓存中。当查找所需要的页时，<strong>内核把页索引转换为基树中的路径</strong>，并快速找到页描述符所在的位置。如果找到，内核可从基树获得页描述符，并很快确定所找的页是否为脏页，以及其数据的 I/O 传送是否正在进行。</p>
+<p>基树的每个节点可有多达 64 个指针指向其他节点或页描述符。<strong>底层节点存放指向页描述符的指针（叶子节点），而上层的节点存放指向其他节点（孩子节点）的指针</strong>。每个节点由<code>radix_tree_node</code>数据结构表示，包含三个字段：</p>
+<ul>
+<li><code>slots</code>：包含 64 个指针的数组</li>
+<li><code>count</code>：记录节点中非空指针数量的计数器</li>
+<li><code>tags</code>：二维的标志数组</li>
+</ul>
+<p>树根由<code>radix_tree_root</code>数据结构表示，有三个字段：</p>
+<ul>
+<li><code>height</code>：树的当前深度（不包括叶子节点的层数）</li>
+<li><code>gfp_mask</code>：为新节点请求内存时所用的标志</li>
+<li><code>rnode</code>：指向与树中第一层节点相应的数据结构<code>radix_tree_node</code></li>
+</ul>
+<p><img src="/img/1603966548.jpg" alt=""></p>
+<p>基树中，页索引相当于线性地址，但页索引中要考虑的字段的数量依赖于基树的深度。<br>如果基树的深度为 1，就只能表示从 0 ~ 63 范围的索引，因此页索引的低 6 位被解释为 slots 数组的下标，每个下标对应第一层的一个节点。<br>如果基树深度为2，就可以表示从 0 ~ 4085 范围的索引，页索引的低 12 位分成两个 6 位的字段，高位的字段表示第一层节点数组的下标，而低位的字段用于表示第二层节点数组的下标。依次类推。</p>
+<p>如果基树的最大索引小于应该增加的页的索引，则内核相应地增加树的深度；基数的中间节点依赖于页索引的值。</p>
+<p><img src="/img/1603966615.jpg" alt=""></p>
+<h3 id="页高速缓存的处理函数"><a href="#页高速缓存的处理函数" class="headerlink" title="页高速缓存的处理函数"></a>页高速缓存的处理函数</h3><h4 id="查找页"><a href="#查找页" class="headerlink" title="查找页"></a>查找页</h4><p><code>find_get_page()</code>参数为指向<code>address_space</code>对象的指针和偏移量。它<strong>获取地址空间的自旋锁，并调用<code>radix_tree_lookup()</code>搜索拥有指定偏移量的基树的叶子节点</strong>。该函数根据偏移量中的位依次从树根开始向下搜索。如果遇到空指针，返回NULL；否则，返回叶子节点的地址，即所需要的页描述符指针。如果找到所需要的页，<strong>增加该页的使用计数器，释放自旋锁，并返回该页的地址</strong>；否则，释放自旋锁并返回NULL。</p>
+<p><code>find_get_pages()</code>与<code>find_get_page()</code>类似，但它实现在高速缓存中查找一组具有相邻索引的页，参数为指向<code>address_space</code>对象的指针、地址空间中相对于搜索起始位置的偏移量、所检索到页的最大数量、指向由该函数赋值的页描述符数组的指针。<code>find_get_pages()</code>依赖<code>radix_tree_gang_lookup()</code>实现查找操作，<code>radix_tree_gang_lookup()</code>为指针数组赋值并返回找到的页数。</p>
+<p><code>find_lock_page()</code>与<code>find_get_page()</code>类似，但它增加返回页的使用计数器，并调用<code>lock_page()</code>设置<code>PG_locked</code>标志，调用者可互斥地访问返回的页。随后，如果页已经被加锁，<code>lock_page()</code>就阻塞当前进程。</p>
+<p>最后，它在<code>PG_locked</code>置位时，调用<code>__wait_on_bit_lock()</code>：</p>
+<ul>
+<li>把当前进程设置为<code>TASK_UNINTERRUPTIBLE</code>状态，把进程描述符存入等待队列，</li>
+<li>执行<code>address_space</code>对象的<code>sync_page</code>方法以取消文件所在块设备的请求队列，<br>-最后调用<code>schedule()</code>挂起进程，直到<code>PG_locked</code>标志清0。</li>
+</ul>
+<p>内核用<code>unlock_page()</code>对页进行解锁，并唤醒等待队列上睡眠的进程。</p>
+<p><code>find_trylock_page()</code>与<code>find_lock_page()</code>类似，但不阻塞：如果被请求的页已经上锁，则返回错误码。<code>find_or_create_page()</code>如果找不到所请求的页，就分配一个新页并把它插入页高速缓存。</p>
+<h4 id="增加页"><a href="#增加页" class="headerlink" title="增加页"></a>增加页</h4><p><code>add_to_page_cache()</code>把一个新页的描述符插入到页高速缓存。参数：页描述符的地址<code>page</code>、<code>address_space</code>对象的地址<code>mapping</code>、表示在地址空间内的页索引的值<code>offset</code>和为基树分配新节点时所用的内存分配标志<code>gfp_mask</code>。函数执行下列操作：</p>
+<ol>
+<li>调用<code>radix_tree_preload()</code>禁用内核抢占，并把一些空的<code>radix_tree_node</code>结构赋给每CPU变量<code>radix_tree_preloads</code>。<code>radix_tree_node</code>结构的分配由slab分配器高速缓存<code>radix_tree_node_cachep</code>完成。如果<code>radix_tree_preload()</code>预分配<code>radix_tree_node</code>结构不成功，则终止并返回错误码-ENOMEM。</li>
+<li>获取<code>mapping-&gt;tree_lock</code>自旋锁。</li>
+<li>调用<code>radix_tree_insert()</code>在树中插入新节点，该函数执行如下操作：<ol>
+<li>调用<code>radix_tree_maxindex()</code>获得最大索引，该索引可能被插入具有当前深度的基树；如果新页的索引不能用当前深度表示，就调用<code>radix_tree_extend()</code>增加适当数量的节点以增加树的深度。分配新节点是通过执行<code>radix_tree_node_alloc()</code>实现的，该函数试图从slab分配高速缓存获得<code>radix_tree_node</code>结构，如果分配失败，就从<code>radix_tree_preloads</code>中的预分配的结构池中获得<code>radix_tree_node</code>结构。</li>
+<li>根据页索引的偏移量，从根节点（<code>mapping-&gt;page_tree</code>）开始遍历树，直到叶子节点。如果需要，调用<code>radix_tree_node_alloc()</code>分配新的中间节点。</li>
+<li>把页描述符地址存放在对基树所遍历的最后节点的适当位置，并返回0。</li>
+</ol>
+</li>
+<li>增加页描述符的使用计数器<code>page-&gt;count</code>。</li>
+<li>由于页是新的，所以其内容无效：设置页框的<code>PG_locked</code>标志，以阻止其他的内核路径并发访问该页。</li>
+<li>用<code>mapping</code>和<code>offset</code>参数初始化<code>page-&gt;mapping</code>和<code>page-&gt;index</code>。</li>
+<li>递增在地址空间所缓存页的计数器（<code>mapping-&gt;nrpages</code>）。</li>
+<li>释放地址空间的自旋锁。</li>
+<li>调用<code>radix_tree_preload_end()</code>重新启用内核抢占。</li>
+<li>返回`0（成功）。</li>
+</ol>
+<h4 id="删除页"><a href="#删除页" class="headerlink" title="删除页"></a>删除页</h4><p><code>remove_from_page_cache()</code>通过下述步骤从页高速缓存中删除页描述符：</p>
+<ol>
+<li>获取自旋锁<code>page-&gt;mapping-&gt;tree_lock</code>并关中断。</li>
+<li>调用<code>radix_tree_delete()</code>从树中删除节点。参数为树根的地址<code>page-&gt;mapping-&gt;page_tree</code>和要删除的页索引。执行下述步骤：<ol>
+<li>根据页索引从根节点开始遍历树，直到叶子节点。遍历时，建立<code>radix_tree_path</code>结构的数组，描述从根到要删除的页相应的叶子节点的路径构成。</li>
+<li>从最后一个节点（包含指向页描述符的指针）开始，对路径数组中的节点开始循环操作。对每个节点，把指向下一个节点（或有描述符）位置数组的元素置为NULL，并递减<code>count</code>字段。如果<code>count</code>为0，就从树中删除节点并把<code>radix_tree_node</code>结构释放给slab分配器高速缓存。</li>
+<li>返回已经从树上删除的页描述符指针</li>
+</ol>
+</li>
+<li>把<code>page-&gt;mapping</code>置为NULL。</li>
+<li>把所缓存页的<code>page-&gt;mapping-&gt;nrpages</code>计数器的值减1。</li>
+<li>释放自旋锁<code>page-&gt;mapping-&gt;tree_lock</code>，打开中断，函数终止。</li>
+</ol>
+<h4 id="更新页"><a href="#更新页" class="headerlink" title="更新页"></a>更新页</h4><p><code>read_cache_page()</code><strong>确保高速缓存中包括最新版本的指定页</strong>。参数为指向<code>address_space</code>对象的指针<code>mapping</code>、表示所请求页的偏移量的值<code>index</code>、指向从磁盘读取页数据的函数的指针<code>filter</code>、传递给<code>filter</code>函数的指针<code>data</code>（通常为NULL）。</p>
+<ol>
+<li>调用<code>find_get_page()</code>检查页是否已经在页高速缓存中。</li>
+<li>如果页不在高速缓存中，则执行下列子步骤：<ol>
+<li>调用<code>alloc_pages()</code>分配一个新页框。</li>
+<li>调用<code>add_to_page_cache()</code>在页高速缓存中插入相应的页描述符。</li>
+<li>调用<code>lru_cache_add()</code>把页插入该管理区的非活动<code>LRU</code>链表中。</li>
+</ol>
+</li>
+<li>此时，所请求的页已经在页高速缓存中了。调用<code>mark_page_accessed()</code>记录页已经被访问过的事实。</li>
+<li>如果页不是最新的（<code>PG_uptodate</code>标志为0），就调用<code>filler</code>函数从磁盘读该页。</li>
+<li>返回页描述符的地址。</li>
+</ol>
+<h3 id="基树的标记"><a href="#基树的标记" class="headerlink" title="基树的标记"></a>基树的标记</h3><p>页高速缓存不仅允许内核能快速获得含有块设备中指定数据的页，还<strong>允许内核从高速缓存中快速获得给定状态的页</strong>。如，假设内核必须从高速缓存获得属于指定所有者的所有页和脏页，如果大多数页不是脏页，遍历整个基树的操作就太慢了。</p>
+<p>为了能快速搜索脏页，基树中的每个中间节点都包含一个针对每个孩子的节点的脏标记，当且至少一个孩子节点的脏标记被置位时该标记被设置。最底层节点的脏标记通常是页描述符的<code>PG_dirty</code>标志的副本。通过这种方式，当内核遍历基树搜索脏页时，就可以跳过脏标记为0的中间节点的所有子树。<code>PG_writeback</code>标志同理，该标志表示页正在被写回磁盘。</p>
+<p><code>radix_tree_tag_set()</code>设置页高速缓存中页的<code>PG_dirty</code>或<code>PG_writeback</code>标志，它作用于三个参数：<strong>基树的根</strong>、<strong>页的索引</strong>及<strong>要设置的标记的类型</strong>（<code>PAGECACHE_TAG_DIRTY</code>或<code>PAGECACHE_TAG_WRITEBACK</code>）。函数从树根开始并向下搜索到与指定索引对应的叶子节点；对于从根通往叶子路径上的每个节点，利用指向路径中下一个节点的指针设置标记。最后，返回页描述符的地址。结果是，从根节点到叶子节点的路径中的所有节点都被加上了标记。</p>
+<p><code>radix_tree_tag_clear()</code>清除页高速缓存中页的<code>PG_dirty</code>或<code>PG_writeback</code>标志，参数与<code>radix_tree_tag_set()</code>相同。函数从树根开始向下到叶子节点，建立描述路径的<code>radix_tree_path</code>结构的数组。然后，从叶子节点到根节点进行操作：<strong>清除底层节点的标记，然后检查是否节点数组中所有标记都被清0，如果是，把上层父节点的相应标记清0</strong>。最后，返回页描述符的地址。</p>
+<p><code>radix_tree_delete()</code>从基树删除页描述符，并更新从根节点到叶子节点的路径中的相应标记。<code>radix_tree_insert()</code>不更新标记，因为插入基树的所有页描述符的<code>PG_dirty</code>和<code>PG_writeback</code>标志都被认为是清0的。如果需要，内核可随后调用<code>radix_tree_tag_set()</code>。</p>
+<p><code>radix_tree_tagged()</code>利用树的所有节点的标志数组测试基树是否至少包括一个指定状态的页，因为可能假设基树所有节点的标记都正确地更新过，所以只需要检查第一层的标记。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(idx = <span class="number">0</span>; idx &lt; <span class="number">2</span>; idx++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(root-&gt;rnode-&gt;tags[tag][idx])</span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br></pre></td></tr></table></figure></p>
+<p><code>find_get_pages_tag()</code>和<code>find_get_pages()</code>类似，但前者返回的只是那些用<code>tag</code>参数标记的页。</p>
+<h2 id="把块存放在页高速缓存中"><a href="#把块存放在页高速缓存中" class="headerlink" title="把块存放在页高速缓存中"></a>把块存放在页高速缓存中</h2><p>VFS（映射层）和各种文件系统以“块”的逻辑单位组织磁盘数据。</p>
+<p>Linux 内核旧版本中，主要有两种不同的磁盘高速缓存：</p>
+<ul>
+<li>页高速缓存，存放访问磁盘文件内容时生成的磁盘数据页。</li>
+<li>缓冲区高速缓存，把通过 VFS 访问的块的内容保留在内存中。</li>
+</ul>
+<p>后来，缓冲区高速缓存就不存在了，不再单独分配块缓冲区，而是把它们放在“缓冲区页”中，缓冲区页保存在页高速缓存中。</p>
+<p>缓冲区页在形式上是与“缓冲区首部”的附加描述符相关的数据页，主要目的是<strong>快速确定页中的一个块在磁盘中的地址</strong>。实际上，页高速缓存内的页的多个块的数据在磁盘上的地址不一定相邻。</p>
+<h3 id="块缓冲区和缓冲区首部"><a href="#块缓冲区和缓冲区首部" class="headerlink" title="块缓冲区和缓冲区首部"></a>块缓冲区和缓冲区首部</h3><p>每个块缓冲区都有<code>buffer_head</code>类型的缓冲区首部描述符，包含内核必须了解的、有关如何处理块的所有信息。<br><img src="/img/1603966616.jpg" alt=""></p>
+<p>缓冲区首部的两个字段编码表示块的磁盘地址，<code>b_bdev</code>包含块的块设备，通常是磁盘或分区。<code>b_blocknr</code>是逻辑块号，即块在磁盘或分区中的编号。<code>b_data</code>表示<strong>块缓冲区在缓冲区页中的位置</strong>。如果页在高端内存，则<code>b_data</code>存放的是块缓冲区相对于页的起始位置的偏移量，否则，<code>b_data</code>存放块缓冲区的线性地址。<code>b_state</code>存放几个标志。<br><img src="/img/1603966619.jpg" alt=""></p>
+<h3 id="管理缓冲区首部"><a href="#管理缓冲区首部" class="headerlink" title="管理缓冲区首部"></a>管理缓冲区首部</h3><p>缓冲区首部有自己的 slab 分配器高速缓存，其描述符<code>kmem_cache_s</code>存在变量<code>bh_cachep</code>中。<code>alloc_buffer_head()</code>和<code>free_buffer_head()</code>分别获取和释放缓冲区首部。</p>
+<p><code>buffer_head</code>的<code>b_count</code>字段是相应的块缓冲区的引用计数器。每次对块缓冲区操作前递增计数器，操作后递减。除了周期性地检查保持在页高速缓存中的块缓冲区外，当空闲内存变得很少时也检查它，当引用计数器为 0 时回收块缓冲区。</p>
+<h3 id="缓冲区页"><a href="#缓冲区页" class="headerlink" title="缓冲区页"></a>缓冲区页</h3><p>只要内核必须单独地访问一个块，就要涉及存放块缓冲区的缓冲区页，并检查相应的缓冲区首部。</p>
+<p>内核创建缓冲区页的两种普通情况：</p>
+<ul>
+<li>当读或写的文件页在磁盘块中不相邻时。因为文件系统为文件分配了非连续的块，或文件有“洞”。</li>
+<li>当访问一个单独的磁盘块时。如，当读超级块或索引节点块时。</li>
+</ul>
+<p>第一种情况下，把缓冲区的描述符插入普通文件的基树；保存好缓冲区首部，因为其中存有重要的信息，即数据在磁盘中位置的块设备和逻辑块号。</p>
+<p>第二种情况下，把缓冲区页的描述符插入基树，树根是与块设备相关的特殊<code>bdev</code>文件系统中索引节点的<code>address_space</code>对象。这种缓冲区页必须满足很强的约束条件，即<strong>所有的块缓冲区涉及的块必须是在块设备上相邻存放的</strong>。</p>
+<p>接下来重点讨论该种情况，即块设备缓冲区页。</p>
+<p>一个缓冲区页内的所有块缓冲区大小必须相同，因此，在 80x86 体系结构上，根据块的大小，一个缓冲页可包括 1 ~ 8 个缓冲区。</p>
+<p>如果一个页作为缓冲区页使用，那么与它的块缓冲区相关的所有缓冲区首部都被收集在一个单向循环链表中。缓冲区页描述符的<code>private</code>字段指向页中第一个块的缓冲区首部；每个缓冲区首部存放在<code>b_this_page</code>字段，该字段是指向链表中下一个缓冲区首部的指针。每个缓冲区首部把缓冲区页描述符的地址存放在<code>b_page</code>字段。<br><img src="/img/1604040652.jpg" alt=""></p>
+<h3 id="分配块设备缓冲区页"><a href="#分配块设备缓冲区页" class="headerlink" title="分配块设备缓冲区页"></a>分配块设备缓冲区页</h3><p>当内核发现指定块的缓冲区所在的页不在页高速缓存中时，就分配一个新的块设备缓冲区页。特别是，对块的查找操作因以下原因而失败时：</p>
+<ul>
+<li>包含数据块的页不在块设备的基树中：必须把新页的描述符加到基树中。</li>
+<li>包含数据块的页在块设备的基树中，但该页不是缓冲区页：必须分配新的缓冲区首部，并将它链接到所属的页，从而把它变成块设备缓冲区页。</li>
+<li>包含数据块的缓冲区页在块设备的基树中，但页中块的大小与所请求的块大小不同：必须释放旧的缓冲区首部，分配经过重新复制的缓冲区首部并将它链接到所属的页。</li>
+</ul>
+<p>内核调用<code>grow_buffers()</code>把块设备缓冲区页添加到页高速缓存中，参数：</p>
+<ul>
+<li><code>block_device</code>描述符的地址<code>bdev</code></li>
+<li>逻辑块号<code>block</code>（块在块设备中的位置）</li>
+<li>块大小<code>size</code></li>
+</ul>
+<p>执行下列操作：</p>
+<ol>
+<li>计算数据页在所请求块的块设备中的偏移量<code>index</code>。</li>
+<li>如果需要，调用<code>grow_dev_page()</code>创建新的块设备缓冲区页。<ol>
+<li>调用<code>find_or_create_page()</code>，参数为块设备的<code>address_space</code>对象（<code>bdev-&gt;bd_inode-&gt;i_mapping</code>）、页偏移<code>index</code>及<code>GFP_NOFS</code>标志。<code>find_or_create_page()</code>在页高速缓存中搜索需要的页，如果需要，就把新页插入高速缓存。</li>
+<li>此时，所请求的页已经在页高速缓存中，且函数获得了它的描述符地址。检查它的<code>PG_private</code>标志；如果为空，说明页还不是一个缓冲区页，跳到第 2e 步。</li>
+<li>页已经是缓冲区页。从页描述符的<code>private</code>字段获得第一个缓冲区首部的地址<code>bh</code>，并检查块大小<code>bh-&gt;size</code>是否等于所请求的块大小；如果大小相等，在页高速缓存中找到的页就是有效的缓冲区页，因此跳到第 2g 步。</li>
+<li>如果页中块的大小有错误，调用<code>try_to_free_buffers()</code>释放缓冲区页的上一个缓冲区首部。</li>
+<li>调用<code>alloc_page_buffers()</code>根据页中所请求的块大小分配缓冲区首部，并把它们插入由<code>b_this_page</code>字段实现的单向循环链表。此外，用页描述符的地址初始化缓冲区首部的<code>b_page</code>字段，用块缓冲区在页内的线性地址或偏移量初始化<code>b_data</code>字段。</li>
+<li>在<code>private</code>字段存放第一个缓冲区首部的地址，把<code>PG_private</code>字段置位，并增加页的使用计数器。</li>
+<li>调用<code>init_page_buffers()</code>初始化连接到页的缓冲区首部的字段<code>b_bdev</code>、<code>b_blocknr</code>和<code>b_bstate</code>。因为所有的块在磁盘上都是相邻的，因此逻辑块号是连续的，而且很容易从块得出。</li>
+<li>返回页描述符地址。</li>
+</ol>
+</li>
+<li>为页解锁（<code>find_or_create_page()</code>曾为页加了锁）。</li>
+<li>递减页的使用计数器（<code>find_or_create_page()</code>曾递增了计数器）。</li>
+<li>返回 1（成功）。</li>
+</ol>
+<h3 id="释放块设备缓冲区页"><a href="#释放块设备缓冲区页" class="headerlink" title="释放块设备缓冲区页"></a>释放块设备缓冲区页</h3><p><code>try_to_release_page()</code>释放缓冲区页，参数为页描述符的地址<code>page</code>，执行下述步骤：</p>
+<ul>
+<li>如果设置了页的<code>PG_writeback</code>标志，则返回 0（正在把页写回磁盘，不能释放该页）。</li>
+<li>如果已经定义了块设备<code>address_space</code>对象的<code>releasepage</code>方法，就调用它。</li>
+<li>调用<code>try_to_free_buffers()</code>并返回它的错误码。</li>
+</ul>
+<p><code>try_to_free_buffers()</code>依次扫描链接到缓冲区页的缓冲区首部，本质上执行下列操作：</p>
+<ul>
+<li>检查页中所有缓冲区首部的标志。如果有些缓冲区首部的<code>BH_Dirty</code>或<code>BH_Locked</code>标志置位，则不能释放这些缓冲区，函数终止并返回0（失败）。</li>
+<li>如果缓冲区首部在间接缓冲区的链表中，则从链表中删除它。</li>
+<li>请求页描述符的<code>PG_private</code>标记，把<code>private</code>字段设置为NULL，并递减页的使用计数器。</li>
+<li>清除页的<code>PG_dirty</code>标记。</li>
+<li>反复调用<code>free_buffer_head()</code>，释放页的所有缓冲区首部。</li>
+<li>返回1（成功）。</li>
+</ul>
+<h3 id="在页高速缓存中搜索块"><a href="#在页高速缓存中搜索块" class="headerlink" title="在页高速缓存中搜索块"></a>在页高速缓存中搜索块</h3><p>在页高速缓冲中搜索指定的块缓冲区（由块设备描述符的地址<code>bdev</code>和逻辑块号<code>nr</code>表示）：</p>
+<ol>
+<li>获取一个指针，让它指向包含指定块的的块设备的<code>address_space</code>对象（<code>bdev-&gt;bd_inode-&gt;i_mapping</code>）。</li>
+<li>获得设备的块大小（<code>bdev-&gt;bd_block_size</code>），并计算包含指定块的页索引。需要在逻辑块号上进行位移操作。如果块的大小为1024字节，每个缓冲区包含四个块缓冲区，则页的索引为<code>nr/4</code>。</li>
+<li>在块设备的基树中搜索缓冲区页。获得页描述符后，内核访问缓冲区首部，它描述了页中块缓冲区的状态。</li>
+</ol>
+<p>在实现中，为提高系统性能，内核维持一个小磁盘高速缓存数组<code>bh_lrus</code>（每个CPU对应一个数组元素），即最近最少使用（LRU）块高速缓存。</p>
+<h4 id="find-get-block"><a href="#find-get-block" class="headerlink" title="_find_get_block()"></a>_find_get_block()</h4><p>参数：<code>block_device</code>描述符地址<code>bdev</code>、块号<code>block</code>和<code>块大小</code>size`。函数返回<strong>页高速缓存中的块缓冲区对应的缓冲区首部的地址，不存在时返回 NULL</strong>。</p>
+<ol>
+<li>检查指向 CPU 的 LRU 块高速缓存数组中是否有一个缓冲区首部，其<code>b_bdev</code>、<code>b_blocknr</code>和<code>b_size</code>字段分别等于<code>bdev</code>、<code>block</code>和<code>size</code>。</li>
+<li>如果缓冲区首部在 LRU 块高速缓存中，就刷新数组中的元素，以便让指针指在第一个位置（索引为 0）中的刚找的缓冲区首部，递增它的<code>b_count</code>字段，并跳到第 8 步。</li>
+<li>如果缓冲区首部不在 LRU 块高速缓存中，根据块号和块大小得到与块设备相关的页的索引：<code>index = block &gt;&gt; (PAGE_SHIFT - bdev-&gt;bd_inode-&gt;i_blkbits);</code></li>
+<li>调用<code>find_get_page()</code>确定包含所请求的块缓冲区的缓冲区页的描述符在页高速缓存中的位置。参数：指向块设备的<code>address_space</code>对象的指针（<code>bdev-&gt;bd_inode-&gt;i_mapping</code>）和页索引。页索引用于<strong>确定存有所请求的块缓冲区的缓冲区页的描述符在页高速缓存中的位置</strong>，没有时返回NULL。</li>
+<li>此时，已得到缓冲区页描述符的地址，扫描链接到缓冲区页的缓冲区首部链表，查找逻辑块号等于<code>block</code>的块。</li>
+<li>递减页描述符的<code>count</code>字段（<code>find_get_page()</code>曾递增过）。</li>
+<li>把 LRU 块高速缓存中的所有元素向下移动一个位置，并把指向所请求块的缓冲区首部的指针插入到第一个位置。如果一个缓冲区首部已经不在 LRU 块高速缓存中，就递减它的引用计数器<code>b_count</code>。</li>
+<li>如果需要，调用<code>mark_page_accessed()</code>把缓冲区页移到适当的 LRU 链表中。</li>
+<li>返回缓冲区首部指针。</li>
+</ol>
+<h4 id="getblk"><a href="#getblk" class="headerlink" title="__getblk()"></a>__getblk()</h4><p>参数：<code>block_device</code>描述符的地址<code>bdev</code>、块号<code>block</code>和块大小<code>size</code>。返回与缓冲区对应的缓冲区首部的地址。如果块不存在，分配块设备缓冲区页并返回将要描述块的缓冲区首部的指针。<code>__getblk()</code>返回的块缓冲区不必包含有效数据—缓冲区首部的<code>BH_Uptodate</code>标志可能被清 0。</p>
+<ol>
+<li>调用<code>__find_get_block()</code>检查块是否已经在页高速缓存中，如果找到，返回其缓冲区首部的地址。</li>
+<li>否则，调用<code>grow_buffers()</code>为所请求的页分配一个新的缓冲区页。</li>
+<li>如果上一步分配失败，调用<code>free_more_memory()</code>回收一部分内存。</li>
+<li>跳到第1步。</li>
+</ol>
+<h4 id="bread"><a href="#bread" class="headerlink" title="__bread()"></a>__bread()</h4><p>参数：<code>block_device</code>描述符的地址<code>bdev</code>、块号<code>block</code>和块大小<code>size</code>。返回与缓冲区对应的缓冲区首部的地址。如果需要，在返回缓冲区首部前<code>__bread()</code>从磁盘读块。</p>
+<ol>
+<li>调用<code>__getblk()</code>在页高速缓存中查找与所请求的块相关的缓冲区页，并获得指向相应的缓冲区首部的指针。</li>
+<li>如果块已经在页高速缓冲中并包含有效数据（<code>BH_Uptodate</code>标志被置位），就返回缓冲区首部的地址。</li>
+<li>否则，递增缓冲区首部的引用计数器。</li>
+<li><code>b_end_io</code>置为<code>end_buffer_read_sync()</code>的地址。</li>
+<li>调用<code>submit_bh()</code>把缓冲区首部传送给通用块层。</li>
+<li>调用<code>wait_on_buffer()</code>把当前进程插入等待队列，直到 I/O 操作完成，即直到缓冲区首部的<code>BH_Lock</code>标志被清 0。</li>
+<li>返回缓冲区首部的地址。</li>
+</ol>
+<h3 id="向通用块层提交缓冲区首部"><a href="#向通用块层提交缓冲区首部" class="headerlink" title="向通用块层提交缓冲区首部"></a>向通用块层提交缓冲区首部</h3><p><code>submit_bh()</code>和<code>ll_rw_block()</code><strong>允许内核对缓冲区首部描述的一个或多个缓冲区进行 I/O 数据传送</strong>。</p>
+<h4 id="submit-bh"><a href="#submit-bh" class="headerlink" title="submit_bh()"></a>submit_bh()</h4><p><strong>向通过块层传递一个缓冲区首部，并由此请求传输一个数据块</strong>。参数为数据传输的方向（<code>READ</code>或<code>WRITE</code>）和指向描述符块缓冲区的缓冲区首部的指针<code>bh</code>。</p>
+<p><code>submit_bh()</code>只是一个起连接作用的函数，它根据缓冲区首部的内容创建一个<code>bio</code>请求，随后调用<code>generic_make_request()</code>。</p>
+<ol>
+<li>设置缓冲区首部的<code>BH_Req</code>标志表示块至少被访问过一次。如果数据传输方向为<code>WRITE</code>，将<code>BH_Write_EIO</code>标志清0。</li>
+<li>调用<code>bio_alloc()</code>分配一个新的<code>bio</code>描述符。</li>
+<li>根据缓冲区首部的内容初始化<code>bio</code>描述符的字段：<ol>
+<li><code>bi_sector</code>置为块中的第一个扇区的号<code>bh-&gt;blocknr * bh-&gt;b_size / 512</code>。</li>
+<li><code>bi_bdev</code>置为块设备描述符的地址<code>bh-&gt;b_bdev</code></li>
+<li><code>bi_size</code>置为块大小<code>bh-&gt;b_size</code></li>
+<li>初始化<code>bi_io_vec</code>数组的第一个元素，使该段对应于块缓冲区：<code>bi_io_vec[0].bv_page</code>置为<code>bh-&gt;b_page</code>，<code>bi_io_vec[0].bv_len</code>置为<code>bh_b_size</code>，<code>bi_bio_vec[0].bv_offset</code>置为块缓冲区在页中的偏移量<code>bh-&gt;b_data</code></li>
+<li><code>bi_vnt</code>置为1（只涉及一个<code>bio</code>的段），<code>bi_idx</code>置为0（将要传输的当前段）。</li>
+<li><code>bi_end_io</code>置为<code>end_bio_bh_io_sync()</code>的地址，把缓冲区首部的地址赋给<code>bi_private</code>，数据传输结束时调用该函数。</li>
+</ol>
+</li>
+<li>递增<code>bio</code>的引用计数器。</li>
+<li>调用<code>submit_bio()</code>，把<code>bi_rw</code>标志设置为数据传输的方向，更新每CPU变量<code>page_states</code>以表示读和写的扇区数，并对<code>bio</code>描述符调用<code>generic_make_request()</code>。</li>
+<li>递减<code>bio</code>的使用计数器；因为<code>bio</code>描述符现在已经被插入 I/O 调度程序的队列，所以没有释放<code>bio</code>描述符。</li>
+<li>返回 0（成功）。</li>
+</ol>
+<p>对 bio 上的 I/O 传输终止时，内核执行<code>bi_end_io</code>方法，即<code>end_bio_bh_io_sync()</code>，本质上从<code>bio</code>的<code>bi_private</code>字段获取缓冲区首部的地址，然后调用缓冲区首部的方法<code>b_end_io</code>，最后调用<code>bio_put()</code>释放<code>bio</code>结构。</p>
+<h4 id="ll-rw-block"><a href="#ll-rw-block" class="headerlink" title="ll_rw_block"></a>ll_rw_block</h4><p>要传输的几个数据块不一定物理上相邻。<code>ll_rw_block</code>参数由数据传输的方向（<code>READ</code>或<code>WRITE</code>）、要传输的数据块的块号、指向块缓冲区所对应的缓冲区首部的指针数组。该函数在所有缓冲区首部上循环，每次循环执行下列操作：</p>
+<ol>
+<li>检查并设置缓冲区首部的<code>BH_Lock</code>标志；如果缓冲区已经被锁住，说明另一个内核控制路径已经激活了数据传输，则不处理该缓冲区。</li>
+<li>把缓冲区首部的使用计数器<code>b_count</code>加1。</li>
+<li>如果数据传输的方向是<code>WRITE</code>，就让缓冲区首部的方法<code>b_end_io</code>指向<code>end_buffer_write_sync()</code>的地址，否则，指向<code>end_buffer_read_sync()</code>的地址。</li>
+<li>如果数据传输的方向是<code>WRITE</code>，就检查并清除缓冲区首部的<code>BH_Dirty</code>标志。如果该标志没有置位，就不必把块写入磁盘，跳到第 7 步。</li>
+<li>如果数据传输的方向是<code>READ</code>或<code>READA（向前读），检查缓冲区首部的</code>BH_Uptodate`标志是否被置位，如果是，就不必从磁盘读块，跳到第 7 步。</li>
+<li>此时必须读或写数据块：调用<code>submit_bh()</code>把缓冲区首部传递到通用块层，然后跳到第 9 步。</li>
+<li>通过清除<code>BH_Lock</code>标志为缓冲区首部解锁，然后唤醒所有等待块解锁的进程。</li>
+<li>递减缓冲区首部的<code>b_count</code>字段。</li>
+<li>如果还有其他缓冲区需要处理，则选择下一个缓冲区首部并跳回第一步。</li>
+</ol>
+<p>当块的数据传送结束，内核执行缓冲区首部的<code>b_end_io</code>方法。如果没有I/O错误，<code>end_buffer_write_sync()</code>和<code>end_buffer_read_snyc()</code>至少简单地把缓冲区首部的<code>BH_Uptodate</code>字段置位，为缓冲区解锁，并递减它的引用计数器。</p>
+<h3 id="把脏页写入磁盘"><a href="#把脏页写入磁盘" class="headerlink" title="把脏页写入磁盘"></a>把脏页写入磁盘</h3><p>只要进程修改了数据，相应的页就被标记为脏页，其<code>PG_dirty</code>标志置位。由于延迟写，使得任一物理块设备平均为读请求提供的服务将多于写请求。一个脏页可能直到系统关闭时都逗留在主存中，主要有两个缺点：</p>
+<ul>
+<li>如果发生硬件错误，则难以找回对文件的修改</li>
+<li>页高速缓存的大小可能很大，至少要与所访问块设备的大小相同</li>
+</ul>
+<p>在下列条件下把脏页写入磁盘：</p>
+<ul>
+<li>页高速缓存变得太满，但还需要更多的页，或脏页的数据已经太多。</li>
+<li>自从页变成脏页以来已经过去太长时间。</li>
+<li>进程请求对块设备或特定文件任何带动的变化都进行刷新。通过调用<code>sync()</code>、<code>fsync()</code>或<code>fdatasync()</code>实现。</li>
+</ul>
+<p>与每个缓冲区页相关的缓冲区首部使内核能了解每个独立块缓冲区的状态。如果至少有一个缓冲区首部的<code>BH_Dirty</code>标志被置位，就设置相应缓冲区页的<code>PG_dirty</code>标志。当内核选择要刷新的缓冲区页时，它扫描相应的缓冲区首部，并只把脏块的内容写到磁盘。一旦内核把缓冲区的所有脏页刷新到磁盘，就把页的<code>PG_dirty</code>标记清 0。</p>
+<h4 id="pdflush-内核线程"><a href="#pdflush-内核线程" class="headerlink" title="pdflush 内核线程"></a>pdflush 内核线程</h4><p><code>pdflush</code>内核线程作用于两个参数：一个<strong>指向线程要执行的函数的指针</strong>和一个<strong>函数要用的参数</strong>。系统中<code>pdflush</code>内核线程的数量是要动态调整的：<code>pdflush</code>线程太少时就创建，太多时就杀死。因为这些内核线程所执行的函数可以阻塞，所以创建多个而不是一个<code>pdflush</code>内核线程可以改善系统性能。</p>
+<p>根据下面的原则控制<code>pdflush</code>线程的产生和消亡：</p>
+<ul>
+<li>必须有至少两个，最多八个<code>pdflush</code>内核线程。</li>
+<li>如果到最近的ls期间没有空闲<code>pdflush</code>，就应该创建新的<code>pdflush</code>。</li>
+<li>如果最近一次<code>pdflush</code>变为空闲的时间超过了ls，就应该删除一个<code>pdflush</code>。</li>
+</ul>
+<p>所有的<code>pdflush</code>内核线程都有<code>pdflush_work</code>描述符。空闲<code>pdflush</code>内核线程的描述符都集中在<code>pdflush_list</code>链表中；在多处理器系统中，<code>pdflush_lock</code>自旋锁保护该链表不会被并发访问。<code>_nrpdflush_threads</code>变量存放<code>pdflush</code>内核线程的总数。最后<code>last_empty_jifs</code>变量存放<code>pdflush</code>线程的<code>pdflush_list</code>链表变为空的时间（以jiffies表示）。</p>
+<p><img src="/img/1604052162.jpg" alt=""></p>
+<p>所有<code>pdflush</code>内核线程都执行`__pdflush()，本质上循环执行直到内核线程死亡。</p>
+<p>假设<code>pdflush</code>内核线程是空闲的，而进程正在<code>TASK_INTERRUPTILE</code>状态睡眠。一旦内核线程被唤醒，<code>__pdflush()</code>就访问其<code>pdflush_work</code>描述符，并执行字段<code>fn</code>的回调函数，将<code>arg0</code>字段中的参数传给该函数。函数结束时，<code>__pdflush()</code>检查<code>last_empty_jifs</code>变量的值：如果不存在空闲<code>pdflush</code>内核线程的时间已超过1s，且<code>pdflush</code>内核线程的数量不到8个，<code>__pdflush()</code>就创建一个内核线程。相反，如果<code>pdflush_list</code>链表最后一项对应的<code>pdflush</code>内核线程空闲时间超过了1s，而系统中有两个以上的<code>pdflush</code>内核线程，<code>__pdflush()</code>就终止：相应的内核线程执行<code>_exit()</code>，并因此被撤销。否则，如果系统中<code>pdflush</code>内核线程不多于两个，<code>__pdflush()</code>就把内核线程的<code>pdflush_work</code>描述符重新插入到<code>pdflush_list</code>链表中，并使内核线程睡眠。</p>
+<p><code>pdflush_operation()</code>激活空闲的<code>pdflush</code>内核线程。参数：一个指针<code>fn</code>，执行必须执行的函数；参数<code>arg0</code>。</p>
+<ol>
+<li>从<code>pdflush_list</code>链表获取<code>pdf</code>指针，它指向空闲<code>pdflush</code>内核线程的<code>pdflush_work</code>描述符。如果链表为空，返回-1。如果链表中仅剩一个元素，就把<code>jiffies</code>的值赋给变量<code>last_empty_jifs</code>。</li>
+<li><code>pdf-&gt;fn</code>=<code>fn</code>；<code>pdf-&gt;arg0</code>=<code>arg0</code>。</li>
+<li>调用<code>wake_up_process()</code>唤醒空闲的<code>pdflush</code>内核线程，即<code>pdf-&gt;who</code>。</li>
+</ol>
+<p><code>pdflush</code>内核线程通常执行下面的回调函数之一：</p>
+<ul>
+<li><code>background_writeout()</code>：系统地扫描页高速缓存以搜索要刷新的脏页。</li>
+<li><code>wb_kupdate()</code>：检查页高速缓冲中是否有“脏”了很长时间的页。</li>
+</ul>
+<h4 id="搜索要刷新的脏页"><a href="#搜索要刷新的脏页" class="headerlink" title="搜索要刷新的脏页"></a>搜索要刷新的脏页</h4><p>所有基树都可能有要刷新的脏页，为了得到脏页，需要搜索与在磁盘上有映像的索引节点相应的所有<code>address_space</code>对象。<code>wakeup_bdflush()</code>参数为页高速缓存中应该刷新的脏页数量；0表示高速缓存中的所有脏页都应该写回磁盘。该函数调用<code>pdflush_operation()</code>唤醒<code>pdflush</code>内核线程，并委托它执行回调函数<code>background_writeout()</code>，<strong>以有效地从页高速缓存获得指定数量的脏页</strong>，并把它们写回磁盘。</p>
+<p>内存不足或用户显式地请求刷新操作时执行<code>wakeup_bdflush()</code>，特别是以下情况：</p>
+<ul>
+<li>用户发出<code>sync()</code>系统调用。</li>
+<li><code>grow_buffers()</code>分配一个新缓冲区页时失败。</li>
+<li>页框回收算法调用<code>free_more_memory()</code>或<code>try_to_free_pages()</code>。</li>
+<li><code>mempool_alloc()</code>分配一个新的内存池元素时失败。</li>
+</ul>
+<p>执行<code>background_writeout()</code>回调函数的<code>pdflush</code>内核线程是被满足以下两个条件的进程唤醒的：</p>
+<ul>
+<li>对页高速缓存中页的内容进行了修改。</li>
+<li>引起脏页部分增加到超过某个脏阈值。</li>
+</ul>
+<p>脏阈值通常设置为系统中所有页的10%，但可通过修改文件<code>/proc/sys/vm/dirty_background_ratio</code>来调整该值。</p>
+<p><code>background_writeout()</code>依赖于作为双向通信设备的<code>writeback_control</code>结构：</p>
+<ul>
+<li>一方面，它告诉辅助函数<code>writeback_indoes()</code>要做什么；</li>
+<li>另一方面，它保存磁盘的页的数量的统计值。</li>
+</ul>
+<p><code>writeback_control</code>的重要字段：</p>
+<ul>
+<li><code>sync_mode</code>：表示同步模式：<ul>
+<li><code>WB_SYNC_ALL</code>表示如果遇到一个上锁的索引节点，必须等待而不能忽略它；</li>
+<li><code>WB_SYNC_HOLD</code>表示把上锁的索引节点放入稍后涉及的链表中；</li>
+<li><code>WB_SYNC_NONE</code>表示简单地忽略上锁的索引节点。</li>
+</ul>
+</li>
+<li><code>bid</code>：如果不为空，就指向<code>backing_dev_info</code>结构。此时，只有属于基本块设备的脏页会被刷新。</li>
+<li><code>older_than_this</code>：如果不为空，就表示应该忽略比指定值还新的索引节点。</li>
+<li><code>nr_to_write</code>：当前执行流中仍然要写的脏页的数量。</li>
+<li><code>nonblocking</code>：如果这个标志被置位，就不能阻塞进程。</li>
+</ul>
+<p><code>background_writeout()</code>参数为<code>nr_pages</code>，表示应该刷新到磁盘的最少页数。</p>
+<ol>
+<li>从每 CPU 变量<code>page_state</code>中读当前页高速缓存中页和脏页的数。如果脏页的比例低于给定的阈值，且已经至少有<code>nr_pages</code>页被刷新到磁盘，则终止。该阈值通常为系统中总页数的40%，可通过文件<code>/proc/sys/vm/dirty_ratio</code>调整该值。</li>
+<li>调用<code>writeback_inodes()</code>尝试写1024个脏页。</li>
+<li>检查有效写过的页的数量，并减少需要写的页的个数。</li>
+<li>如果已经写过的页少于1024页，或忽略了一些页，则块设备的请求队列处于拥塞状态：此时，使当前进程在特定的等待队列上睡眠10ms或直到队列不拥塞。</li>
+<li>返回第1步。</li>
+</ol>
+<p><code>writeback_inodes()</code>参数为指针<code>wbc</code>，指向<code>writeback_control</code>描述符。该描述符的<code>nr_to_write</code>字段存有要刷新到磁盘的页数。函数返回时，该字段存有要刷新到磁盘的剩余页数，如果一切顺利，该字段为0。</p>
+<p>假设<code>writeback_inodes()</code>被调用的条件为：<strong>指针<code>wbc-&gt;bdi</code>和<code>wbc-&gt;older_than_this</code>被置为NULL，<code>WB_SYNC_NONE</code>同步模式和<code>wbc-&gt;nonblocking</code>标志置位</strong>。</p>
+<p><code>writeback_inodes()</code>扫描在<code>super_blocks</code>变量中建立的超级块链表。当遍历完整个链表或刷新的页的数量达到预期数量时，就停止扫描。对每个超级块<code>sb</code>执行下述步骤：</p>
+<ol>
+<li>检查<code>sb-&gt;s_dirty</code>或<code>sb-&gt;s_io</code>链表是否为空：<ol>
+<li>第一个链表集中了超级块的脏索引节点</li>
+<li>第二个链表集中了等待被传送到磁盘的索引节点。</li>
+<li>如果两个来链表为空，说明相应文件系统的索引节点没有脏页，因此处理链表中的下一个超级块。</li>
+</ol>
+</li>
+<li>此时，超级块有脏索引节点。对超级块<code>sb</code>调用<code>sync_sb_inodes()</code>，该函数执行下面的操作：<ol>
+<li>把<code>sb-&gt;s_dirty</code>的所有索引节点插入<code>sb-&gt;s_io</code>指向的链表，并清空脏索引节点链表。</li>
+<li>从<code>sb-&gt;s_io</code>获得下一个索引节点的指针。如果链表为空，就返回。</li>
+<li>如果<code>sync_sb_inodes()</code>开始执行后，索引节点变为脏节点，就忽略这个索引节点的脏页并返回。</li>
+<li>如果当前进程是<code>pdflush</code>内核线程，<code>sync_sb_inodes()</code>就检查运行在另一个CPU上的<code>pdflush</code>内核线程是否已经试图刷新这个块设备文件的脏页。这是通过一个原子测试和对索引节点的<code>backing_dev_info</code>的<code>BDI_pdflush</code>标志的设置操作完成的。</li>
+<li>把索引节点的引用计数器加1。</li>
+<li>调用<code>__writeback_single_inode()</code>回写与所选择的索引节点相关的脏缓冲区：<ol>
+<li>如果索引节点被锁定，就把它移到脏索引节点链表中（<code>inode-&gt;i_sb-&gt;s_dirty</code>）并返回0。</li>
+<li>使用索引节点地址空间的<code>writepages</code>方法，或在没有该方法的情况下使用<code>mpage_writepages()</code>来写<code>wbc-&gt;nr_to_write</code>个脏页。该函数调用<code>find_get_pages_tag()</code>快速获得索引节点地址空间的所有脏页。</li>
+<li>如果索引节点是脏的，就调用超级块的<code>write_inode</code>方法把索引节点写到磁盘。实现该方法的函数通常依靠<code>submit_bh()</code>来传输一个数据块。</li>
+<li>检查索引节点的状态。如果索引节点还有脏页，就把索引节点移回<code>sb-&gt;s_dirty</code>链表；如果索引节点引用计数器为0，就把索引节点移到<code>inode_unused</code>链表中；否则就把所以节点移到<code>inode_in_use</code>链表中。</li>
+<li>返回在第<code>2f(2)</code>步所调用的函数的错误代码。</li>
+</ol>
+</li>
+<li>回到<code>sync_sb_inodes()</code>中。如果当前进程是<code>pdflush</code>内核线程，就把第2d步设置的<code>BDI_pdflush</code>标志清0。</li>
+<li>如果忽略了刚处理的索引节点的一些页，那么该索引节点包括锁定的缓冲区：把<code>sb-&gt;s_io</code>链表中的所有剩余索引节点移回到<code>sb-&gt;s_dirty</code>链表中，以后将重新处理它们。</li>
+<li>把索引节点的引用计数器减1。</li>
+<li>如果<code>wbc-&gt;nr_to_write</code>大于0，则回到第2b步搜索同一个超级块的其他脏索引节点。否则，<code>sync_sb_inodes()</code>终止。</li>
+</ol>
+</li>
+<li>回到<code>writeback_inodes()</code>中。如果<code>wbc-&gt;nr_to_write</code>大于0，就跳到第1步，并继续处理全局链表中的下一个超级块；否则返回。</li>
+</ol>
+<h4 id="回写陈旧的脏页"><a href="#回写陈旧的脏页" class="headerlink" title="回写陈旧的脏页"></a>回写陈旧的脏页</h4><p>脏页在保留一定时间后，内核就显式地开始进行I/O数据的传输，把脏页的内容写到磁盘。</p>
+<p>回写陈旧脏页的工作委托给了被定期唤醒的<code>pdflush</code>内核线程。在内核初始化期间，<code>page_writeback_init()</code>建立<code>wb_timer</code>动态定时器，以便定时器的到期时间发生在<code>dirty_writeback_ccentisecs</code>文件中规定的几百分之一秒后。定时器函数<code>wb_timer_fn()</code>本质上调用<code>pdflush_operation()</code>，传递给它的参数是回调函数<code>wb_kupdate()</code>的地址。</p>
+<p><code>wb_kupdate()</code>遍历页高速缓存搜索陈旧的脏索引节点，它执行下面的步骤：</p>
+<ol>
+<li>调用<code>sync_supers()</code>把脏的超级块写到磁盘。<code>sync_supers()</code>确保了任何超级块脏的时间通常不会超过5s。</li>
+<li>把当前时间减30s所对应的值（用<code>jiffies</code>表示）的指针存放在<code>writeback_control</code>描述符的<code>older_than_this</code>字段中。允许一个页保持脏状态的最长时间为30s。</li>
+<li>根据每CPU变量<code>page_state</code>确定当前在页高速缓存中脏页的大概数量。</li>
+<li>反复调用<code>writeback_inodes()</code>，直到写入磁盘的页数等于上一步所确定的值，或直到把所有保持脏状态时间超过30s的页都写到磁盘。如果在循环的过程中一些请求队列变得拥塞，函数就可能睡眠。</li>
+<li>用<code>mod_timer()</code>重新启动<code>wb_timer</code>动态定时器：一旦从调用该函数开始经历过文件<code>dirty_writeback_centisecs</code>中规定的几百分之一秒时间后，定时器到期。</li>
+</ol>
+<h3 id="sync-、fsync-和fdatasync-系统调用"><a href="#sync-、fsync-和fdatasync-系统调用" class="headerlink" title="sync()、fsync()和fdatasync()系统调用"></a>sync()、fsync()和fdatasync()系统调用</h3><ul>
+<li><code>sync()</code>：允许进程把所有脏缓冲区刷新到磁盘。</li>
+<li><code>fsync()</code>：允许进程把属于特定打开文件的所有块刷新到磁盘。</li>
+<li><code>fdatasync()</code>：与<code>fsync()</code>相似，但不刷新文件的索引节点块。</li>
+</ul>
+<h4 id="sync"><a href="#sync" class="headerlink" title="sync()"></a>sync()</h4><p><code>sync()</code>的服务例程<code>sys_sync()</code>调用一系列辅助函数：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">wakeup_bdflush(<span class="number">0</span>);</span><br><span class="line">sync_inodes(<span class="number">0</span>);</span><br><span class="line">sync_supers();</span><br><span class="line">sync_filesystems(<span class="number">0</span>);</span><br><span class="line">sync_filesystems(<span class="number">1</span>);</span><br><span class="line">sync_inodes(<span class="number">1</span>);</span><br></pre></td></tr></table></figure></p>
+<p><code>wakeup_bdflush()</code>启动<code>pdflush</code>内核线程，把页高速缓存中的所有脏页刷新到磁盘。</p>
+<p><code>sync_inodes()</code>扫描超级块的链表以搜索要刷新的脏索引节点，作用于参数<code>wait</code>，函数扫描文件系统的超级块，对于每个包含脏索引节点的超级块，首先调用<code>sync_sb_inodes()</code>刷新相应的脏页，然后调用<code>sync_blockdev()</code>显式刷新该超级块所在块设备的脏缓冲页，这一步之所以能完成是因为许多磁盘文件系统的<code>write_inode</code>超级块方法仅仅把磁盘索引节点对应的块缓冲区标记为“脏”，<code>sync_blockdev()</code>确保把<code>sync_sb_inodes()</code>所完成的更新有效地写到磁盘。</p>
+<p><code>sync_supers()</code>把脏超级块写到磁盘，如果需要，也可以使用适当的<code>write_super</code>超级块操作</p>
+<p><code>sync_filesystems()</code>为所有可写的文件系统执行<code>sync_fs</code>超级块方法。</p>
+<p><code>sync_inodes()</code>和<code>sync_filesystems()</code>都被调用两次，一次是参数<code>wait</code>等于0时，另一次是等于1。首先，把未上锁的索引节点快速刷新到磁盘；其次，等待所有上锁的索引节点被解锁，然后把它们逐个写到磁盘。</p>
+<h4 id="fsync-和fdatasync"><a href="#fsync-和fdatasync" class="headerlink" title="fsync()和fdatasync()"></a>fsync()和fdatasync()</h4><p><code>fsync()</code>强制<strong>内核把文件描述符参数<code>fd</code>所指定文件的所有脏缓冲区写到磁盘中</strong>。相应的服务例程获得文件对象的地址，并随后调用<code>fsync</code>方法。通常，该方法以调用<code>__write_back_single_inode()</code>结束，该函数<strong>把与被选中的索引节点相关的脏页和索引节点本身都写回磁盘</strong>。</p>
+<p><code>fdatasync()</code>和<code>fsync()</code>很像，但它<strong>只把包含文件数据而不是那些包含索引节点信息的缓冲区写到磁盘</strong>。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/10/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B04/" rel="next" title="深入理解Linux内核10-12章">
+                <i class="fa fa-chevron-left"></i> 深入理解Linux内核10-12章
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/10/31/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B06/" rel="prev" title="深入理解Linux内核16-17章">
+                深入理解Linux内核16-17章 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#IO%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E5%92%8C%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.</span> <span class="nav-text">IO体系结构和设备驱动程序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#IO%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">IO体系结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O%E7%AB%AF%E5%8F%A3"><span class="nav-number">1.1.1.</span> <span class="nav-text">I&#x2F;O端口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.1.2.</span> <span class="nav-text">I&#x2F;O接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%93%E7%94%A8I-O%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">专用I&#x2F;O接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E7%94%A8I-O%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">通用I&#x2F;O接口</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E6%8E%A7%E5%88%B6%E5%99%A8"><span class="nav-number">1.1.3.</span> <span class="nav-text">设备控制器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">设备驱动程序模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sysfs%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.2.1.</span> <span class="nav-text">sysfs文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kobject"><span class="nav-number">1.2.2.</span> <span class="nav-text">kobject</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E5%86%8Ckobject%E3%80%81kset%E5%92%8Csubsystem"><span class="nav-number">1.2.3.</span> <span class="nav-text">注册kobject、kset和subsystem</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E6%A8%A1%E5%9E%8B%E7%BB%84%E4%BB%B6"><span class="nav-number">1.2.4.</span> <span class="nav-text">设备驱动程序模型组件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">设备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">驱动程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BA%BF"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">总线</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B1%BB"><span class="nav-number">1.2.4.4.</span> <span class="nav-text">类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.5.</span> <span class="nav-text">设备文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E6%96%87%E4%BB%B6%E7%9A%84%E7%94%A8%E6%88%B7%E6%80%81%E5%A4%84%E7%90%86"><span class="nav-number">1.2.6.</span> <span class="nav-text">设备文件的用户态处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D%E8%AE%BE%E5%A4%87%E5%8F%B7"><span class="nav-number">1.2.6.1.</span> <span class="nav-text">动态分配设备号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BA%E8%AE%BE%E5%A4%87%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.6.2.</span> <span class="nav-text">动态创建设备文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E6%96%87%E4%BB%B6%E7%9A%84VFS%E5%A4%84%E7%90%86"><span class="nav-number">1.2.7.</span> <span class="nav-text">设备文件的VFS处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.3.</span> <span class="nav-text">设备驱动程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.3.1.</span> <span class="nav-text">注册设备驱动程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.3.2.</span> <span class="nav-text">初始化设备驱动程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7I-O%E6%93%8D%E4%BD%9C"><span class="nav-number">1.3.3.</span> <span class="nav-text">监控I&#x2F;O操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AE%E8%AF%A2%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">轮询模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">中断模式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BF%E9%97%AEI-O%E5%85%B1%E4%BA%AB%E5%AD%98%E5%82%A8%E5%99%A8"><span class="nav-number">1.3.4.</span> <span class="nav-text">访问I&#x2F;O共享存储器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98%E8%AE%BF%E9%97%AE-DMA"><span class="nav-number">1.3.5.</span> <span class="nav-text">直接内存访问(DMA)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5DMA%E5%92%8C%E5%BC%82%E6%AD%A5DMA"><span class="nav-number">1.3.5.1.</span> <span class="nav-text">同步DMA和异步DMA</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DMA%E4%BC%A0%E9%80%81%E7%9A%84%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0"><span class="nav-number">1.3.5.2.</span> <span class="nav-text">DMA传送的辅助函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7DMA%E6%98%A0%E5%B0%84%E7%9A%84%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0"><span class="nav-number">1.3.5.3.</span> <span class="nav-text">一致性DMA映射的辅助函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%81%E5%BC%8FDMA%E6%98%A0%E5%B0%84%E7%9A%84%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0"><span class="nav-number">1.3.5.4.</span> <span class="nav-text">流式DMA映射的辅助函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E6%94%AF%E6%8C%81%E7%9A%84%E7%BA%A7%E5%88%AB"><span class="nav-number">1.3.6.</span> <span class="nav-text">内核支持的级别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.4.</span> <span class="nav-text">字符设备驱动程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E9%85%8D%E8%AE%BE%E5%A4%87%E5%8F%B7"><span class="nav-number">1.4.1.</span> <span class="nav-text">分配设备号</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#register-chrdev-region-%E5%87%BD%E6%95%B0%E5%92%8Calloc-chrdev-region-%E5%87%BD%E6%95%B0"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">register_chrdev_region()函数和alloc_chrdev_region()函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#register-chrdev-%E5%87%BD%E6%95%B0"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">register_chrdev()函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.4.2.</span> <span class="nav-text">访问字符设备驱动程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E7%9A%84%E7%BC%93%E5%86%B2%E7%AD%96%E7%95%A5"><span class="nav-number">1.4.3.</span> <span class="nav-text">字符设备的缓冲策略</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9D%97%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.</span> <span class="nav-text">块设备驱动程序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9D%97%E8%AE%BE%E5%A4%87%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">2.1.</span> <span class="nav-text">块设备的处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%87%E5%8C%BA"><span class="nav-number">2.1.1.</span> <span class="nav-text">扇区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%97"><span class="nav-number">2.1.2.</span> <span class="nav-text">块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AE%B5"><span class="nav-number">2.1.3.</span> <span class="nav-text">段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E5%9D%97%E5%B1%82"><span class="nav-number">2.2.</span> <span class="nav-text">通用块层</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Bio-%E7%BB%93%E6%9E%84"><span class="nav-number">2.2.1.</span> <span class="nav-text">Bio 结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E5%92%8C%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA%E8%A1%A8%E7%A4%BA"><span class="nav-number">2.2.2.</span> <span class="nav-text">磁盘和磁盘分区表示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E8%AF%B7%E6%B1%82"><span class="nav-number">2.2.3.</span> <span class="nav-text">提交请求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-O-%E8%B0%83%E5%BA%A6%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.3.</span> <span class="nav-text">I&#x2F;O 调度程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E9%98%9F%E5%88%97%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">2.3.1.</span> <span class="nav-text">请求队列描述符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">2.3.2.</span> <span class="nav-text">请求描述符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E8%AF%B7%E6%B1%82%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E5%88%86%E9%85%8D%E8%BF%9B%E8%A1%8C%E7%AE%A1%E7%90%86"><span class="nav-number">2.3.3.</span> <span class="nav-text">对请求描述符的分配进行管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%81%BF%E5%85%8D%E8%AF%B7%E6%B1%82%E9%98%9F%E5%88%97%E6%8B%A5%E5%A1%9E"><span class="nav-number">2.3.4.</span> <span class="nav-text">避免请求队列拥塞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BF%80%E6%B4%BB%E5%9D%97%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.3.5.</span> <span class="nav-text">激活块设备驱动程序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-O-%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="nav-number">2.4.</span> <span class="nav-text">I&#x2F;O 调度算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%9CNoop%E2%80%9D%E7%AE%97%E6%B3%95"><span class="nav-number">2.4.1.</span> <span class="nav-text">“Noop”算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%9CCFQ%E2%80%9D%E5%AE%8C%E5%85%A8%E5%85%AC%E5%B9%B3%E9%98%9F%E5%88%97%E7%AE%97%E6%B3%95"><span class="nav-number">2.4.2.</span> <span class="nav-text">“CFQ”完全公平队列算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%9C%E6%9C%80%E5%90%8E%E6%9C%9F%E9%99%90%E2%80%9D%E7%AE%97%E6%B3%95"><span class="nav-number">2.4.3.</span> <span class="nav-text">“最后期限”算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%9C%E9%A2%84%E6%9C%9F%E2%80%9D%E7%AE%97%E6%B3%95"><span class="nav-number">2.4.4.</span> <span class="nav-text">“预期”算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%91-I-O-%E8%B0%83%E5%BA%A6%E7%A8%8B%E5%BA%8F%E5%8F%91%E5%87%BA%E8%AF%B7%E6%B1%82"><span class="nav-number">2.5.</span> <span class="nav-text">向 I&#x2F;O 调度程序发出请求</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#blk-queue-bounce"><span class="nav-number">2.5.1.</span> <span class="nav-text">blk_queue_bounce()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9D%97%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F-1"><span class="nav-number">2.6.</span> <span class="nav-text">块设备驱动程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%97%E8%AE%BE%E5%A4%87"><span class="nav-number">2.6.1.</span> <span class="nav-text">块设备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E5%9D%97%E8%AE%BE%E5%A4%87"><span class="nav-number">2.6.2.</span> <span class="nav-text">访问块设备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.6.3.</span> <span class="nav-text">注册和初始化设备驱动程序</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">2.6.3.1.</span> <span class="nav-text">定义驱动程序描述符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%84%E5%AE%9A%E4%B8%BB%E8%AE%BE%E5%A4%87%E5%8F%B7"><span class="nav-number">2.6.3.2.</span> <span class="nav-text">预定主设备号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">2.6.3.3.</span> <span class="nav-text">初始化自定义描述符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96-gendisk-%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">2.6.3.4.</span> <span class="nav-text">初始化 gendisk 描述符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%9D%97%E8%AE%BE%E5%A4%87%E6%93%8D%E4%BD%9C%E8%A1%A8"><span class="nav-number">2.6.3.5.</span> <span class="nav-text">初始化块设备操作表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E9%85%8D%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E8%AF%B7%E6%B1%82%E9%98%9F%E5%88%97"><span class="nav-number">2.6.3.6.</span> <span class="nav-text">分配和初始化请求队列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.6.3.7.</span> <span class="nav-text">设置中断处理程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C%E7%A3%81%E7%9B%98"><span class="nav-number">2.6.3.8.</span> <span class="nav-text">注册磁盘</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%96%E7%95%A5%E4%BE%8B%E7%A8%8B"><span class="nav-number">2.6.4.</span> <span class="nav-text">策略例程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.6.5.</span> <span class="nav-text">中断处理程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%93%E5%BC%80%E5%9D%97%E8%AE%BE%E5%A4%87%E6%96%87%E4%BB%B6"><span class="nav-number">2.6.6.</span> <span class="nav-text">打开块设备文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A1%B5%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98"><span class="nav-number">3.</span> <span class="nav-text">页高速缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B5%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98-1"><span class="nav-number">3.1.</span> <span class="nav-text">页高速缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#address-space-%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.1.1.</span> <span class="nav-text">address_space 对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%A0%91"><span class="nav-number">3.1.2.</span> <span class="nav-text">基树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B5%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E7%9A%84%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0"><span class="nav-number">3.1.3.</span> <span class="nav-text">页高速缓存的处理函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE%E9%A1%B5"><span class="nav-number">3.1.3.1.</span> <span class="nav-text">查找页</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E9%A1%B5"><span class="nav-number">3.1.3.2.</span> <span class="nav-text">增加页</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E9%A1%B5"><span class="nav-number">3.1.3.3.</span> <span class="nav-text">删除页</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E9%A1%B5"><span class="nav-number">3.1.3.4.</span> <span class="nav-text">更新页</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%A0%91%E7%9A%84%E6%A0%87%E8%AE%B0"><span class="nav-number">3.1.4.</span> <span class="nav-text">基树的标记</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E5%9D%97%E5%AD%98%E6%94%BE%E5%9C%A8%E9%A1%B5%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E4%B8%AD"><span class="nav-number">3.2.</span> <span class="nav-text">把块存放在页高速缓存中</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%97%E7%BC%93%E5%86%B2%E5%8C%BA%E5%92%8C%E7%BC%93%E5%86%B2%E5%8C%BA%E9%A6%96%E9%83%A8"><span class="nav-number">3.2.1.</span> <span class="nav-text">块缓冲区和缓冲区首部</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E7%BC%93%E5%86%B2%E5%8C%BA%E9%A6%96%E9%83%A8"><span class="nav-number">3.2.2.</span> <span class="nav-text">管理缓冲区首部</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%86%B2%E5%8C%BA%E9%A1%B5"><span class="nav-number">3.2.3.</span> <span class="nav-text">缓冲区页</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E9%85%8D%E5%9D%97%E8%AE%BE%E5%A4%87%E7%BC%93%E5%86%B2%E5%8C%BA%E9%A1%B5"><span class="nav-number">3.2.4.</span> <span class="nav-text">分配块设备缓冲区页</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8A%E6%94%BE%E5%9D%97%E8%AE%BE%E5%A4%87%E7%BC%93%E5%86%B2%E5%8C%BA%E9%A1%B5"><span class="nav-number">3.2.5.</span> <span class="nav-text">释放块设备缓冲区页</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E9%A1%B5%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E4%B8%AD%E6%90%9C%E7%B4%A2%E5%9D%97"><span class="nav-number">3.2.6.</span> <span class="nav-text">在页高速缓存中搜索块</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#find-get-block"><span class="nav-number">3.2.6.1.</span> <span class="nav-text">_find_get_block()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#getblk"><span class="nav-number">3.2.6.2.</span> <span class="nav-text">__getblk()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bread"><span class="nav-number">3.2.6.3.</span> <span class="nav-text">__bread()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%91%E9%80%9A%E7%94%A8%E5%9D%97%E5%B1%82%E6%8F%90%E4%BA%A4%E7%BC%93%E5%86%B2%E5%8C%BA%E9%A6%96%E9%83%A8"><span class="nav-number">3.2.7.</span> <span class="nav-text">向通用块层提交缓冲区首部</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#submit-bh"><span class="nav-number">3.2.7.1.</span> <span class="nav-text">submit_bh()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ll-rw-block"><span class="nav-number">3.2.7.2.</span> <span class="nav-text">ll_rw_block</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E8%84%8F%E9%A1%B5%E5%86%99%E5%85%A5%E7%A3%81%E7%9B%98"><span class="nav-number">3.2.8.</span> <span class="nav-text">把脏页写入磁盘</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#pdflush-%E5%86%85%E6%A0%B8%E7%BA%BF%E7%A8%8B"><span class="nav-number">3.2.8.1.</span> <span class="nav-text">pdflush 内核线程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E8%A6%81%E5%88%B7%E6%96%B0%E7%9A%84%E8%84%8F%E9%A1%B5"><span class="nav-number">3.2.8.2.</span> <span class="nav-text">搜索要刷新的脏页</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9E%E5%86%99%E9%99%88%E6%97%A7%E7%9A%84%E8%84%8F%E9%A1%B5"><span class="nav-number">3.2.8.3.</span> <span class="nav-text">回写陈旧的脏页</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sync-%E3%80%81fsync-%E5%92%8Cfdatasync-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">3.2.9.</span> <span class="nav-text">sync()、fsync()和fdatasync()系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#sync"><span class="nav-number">3.2.9.1.</span> <span class="nav-text">sync()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fsync-%E5%92%8Cfdatasync"><span class="nav-number">3.2.9.2.</span> <span class="nav-text">fsync()和fdatasync()</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

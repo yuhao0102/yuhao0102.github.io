@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zn-ch">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="C++," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="设计模式总结: 前言：个人觉得设计模式就是各个对象在不同的时机、不同的调用方被创建，组合结构和封装的侧重点有些不同，从而形成了各个模式的概念。 简单工厂模式通过在工厂类中进行判断，然后创建需要的功能类。简单工厂模式是工厂模式中最简单的一种，他可以用比较简单的方式隐藏创建对象的细节，一般只需要告诉工厂类所需要的类型，工厂类就会返回需要的产品类，但客户端看到的只是产品的抽象对象，无需关心到底是返回了哪">
+<meta property="og:type" content="article">
+<meta property="og:title" content="23种设计模式总结">
+<meta property="og:url" content="http://yoursite.com/2019/05/14/23%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="设计模式总结: 前言：个人觉得设计模式就是各个对象在不同的时机、不同的调用方被创建，组合结构和封装的侧重点有些不同，从而形成了各个模式的概念。 简单工厂模式通过在工厂类中进行判断，然后创建需要的功能类。简单工厂模式是工厂模式中最简单的一种，他可以用比较简单的方式隐藏创建对象的细节，一般只需要告诉工厂类所需要的类型，工厂类就会返回需要的产品类，但客户端看到的只是产品的抽象对象，无需关心到底是返回了哪">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/img/19100800-208864687d8a43c7afed3069bd0c3174.jpg">
+<meta property="og:image" content="http://yoursite.com/img/19101120-aec0022019a44d9a87c6586ddc95717a.jpg">
+<meta property="og:image" content="http://yoursite.com/img/815220-20170416031217864-1019073972.png">
+<meta property="og:image" content="http://yoursite.com/img/19105813-05519e174c32473bb7deee57ae8e25dc.jpg">
+<meta property="article:published_time" content="2019-05-14T02:08:00.000Z">
+<meta property="article:modified_time" content="2019-05-14T02:35:25.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/19100800-208864687d8a43c7afed3069bd0c3174.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/05/14/23种设计模式/"/>
+
+
+
+
+
+  <title>23种设计模式总结 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zn-ch">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hao Yu's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">The program monkey was eaten by the siege lion.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/14/23%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">23种设计模式总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-14T10:08:00+08:00">
+                2019-05-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>设计模式总结:</p>
+<p>前言：个人觉得设计模式就是各个对象在不同的时机、不同的调用方被创建，组合结构和封装的侧重点有些不同，从而形成了各个模式的概念。</p>
+<h1 id="简单工厂模式"><a href="#简单工厂模式" class="headerlink" title="简单工厂模式"></a>简单工厂模式</h1><p>通过在工厂类中进行判断，然后创建需要的功能类。<br>简单工厂模式是工厂模式中最简单的一种，他可以用比较简单的方式隐藏创建对象的细节，一般只需要告诉工厂类所需要的类型，工厂类就会返回需要的产品类，但客户端看到的只是产品的抽象对象，无需关心到底是返回了哪个子类。客户端唯一需要知道的具体子类就是工厂子类。除了这点，基本是达到了依赖倒转原则的要求。</p>
+<p>假如，我们不用工厂类，只用AbstractProduct和它的子类，那客户端每次使用不同的子类的时候都需要知道到底是用哪一个子类，当类比较少的时候还没什么问题，但是当类比较多的时候，管理起来就非常的麻烦了，就必须要做大量的替换，一个不小心就会发生错误。</p>
+<p>而使用了工厂类之后，就不会有这样的问题，不管里面多少个类，我只需要知道类型号即可。不过，这里还有一个疑问，那就是如果我每次用工厂类创建的类型都不相同，这样修改起来的时候还是会出现问题，还是需要大量的替换。所以简单工厂模式一般应该于程序中大部分地方都只使用其中一种产品，工厂类也不用频繁创建产品类的情况。这样修改的时候只需要修改有限的几个地方即可。<br><img src="/img/19100800-208864687d8a43c7afed3069bd0c3174.jpg" alt=""></p>
+<p>客户只需要知道SimpleFactory就可以了，使用的时候也是使用的AbstractFactory，这样客户端只在第一次创建工厂的时候是知道具体的细节的，其他时候它都只知道AbstractFactory，这样就完美的达到了依赖倒转的原则。</p>
+<p>常用的场景：<br>例如部署多种数据库的情况，可能在不同的地方要使用不同的数据库，此时只需要在配置文件中设定数据库的类型，每次再根据类型生成实例，这样，不管下面的数据库类型怎么变化，在客户端看来都是只有一个AbstractProduct，使用的时候根本无需修改代码。提供的类型也可以用比较便于识别的字符串，这样不用记很长的类名，还可以保存为配置文件。这样，每次只需要修改配置文件和添加新的产品子类即可。所以简单工厂模式一般应用于多种同类型类的情况，将这些类隐藏起来，再提供统一的接口，便于维护和修改。</p>
+<p>优点</p>
+<ol>
+<li>隐藏了对象创建的细节，将产品的实例化推迟到子类中实现。</li>
+<li>客户端基本不用关心使用的是哪个产品，只需要知道用哪个工厂就行了，提供的类型也可以用比较便于识别的字符串。</li>
+<li>方便添加新的产品子类，每次只需要修改工厂类传递的类型值就行了。</li>
+<li>遵循了依赖倒转原则。</li>
+</ol>
+<p>缺点</p>
+<ol>
+<li>要求产品子类的类型差不多，使用的方法名都相同，如果类比较多，而所有的类又必须要添加一种方法，则会是非常麻烦的事情。或者是一种类另一种类有几种方法不相同，客户端无法知道是哪一个产品子类，也就无法调用这几个不相同的方法。</li>
+<li>每添加一个产品子类，都必须在工厂类中添加一个判断分支，这违背了开放-封闭原则。</li>
+</ol>
+<p>代码演示：<br>抽象产品类代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">namespace CNBlogs.DesignPattern.Common</span><br><span class="line">&#123;</span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 抽象产品类： 汽车</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public interface ICar</span><br><span class="line">    &#123;</span><br><span class="line">        void GetCar();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>具体产品类代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">namespace CNBlogs.DesignPattern.Common</span><br><span class="line">&#123;</span><br><span class="line">    public enum CarType</span><br><span class="line">    &#123;</span><br><span class="line">        SportCarType = 0,</span><br><span class="line">        JeepCarType = 1,</span><br><span class="line">        HatchbackCarType = 2</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 具体产品类： 跑车</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public class SportCar : ICar</span><br><span class="line">    &#123;</span><br><span class="line">        public void GetCar()</span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(&quot;场务把跑车交给范·迪塞尔&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 具体产品类： 越野车</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public class JeepCar : ICar</span><br><span class="line">    &#123;</span><br><span class="line">        public void GetCar()</span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(&quot;场务把越野车交给范·迪塞尔&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 具体产品类： 两箱车</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public class HatchbackCar : ICar</span><br><span class="line">    &#123;</span><br><span class="line">        public void GetCar()</span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(&quot;场务把两箱车交给范·迪塞尔&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>简单工厂核心代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">namespace CNBlogs.DesignPattern.Common</span><br><span class="line">&#123;</span><br><span class="line">    public class Factory</span><br><span class="line">    &#123;</span><br><span class="line">        public ICar GetCar(CarType carType)</span><br><span class="line">        &#123;</span><br><span class="line">            switch (carType)</span><br><span class="line">            &#123;</span><br><span class="line">                case CarType.SportCarType:</span><br><span class="line">                    return new SportCar();</span><br><span class="line">                case CarType.JeepCarType:</span><br><span class="line">                    return new JeepCar();</span><br><span class="line">                case CarType.HatchbackCarType:</span><br><span class="line">                    return new HatchbackCar();</span><br><span class="line">                default:</span><br><span class="line">                    throw new Exception(&quot;爱上一匹野马,可我的家里没有草原. 你走吧！&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>客户端调用代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">//------------------------------------------------------------------------------</span><br><span class="line">// &lt;copyright file=&quot;Program.cs&quot; company=&quot;CNBlogs Corporation&quot;&gt;</span><br><span class="line">//     Copyright (C) 2015-2016 All Rights Reserved</span><br><span class="line">//     原博文地址： http://www.cnblogs.com/toutou/</span><br><span class="line">//     作      者: 请叫我头头哥</span><br><span class="line">// &lt;/copyright&gt; </span><br><span class="line">//------------------------------------------------------------------------------</span><br><span class="line">namespace CNBlogs.DesignPattern</span><br><span class="line">&#123;</span><br><span class="line">    using System;</span><br><span class="line">    using CNBlogs.DesignPattern.Common;</span><br><span class="line"></span><br><span class="line">    class Program</span><br><span class="line">    &#123;</span><br><span class="line">        static void Main(string[] args)</span><br><span class="line">        &#123;</span><br><span class="line">            ICar car;</span><br><span class="line">            try</span><br><span class="line">            &#123;</span><br><span class="line">                Factory factory = new Factory();</span><br><span class="line"></span><br><span class="line">                Console.WriteLine(&quot;范·迪塞尔下一场戏开跑车。&quot;);</span><br><span class="line">                car = factory.GetCar(CarType.SportCarType);</span><br><span class="line">                car.GetCar();</span><br><span class="line">            &#125;</span><br><span class="line">            catch (Exception ex)</span><br><span class="line">            &#123;</span><br><span class="line">                Console.WriteLine(ex.Message);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="策略模式"><a href="#策略模式" class="headerlink" title="策略模式"></a>策略模式</h1><p>假设一个功能类是一个策略，调用的时候需要创建这个策略的实例，传进一个类似策略控制中心的方法中，然后通过策略基类调用这个传进去的实例子类的方法。</p>
+<p>优点：就是相对工厂模式免去了创建那个功能类的判断，简化了工厂模式。缺点：就是把子类实例赋值给了父类，这样就丢掉了子类新增的功能。</p>
+<h1 id="工厂方法模式-属于工厂模式"><a href="#工厂方法模式-属于工厂模式" class="headerlink" title="工厂方法模式(属于工厂模式)"></a>工厂方法模式(属于工厂模式)</h1><p>把简单工厂模式中的工厂类，做了进一步的抽象为接口或抽象类，给各个功能创建一个对应的工厂类，然后在这个工厂类里面去创建对应的实例。<br>工厂模式基本与简单工厂模式差不多，上面也说了，每次添加一个产品子类都必须在工厂类中添加一个判断分支，这样违背了开放-封闭原则，因此，工厂模式就是为了解决这个问题而产生的。</p>
+<p>既然每次都要判断，那我就把这些判断都生成一个工厂子类，这样，每次添加产品子类的时候，只需再添加一个工厂子类就可以了。这样就完美的遵循了开放-封闭原则。但这其实也有问题，如果产品数量足够多，要维护的量就会增加，好在一般工厂子类只用来生成产品类，只要产品子类的名称不发生变化，那么基本工厂子类就不需要修改，每次只需要修改产品子类就可以了。<br><img src="/img/19101120-aec0022019a44d9a87c6586ddc95717a.jpg" alt=""></p>
+<p>同样工厂模式一般应该于程序中大部分地方都只使用其中一种产品，工厂类也不用频繁创建产品类的情况。这样修改的时候只需要修改有限的几个地方即可。</p>
+<p>常用的场景<br>基本与简单工厂模式一致，只不过是改进了简单工厂模式中的开放-封闭原则的缺陷，使得模式更具有弹性。将实例化的过程推迟到子类中，由子类来决定实例化哪个。</p>
+<p>优点：基本与简单工厂模式一致，多的一点优点就是遵循了开放-封闭原则，使得模式的灵活性更强。<br>缺点：当新增一个功能类，就需要创建对于的工厂类，相比简单工厂模式，免去了判断创建那个具体实例，但会创建过多的类，还不如策略模式。</p>
+<p>代码演示： </p>
+<p>抽象工厂代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">namespace CNBlogs.DesignPattern.Common</span><br><span class="line">&#123;</span><br><span class="line">    public interface IFactory</span><br><span class="line">    &#123;</span><br><span class="line">        ICar CreateCar();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>抽象产品代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">namespace CNBlogs.DesignPattern.Common</span><br><span class="line">&#123;</span><br><span class="line">    public interface ICar</span><br><span class="line">    &#123;</span><br><span class="line">        void GetCar();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>具体工厂代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">namespace CNBlogs.DesignPattern.Common</span><br><span class="line">&#123;</span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    ///  具体工厂类： 用于创建跑车类</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public class SportFactory : IFactory</span><br><span class="line">    &#123;</span><br><span class="line">        public ICar CreateCar()</span><br><span class="line">        &#123;</span><br><span class="line">            return new SportCar();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    ///  具体工厂类： 用于创建越野车类</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public class JeepFactory : IFactory</span><br><span class="line">    &#123;</span><br><span class="line">        public ICar CreateCar()</span><br><span class="line">        &#123;</span><br><span class="line">            return new JeepCar();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    ///  具体工厂类： 用于创建两厢车类</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public class HatchbackFactory : IFactory</span><br><span class="line">    &#123;</span><br><span class="line">        public ICar CreateCar()</span><br><span class="line">        &#123;</span><br><span class="line">            return new HatchbackCar();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>具体产品代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">namespace CNBlogs.DesignPattern.Common</span><br><span class="line">&#123;</span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 具体产品类： 跑车</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public class SportCar : ICar</span><br><span class="line">    &#123;</span><br><span class="line">        public void GetCar()</span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(&quot;场务把跑车交给范·迪塞尔&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 具体产品类： 越野车</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public class JeepCar : ICar</span><br><span class="line">    &#123;</span><br><span class="line">        public void GetCar()</span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(&quot;场务把越野车交给范·迪塞尔&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 具体产品类： 两箱车</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public class HatchbackCar : ICar</span><br><span class="line">    &#123;</span><br><span class="line">        public void GetCar()</span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(&quot;场务把两箱车交给范·迪塞尔&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>客户端代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">//------------------------------------------------------------------------------</span><br><span class="line">// &lt;copyright file=&quot;Program.cs&quot; company=&quot;CNBlogs Corporation&quot;&gt;</span><br><span class="line">//     Copyright (C) 2015-2016 All Rights Reserved</span><br><span class="line">//     原博文地址： http://www.cnblogs.com/toutou/</span><br><span class="line">//     作      者: 请叫我头头哥</span><br><span class="line">// &lt;/copyright&gt; </span><br><span class="line">//------------------------------------------------------------------------------</span><br><span class="line">namespace CNBlogs.DesignPattern</span><br><span class="line">&#123;</span><br><span class="line">    using System.IO;</span><br><span class="line">    using System.Configuration;</span><br><span class="line">    using System.Reflection;</span><br><span class="line">    using CNBlogs.DesignPattern.Common;</span><br><span class="line"></span><br><span class="line">    class Program</span><br><span class="line">    &#123;</span><br><span class="line">        static void Main(string[] args)</span><br><span class="line">        &#123;</span><br><span class="line">            // 工厂类的类名写在配置文件中可以方便以后修改</span><br><span class="line">            string factoryType = ConfigurationManager.AppSettings[&quot;FactoryType&quot;];</span><br><span class="line"></span><br><span class="line">            // 这里把DLL配置在数据库是因为以后数据可能发生改变</span><br><span class="line">            // 比如说现在的数据是从sql server取的，以后需要从oracle取的话只需要添加一个访问oracle数据库的工程就行了</span><br><span class="line">            string dllName = ConfigurationManager.AppSettings[&quot;DllName&quot;];</span><br><span class="line"></span><br><span class="line">            // 利用.NET提供的反射可以根据类名来创建它的实例，非常方便</span><br><span class="line">            var currentAssembly = System.Reflection.Assembly.GetExecutingAssembly();</span><br><span class="line">            string codeBase = currentAssembly.CodeBase.ToLower().Replace(currentAssembly.ManifestModule.Name.ToLower(), string.Empty);</span><br><span class="line">            IFactory factory = Assembly.LoadFrom(Path.Combine(codeBase, dllName)).CreateInstance(factoryType) as IFactory;</span><br><span class="line">            ICar car = factory.CreateCar();</span><br><span class="line">            car.GetCar();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="装饰模式"><a href="#装饰模式" class="headerlink" title="装饰模式"></a>装饰模式</h1><p>一般情况下，当一个基类写好之后，我们也许不愿意去改动，也不能改动，原因是<br>这样的在项目中用得比较久的基类，一旦改动，也许会影响其他功能模块，但是，<br>又要在该类上面添加功能。使用继承，当在A阶段，写出继承类，用过一段时间，发<br>现又要添加新功能，于是又要从原始类或A阶段的类继承，周而复始，慢慢的，子类就越来越多，层级就越来越深。然而，事实上，在C阶段需要A阶段的功能，但不需要B阶段的功能，在这种复杂情形下，继承就显得不灵活，于是想到了装饰模式。<br>装饰模式：<br>需要扩展一个类的功能，或给一个类增加附加责任<br>需要动态地给一个对象增加功能，这些功能可以再动态地撤销。<br>需要增加由一些基本功能的排列组合而产生的非常大量的功能，从而使继承关系变得不现实。</p>
+<p>在使用装饰模式前，需要了解虚方法和抽象方法的区别：虚方法，是实例方法，可以在子类中覆盖，也可以由该类对象直接调用。抽象方法需要写在抽象类中，抽象类不能实例化，所以要使用抽象方法必须由子类实现后方可调用。</p>
+<p>该模式中，要被扩展的类可以是包含抽象方法的抽象类，也可以是包含虚方法的实例类，也可以是普通实例类。装饰模式就是在原有基类上做扩展，至于基类是什么性质并不重要.</p>
+<p>装饰模式在C#代码，和扩展方法，惊人的类似。<br><img src="/img/815220-20170416031217864-1019073972.png" alt=""></p>
+<ul>
+<li>Component为统一接口，也是装饰类和被装饰类的基本类型。</li>
+<li>ConcreteComponent为具体实现类，也是被装饰类，他本身是个具有一些功能的完整的类。</li>
+<li>Decorator是装饰类，实现了Component接口的同时还在内部维护了一个ConcreteComponent的实例，并可以通过构造函数初始化。而Decorator本身，- 通常采用默认实现，他的存在仅仅是一个声明：我要生产出一些用于装饰的子类了。而其子类才是赋有具体装饰效果的装饰产品类。</li>
+<li>ConcreteDecorator是具体的装饰产品类，每一种装饰产品都具有特定的装饰效果。可以通过构造器声明装饰哪种类型的ConcreteComponent，从而对其进行装饰。</li>
+</ul>
+<p>最简单的代码实现装饰器模式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">//基础接口</span><br><span class="line">public interface Component &#123;</span><br><span class="line">    </span><br><span class="line">    public void biu();</span><br><span class="line">&#125;</span><br><span class="line">//具体实现类</span><br><span class="line">public class ConcretComponent implements Component &#123;</span><br><span class="line"></span><br><span class="line">    public void biu() &#123;</span><br><span class="line">        </span><br><span class="line">        System.out.println(&quot;biubiubiu&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//装饰类</span><br><span class="line">public class Decorator implements Component &#123;</span><br><span class="line"></span><br><span class="line">    public Component component;</span><br><span class="line">    </span><br><span class="line">    public Decorator(Component component) &#123;</span><br><span class="line">        </span><br><span class="line">        this.component = component;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public void biu() &#123;</span><br><span class="line">        </span><br><span class="line">        this.component.biu();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//具体装饰类</span><br><span class="line">public class ConcreteDecorator extends Decorator &#123;</span><br><span class="line"></span><br><span class="line">    public ConcreteDecorator(Component component) &#123;</span><br><span class="line"></span><br><span class="line">        super(component);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void biu() &#123;</span><br><span class="line">        </span><br><span class="line">        System.out.println(&quot;ready?go!&quot;);</span><br><span class="line">        this.component.biu();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样一个基本的装饰器体系就出来了，当我们想让Component在打印之前都有一个ready？go！的提示时，就可以使用ConcreteDecorator类了。具体方式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">　　//使用装饰器</span><br><span class="line">　　Component component = new ConcreteDecorator(new ConcretComponent());</span><br><span class="line">　　component.biu();</span><br><span class="line"></span><br><span class="line">　　//console：</span><br><span class="line">　　ready?go!</span><br><span class="line">　　biubiubiu</span><br></pre></td></tr></table></figure>
+<p>为何使用装饰器模式？<br>一个设计模式的出现一定有他特殊的价值。仅仅看见上面的结构图你可能会想，为何要兜这么一圈来实现？仅仅是想要多一行输出，我直接继承ConcretComponent，或者直接在另一个Component的实现类中实现不是一样吗？</p>
+<p>首先，装饰器的价值在于装饰，他并不影响被装饰类本身的核心功能。在一个继承的体系中，子类通常是互斥的。比如一辆车，品牌只能要么是奥迪、要么是宝马，不可能同时属于奥迪和宝马，而品牌也是一辆车本身的重要属性特征。但当你想要给汽车喷漆，换坐垫，或者更换音响时，这些功能是互相可能兼容的，并且他们的存在不会影响车的核心属性：那就是他是一辆什么车。这时你就可以定义一个装饰器：喷了漆的车。不管他装饰的车是宝马还是奥迪，他的喷漆效果都可以实现。</p>
+<p>再回到这个例子中，我们看到的仅仅是一个ConcreteComponent类。在复杂的大型项目中，同一级下的兄弟类通常有很多。当你有五个甚至十个ConcreteComponent时，再想要为每个类都加上“ready？go！”的效果，就要写出五个子类了。毫无疑问这是不合理的。装饰器模式在不影响各个ConcreteComponent核心价值的同时，添加了他特有的装饰效果，具备非常好的通用性，这也是他存在的最大价值。</p>
+<p>实战中使用装饰器模式</p>
+<p>写这篇博客的初衷也是恰好在工作中使用到了这个模式，觉得非常好用。需求大致是这样：采用sls服务监控项目日志，以Json的格式解析，所以需要将项目中的日志封装成json格式再打印。现有的日志体系采用了log4j + slf4j框架搭建而成。调用起来是这样的:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">private static final Logger logger = LoggerFactory.getLogger(Component.class);</span><br><span class="line">logger.error(string);</span><br></pre></td></tr></table></figure><br>这样打印出来的是毫无规范的一行行字符串。在考虑将其转换成json格式时，我采用了装饰器模式。目前有的是统一接口Logger和其具体实现类，我要加的就是一个装饰类和真正封装成Json格式的装饰产品类。具体实现代码如下：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * logger decorator for other extension </span><br><span class="line"> * this class have no specific implementation</span><br><span class="line"> * just for a decorator definition</span><br><span class="line"> * @author jzb</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class DecoratorLogger implements Logger &#123;</span><br><span class="line"></span><br><span class="line">    public Logger logger;</span><br><span class="line"></span><br><span class="line">    public DecoratorLogger(Logger logger) &#123;</span><br><span class="line"></span><br><span class="line">        this.logger = logger;</span><br><span class="line">    &#125;</span><br><span class="line">　　　　</span><br><span class="line">    @Override</span><br><span class="line">    public void error(String str) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void info(String str) &#123;&#125;</span><br><span class="line">        </span><br><span class="line">    //省略其他默认实现</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * json logger for formatted output </span><br><span class="line"> * @author jzb</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class JsonLogger extends DecoratorLogger &#123;</span><br><span class="line">public JsonLogger(Logger logger) &#123;</span><br><span class="line">        </span><br><span class="line">        super(logger);</span><br><span class="line">    &#125;</span><br><span class="line">        </span><br><span class="line">    @Override</span><br><span class="line">    public void info(String msg) &#123;</span><br><span class="line"></span><br><span class="line">        JSONObject result = composeBasicJsonResult();</span><br><span class="line">        result.put(&quot;MESSAGE&quot;, msg);</span><br><span class="line">        logger.info(result.toString());</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    @Override</span><br><span class="line">    public void error(String msg) &#123;</span><br><span class="line">        </span><br><span class="line">        JSONObject result = composeBasicJsonResult();</span><br><span class="line">        result.put(&quot;MESSAGE&quot;, msg);</span><br><span class="line">        logger.error(result.toString());</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public void error(Exception e) &#123;</span><br><span class="line"></span><br><span class="line">        JSONObject result = composeBasicJsonResult();</span><br><span class="line">        result.put(&quot;EXCEPTION&quot;, e.getClass().getName());</span><br><span class="line">        String exceptionStackTrace = ExceptionUtils.getStackTrace(e);    </span><br><span class="line">        result.put(&quot;STACKTRACE&quot;, exceptionStackTrace);</span><br><span class="line">        logger.error(result.toString());</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public static class JsonLoggerFactory &#123;</span><br><span class="line">        </span><br><span class="line">        @SuppressWarnings(&quot;rawtypes&quot;)</span><br><span class="line">        public static JsonLogger getLogger(Class clazz) &#123;</span><br><span class="line"></span><br><span class="line">            Logger logger = LoggerFactory.getLogger(clazz);</span><br><span class="line">            return new JsonLogger(logger);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private JSONObject composeBasicJsonResult() &#123;</span><br><span class="line">        //拼装了一些运行时信息</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>可以看到，在JsonLogger中，对于Logger的各种接口，我都用JsonObject对象进行一层封装。在打印的时候，最终还是调用原生接口logger.error(string)，只是这个string参数已经被我们装饰过了。如果有额外的需求，我们也可以再写一个函数去实现。比如error(Exception e)，只传入一个异常对象，这样在调用时就非常方便了。</p>
+<p>另外，为了在新老交替的过程中尽量不改变太多的代码和使用方式。我又在JsonLogger中加入了一个内部的工厂类JsonLoggerFactory（这个类转移到DecoratorLogger中可能更好一些），他包含一个静态方法，用于提供对应的JsonLogger实例。最终在新的日志体系中，使用方式如下：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">private static final Logger logger = JsonLoggerFactory.getLogger(Component.class);</span><br><span class="line">logger.error(string);</span><br></pre></td></tr></table></figure><br>他唯一与原先不同的地方，就是LoggerFactory -&gt; JsonLoggerFactory，这样的实现，也会被更快更方便的被其他开发者接受和习惯。</p>
+<h1 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h1><p>代理类成为实际想调用对象的中间件，可以控制对实际调用对象的访问权限；维护实际调用对象的一个引用。</p>
+<h1 id="原型模式"><a href="#原型模式" class="headerlink" title="原型模式"></a>原型模式</h1><p>创建好了一个实例，然后用这个实例，通过克隆方式创建另一个同类型的实例，而不必关心这个新实例是如何创建的。</p>
+<p>原型模式使用时需要注意浅拷贝与深拷贝的问题。</p>
+<h1 id="建造者模式"><a href="#建造者模式" class="headerlink" title="建造者模式"></a>建造者模式</h1><p>每个对象都具备自己的功能，但是，它们的创建方式却是一样的。这个时候就需要中间这个建造者类来负责功能对象实例的创建。在调用端只需调用特定的方法即可。</p>
+<p>这个和策略模式有点类似。</p>
+<h1 id="抽象工厂模式"><a href="#抽象工厂模式" class="headerlink" title="抽象工厂模式"></a>抽象工厂模式</h1><p>使用该功能类的功能类，利用抽象工厂去创建该功能类的实例。这样的好处在于尽可能的避免去创建功能的实例。<br>更牛逼的做法就是使用反射去创建这个功能类的实例，在调用端就一点都不需要知道要去实例化那个具体的功能类。这当然不是抽象工厂模式独有的。<br>抽象工厂模式就变得比工厂模式更为复杂，就像上面提到的缺点一样，工厂模式和简单工厂模式要求产品子类必须要是同一类型的，拥有共同的方法，这就限制了产品子类的扩展。于是为了更加方便的扩展，抽象工厂模式就将同一类的产品子类归为一类，让他们继承同一个抽象子类，我们可以把他们一起视作一组，然后好几组产品构成一族。</p>
+<p>此时，客户端要使用时必须知道是哪一个工厂并且是哪一组的产品抽象类。每一个工厂子类负责产生一族产品，而子类的一种方法产生一种类型的产品。在客户端看来只有AbstractProductA和AbstractProductB两种产品，使用的时候也是直接使用这两种产品。而通过工厂来识别是属于哪一族产品。<br><img src="/img/19105813-05519e174c32473bb7deee57ae8e25dc.jpg" alt=""></p>
+<p>产品ProductA_1和ProductB_1构成一族产品，对应于有Factory1来创建，也就是说Factory1总是创建的ProductA_1和ProductB_1的产品，在客户端看来只需要知道是哪一类工厂和产品组就可以了。一般来说， ProductA_1和ProductB_1都是适应同一种环境的，所以他们会被归为一族。</p>
+<p>常用的场景<br>例如Linux和windows两种操作系统下，有2个挂件A和B，他们在Linux和Windows下面的实现方式不同，Factory1负责产生能在Linux下运行的挂件A和B，Factory2负责产生能在Windows下运行的挂件A和B，这样如果系统环境发生变化了，我们只需要修改工厂就行了。</p>
+<p>优点</p>
+<ol>
+<li>封装了产品的创建，使得不需要知道具体是哪种产品，只需要知道是哪个工厂就行了。</li>
+<li>可以支持不同类型的产品，使得模式灵活性更强。</li>
+<li>可以非常方便的使用一族中间的不同类型的产品。</li>
+</ol>
+<p>缺点</p>
+<ol>
+<li>结构太过臃肿，如果产品类型比较多，或者产品族类比较多，就会非常难于管理。</li>
+<li>每次如果添加一组产品，那么所有的工厂类都必须添加一个方法，这样违背了开放-封闭原则。所以一般适用于产品组合产品族变化不大的情况。</li>
+</ol>
+<p>抽象工厂代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">namespace CNBlogs.DesignPattern.Common</span><br><span class="line">&#123;</span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 抽象工厂类</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public abstract class AbstractEquipment</span><br><span class="line">    &#123;</span><br><span class="line">        /// &lt;summary&gt;</span><br><span class="line">        /// 抽象方法： 创建一辆车</span><br><span class="line">        /// &lt;/summary&gt;</span><br><span class="line">        /// &lt;returns&gt;&lt;/returns&gt;</span><br><span class="line">        public abstract AbstractCar CreateCar();</span><br><span class="line"></span><br><span class="line">        /// &lt;summary&gt;</span><br><span class="line">        /// 抽象方法： 创建背包</span><br><span class="line">        /// &lt;/summary&gt;</span><br><span class="line">        /// &lt;returns&gt;&lt;/returns&gt;</span><br><span class="line">        public abstract AbstractBackpack CreateBackpack();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>抽象产品代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">namespace CNBlogs.DesignPattern.Common</span><br><span class="line">&#123;</span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 抽象产品: 车抽象类</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public abstract class AbstractCar</span><br><span class="line">    &#123;</span><br><span class="line">        /// &lt;summary&gt;</span><br><span class="line">        /// 车的类型属性</span><br><span class="line">        /// &lt;/summary&gt;</span><br><span class="line">        public abstract string Type</span><br><span class="line">        &#123;</span><br><span class="line">            get;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        /// &lt;summary&gt;</span><br><span class="line">        /// 车的颜色属性</span><br><span class="line">        /// &lt;/summary&gt;</span><br><span class="line">        public abstract string Color</span><br><span class="line">        &#123;</span><br><span class="line">            get;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 抽象产品: 背包抽象类</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public abstract class AbstractBackpack</span><br><span class="line">    &#123;</span><br><span class="line">        /// &lt;summary&gt;</span><br><span class="line">        /// 包的类型属性</span><br><span class="line">        /// &lt;/summary&gt;</span><br><span class="line">        public abstract string Type</span><br><span class="line">        &#123;</span><br><span class="line">            get;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        /// &lt;summary&gt;</span><br><span class="line">        /// 包的颜色属性</span><br><span class="line">        /// &lt;/summary&gt;</span><br><span class="line">        public abstract string Color</span><br><span class="line">        &#123;</span><br><span class="line">            get;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>具体工厂代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">namespace CNBlogs.DesignPattern.Common</span><br><span class="line">&#123;</span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 运动装备</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public class SportEquipment : AbstractEquipment</span><br><span class="line">    &#123;</span><br><span class="line">        public override AbstractCar CreateCar()</span><br><span class="line">        &#123;</span><br><span class="line">            return new SportCar();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public override AbstractBackpack CreateBackpack()</span><br><span class="line">        &#123;</span><br><span class="line">            return new SportBackpack();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 越野装备  这里就不添加了，同运动装备一个原理，demo里只演示一个，实际项目中可以按需添加</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    //public class JeepEquipment : AbstractEquipment</span><br><span class="line">    //&#123;</span><br><span class="line">    //    public override AbstractCar CreateCar()</span><br><span class="line">    //    &#123;</span><br><span class="line">    //        return new JeeptCar();</span><br><span class="line">    //    &#125;</span><br><span class="line"></span><br><span class="line">    //    public override AbstractBackpack CreateBackpack()</span><br><span class="line">    //    &#123;</span><br><span class="line">    //        return new JeepBackpack();</span><br><span class="line">    //    &#125;</span><br><span class="line">    //&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>具体产品代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">namespace CNBlogs.DesignPattern.Common</span><br><span class="line">&#123;</span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 跑车</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public class SportCar : AbstractCar</span><br><span class="line">    &#123;</span><br><span class="line">        private string type = &quot;Sport&quot;;</span><br><span class="line">        private string color = &quot;Red&quot;;</span><br><span class="line"></span><br><span class="line">        /// &lt;summary&gt;</span><br><span class="line">        /// 重写基类的Type属性</span><br><span class="line">        /// &lt;/summary&gt;</span><br><span class="line">        public override string Type</span><br><span class="line">        &#123;</span><br><span class="line">            get</span><br><span class="line">            &#123;</span><br><span class="line">                return type;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        /// &lt;summary&gt;</span><br><span class="line">        /// 重写基类的Color属性</span><br><span class="line">        /// &lt;/summary&gt;</span><br><span class="line">        public override string Color</span><br><span class="line">        &#123;</span><br><span class="line">            get</span><br><span class="line">            &#123;</span><br><span class="line">                return color;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 运动背包</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public class SportBackpack : AbstractBackpack</span><br><span class="line">    &#123;</span><br><span class="line">        private string type = &quot;Sport&quot;;</span><br><span class="line">        private string color = &quot;Red&quot;;</span><br><span class="line"></span><br><span class="line">        /// &lt;summary&gt;</span><br><span class="line">        /// 重写基类的Type属性</span><br><span class="line">        /// &lt;/summary&gt;</span><br><span class="line">        public override string Type</span><br><span class="line">        &#123;</span><br><span class="line">            get</span><br><span class="line">            &#123;</span><br><span class="line">                return type;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        /// &lt;summary&gt;</span><br><span class="line">        /// 重写基类的Color属性</span><br><span class="line">        /// &lt;/summary&gt;</span><br><span class="line">        public override string Color</span><br><span class="line">        &#123;</span><br><span class="line">            get</span><br><span class="line">            &#123;</span><br><span class="line">                return color;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//具体产品可以有很多很多， 至于越野类的具体产品这里就不列出来了。</span><br></pre></td></tr></table></figure><br>创建装备代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">namespace CNBlogs.DesignPattern.Common</span><br><span class="line">&#123;</span><br><span class="line">    public class CreateEquipment</span><br><span class="line">    &#123;</span><br><span class="line">        private AbstractCar fanCar;</span><br><span class="line">        private AbstractBackpack fanBackpack;</span><br><span class="line">        public CreateEquipment(AbstractEquipment equipment)</span><br><span class="line">        &#123;</span><br><span class="line">            fanCar = equipment.CreateCar();</span><br><span class="line">            fanBackpack = equipment.CreateBackpack();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public void ReadyEquipment()</span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(string.Format(&quot;老范背着&#123;0&#125;色&#123;1&#125;包开着&#123;2&#125;色&#123;3&#125;车。&quot;, </span><br><span class="line">                fanBackpack.Color, </span><br><span class="line">                fanBackpack.Type,</span><br><span class="line">                fanCar.Color,</span><br><span class="line">                fanCar.Type</span><br><span class="line">                ));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>客户端代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">//------------------------------------------------------------------------------</span><br><span class="line">// &lt;copyright file=&quot;Program.cs&quot; company=&quot;CNBlogs Corporation&quot;&gt;</span><br><span class="line">//     Copyright (C) 2015-2016 All Rights Reserved</span><br><span class="line">//     原博文地址： http://www.cnblogs.com/toutou/</span><br><span class="line">//     作      者: 请叫我头头哥</span><br><span class="line">// &lt;/copyright&gt; </span><br><span class="line">//------------------------------------------------------------------------------</span><br><span class="line">namespace CNBlogs.DesignPattern</span><br><span class="line">&#123;</span><br><span class="line">    using System;</span><br><span class="line">    using System.Configuration;</span><br><span class="line">    using System.Reflection;</span><br><span class="line"></span><br><span class="line">    using CNBlogs.DesignPattern.Common;</span><br><span class="line"></span><br><span class="line">    class Program</span><br><span class="line">    &#123;</span><br><span class="line">        static void Main(string[] args)</span><br><span class="line">        &#123;</span><br><span class="line">            // ***具体app.config配置如下*** //</span><br><span class="line">            //&lt;add key=&quot;assemblyName&quot; value=&quot;CNBlogs.DesignPattern.Common&quot;/&gt;</span><br><span class="line">            //&lt;add key=&quot;nameSpaceName&quot; value=&quot;CNBlogs.DesignPattern.Common&quot;/&gt;</span><br><span class="line">            //&lt;add key=&quot;typename&quot; value=&quot;SportEquipment&quot;/&gt;</span><br><span class="line">            // 创建一个工厂类的实例</span><br><span class="line">            string assemblyName = ConfigurationManager.AppSettings[&quot;assemblyName&quot;];</span><br><span class="line">            string fullTypeName = string.Concat(ConfigurationManager.AppSettings[&quot;nameSpaceName&quot;], &quot;.&quot;, ConfigurationManager.AppSettings[&quot;typename&quot;]);</span><br><span class="line">            AbstractEquipment factory = (AbstractEquipment)Assembly.Load(assemblyName).CreateInstance(fullTypeName);</span><br><span class="line">            CreateEquipment equipment = new CreateEquipment(factory);</span><br><span class="line">            equipment.ReadyEquipment();</span><br><span class="line">            Console.Read();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="外观模式"><a href="#外观模式" class="headerlink" title="外观模式"></a>外观模式</h1><p>外观模式：为外界调用提供一个统一的接口，把其他类中需要用到的方法提取出来，由外观类进行调用。然后在调用段实例化外观类，以间接调用需要的方法。这种方式形式上和代理模式有异曲同工之妙。</p>
+<h1 id="模板模式"><a href="#模板模式" class="headerlink" title="模板模式"></a>模板模式</h1><p>模板模式：其实就是抽象出各个具体操作类的公共操作方法，在子类重新实现,然后使用子类去实例化父类。这个模板类其实可以使用接口替换。事实上接口才是专门用来定义操作规范。当然，当有些公共方法，各个子类均有一致需求，此时就不应使用接口，使用抽象类。</p>
+<h1 id="状态模式"><a href="#状态模式" class="headerlink" title="状态模式"></a>状态模式</h1><p>一个方法的判断逻辑太长，就不容易修改。方法过长，其本质就是，就是本类在不同条件下的状态转移。状态模式，就是将这些判断分开到各个能表示当前状态的独立类中。</p>
+<h1 id="备忘录模式"><a href="#备忘录模式" class="headerlink" title="备忘录模式"></a>备忘录模式</h1><p>备忘录模式：事实上我觉得这个东西没什么用，按照这种方式进行备份，会因为值类型与引用类型的不同而导致数据丢失。</p>
+<h1 id="适配器模式"><a href="#适配器模式" class="headerlink" title="适配器模式"></a>适配器模式</h1><p>适配器模式：其实就是代理模式的一个变种，代码的编写方式都差不多。只是，使用这两种模式的出发点不一样，导致这两种模式产生了细微的差别。</p>
+<h1 id="组合模式"><a href="#组合模式" class="headerlink" title="组合模式"></a>组合模式</h1><p>当对象或系统之间出现部分与整体，或类似树状结构的情况时，考虑组合模式。相对装饰模式来说，这两个有异曲同工之妙，都强调对象间的组合，但是，装饰模式同时强调组合的顺序，而组合模式则是随意组合与移除。</p>
+<h1 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h1><p>能避免同一对象被反复实例化。比如说，访问数据库的连接对象就比普通对象实例化的时间要长;WCF中，维护服务器端远程对象的创建等，这类情况，很有必要用单例模式进行处理对象的实例化。</p>
+<p>单例模式也称为单件模式、单子模式，可能是使用最广泛的设计模式。其意图是保证一个类仅有一个实例，并提供一个访问它的全局访问点，该实例被所有程序模块共享。有很多地方需要这样的功能模块，如系统的日志输出，GUI应用必须是单鼠标，MODEM的联接需要一条且只需要一条电话线，操作系统只能有一个窗口管理器，一台PC连一个键盘。</p>
+<p>单例模式有许多种实现方法，在C++中，甚至可以直接用一个全局变量做到这一点，但这样的代码显的很不优雅。 使用全局对象能够保证方便地访问实例，但是不能保证只声明一个对象——也就是说除了一个全局实例外，仍然能创建相同类的本地实例。<br>《设计模式》一书中给出了一种很不错的实现，定义一个单例类，使用类的私有静态指针变量指向类的唯一实例，并用一个公有的静态方法获取该实例。</p>
+<p>单例模式通过类本身来管理其唯一实例，这种特性提供了解决问题的方法。唯一的实例是类的一个普通对象，但设计这个类时，让它只能创建一个实例并提供对此实例的全局访问。唯一实例类Singleton在静态成员函数中隐藏创建实例的操作。习惯上把这个成员函数叫做Instance()，它的返回值是唯一实例的指针。<br>定义如下：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class CSingleton</span><br><span class="line">&#123;</span><br><span class="line">private:</span><br><span class="line">	CSingleton()   //构造函数是私有的</span><br><span class="line">	&#123;</span><br><span class="line">	&#125;</span><br><span class="line">	static CSingleton *m_pInstance;</span><br><span class="line">public:</span><br><span class="line">	static CSingleton * GetInstance()</span><br><span class="line">	&#123;</span><br><span class="line">		if(m_pInstance == NULL)  //判断是否第一次调用</span><br><span class="line">			m_pInstance = new CSingleton();</span><br><span class="line">		return m_pInstance;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br>用户访问唯一实例的方法只有GetInstance()成员函数。如果不通过这个函数，任何创建实例的尝试都将失败，因为类的构造函数是私有的。GetInstance()使用懒惰初始化，也就是说它的返回值是当这个函数首次被访问时被创建的。这是一种防弹设计——所有GetInstance()之后的调用都返回相同实例的指针：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CSingleton* p1 = CSingleton :: GetInstance();</span><br><span class="line">CSingleton* p2 = p1-&gt;GetInstance();</span><br><span class="line">CSingleton &amp; ref = * CSingleton :: GetInstance();</span><br></pre></td></tr></table></figure><br>对GetInstance稍加修改，这个设计模板便可以适用于可变多实例情况，如一个类允许最多五个实例。</p>
+<p>单例类CSingleton有以下特征：</p>
+<ul>
+<li>它有一个指向唯一实例的静态指针m_pInstance，并且是私有的；</li>
+<li>它有一个公有的函数，可以获取这个唯一的实例，并且在需要的时候创建该实例；</li>
+<li>它的构造函数是私有的，这样就不能从别处创建该类的实例。</li>
+</ul>
+<p>大多数时候，这样的实现都不会出现问题。有经验的读者可能会问，m_pInstance指向的空间什么时候释放呢？更严重的问题是，该实例的析构函数什么时候执行？<br>如果在类的析构行为中有必须的操作，比如关闭文件，释放外部资源，那么上面的代码无法实现这个要求。我们需要一种方法，正常的删除该实例。<br>可以在程序结束时调用GetInstance()，并对返回的指针掉用delete操作。这样做可以实现功能，但不仅很丑陋，而且容易出错。因为这样的附加代码很容易被忘记，而且也很难保证在delete之后，没有代码再调用GetInstance函数。<br>一个妥善的方法是让这个类自己知道在合适的时候把自己删除，或者说把删除自己的操作挂在操作系统中的某个合适的点上，使其在恰当的时候被自动执行。<br>我们知道，程序在结束的时候，系统会自动析构所有的全局变量。事实上，系统也会析构所有的类的静态成员变量，就像这些静态成员也是全局变量一样。利用这个特征，我们可以在单例类中定义一个这样的静态成员变量，而它的唯一工作就是在析构函数中删除单例类的实例。如下面的代码中的CGarbo类（Garbo意为垃圾工人）：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">class CSingleton</span><br><span class="line">&#123;</span><br><span class="line">private:</span><br><span class="line">	CSingleton()</span><br><span class="line">	&#123;</span><br><span class="line">	&#125;</span><br><span class="line">	static CSingleton *m_pInstance;</span><br><span class="line">	class CGarbo   //它的唯一工作就是在析构函数中删除CSingleton的实例</span><br><span class="line">	&#123;</span><br><span class="line">	public:</span><br><span class="line">		~CGarbo()</span><br><span class="line">		&#123;</span><br><span class="line">			if(CSingleton::m_pInstance)</span><br><span class="line">				delete CSingleton::m_pInstance;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;;</span><br><span class="line">	static CGarbo Garbo;  //定义一个静态成员变量，程序结束时，系统会自动调用它的析构函数</span><br><span class="line">public:</span><br><span class="line">	static CSingleton * GetInstance()</span><br><span class="line">	&#123;</span><br><span class="line">		if(m_pInstance == NULL)  //判断是否第一次调用</span><br><span class="line">			m_pInstance = new CSingleton();</span><br><span class="line">		return m_pInstance;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br>类CGarbo被定义为CSingleton的私有内嵌类，以防该类被在其他地方滥用。<br>程序运行结束时，系统会调用CSingleton的静态成员Garbo的析构函数，该析构函数会删除单例的唯一实例。<br>使用这种方法释放单例对象有以下特征：</p>
+<ul>
+<li>在单例类内部定义专有的嵌套类；</li>
+<li>在单例类内定义私有的专门用于释放的静态成员；</li>
+<li>利用程序在结束时析构全局变量的特性，选择最终的释放时机；</li>
+<li>使用单例的代码不需要任何操作，不必关心对象的释放。</li>
+</ul>
+<p>但是添加一个类的静态对象，总是让人不太满意，所以有人用如下方法来重新实现单例和解决它相应的问题，代码如下：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">class CSingleton</span><br><span class="line">&#123;</span><br><span class="line">private:</span><br><span class="line">	CSingleton()   //构造函数是私有的</span><br><span class="line">	&#123;</span><br><span class="line">	&#125;</span><br><span class="line">public:</span><br><span class="line">	static CSingleton &amp; GetInstance()</span><br><span class="line">	&#123;</span><br><span class="line">		static CSingleton instance;   //局部静态变量</span><br><span class="line">		return instance;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br>使用局部静态变量，非常强大的方法，完全实现了单例的特性，而且代码量更少，也不用担心单例销毁的问题。<br>但使用此种方法也会出现问题，当如下方法使用单例时问题来了，<br><code>Singleton singleton = Singleton :: GetInstance();</code><br>这么做就出现了一个类拷贝的问题，这就违背了单例的特性。产生这个问题原因在于：编译器会为类生成一个默认的构造函数，来支持类的拷贝。<br>最后没有办法，我们要禁止类拷贝和类赋值，禁止程序员用这种方式来使用单例，当时领导的意思是GetInstance()函数返回一个指针而不是返回一个引用，函数的代码改为如下：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">class CSingleton</span><br><span class="line">&#123;</span><br><span class="line">private:</span><br><span class="line">	CSingleton()   //构造函数是私有的</span><br><span class="line">	&#123;</span><br><span class="line">	&#125;</span><br><span class="line">public:</span><br><span class="line">	static CSingleton * GetInstance()</span><br><span class="line">	&#123;</span><br><span class="line">		static CSingleton instance;   //局部静态变量</span><br><span class="line">		return &amp;instance;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br>但我总觉的不好，为什么不让编译器不这么干呢。这时我才想起可以显示的声明类拷贝的构造函数，和重载 = 操作符，新的单例类如下：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class CSingleton</span><br><span class="line">&#123;</span><br><span class="line">private:</span><br><span class="line">	CSingleton()   //构造函数是私有的</span><br><span class="line">	&#123;</span><br><span class="line">	&#125;</span><br><span class="line">	CSingleton(const CSingleton &amp;);</span><br><span class="line">	CSingleton &amp; operator = (const CSingleton &amp;);</span><br><span class="line">public:</span><br><span class="line">	static CSingleton &amp; GetInstance()</span><br><span class="line">	&#123;</span><br><span class="line">		static CSingleton instance;   //局部静态变量</span><br><span class="line">		return instance;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br>关于<code>Singleton(const Singleton);</code>和 <code>Singleton &amp; operate = (const Singleton&amp;);</code>函数，需要声明成私有的，并且只声明不实现。这样，如果用上面的方式来使用单例时，不管是在友元类中还是其他的，编译器都是报错。<br>不知道这样的单例类是否还会有问题，但在程序中这样子使用已经基本没有问题了。</p>
+<p>考虑到线程安全、异常安全，可以做以下扩展<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">class Lock</span><br><span class="line">&#123;</span><br><span class="line">private:       </span><br><span class="line">	CCriticalSection m_cs;</span><br><span class="line">public:</span><br><span class="line">	Lock(CCriticalSection  cs) : m_cs(cs)</span><br><span class="line">	&#123;</span><br><span class="line">		m_cs.Lock();</span><br><span class="line">	&#125;</span><br><span class="line">	~Lock()</span><br><span class="line">	&#123;</span><br><span class="line">		m_cs.Unlock();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line">class Singleton</span><br><span class="line">&#123;</span><br><span class="line">private:</span><br><span class="line">	Singleton();</span><br><span class="line">	Singleton(const Singleton &amp;);</span><br><span class="line">	Singleton&amp; operator = (const Singleton &amp;);</span><br><span class="line"> </span><br><span class="line">public:</span><br><span class="line">	static Singleton *Instantialize();</span><br><span class="line">	static Singleton *pInstance;</span><br><span class="line">	static CCriticalSection cs;</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line">Singleton* Singleton::pInstance = 0;</span><br><span class="line"> </span><br><span class="line">Singleton* Singleton::Instantialize()</span><br><span class="line">&#123;</span><br><span class="line">	if(pInstance == NULL)</span><br><span class="line">	&#123;   //double check</span><br><span class="line">		Lock lock(cs);           //用lock实现线程安全，用资源管理类，实现异常安全</span><br><span class="line">		//使用资源管理类，在抛出异常的时候，资源管理类对象会被析构，析构总是发生的无论是因为异常抛出还是语句块结束。</span><br><span class="line">		if(pInstance == NULL)</span><br><span class="line">		&#123;</span><br><span class="line">			pInstance = new Singleton();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return pInstance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>之所以在Instantialize函数里面对pInstance 是否为空做了两次判断，因为该方法调用一次就产生了对象，pInstance == NULL 大部分情况下都为false，如果按照原来的方法，每次获取实例都需要加锁，效率太低。而改进的方法只需要在第一次 调用的时候加锁，可大大提高效率。</p>
+<h1 id="迭代器模式"><a href="#迭代器模式" class="headerlink" title="迭代器模式"></a>迭代器模式</h1><p>提供一种方法访问一个容器对象中各个元素，而又不需暴露该对象的内部细节。</p>
+<p>Foreach就是这种模式应用的代表。</p>
+<h1 id="职责链模式"><a href="#职责链模式" class="headerlink" title="职责链模式"></a>职责链模式</h1><p>职责链模式：就是一个将请求或命令进行转发的流程，类似工作流。并且，也非常类似状态模式，它们共同的特点就是将一个复杂的判断逻辑，转移到各个子类，然后在由子类进行简单判断。</p>
+<p>状态模式与职责链模式的区别：状态模式是让各个状态对象自己知道其下一个处理的对象是谁，即在编译时便设定好了的；而职责链模式中的各个对象并不指定其下一个处理的对象到底是谁，只有在客户端才设定。</p>
+<h1 id="命令模式"><a href="#命令模式" class="headerlink" title="命令模式"></a>命令模式</h1><p>当有客户端发送了一系列的命令或请求，去要求某个对象实现什么操作，可使用命令模式，相当于多个命令发给一个对象。</p>
+<p>这一点和观察者模式非常的类似。观察者模式也是某个对象，发出消息，然后由中间对象通知观察者然后去做什么，封装的是要执行操作的对象。而命令模式，则是将各个操作封装成类，然后告知某个对象该做什么。两者的区别是封装的角度不同。</p>
+<h1 id="桥接模式"><a href="#桥接模式" class="headerlink" title="桥接模式"></a>桥接模式</h1><p>依据合成/聚合原则，优先使用类之间的不同组合，来实现各个类要表现的功能,而不是使用继承。比如说：继承会延续父类的功能，然而，并不是所有的子类都需要这样的功能，但是抽象出的东西在父类，导致子类又必须要实现它，这样，父类就越来越庞大，子类又多了很多不必要的东西。因此，桥接模式更强调类之间的组合从而实现解耦。</p>
+<p>对比组合模式，它更强调的是部分与整体间的组合，桥接模式强调的是平行级别上不同类的组合。</p>
+<h1 id="解释器模式"><a href="#解释器模式" class="headerlink" title="解释器模式"></a>解释器模式</h1><p>举例：写好了C#代码，VB代码，此时需要个编译器来编译。这时，这个编译器就相当于解释器，解释好了交给CPU执行。</p>
+<p>解释器跟适配器模式有点类似，但是，适配器模式不需要预先知道要适配的规则，解释器是根据规则去执行解释。</p>
+<h1 id="享元模式"><a href="#享元模式" class="headerlink" title="享元模式"></a>享元模式</h1><p>享元模式其实是为了避免创建过多的数据对象。比如此列：在象棋中只有红黑双方，红棋子只是红棋中的一颗，很多红棋其实可以使用一个红棋对象表示即可，在外部只需公开该棋的状态即可区分那个红棋，从而达到减少内存消耗的目的。</p>
+<h1 id="中介者模式"><a href="#中介者模式" class="headerlink" title="中介者模式"></a>中介者模式</h1><p>中介者模式：中介者类唯一要干的事情就是给各个成员对象发出通知。因此，中介者事先就应该知道有哪些成员。</p>
+<p>中介者模式和代理模式，观察者模式非常的像。但是其它两种模式在调用的时候，并不需要事先设置那个类被代理，或是事先那些对象需要被通知。</p>
+<h1 id="访问者模式"><a href="#访问者模式" class="headerlink" title="访问者模式"></a>访问者模式</h1><p>在不改变原有代码的结构上，又想去影响原来的类，或是访问原来类的成员，此时就可以使用访问者模式。但需要注意的是：事先需要构造好那些要访问的对象的对象结构。这个结构在访问者类中去维护。</p>
+<h1 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a>观察者模式</h1><p>就是消息订阅—发布模式。本来原始的状况是需要在观察者类内部设置需要通知的对象。结果现在出现了事件。定义委托来通知其他对象，显得更简洁。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag"># C++</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/08/Linux%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E7%9A%84%E6%96%B9%E5%BC%8F/" rel="next" title="Linux进程间通信的方式">
+                <i class="fa fa-chevron-left"></i> Linux进程间通信的方式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/14/%E6%8A%8A%E6%8F%A1linux%E5%86%85%E6%A0%B8%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3/" rel="prev" title="把握Linux内核设计思想">
+                把握Linux内核设计思想 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">简单工厂模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">策略模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F-%E5%B1%9E%E4%BA%8E%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">工厂方法模式(属于工厂模式)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A3%85%E9%A5%B0%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">装饰模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="nav-number">5.</span> <span class="nav-text">代理模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F"><span class="nav-number">6.</span> <span class="nav-text">原型模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F"><span class="nav-number">7.</span> <span class="nav-text">建造者模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F"><span class="nav-number">8.</span> <span class="nav-text">抽象工厂模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F"><span class="nav-number">9.</span> <span class="nav-text">外观模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E6%9D%BF%E6%A8%A1%E5%BC%8F"><span class="nav-number">10.</span> <span class="nav-text">模板模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F"><span class="nav-number">11.</span> <span class="nav-text">状态模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F"><span class="nav-number">12.</span> <span class="nav-text">备忘录模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F"><span class="nav-number">13.</span> <span class="nav-text">适配器模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F"><span class="nav-number">14.</span> <span class="nav-text">组合模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F"><span class="nav-number">15.</span> <span class="nav-text">单例模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F"><span class="nav-number">16.</span> <span class="nav-text">迭代器模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F"><span class="nav-number">17.</span> <span class="nav-text">职责链模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F"><span class="nav-number">18.</span> <span class="nav-text">命令模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F"><span class="nav-number">19.</span> <span class="nav-text">桥接模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E9%87%8A%E5%99%A8%E6%A8%A1%E5%BC%8F"><span class="nav-number">20.</span> <span class="nav-text">解释器模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F"><span class="nav-number">21.</span> <span class="nav-text">享元模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F"><span class="nav-number">22.</span> <span class="nav-text">中介者模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E8%80%85%E6%A8%A1%E5%BC%8F"><span class="nav-number">23.</span> <span class="nav-text">访问者模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F"><span class="nav-number">24.</span> <span class="nav-text">观察者模式</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

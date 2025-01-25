@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="zn-ch">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="第一章 引言 BPF提供了一种在各种内核时间和应用程序事件发生时运行一段小程序的机制。由指令集、存储对象和辅助函数等几部分组成。应用领域分别是网络、可观测性和安全。 跟踪(tracing)是基于事件记录。嗅探(snoop)、时间记录和跟踪，通常指的是一回事。 采样(sampling)：通过获取全部观测量的子集来描绘目标的大致图像；这也被称为生成性能剖析样本或profiling。有一个BPF工具就叫">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BPF之巅--洞悉Linux系统和应用性能">
+<meta property="og:url" content="http://yoursite.com/2023/09/04/bpf%E4%B9%8B%E5%B7%85/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="第一章 引言 BPF提供了一种在各种内核时间和应用程序事件发生时运行一段小程序的机制。由指令集、存储对象和辅助函数等几部分组成。应用领域分别是网络、可观测性和安全。 跟踪(tracing)是基于事件记录。嗅探(snoop)、时间记录和跟踪，通常指的是一回事。 采样(sampling)：通过获取全部观测量的子集来描绘目标的大致图像；这也被称为生成性能剖析样本或profiling。有一个BPF工具就叫">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/2023/09/04/bpf%E4%B9%8B%E5%B7%85/1693795676130.png">
+<meta property="og:image" content="http://yoursite.com/2023/09/04/bpf%E4%B9%8B%E5%B7%85/1693795734207.png">
+<meta property="article:published_time" content="2023-09-04T02:41:00.000Z">
+<meta property="article:modified_time" content="2023-09-07T02:48:02.585Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2023/09/04/bpf%E4%B9%8B%E5%B7%85/1693795676130.png">
+
+<link rel="canonical" href="http://yoursite.com/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zn-ch'
+  };
+</script>
+
+  <title>BPF之巅--洞悉Linux系统和应用性能 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hao Yu's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">The program monkey was eaten by the siege lion.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zn-ch">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Hao Yu">
+      <meta itemprop="description" content="Introduce something interesting and recode learning process, some articles are written by others, the original link has been given as much as possible, thanks to the original author">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          BPF之巅--洞悉Linux系统和应用性能
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2023-09-04 10:41:00" itemprop="dateCreated datePublished" datetime="2023-09-04T10:41:00+08:00">2023-09-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-09-07 10:48:02" itemprop="dateModified" datetime="2023-09-07T10:48:02+08:00">2023-09-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="第一章-引言"><a href="#第一章-引言" class="headerlink" title="第一章 引言"></a>第一章 引言</h1><ul>
+<li>BPF提供了一种在各种内核时间和应用程序事件发生时运行一段小程序的机制。由指令集、存储对象和辅助函数等几部分组成。应用领域分别是网络、可观测性和安全。</li>
+<li>跟踪(tracing)是基于事件记录。嗅探(snoop)、时间记录和跟踪，通常指的是一回事。</li>
+<li>采样(sampling)：通过获取全部观测量的子集来描绘目标的大致图像；这也被称为生成性能剖析样本或profiling。有一个BPF工具就叫profile，它基于计时器来对运行中的代码定时采样。</li>
+<li>可观测性(observability)：通过全面观测来理解一个系统，可以实现这一目标的工具可以归类为可观测工具。</li>
+<li>BCC(BPF编辑器集合，BPF Compiler Collection)是最早用于开发BPF跟踪程序的高级框架。它提供了一个编写内核BPF程序的C语言环境，同时还提供了其他高级语言环境来实现用户端接口。</li>
+<li>bpftrace是一个新近出现的前端，它提供了专门用于创建BPF工具的高级语言支持。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bpftrace -e &#x27;tracepoint:syscalls:sys_enter_open &#123; printf(&quot;%s %s\n&quot;,comm,str(args-&gt;filename)); &#125;&#x27;</span><br><span class="line">bpftrace -l &#x27;tracepoint:syscalls:sys_enter_open*&#x27;</span><br><span class="line">bpftrace -e &#x27;tracepoint:syscalls:sys_enter_open*&#123;@[probe]=count();&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>bpftrace在编写功能强大的单行程序、短小的脚本方面甚为理想；BCC则更适合开发复杂的脚本和作为后台进程使用，它还可以调试其他库的支持。</li>
+<li>动态插桩：kprobes和uprobes。可能存在由于软件改名而动态插桩不可用</li>
+<li>静态插桩：tracepoint和USDT。将稳定的事件名字编码到软件代码中</li>
+</ul>
+<p><img src="1693795676130.png" alt="/img/bcc_tracing_tools"></p>
+<p><img src="1693795734207.png" alt="/img/image-20230904104906639"></p>
+<h1 id="第二章-扩展版BPF"><a href="#第二章-扩展版BPF" class="headerlink" title="第二章 扩展版BPF"></a>第二章 扩展版BPF</h1><ul>
+<li><p>BPF指令通过BPF验证器验证，再由BPF虚拟机执行。BPF虚拟机的实现既包括一个解释器【非即时编译】，又包括一个JIT编译器：JIT编译器负责生成处理器可直接执行的机器指令。验证器会拒绝那些不安全的操作，这包括针对无界循环的检查。BPF程序必须在有限时间内完成。</p>
+</li>
+<li><p>BPF可以利用辅助函数获取内核状态，利用BPF映射表进行存储。BPF程序在特定时间发生时执行，包括kprobes、uprobes和跟踪点等信息。</p>
+</li>
+<li><p>BPF具有高效率和生产环境安全性等特点，它已经内置在Linux内核中。有了BPF，就可以在生产环境中直接运行这些工具，而无需增加新的内核组件。</p>
+</li>
+<li><p>BPF指令集查看：bpftool</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bpftool prog show</span><br><span class="line">bpftool prog dump xlated id 36</span><br><span class="line">bpftool prog dump xlated id 37 opcodes</span><br></pre></td></tr></table></figure>
+<ul>
+<li>bpftrace查看BPF指令集</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bpftrace -v /usr/share/bpftrace/tools/biolatency.bt</span><br></pre></td></tr></table></figure>
+<ul>
+<li>调用栈回溯<ul>
+<li>基于栈指针的调用栈回溯</li>
+<li>调试信息</li>
+<li>最后分支记录LBR，目前BPF不支持</li>
+<li>ORC：oops回滚能力</li>
+<li>符号：调用栈信息目前在内核中是以地址数组形式记录的，这些地址可以通过用户态的程序翻译为符号（比如函数的名字）</li>
+</ul>
+</li>
+<li>火焰图<ul>
+<li>Linux的perf剖析器将其样本摘要为调用树格式，显示每个分支所占的百分比。</li>
+<li>BCC的profile工具则采用了另外一种摘要方式：对每个独特的调用栈分别计数。</li>
+</ul>
+</li>
+<li>事件源<ul>
+<li>kprobes：内核动态插桩支持。可以对任何内核函数进行插桩，它还可以对函数内部的指令进行插桩。kretprobes可以用来对内核函数的返回进行插桩以获得返回值。当用kprobes和kretprobes对同一个函数进行插桩时，可以使用时间戳来记录函数执行时长。过程如下<ul>
+<li>将在要插桩的目标地址中的字节内容复制并保存（为的是给单步断点指令腾出位置）</li>
+<li>以单步中断指令覆盖目标地址：在x86_64上是int3指令。（如果kprobes开启了优化，则使用jmp指令）</li>
+<li>当指令流执行到断点时，断点处理函数会检查这个断点是否是由kprobes注册的，如果是，就会执行kprobes处理函数。</li>
+<li>原始的指令会接着执行，指令流继续。</li>
+<li>当不再需要kprobes时，原始的字节内容会被复制回目标地址上，这样这些指令就回到了它们的初始状态。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bpftrace -e &#x27;kprobe:vfs_* &#123;@[probe]=count();&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>uprobes：用户态程序动态插桩。uprobes可以在用户态程序的函数入口、特定偏移处，以及函数返回处进行插桩。<ul>
+<li>过程：和kprobes类似。将一个快速断点指令插入目标指令处，该指令将执行转交给uprobes处理函数。当不再需要uprobes时，目标指令会恢复为原来的样子。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">perf top </span><br><span class="line">find / -name &#x27;libc-2.17.so&#x27;</span><br><span class="line"># /usr/lib64/libc-2.17.so</span><br><span class="line">bpftrace -l &#x27;uprobe:/usr/lib64/libc-2.17.so:gethost*&#x27;</span><br><span class="line">bpftrace -e &#x27;uprobe:/usr/lib64/libc-2.17.so:gethost*&#123;@[probe]=count();&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>跟踪点tracepoints：对内核进行静态插桩。内核开发者在内核函数中的特定逻辑位置处，有意放置了这些插桩点；然后这些跟踪点会被编译到内核的二进制文件中。原理如下：<ul>
+<li>在内核编译阶段会在跟踪点位置插入一条不做任何具体工作的指令。在x86_64架构上，这是一个5字节nop指令。这个长度的选择是为了确保以后可以将它替换为一个5字节的jump指令。</li>
+<li>在函数尾部会插入一个跟踪点处理函数，也叫做蹦床函数。这个函数会遍历一个存储跟踪点探针回调函数的数组。（之所以叫蹦床函数，是因为在执行过程中函数会跳入，然后再跳出这个处理函数）。</li>
+<li>在执行过程中,当某个跟踪器启用跟踪点时（该跟踪点可能已经被其他跟踪器所启用）<ul>
+<li>在跟踪点回调函数数组中插入一条新的跟踪器回调函数，以RCU形式进行同步更新。</li>
+<li>如果之前跟踪点处于禁用状态，nop指令地址会重写为跳转到蹦床函数的指令。</li>
+</ul>
+</li>
+<li>当跟踪器禁用某个跟踪点时：<br>  在跟踪点回调函数数组中删除该跟踪器的回调函数，并且以RCU形式进行同步更新。<br>  如果最后一个回调函数也被去除了，那么jmp指令再重写为nop指令。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>RCU(Read-Copy Update)机制：首先将需要修改的内容复制出一份副本，然后在副本上进行修改操作。在写者进行修改操作的过程中，旧数据没有做任何更新，不会产生读写竞争，因此依然可以被读者并行访问。当写者修改完成后，写者直接将新数据内存地址替换掉旧数据的内存地址，由于内存地址替换操作是原子的，因此可以保证读写不会产生冲突。内存地址替换后，原有读者访问旧数据，新的读者将访问新数据。当原有读者访问完旧数据，进入静默期后，旧数据将被写者删除回收。当然，通常写者只进行更新、删除指针操作，旧数据内存的回收由另一个线程完成。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bpftrace -e &#x27;tracepoint:sched:sched_process_exec &#123;printf(&quot;exec by %s\n&quot;,comm);&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>USDT:用户预定义静态跟踪提供了一个用户空间版的跟踪点机制。需要被添加到源代码并编译到最终的二进制文件中，在插桩点留下nop指令，在ELF notes段中存放元数据。<ul>
+<li>原理：当编译应用程序时，在USDT探针的地址放置一个nop指令。在插桩时，这个地址会由内核使用uprobes动态将其修改为一个断点指令。</li>
+</ul>
+</li>
+<li>PMC性能监控计数器。<ul>
+<li>模式<ul>
+<li>计数：PMC能够跟踪事件发生的频率。</li>
+<li>溢出采样：PMC在所监控的事件发生到一定次数时通知内核，这样内核可以获得额外的状态。监控的事件可能会以每秒百万、亿级别的频率发生，如果对每次事件都进行中断会导致系统性能下降到不可用。解决方案就是利用一个可编程的计数器进行采样，具体来说，是当计数器溢出时就向内核发送信号（比如每10000次LLC缓存未命中事件，或者每百万次阻塞的指令时钟周期）。</li>
+</ul>
+</li>
+<li>采样模式对BPF跟踪来说更值得关注，因为它产生的事件给BPF程序提供了执行的时机。BCC和bpftrace都支持PMC事件跟踪。</li>
+</ul>
+</li>
+<li>perf_events：perf所依赖的采样和跟踪机制。</li>
+</ul>
+<h1 id="第三章-性能分析"><a href="#第三章-性能分析" class="headerlink" title="第三章 性能分析"></a>第三章 性能分析</h1><ul>
+<li>目标：改进最终用户的体验以及降低运行成本。</li>
+<li>目标量化：延迟、速率、吞吐量、利用率、成本。</li>
+<li>业务负载画像：理解实际运行的业务负载。推荐步骤如下：<ul>
+<li>负载是谁产生的（比如，进程ID、用户ID、进程名、IP地址）？</li>
+<li>负载为什么会产生（代码路径、调用栈、火焰图）？</li>
+<li>负载的组成是什么（IOPS、吞吐量、负载类型）？</li>
+<li>负载怎样随着时间发生变化（比较每个周期的摘要信息）？</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vfsstat</span><br><span class="line">bpftrace -e &#x27;kprobe:vfs_read &#123;@[comm] = count();&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>下钻分析：从一个指标开始，然后将这个指标拆分成多个组成部分，再将最大的组件进一步拆分为更小的组件，不断重复这个过程直到定位出一个或多个根因。推荐步骤如下<ul>
+<li>从业务最高层级开始分析</li>
+<li>检查下一层次的细节</li>
+<li>挑出最感兴趣的部分或者线索。</li>
+<li>如果问题没有解决，跳转到第二步。</li>
+</ul>
+</li>
+<li>USE方法论：针对每一个资源，分别去检查：使用率、饱和度、错误。</li>
+<li>检查清单发：列出一系列工具和指标，用于对照运行和检查。</li>
+<li>Linux60秒分析</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">uptime # 平均负载</span><br><span class="line">dmesg|tail # 系统日志</span><br><span class="line">vmstat 1 # r CPU正在执行和等待执行的进程数量。不包括I/O</span><br><span class="line">mpstat -P ALL 1 # 将每个CPU分解到各个状态下的时间打印出来。</span><br><span class="line">pidstat 1 # 按每个进程展示CPU的使用情况</span><br><span class="line">iostat -xz 1 # 显示存储设备的I/O指标</span><br><span class="line">free -m</span><br><span class="line">sar -n DEV 1 # 网络设备指标</span><br><span class="line">sar -n TCP,ETCP 1 # TCP指标和TCP错误信息。active/s 本地发起的TCP连接数/s。passive/s 远端发起的TCP连接数/s。 retrans/s TCP重传数/s</span><br><span class="line">top</span><br></pre></td></tr></table></figure>
+<p>BCC工具检查列表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">execsnoop # 跟踪execve系统调用</span><br><span class="line">opensnoop # 跟踪open系统调用,包括打开文件的路径、打开操作是否成功</span><br><span class="line">ext4slower(或者brtfs*、xfs*、zfs*) # 跟踪ext4文件系统的常见操作</span><br><span class="line">biolatency # 跟踪磁盘I/O延迟</span><br><span class="line">biosnoop # 将每一次磁盘I/O请求打印出来，包含延迟之类的细节信息。</span><br><span class="line">cachestat # 展示文件系统缓存的统计信息。</span><br><span class="line">tcpconnect</span><br><span class="line">tcpaccept</span><br><span class="line">tcpretrans</span><br><span class="line">runqlat # 线程等待CPU运行的时间进行统计</span><br><span class="line">profile # CPU剖析器，可以用来理解那些代码路径消耗了CPU资源。周期性的对调用栈进行采样，然后将消重后的调用栈连同出现的次数一起打印出来。</span><br></pre></td></tr></table></figure>
+<h1 id="第四章-BCC"><a href="#第四章-BCC" class="headerlink" title="第四章 BCC"></a>第四章 BCC</h1><ul>
+<li>funccount:对事件—特别是函数调用—进行计数</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">funccount [-h] [-p PID] [-i INTERVAL] [-d DURATION] [-T] [-r] [-D] pattern</span><br><span class="line"></span><br><span class="line">Count all malloc() calls in libc:</span><br><span class="line"># funccount c:malloc</span><br><span class="line"></span><br><span class="line">展示每秒块I/O事件的数量</span><br><span class="line"># funccount -i 1 &#x27;t:block:*&#x27;</span><br><span class="line">展示每秒libc中getaddrinfo()（域名解析）函数的调用次数</span><br><span class="line"># funccount -i 1 c:getaddrinfo</span><br><span class="line">对libgo中全部的“os.*”调用进行计数</span><br><span class="line"># funccount &#x27;go:os.*&#x27;</span><br><span class="line">u:lib:name 对lib库中名为name的USDT探针进行插桩</span><br><span class="line">path:name 对位于path路径下文件中的用户态函数name()进行插桩</span><br></pre></td></tr></table></figure>
+<ul>
+<li>stackcount:对导致某事件发生的函数调用栈进行计数。stackcount可以回答如下问题：<ul>
+<li>某个事件为什么会被调用？调用的代码路径是什么？</li>
+<li>有哪些不同的代码路径会调用该事件，它们的调用频次如何。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">火焰图</span><br><span class="line">stackcount -fP -D 10 ktime_get&gt;out.stackcount01.txt</span><br><span class="line">git clone https://github.com/brendangregg/FlameGraph.git</span><br><span class="line">cd FlameGraph</span><br><span class="line">/Users/junmo/www/FlameGraph/flamegraph.pl --hash --bgcolors=grey &lt; out.stackcount01.txt &gt; out.stackcount01.svg</span><br><span class="line"></span><br><span class="line">对创建块I/O的函数调用栈进行计数</span><br><span class="line">stackcount t:block:block_rq_insert</span><br><span class="line">对发送IP数据包的调用栈进行计数</span><br><span class="line">stackcount ip_output</span><br><span class="line">对导致线程阻塞并且导致脱离CPU的调用栈进行计数</span><br><span class="line">stackcount t:sched:sched_switch</span><br><span class="line">对导致系统调用read()的调用栈进行计数</span><br><span class="line">stackcount t:syscalls:sys_enter_read</span><br></pre></td></tr></table></figure>
+<ul>
+<li>trace是一个BCC多用途工具，可以针对多个数据源进行每个事件的跟踪，支持kprobes、uprobes、跟踪点和USDT探针。它可以回答如下解决问题：<ul>
+<li>当某个内核态/用户态函数被调用时，调用参数是什么？</li>
+<li>这个函数的返回值是什么？调用失败了吗？</li>
+<li>这个函数是如何被调用的？相应的用户态或内核态函数调用栈是什么？</li>
+<li>因为trace会对每个事件产生一行输出，因此它比较适用于低频事件。对于高频事件，可以采用过滤表达式，只打印感兴趣的事件。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># arg2是do_sys_open()函数的第二个参数,打印文件名</span><br><span class="line">trace &#x27;do_sys_open &quot;%s&quot;,arg2&#x27; </span><br><span class="line"># 跟踪内核函数do_sys_open(),并打印返回值</span><br><span class="line">trace &#x27;r::do_sys_open &quot;ret: %d&quot;, retval&#x27;</span><br><span class="line"># 跟踪do_nanosleep()，并且打印用户态的调用栈</span><br><span class="line">trace -U &#x27;do_nanosleep &quot;mode: %d&quot;,arg2&#x27;</span><br><span class="line"># 跟踪通过pam库进行身份鉴别的请求</span><br><span class="line">trace &#x27;pam:pam_start &quot;%s: %s&quot;,arg1,arg2&#x27;</span><br><span class="line"></span><br><span class="line"># bcc使用系统头文件和内核头文件来获取结构体信息</span><br><span class="line">trace &#x27;do_nanosleep(struct hrtimer_sleeper *t) &quot;task: %x&quot;,t-&gt;task&#x27;</span><br><span class="line">trace -I &#x27;net/sock.h&#x27; &#x27;udpv6_sendmsg(struct sock *sk) (sk-&gt;sk_dport == 13568)&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>argdist:针对函数调用参数分析的多用途工具<ul>
+<li><code>$retval</code>:函数的返回值</li>
+<li><code>$latency</code>:从进入到返回的时长，单位是纳秒</li>
+<li><code>$entry(param)</code>:在探针进入(entry)时param的值。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">argdist -H &#x27;r::__tcp_select_window():int:$retval&#x27;</span><br><span class="line"># 将内核函数vfs_read的返回值以直方图的形式打印出来</span><br><span class="line">argdist -H &#x27;r::vfs_read()&#x27;</span><br><span class="line"># 以直方图对pid为1005的进程的用户态调用libc的read()函数的返回值（size）进行统计输出</span><br><span class="line">argdist -p 1005 -H &#x27;r:c:read()&#x27;</span><br><span class="line"># Aggregate interrupts by interrupt request (IRQ)</span><br><span class="line">argdist -C &#x27;t:irq:irq_handler_entry():int:args-&gt;irq&#x27;</span><br></pre></td></tr></table></figure>
+<h1 id="第五章-bpftrace"><a href="#第五章-bpftrace" class="headerlink" title="第五章 bpftrace"></a>第五章 bpftrace</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bpftrace -e &#x27;tracepoint:syscalls:sys_enter_execve &#123;printf(&quot;%s -&gt; %s\n&quot;,comm,str(args-&gt;filename))&#125;&#x27;</span><br><span class="line"># 展示新进程的创建，以及参数信息</span><br><span class="line">bpftrace -e &#x27;tracepoint:syscalls:sys_enter_execve &#123;join(args-&gt;argv)&#125;&#x27;</span><br><span class="line"># 展示进程的磁盘I/O尺寸</span><br><span class="line">bpftrace -e &#x27;tracepoint:block:block_rq_issue &#123;printf(&quot;%d %s %d\n&quot;,pid,comm,args-&gt;bytes)&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>探针格式：<ul>
+<li>kprobe对内核进行插桩，只需要一个标识符：内核函数名</li>
+<li>uprobe对用户态函数进行插桩，需要两个标识符：二进制文件的路径和函数名</li>
+<li>可以使用逗号将多个探针并列，指向同一个执行动作。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/bpftrace</span><br><span class="line">BEGIN</span><br><span class="line">&#123;</span><br><span class="line">        printf(&quot;Hello world!\n&quot;);</span><br><span class="line">&#125;</span><br><span class="line">END</span><br><span class="line">&#123;</span><br><span class="line">        printf(&quot;Game over!\n&quot;);</span><br><span class="line">&#125;</span><br><span class="line">kprobe:vfs_read</span><br><span class="line">&#123;</span><br><span class="line">        @start[tid] = nsecs;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">kretprobe:vfs_read</span><br><span class="line">/@start[tid]/ // 过滤器</span><br><span class="line">&#123;</span><br><span class="line">        $duration_us = (nsecs - @start[tid]) / 1000;</span><br><span class="line">        @us[pid,comm] = hist($duration_us);</span><br><span class="line">        delete(@start[tid]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>变量</p>
+<ul>
+<li>内置变量：由bpftrace预先定义好，通常是一个只读的信息源</li>
+<li>临时变量：被用于临时计算，字首加”$”作为前缀。</li>
+<li>映射表变量：使用BPF映射表来存储对象，名字带有”@”前缀。它们可以用作全局存储，在不同动作之间传递数据。</li>
+</ul>
+</li>
+<li><p>探针类型</p>
+<ul>
+<li>内核静态插桩点 tracepoint[t]</li>
+<li>用户静态定义插桩点 usdt[U]</li>
+<li>内核动态函数插桩 kprobe[k]</li>
+<li>内核动态函数返回值插桩 kretprobe[kr]</li>
+<li>用户态动态函数插桩 uprobe[u]</li>
+<li>用户态动态函数返回值插桩 uretprobe[ur]</li>
+<li>内核软件事件 software[s]<ul>
+<li>cpu-clock[cpu] CPU真实时间，默认采样间隔1000000</li>
+<li>task-clock CPU任务时间，默认采样间隔1000000</li>
+<li>page-faults[faults] 缺页中断，默认采样间隔100</li>
+<li>context-switches[cs] 上下文切换，默认采样间隔100</li>
+<li>略…</li>
+</ul>
+</li>
+<li>硬件基于计数器的插桩 hardware[h]</li>
+<li>对全部CPU进行时间采样 profile[p]<ul>
+<li>profile:[hz|s|ms|us]:rate；对于全部CPU激活</li>
+</ul>
+</li>
+<li>周期性报告(从一个CPU上) interval[i]<ul>
+<li>interval:[s:ms]:rate ;对于一个CPU</li>
+</ul>
+</li>
+<li>BEGIN bpftrace启动</li>
+<li>END bpftrace退出</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bpftrace -lv tracepoint:syscalls:sys_enter_read</span><br></pre></td></tr></table></figure>
+<ul>
+<li>bpftrace控制流<ul>
+<li>过滤器 probe /filter/ {action}</li>
+<li>三元运算符 test ? true_statement : false_statement</li>
+<li>if 语句 if(test){} else{}</li>
+<li>循环展开 unroll(count){statements}</li>
+</ul>
+</li>
+<li>bpftrace内置变量<ul>
+<li>pid tid uid username</li>
+<li>nsecs 时间戳 纳秒</li>
+<li>elapsed 时间错，单位纳秒，字bpftrace启动开始计时</li>
+<li>cpu 处理器ID</li>
+<li>comm 进程名</li>
+<li>kstack ustack 调试栈信息</li>
+<li>func 被跟踪函数名字</li>
+<li>probe 当前探针全名</li>
+<li>arg0…argN</li>
+<li>retval</li>
+<li>curtask 内核task_struct地址</li>
+<li>cgroup</li>
+<li>1 , . . . , 1,…,1,…,N bpftrace程序的位置参数</li>
+</ul>
+</li>
+<li>bpftrace函数<ul>
+<li>printf time str</li>
+<li>join 将多个字符串用空格进行连接并打印出来</li>
+<li>kstack ustack</li>
+<li>ksym usym 地址转换为字符串形式名字</li>
+<li>system 执行shell命令</li>
+</ul>
+</li>
+<li>bpftrace映射表的操作函数<ul>
+<li>count() sum(int n) avg(int n) min(int n) max(int n)</li>
+<li>stats(int n) 返回事假次数、平均值和总和</li>
+<li>hist(int n) 打印2的幂方的直方图</li>
+<li>lhist(int n,int min,int max,int step) 打印线性直方图</li>
+<li>delete(@m[key]) 删除key</li>
+<li><code>print(@m[,top[,div]])</code> 打印映射表，top指明只打印最高的top项目，div是一个整数分母，用来将数值整除后输出</li>
+<li>clear(@m) 删除映射表中全部的键</li>
+<li>zero(@m) 将映射表中所有的值设置为0</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bpftrace -e &#x27;k:vfs_* &#123;@[probe] = count();&#125; END &#123;print(@,5);clear(@);&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<h1 id="第六章-CPU"><a href="#第六章-CPU" class="headerlink" title="第六章 CPU"></a>第六章 CPU</h1><ul>
+<li>事件源<ul>
+<li>软中断 irq:softirq<em> 跟踪点[t:irq:softirq</em>]</li>
+<li>硬中断 irq:irq_handler<em> 跟踪点[t:irq:irq_handler</em>]</li>
+<li>运行队列 t:workqueue:*跟踪点</li>
+<li>定时采样 PMC或是基于定时器的采样器</li>
+<li>CPU电源控制事件 power跟踪点 [t:workqueue:*]</li>
+<li>CPU周期 PMC数据</li>
+</ul>
+</li>
+<li>查看所有cpu是否正常使用 <code>mpstat -P ALL</code></li>
+<li>perf火焰图</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># perf.data</span><br><span class="line">perf record -F 99 -a -g  -o cycle_0526.perf -- sleep 30</span><br><span class="line"></span><br><span class="line"># 用perf script工具对cycle_0526.perf进行解析</span><br><span class="line">perf script -i cycle_0526.perf &amp;&gt; perf.unfold</span><br><span class="line"></span><br><span class="line"># 将perf.unfold中的符号进行折叠：</span><br><span class="line">./stackcollapse-perf.pl perf.unfold &amp;&gt; perf.folded</span><br><span class="line"></span><br><span class="line"># svg</span><br><span class="line">./flamegraph.pl perf.folded &gt; perf.svg</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><code>execsnoop</code>跟踪全系统中新进程执行信息的工具。利用这个工具可以找到消耗大量CPU的短进程，并且可以用来分析软件执行过程，包括启动脚本等。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># bpftrace版本实现</span><br><span class="line">bpftrace -e &#x27;t:syscalls:sys_enter_execve &#123;printf (&quot;%-10u %-5d &quot;,elapsed/1000000,pid);join(args-&gt;argv);&#125;&#x27;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>exitsnoop 跟踪进程退出事件，打印出进程的总运行时长和退出原因。可以帮助调试短时进程。</p>
+</li>
+<li><p>runqlat: CPU调度延迟分析工具。在需求超过供给，CPU资源处于饱和状态时，这个工具可以用来识别和量化问题的严重性。runqlat利用对CPU调度器的线程唤醒事件和线程上下文切换事件的跟踪来计算线程从唤醒到运行之间的时间间隔。</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">runqlat 10 1 # 运行10s，只打印1次。nsecs单位为微秒</span><br><span class="line"># -m 以毫秒为单位输出</span><br><span class="line"># -P 给每个进程打印一个直方图</span><br><span class="line"># --pidnss 给每个PID空间打印一个直方图</span><br><span class="line"># -p PID 指定进程</span><br><span class="line"># -T 输出包含时间戳</span><br></pre></td></tr></table></figure>
+<ul>
+<li>runqlen 采样CPU运行队列的长度信息，可以统计有多少线程正在等待运行，并以直方图的方式输出。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">runqlen -C 10 1</span><br><span class="line"># -C 每个CPU输出一个直方图</span><br><span class="line"># -O 运行队列占有率信息，运行队列不为0的时长百分比</span><br><span class="line"># -T 输出时间戳信息</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>runqslower 可以列出运行队列中等待延迟超过阈值的线程名字，可以输出受延迟影响的进程名和对应的延时时长。</p>
+</li>
+<li><p>cpudist 用来展示每次线程唤醒之后在CPU上执行的时长分布。在内部跟踪CPU调度器的上下文切换事件，在繁忙的生产环境中发生的频率很高，额外消耗显著，使用时多小心。</p>
+</li>
+<li><p>profile:定时采样调用栈信息并且汇报调用栈出现频率信息。默认以49Hz的频率同时采样所有的CPU的用户态和内核态的调用栈。</p>
+<ul>
+<li>U 仅输出用户态调用栈信息</li>
+<li>K 仅输出内核态调用栈</li>
+<li>a 在函数名称上加上标记(例如，在内核态函数加上”_[k]”)</li>
+<li>d 在用户态和内核态调用栈之间加上分隔符</li>
+<li>f 以折叠方式输出</li>
+<li>p PID 仅跟踪给定的进程</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">profile -af 30 &gt; out.stacks01</span><br><span class="line">./flamegraph.pl --color=java &lt; ../out.stacks01 &gt; out.svg</span><br><span class="line"># 核心实现等同于如下bpftrace</span><br><span class="line">bpftrace -e &#x27;profile:hz:49 /pid/ &#123; @samples[ustack,kstack,comm]=count();&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>offcputime 用于统计线程阻塞和脱离CPU运行的时间，同时输出调用栈信息，以便理解阻塞原因。这个工具正好是profile工具的对立面；这两个工具结合起来覆盖了线程的全部生命周期：profile覆盖在CPU之上运行的分析，而offcputime则分析脱离CPU运行的时间<ul>
+<li>U 仅输出用户态调用栈信息</li>
+<li>K 仅输出内核态调用栈</li>
+<li>u 仅包括用户态线程</li>
+<li>k 仅包括内核态线程</li>
+<li>f 以折叠方式输出</li>
+<li>p PID 仅跟踪给定的进程</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 内核调用栈5秒的火焰图</span><br><span class="line">offcputime -fKu 5 &gt; out.offcuptime01.txt</span><br><span class="line">./flamegraph.pl --hash --bgcolors=blue --title=&quot;OFF-CPU Time Flame Graph&quot; \</span><br><span class="line">&lt; out.offcputime01.txt &gt; out.offcputime01.svg</span><br></pre></td></tr></table></figure>
+<ul>
+<li>syscount 统计系统中的系统调用数量.</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/usr/share/bcc/tools/syscount -LP</span><br><span class="line">bpftrace -e &#x27;t:syscalls:sys_enter_*&#123;@[probe]=count();&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>argdist和trace：针对每个事件自定义处理方法、</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 获取参数名字</span><br><span class="line">$ tplist -v syscalls:sys_enter_read</span><br><span class="line">syscalls:sys_enter_read</span><br><span class="line">  int __syscall_nr;</span><br><span class="line">  unsigned int fd;</span><br><span class="line">  char * buf;</span><br><span class="line">  size_t count;</span><br><span class="line"># count read调用缓存的大小</span><br><span class="line">argdist -H &#x27;t:syscalls:sys_enter_read():int:args-&gt;count&#x27;</span><br><span class="line">argdist -H &#x27;t:syscalls:sys_exit_read():int:args-&gt;ret&#x27;</span><br><span class="line"># 等价bpftrace程序如下</span><br><span class="line">bpftrace -e &#x27;t:syscalls:sys_enter_read &#123;@ = hist(args-&gt;count);&#125;&#x27;</span><br><span class="line">bpftrace -e &#x27;t:syscalls:sys_exit_read &#123;@ = hist(args-&gt;ret);&#125;&#x27;</span><br><span class="line"># bpftrace针对负值有一个单独的统计区间([...,0])，read的返回值如果是负数就说明出现了错误</span><br><span class="line"># 统计出现的错误频率</span><br><span class="line">bpftrace -e &#x27;t:syscalls:sys_exit_read /args-&gt;ret&lt;0/ &#123;@ = lhist(- args-&gt;ret,0,100,1);&#125;&#x27;</span><br><span class="line"></span><br><span class="line">trace &#x27;t:syscalls:sys_enter_execve &quot;-&gt; %s&quot;, args-&gt;filename&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><ul>
+<li>funccount 可以统计事件和函数调用频率。此工具是根据函数动态跟踪来统计的：对内核态函数使用kprobes，对用户态函数使用uprobes</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">funccount &#x27;tcp_*&#x27; # 统计内核以tcp_开头的所有函数</span><br><span class="line">funccount -i 1 get_page_from_freelist</span><br><span class="line"></span><br><span class="line">bpftrace -e &#x27;k:tcp_* &#123;@[probe] = count();&#125; interval:s:1&#123;print(@);clear(@);&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>softirqs 显示系统中软中断消耗的CPU时间。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bpftrace -e &#x27;t:irq:softirq_entry &#123;@[args-&gt;vec] = count();&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>hardirqs 显示系统处理硬中断的时间。</li>
+<li>cpuwalk.bt 采样每个CPU上运行的进程名，并且以线性直方图的方式输出。</li>
+</ul>
+<h1 id="第七章-内存"><a href="#第七章-内存" class="headerlink" title="第七章 内存"></a>第七章 内存</h1><ul>
+<li>Linux操作系统采用的虚拟内存机制，每个进程都有自己的虚拟内存地址空间，仅当实际使用内存的时候才会映射到物理内存之上。</li>
+<li>内存管理机制<ul>
+<li>页换出守护进程(kswapd):会被定期唤醒，它会批量扫描活跃页的LRU列表和非活跃页的LRU列表以寻找可以释放的内存。当空闲内存低于某个阈值的时候，该进程就会被唤醒，当空闲内存高于另外一个阈值的时才会休息。</li>
+<li>物理换页设备(swap device):当系统内存不够时，换页设备允许系统以一种降级模式运行：进程可以继续申请内存，但是不经常使用的页将会被换入换出到对应的换页设备上，但是这一般会导致应用程序运行速度大幅下降。</li>
+<li>在极端情况下)直接杀掉内存溢出的进程（OOM Killer）:按预定规则(将除内核关键任务和init(PID 1)进程之外的占用内存最多的进程杀死)杀掉进程。</li>
+</ul>
+</li>
+<li>堆内存：存储在进程虚拟内存地址空间的一段动态区间中的内存</li>
+<li><p>空闲内存列表freelist：内核为每个CPU和DRAM组维护一组空闲内存列表，这样可以直接响应内存分配请求。同时，内核软件本身的内存分配需求也从这个空闲内存列表直接获取，一般通过内核内存分配器进行，例如，slab分配器。</p>
+</li>
+<li><p>内存页的生命周期:</p>
+<ul>
+<li>应用程序发起内存分配请求</li>
+<li>应用程序库代码要么直接从空闲列表中响应请求，要么先扩展虚拟内存地址空间再分配。根据内存分配库的不同实现，有以下两种选项：<ul>
+<li>利用brk()系统调用来扩展堆的尺寸，以便用新的堆地址响应请求。</li>
+<li>利用mmap()系统调用来创建一个新的内存段地址。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>内存分配之后，应用程序试图使用store/load指令来使用之前分配的内存地址，这就要调用CPU内部的内存管理单元来进行虚拟地址到物理地址的转换。当虚拟地址没有对应的物理地址时，会导致MMU发出一个缺页错误(page fault)。</li>
+<li>缺页错误由内核处理。在对应的处理函数中，内核会在物理内存空闲列表中找到一个空闲地址并映射到该虚拟地址。接下来，内存会通知MMU以便未来直接查找该映射。现在用户进程占用了一个物理内存页。进程所使用的全部物理内存数量称为常驻集大小(RSS)。</li>
+<li>当系统内存需求超过一定水平时，内核中的页换出守护进程就开始寻找可以释放的内存页。<ul>
+<li>文件系统页：从磁盘中读出并且是没有被修改过的页（blacked by disk），这些页可以立即释放，需要再读取回来。</li>
+<li>被修改过的文件系统页：这些页被称为“脏页”，这些页需要先写回磁盘才能被释放。</li>
+<li>应用程序内存页：这些页被称为匿名页(anonymous memory),因为这些页不是来源于某个文件的。如果系统中有换页设备(swap device)，那么这些页可以先存入换页设备，再被释放。将内存页写入换页设备成为换页。</li>
+</ul>
+</li>
+<li>页压缩：内核中有一个压缩程序来移动内存页，以便扩大连续内存。</li>
+<li>文件系统缓存和缓冲区：Linux会借用空闲内存作为文件系统的缓存，如果有需要的话会再释放。</li>
+</ul>
+<p>事件源</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">用户态内存分配  usdt:/usr/lib64/libc-2.28.so:*</span><br><span class="line">内核态内存分配  t:kmem:*</span><br><span class="line">堆内存扩展</span><br><span class="line">共享内存函数</span><br><span class="line">缺页错误    kprobes、软件事件，以及exception跟踪点</span><br><span class="line">页迁移            t:migration:*&#x27;</span><br><span class="line">页压缩            t:compaction:*</span><br><span class="line">VM扫描器          t:vmscan:*</span><br><span class="line">内存访问周期        PMC</span><br><span class="line">bpftrace -l &#x27;usdt:/usr/lib64/libc-2.28.so:*&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>内存分析策略</p>
+<ul>
+<li>检查OOM Killer杀掉的进程的信息。（dmesg）</li>
+<li>检查系统中是否有换页设备，以及使用的换页空间大小；并且检查这些换页设备是否有活跃的I/O操作（iostat vmstat）</li>
+<li>检查系统中的空闲内存的数量，以及整个系统的缓存使用情况（free）</li>
+<li>按进程检查内存使用量(top ps)</li>
+<li>检查系统的缺页错误的发生频率，并且检查缺页错误发生时的调用栈信息，这可以解释RSS增长的原因</li>
+<li>检查缺页错误与那些文件有关</li>
+<li>通过跟踪brk()和mmap()系统调用</li>
+<li>BPF工具</li>
+<li>使用PMC测量硬件缓存命中率和内存空间，以便分析导致内存I/O发生的函数和指令信息(perf)</li>
+</ul>
+</li>
+<li><p>传统工具</p>
+<ul>
+<li>dmesg 内核日志</li>
+<li>内核统计信息：/proc/meminfo /proc/swaps<ul>
+<li>swapon:显示系统是否使用换页设备</li>
+<li>free:统计全系统内存使用量</li>
+<li>ps:进程状态命令按进程显示内存用量。%MEM 物理内存占比所有内存；VSZ虚拟内存；RSS常驻集大小</li>
+<li>pmap:按地址空间段展示进程内存用量。pmap -x PID</li>
+<li>vmstat:按时间展示各种全系统的统计数据，包括内存、CPU，以及存储I/O。</li>
+<li>sar:是一个可以打印不同目标、不同监控指标的复合工具。-B选项打印的是页统计信息。</li>
+</ul>
+</li>
+<li>硬件统计和硬件采样：用PMC来观测内存I/O事件，这些PMC统计的是处理器中的CPU单元到主内存之间的I/O操作，中间还涉及了CPU缓存。PMC提供两种方式：累计和采样。累计方式提供的是统计信息，额外消耗几乎为0；而采样模式则将发生的事件存入一个文件中供后期分析。</li>
+</ul>
+</li>
+<li><p>oomkill：用来跟踪OOM Killer事件的信息，以及打印出平均负载等详细信息。</p>
+</li>
+<li><p>memleak：用来跟踪内存分配和释放事件对应的调用栈信息。随着时间的推移，这个工具可以显示长期不被释放的内存。根据内存分配频繁程度，性能会下降，只能用来调试。</p>
+</li>
+<li><p>mmapsnoop：跟踪全系统的mmap系统调用并打印出映射请求的详细信息，这对内存映射调试来说是很有用的。</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bpftrace -e &#x27;t:syscalls:sys_enter_mmap &#123;@[comm] = count();&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>brkstack:跟踪brk调用</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">trace -U t:syscalls:sys_enter_brk</span><br><span class="line">stackcount -PU t:syscalls:sys_enter_brk</span><br><span class="line"></span><br><span class="line">bpftrace -e &#x27;t:syscalls:sys_enter_brk &#123;@[ustack,comm]=count();&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>shmsnoop：可以跟踪System V的共享内存系统调用:shmget()、shmat()、shmdt、以及shmctl()。</li>
+<li>faults:跟踪缺页错误和对应的调用栈信息，截取首次使用该内存触发缺页错误的代码路径。缺页错误会直接导致RSS的增长，所以这里截取的调用栈信息可以用来解释进程内存用量的增长。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">stackcount -U t:exceptions:page_fault_user</span><br><span class="line">stackcount  t:exceptions:page_fault_kernel</span><br><span class="line"></span><br><span class="line">火焰图</span><br><span class="line">stackcount -f -PU t:exceptions:page_fault_user &gt; out.pagefaults01.txt</span><br><span class="line">flamegraph.pl --hash --width=800 --title=&quot;Page Fault Flame Graph&quot; \</span><br><span class="line">--color=java --bgcolor=green &lt; out.pagefaults01.txt &gt;out.pagefaults01.svg</span><br><span class="line"></span><br><span class="line">bpftrace -e &#x27;s:page-faults:1 &#123;@[ustack,comm]=count();&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>ffaults根据文件名来跟踪缺页错误。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find / -name &quot;mm.h&quot;</span><br><span class="line">bpftrace --include &quot;/usr/src/kernels/4.18.0-193.28.1.el8_2.x86_64/include/linux/mm.h&quot; -e &#x27;k:handle_mm_fault&#123;$vma=(struct vm_area_struct *)arg0; $file=$vma-&gt;vm_file-&gt;f_path.dentry-&gt;d_name.name; @[str($file)]=count();&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>vmscan:使用vmscan跟踪点来观察页换出守护进程(kswapd)的操作，该进程在系统内存压力上升时负责释放内存以便重用。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">funccount &#x27;t:vmscan:*&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>drsnoop:用来跟踪内存释放过程中直接回收部分，可以显示受到影响的进程，以及对应的延迟：直接回收所需的时间。可以用来分析内存受限的系统中应用程序的性能影响。</p>
+</li>
+<li><p>swapin：展示了那个进程正在从换页设备中换入页，前提是系统有正在使用的换页设备。</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bpftrace -e &#x27;k:swap_readpage&#123;@[comm,pid]=count();&#125; interval:s:1&#123;time();print(@);clear(@)&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>hfaults：通过跟踪巨页相关的缺页错误信息，按进程展示详细信息。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bpftrace -e &#x27;k:hugetlb_fault&#123;@[pid,comm]=count();&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<h1 id="第八章-文件系统"><a href="#第八章-文件系统" class="headerlink" title="第八章 文件系统"></a>第八章 文件系统</h1><ul>
+<li>逻辑I/O是指向文件系统发送的请求。如果这些请求最终必须要由磁盘设备服务，那么它们就变成了物理I/O。很多逻辑I/O直接从文件缓存中返回，而不必发往磁盘设备。</li>
+<li>裸I/O：一种应用程序绕过文件系统层直接使用磁盘设备的方式。</li>
+<li>文件系统缓存：<ul>
+<li>页缓存：该缓存的内容是虚拟内存页，包括文件的内容，以及I/O缓冲的信息，该缓存的主要作用是提高文件性能和目录I/O性能。</li>
+<li>inode缓存：inodes（索引节点）是文件系统用来描述所存对象的一个数据结构体。VFS层有一个通用版本的inode，Linux维护这个缓存，是因为检查权限以及读取其他元数据的时候，对这些结构体的读取非常频繁。</li>
+<li>目录缓存：又叫dcache，这个缓存包括目录元素名到VFS inode之间的映射信息，这可以提高路径名查找速度。</li>
+</ul>
+</li>
+<li>预读取Read-Ahead：又叫预缓存，该功能如果检测到一个顺序式的读操作，就会预测出接下来会使用的页，主动将其加载到页缓存中。</li>
+<li>写回Write-Back：先在内存中缓存要修改的页，再在一段时间后由内核的工作线程将修改写入磁盘，这样可以避免应用程序阻塞于较慢的磁盘I/O。</li>
+<li>传统工具<ul>
+<li>df显示文件系统的磁盘用量</li>
+<li>mount可以将文件系统挂载到系统上，并且可以列出这些文件系统的类型和挂载参数。</li>
+<li>strace可以跟踪系统中的系统调用，可以用这个命令来观察系统中的文件系统调用操作。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strace -tttT cksum /usr/bin/cksum</span><br></pre></td></tr></table></figure>
+<ul>
+<li>perf可以跟踪文件系统跟踪点,利用kprobes来跟踪VFS和文件系统的内部函数</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">perf trace cksum /usr/bin/cksum</span><br><span class="line">perf stat -e &#x27;ext4:*&#x27; -a</span><br><span class="line">perf record -e ext4:ext4_da_write_begin -a // 由于perf.data是写入文件系统的，如果跟踪的是文件系统的写事件，那么就会产生一个自反馈循环</span><br><span class="line"></span><br><span class="line">bpftrace -e &#x27;t:ext4:ext4_da_write_begin&#123;@ = hist(args-&gt;len);&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>opensnoop：跟踪文件打开事件，对发现系统中使用的数据文件、日志文件以及配置文件来说十分有用。该工具还可以揭示由于快速打开大量文件导致的性能问题</p>
+</li>
+<li><p>statsnoop：跟踪stats类型的系统调用。stats返回的是文件的信息。</p>
+</li>
+<li><p>syncsnoop：可以配合时间戳展示sync调用信息。sync的作用是将修改过的数据写回磁盘。</p>
+</li>
+<li><p>mmapfiles: 跟踪mmap调用，并且统计映射入内存地址范围的文件频率信息</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/bpftrace</span><br><span class="line">#include &lt;linux/mm.h&gt;</span><br><span class="line">kprobe:do_mmap&#123;</span><br><span class="line">  $file = (struct file *)arg0;</span><br><span class="line">  $name = $file-&gt;f_path.dentry;</span><br><span class="line">  $dir1 = $name-&gt;d_parent;</span><br><span class="line">  $dir2 = $dir1-&gt;d_parent;</span><br><span class="line">  @[str($dir2-&gt;d_name.name), str($dir1-&gt;d_name.name),str($name-&gt;d_name.name)] = count();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>scread：跟踪read系统调用，同时展示对应的文件名</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/bpftrace</span><br><span class="line">#include &lt;linux/sched.h&gt;</span><br><span class="line">#include &lt;linux/fs.h&gt;</span><br><span class="line">#include &lt;linux/fdtable.h&gt;</span><br><span class="line">t:syscalls:sys_enter_read&#123;</span><br><span class="line">  $task = (struct task_struct *)curtask;</span><br><span class="line">  $file = (struct file *)*($task-&gt;files-&gt;fdt-&gt;fd + args-&gt;fd); // 运行失败</span><br><span class="line">  @filename[str($file-&gt;f_path.dentry-&gt;d_name.name)] = count();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>fmapfault 跟踪内存映射文件的缺页错误，按进程名和文件名来统计。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/bpftrace</span><br><span class="line">#include &lt;linux/mm.h&gt;</span><br><span class="line">kprobe:filemap_fault&#123;</span><br><span class="line">  $vf = (struct vm_fault *)arg0;</span><br><span class="line">  $file = $vf-&gt;vma-&gt;vm_file-&gt;f_path.dentry-&gt;d_name.name;</span><br><span class="line">  @[comm, str($file)] = count();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>filelife 展示短期文件的生命周期：这些文件在跟踪过程中产生并且随后就被删除了</li>
+<li>vfsstat 可以摘要统计常见的VFS调用：读/写(I/O)、创建、打开，以及fsync。这个工具可以提供一个最高层次的虚拟文件系统操作负载分析。</li>
+<li>vfscount 统计所有的VFS函数。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">funccount &#x27;vfs_*&#x27;</span><br><span class="line">bpftrace -e &#x27;kprobe:vfs_* &#123;@[func] = count();&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>vfssize 可以以直方图方式统计VFS读取尺寸和写入尺寸，并按进程名、VFS文件名以及操作类型进行分类。</li>
+<li>fileslower 用于显示延迟超过某个阈值的同步模式的文件读取和写入操作。</li>
+<li>filetop 显示读写最频繁的文件的文件名</li>
+<li>同步写操作必须要等待存储I/O完全完成，即写穿透(write-through)模式，而普通文件读写的写入操作只要写入缓存就成功了，即写回模式(write-back)。</li>
+<li>cachestat 展示页缓存的命中率统计信息。可以用来检查页缓存的命中率和有效程度。</li>
+<li>cachetop 按进程统计cachestat</li>
+<li>writeback.bt 展示页缓存的写回操作：页扫描的时间、脏页写入磁盘的时间、写回事件的类型，以及持续的时间。<ul>
+<li>periodic 周期性写回操作，涉及的页不多</li>
+<li>background 后台写回操作，每次写入很多页，一般是在系统空闲内存低的情况下进行的异步页写回操作。</li>
+</ul>
+</li>
+<li>dcstat 可以展示目录缓存(dcache)的统计信息.</li>
+<li>dcsnoop 跟踪目录缓存的查找操作，展示每次查找的详细信息。</li>
+<li>mountsnoop 输出挂载的文件系统。</li>
+<li>xfsslower 跟踪常见的XFS文件系统操作：对超过阈值的慢速操作打印出每个事件的详细信息。</li>
+<li>xfsdist 作用是观察XFS文件系统，以直方图方式统计常见的操作延迟</li>
+<li>ext4dist 以直方图方式统计常见的操作延迟</li>
+<li>icstat 跟踪inode缓存的查找操作，并打印出每秒统计结果</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/" rel="prev" title="spack简明使用手册">
+      <i class="fa fa-chevron-left"></i> spack简明使用手册
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/" rel="next" title="eBPF编程入门">
+      eBPF编程入门 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%BC%95%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">第一章 引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E6%89%A9%E5%B1%95%E7%89%88BPF"><span class="nav-number">2.</span> <span class="nav-text">第二章 扩展版BPF</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">第三章 性能分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-BCC"><span class="nav-number">4.</span> <span class="nav-text">第四章 BCC</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E7%AB%A0-bpftrace"><span class="nav-number">5.</span> <span class="nav-text">第五章 bpftrace</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0-CPU"><span class="nav-number">6.</span> <span class="nav-text">第六章 CPU</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%83%E7%AB%A0-%E5%86%85%E5%AD%98"><span class="nav-number">7.</span> <span class="nav-text">第七章 内存</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%85%AB%E7%AB%A0-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">8.</span> <span class="nav-text">第八章 文件系统</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Hao Yu</p>
+  <div class="site-description" itemprop="description">Introduce something interesting and recode learning process, some articles are written by others, the original link has been given as much as possible, thanks to the original author</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">128</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

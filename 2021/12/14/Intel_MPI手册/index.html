@@ -1,0 +1,2284 @@
+<!DOCTYPE html>
+<html lang="zn-ch">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Intel MPI安装设置 加载 mpivars.[c]sh 脚本。 创建文本文件 mpd.hosts ，其中保存有集群的节点列表，每行一个名字 (只针对开发者) 确保环境变量 PATH 中包含有相应的编译器，比如 icc。 (只针对开发者) 使用适当的编译驱动编译测试程序，比如 mpiicc。    1$ mpiicc -o test test.c  使用 mpirun 运行测试程序1$ mpi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Intel MPI library developer reference for Linux">
+<meta property="og:url" content="http://yoursite.com/2021/12/14/Intel_MPI%E6%89%8B%E5%86%8C/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="Intel MPI安装设置 加载 mpivars.[c]sh 脚本。 创建文本文件 mpd.hosts ，其中保存有集群的节点列表，每行一个名字 (只针对开发者) 确保环境变量 PATH 中包含有相应的编译器，比如 icc。 (只针对开发者) 使用适当的编译驱动编译测试程序，比如 mpiicc。    1$ mpiicc -o test test.c  使用 mpirun 运行测试程序1$ mpi">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/img/1639492360.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639659501.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639662456.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639662711.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639662806.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639662910.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639662962.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639663013.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639663084.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639663518.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639663572.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639663640.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639663678.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639663898.jpg">
+<meta property="article:published_time" content="2021-12-14T07:04:00.000Z">
+<meta property="article:modified_time" content="2022-01-07T06:09:50.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/1639492360.jpg">
+
+<link rel="canonical" href="http://yoursite.com/2021/12/14/Intel_MPI%E6%89%8B%E5%86%8C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zn-ch'
+  };
+</script>
+
+  <title>Intel MPI library developer reference for Linux | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hao Yu's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">The program monkey was eaten by the siege lion.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zn-ch">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/12/14/Intel_MPI%E6%89%8B%E5%86%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Hao Yu">
+      <meta itemprop="description" content="Introduce something interesting and recode learning process, some articles are written by others, the original link has been given as much as possible, thanks to the original author">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Intel MPI library developer reference for Linux
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-12-14 15:04:00" itemprop="dateCreated datePublished" datetime="2021-12-14T15:04:00+08:00">2021-12-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-07 14:09:50" itemprop="dateModified" datetime="2022-01-07T14:09:50+08:00">2022-01-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Intel-MPI安装"><a href="#Intel-MPI安装" class="headerlink" title="Intel MPI安装"></a>Intel MPI安装</h1><h2 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h2><ul>
+<li>加载 mpivars.[c]sh 脚本。</li>
+<li>创建文本文件 mpd.hosts ，其中保存有集群的节点列表，每行一个名字<ul>
+<li>(只针对开发者) 确保环境变量 PATH 中包含有相应的编译器，比如 icc。</li>
+<li>(只针对开发者) 使用适当的编译驱动编译测试程序，比如 mpiicc。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiicc -o test test.c</span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用 mpirun 运行测试程序<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -r ssh -f mpd.hosts -n &lt;# of processes&gt; ./test</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="编译链接"><a href="#编译链接" class="headerlink" title="编译链接"></a>编译链接</h2><ul>
+<li>保证在PATH环境变量中编译器设置正确。使用Intel编译器，确保<code>LD_LIBRARY_PATH</code>环境变量中含有编译库的路径。</li>
+<li>通过相应的 mpi 命令编译 MPI 程序。比如调用 mpicc 使用 GNU C 编译器：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpicc &lt;path-to-test&gt;/test.c</span><br></pre></td></tr></table></figure>
+(支持的编译器都有对应的以 mpi 开头的命令，比如 Intel Fortran (ifort ) 对应的为 mpiifort).</li>
+</ul>
+<h2 id="运行MPI程序"><a href="#运行MPI程序" class="headerlink" title="运行MPI程序"></a>运行MPI程序</h2><h3 id="设置-MPD-守护进程"><a href="#设置-MPD-守护进程" class="headerlink" title="设置 MPD 守护进程"></a>设置 MPD 守护进程</h3><p>Intel MPI 库使用 Multi-Purpose Daemon (MPD) 任务调度机制。为运行使用 mpiicc 编译的程序，首先需要设置好 MPD 守护进程。</p>
+<p>与系统管理员为系统中所有用户启动一次 MPD 守护进程不同，用户需要启动和维护自己的一组 MPD 守护进程。这种设置增强了系统安全性，并为控制可执行程序的环境提供了更强的灵活性。</p>
+<p>设置MPD的步骤如下：</p>
+<ul>
+<li>设置相应的环境变量和目录。比如，在 .zshrc 或 .bashrc 文件中：<ul>
+<li>保证 PATH 变量中包含有<code>&lt;installdir&gt;/bin</code>或者Intel 64 位架构对应的<code>&lt;installdir&gt;/bin64</code>目录，其中<code>&lt;installdir&gt;</code>指的是 MPI 的安装路径。可使用 Intel MPI 库中带有的 mpivars.[c]sh 来设置此变量。</li>
+<li>确保 PATH 中包含有的 Python 至少为 2.2 或以上版本。</li>
+<li>如果使用 Intel 编译器，确保<code>LD_LIBRARY_PATH</code>变量包含有编译器的库目录。可使用编译器中带有的 {icc,ifort}*vars.[c]sh 脚本来设置。</li>
+<li>设置应用程序所需要的其它环境变量。</li>
+</ul>
+</li>
+<li><p>创建 $HOME/.mpd.conf 文件，设置 MPD 密码，需要在文件中写入一行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">secretword=&lt;mpd secret word&gt;</span><br></pre></td></tr></table></figure>
+<p>不要使用 Linux 登陆密码。<code>&lt;mpd secret word&gt;</code>可为任意字符串，它仅仅在不同的集群用户对 MPD 守护进程进行控制时有用。</p>
+</li>
+<li><p>使用 chmod 设置 $HOME/.mpd.conf 文件的权限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ chmod 600 $HOME/.mpd.conf</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>保证你在集群的所有节点上 rsh 命令看到同样的 PATH 和 .mpd.conf 内容。 比如在集群的所有节点上执行下面的命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ rsh &lt;node&gt; env</span><br><span class="line">$ rsh &lt;node&gt; cat $HOME/.mpd.conf</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>保证每个节点都能够与其它任意节点连接。可使用安装中提供的 sshconnectivity 脚本。该脚本使用提供所有节点列表的文件作为参数，每个节点一行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sshconnectivity.exp machines.LINUX</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>集群使用的是 ssh 而不是 rsh:</p>
+<pre><code>- 需要确保任一节点与其它节点连 接时都不需要密码。这需要参照系统管理手册。
+- 在启动 mpdboot 时需要加上调 用参数 -r ssh 或 --rsh=ssh
+</code></pre><ul>
+<li><p>创建文本文件 mpd.hosts , 其中列出了集群中所有的节点，每行一个主机名。比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cat &gt; mpd.hosts</span><br><span class="line">node1</span><br><span class="line">node2</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 mpdallexit 命令关闭上一次的 MPD 守护进程。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpdallexit</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 mpdboot 命令启动 MPD 守护进程。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpdboot -n &lt;#nodes&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果文件 $PWD/mpd.hosts 存在，则会被用作默认参数。如果没有主机名文件，启用 mpdboot 只会在本地机器上运行 MPD 守护进程。</p>
+</li>
+<li>使用 mpdtrace 命令检查 MPD 守护进程的状态：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpdtrace</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>其输出结果应该为当前进行 MPD 守护进程的节点列表。该列表应该与 mpd.hosts 文件中节点列表符合。</p>
+<h1 id="网络结构选择"><a href="#网络结构选择" class="headerlink" title="网络结构选择"></a>网络结构选择</h1><p>Intel MPI 库会动态选择大部分适用的网络结构以便 MPI 进程之间进行通讯。设置环境变量<code>I_MPI_DEVICE</code>为下表中的某个值：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>I_MPI_DEVICE 值</th>
+<th>支持的结构</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sock</td>
+<td>TCP/Ethernet/sockets</td>
+</tr>
+<tr>
+<td>shm</td>
+<td>Shared memory only (no sockets)</td>
+</tr>
+<tr>
+<td>ssm</td>
+<td>TCP + shared memory</td>
+</tr>
+<tr>
+<td>rdma[:]</td>
+<td>InfiniBand, Myrinet (via specified DAPL provider)</td>
+</tr>
+<tr>
+<td>rdssm[:]</td>
+<td>TCP + shared memory + DAPL</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>要保证所选择的网络结构可用。比如，使用 shm 只有当所有进程可以通过共享内存进 行通讯时才行；使用 rdma 只有当所有进程可以通过单一的 DAPL 相互通讯时才行。</p>
+<h1 id="运行MPI程序-1"><a href="#运行MPI程序-1" class="headerlink" title="运行MPI程序"></a>运行MPI程序</h1><p>运行使用 Intel MPI 库连接的程序，使用 mpiexec 命令：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiexec -n &lt;# of processes&gt; ./myprog</span><br></pre></td></tr></table></figure><br>使用 -n 参数设置进程数，这是 mpiexec 唯一需要明显指定的选项。如果使用的网络结构与默认的不同，需要使用 -genv 选项来提供一个可以赋给 I_MPI_DEVICE 变量的值。</p>
+<p>比如使用 shm 结构来运行 MPI 程序，可执行如下命令：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiexec -genv I_MPI_DEVICE shm -n &lt;# of processes&gt; ./myprog</span><br></pre></td></tr></table></figure><br>比如使用 rdma 结构来运行 MPI 程序，可执行如下命令：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiexec -genv I_MPI_DEVICE rdma -n &lt;# of processes&gt; ./myprog</span><br></pre></td></tr></table></figure><br>可以通过命令选择任何支持的设备。</p>
+<p>如果应用程序运行成功，可将其移动到使用不同结构的集群中，不需要重新链接程序。</p>
+<h1 id="MPI错误代码对照表"><a href="#MPI错误代码对照表" class="headerlink" title="MPI错误代码对照表"></a>MPI错误代码对照表</h1><ul>
+<li>00CA : no resources available　　</li>
+<li>00CB : configuration error　　</li>
+<li>00CD : illegal call　　</li>
+<li>00CE : module not found　　</li>
+<li>00CF : driver not loaded　　</li>
+<li>00D0 : hardware fault　　</li>
+<li>00D1 : software fault　　</li>
+<li>00D2 : memory fault　　</li>
+<li>00D7 : no me age　　</li>
+<li>00D8 : storage fault　　</li>
+<li>00DB : internal timeout　　</li>
+<li>00E1 : too many cha els open　　</li>
+<li>00E2 : internal fault　　</li>
+<li>00E7 : hardware fault　　</li>
+<li>00E9 : sin_serv.exe not started　　</li>
+<li>00EA : protected　　</li>
+<li>00F0 : scp db file does not exist　　</li>
+<li>00F1 : no global dos storage available　　</li>
+<li>00F2 : error during tra mi ion　　</li>
+<li>00F2 : error during reception　　</li>
+<li>00F4 : device does not exist　　</li>
+<li>00F5 : incorrect sub system　　</li>
+<li>00F6 : unknown code　　</li>
+<li>00F7 : buffer too small　　</li>
+<li>00F8 : buffer too small　　</li>
+<li>00F9 : incorrect protocol　　</li>
+<li>00FB : reception error　　</li>
+<li>00FC : licence error　　</li>
+<li>0101 : co ection not established / parameterised　　</li>
+<li>010A : negative acknowledgement received / timeout error　　</li>
+<li>010C : data does not exist or disabled　　</li>
+<li>012A : system storage no longer available　　</li>
+<li>012E : incorrect parameter　　</li>
+<li>0132 : no memory in DPRAM　　</li>
+<li>0201 : incorrect interface  ecified　　</li>
+<li>0202 : maximum amount of interfaces exceeded　　</li>
+<li>0203 : PRODAVE already initialised　　</li>
+<li>0204 : wrong parameter list　</li>
+<li>0205 : PRODAVE not initialised　</li>
+<li>0206 : handle ca ot be set　</li>
+<li>0207 : data segment ca ot be disabled　</li>
+<li>0300 : initialisiation error　</li>
+<li>0301 : initialisiation error　</li>
+<li>0302 : block too small, DW does not exist　</li>
+<li>0303 : block limit exceeded, correct amount</li>
+<li>0310 : no HW found　</li>
+<li>0311 : HW defective　</li>
+<li>0312 : incorrect config param　</li>
+<li>0313 : incorrect baud rate / interrupt vector　</li>
+<li>0314 : HSA parameterised incorrectly　</li>
+<li>0315 : MPI addre  error　</li>
+<li>0316 : HW device already allocated　</li>
+<li>0317 : interrupt not available　</li>
+<li>0318 : interrupt occupied　</li>
+<li>0319 : sap not occupied　</li>
+<li>031A : no remote station found　</li>
+<li>031B : internal error　</li>
+<li>031C : system error　</li>
+<li>031D : error buffer size　</li>
+<li>0320 : hardware fault　</li>
+<li>0321 : DLL function error　</li>
+<li>0330 : version conflict　</li>
+<li>0331 : error com config　</li>
+<li>0332 : hardware fault　</li>
+<li>0333 : com not configured　</li>
+<li>0334 : com not available　</li>
+<li>0335 : serial drv in use　</li>
+<li>0336 : no co ection　</li>
+<li>0337 : job rejected　</li>
+<li>0380 : internal error　</li>
+<li>0381 : hardware fault　</li>
+<li>0382 : no driver or device found　</li>
+<li>0384 : no driver or device found　</li>
+<li>03FF : system fault　</li>
+<li>0800 : toolbox occupied　</li>
+<li>4001 : co ection not known　</li>
+<li>4002 : co ection not established　</li>
+<li>4003 : co ection is being established　</li>
+<li>4004 : co ection broken down　</li>
+<li>8000 : function already actively occupied　</li>
+<li>8001 : not allowed in this operating status　</li>
+<li>8101 : hardware fault　</li>
+<li>8103 : object acce  not allowed　</li>
+<li>8104 : context is not su orted　</li>
+<li>8105 : invalid addre 　</li>
+<li>8106 : type (data type) not su orted　</li>
+<li>8107 : type (data type) not co istent　</li>
+<li>810A : object does not exist　</li>
+<li>8301 : memory slot on CPU not sufficient　</li>
+<li>8404 : grave error　　8500 : incorrect PDU size　</li>
+<li>8702 : addre  invalid　</li>
+<li>D201 : syntax error block name　</li>
+<li>D202 : syntax error function parameter　</li>
+<li>D203 : syntax error block type　</li>
+<li>D204 : no linked block in storage medium　</li>
+<li>D205 : object already exists　</li>
+<li>D206 : object already exists　</li>
+<li>D207 : block exists in EPROM　</li>
+<li>D209 : block does not exist　</li>
+<li>D20E : no block available　</li>
+<li>D210 : block number too big　</li>
+<li>D241 : protection level of function not sufficient　</li>
+<li>D406 : information not available　</li>
+<li>EF01 : incorrect ID2　</li>
+<li>FFFB : TeleService Library not found　</li>
+<li>FFFE : unknown error FFFE hex　</li>
+<li>FFFF : timeout error. Check interfac</li>
+</ul>
+<h1 id="MPI的命令"><a href="#MPI的命令" class="headerlink" title="MPI的命令"></a>MPI的命令</h1><h2 id="编译命令列表"><a href="#编译命令列表" class="headerlink" title="编译命令列表"></a>编译命令列表</h2><p>本节提供有关不同命令类型以及如何使用这些命令的信息：</p>
+<ul>
+<li>编译命令列出了可用的英特尔® MPI 库编译器命令、相关选项和环境变量。</li>
+<li>mpirun 提供了mpirun 命令的描述和示例。</li>
+<li>mpiexec.hydra 提供有关 mpiexec.hydra 命令、其选项、环境变量，以及相关的功能和实用程序。</li>
+<li>cpuinfo 提供了 cpuinfo 实用程序的语法、参数、描述和输出示例。</li>
+<li>impi_info 提供有关可用环境变量的信息。</li>
+<li>mpitune 提供有关 mpitune 实用程序的配置选项的信息。</li>
+</ul>
+<h3 id="编译器命令"><a href="#编译器命令" class="headerlink" title="编译器命令"></a>编译器命令</h3><p>下表列出了可用的英特尔® MPI 库编译器命令及其底层编译器和编程语言。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Compiler Command</th>
+<th>Default Compiler</th>
+<th>Supported Languages</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Generic Compilers</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>mpicc</td>
+<td>gcc, cc</td>
+<td>C</td>
+</tr>
+<tr>
+<td>mpicxx</td>
+<td>g++</td>
+<td>C/C++</td>
+</tr>
+<tr>
+<td>mpifc</td>
+<td>gfortran</td>
+<td>Fortran77<em>/Fortran 95</em></td>
+</tr>
+<tr>
+<td>GNU* Compilers</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>mpigcc</td>
+<td>gcc</td>
+<td>C</td>
+</tr>
+<tr>
+<td>mpigxx</td>
+<td>g++</td>
+<td>C/C++</td>
+</tr>
+<tr>
+<td>mpif77</td>
+<td>gfortran</td>
+<td>Fortran 77</td>
+</tr>
+<tr>
+<td>mpif90</td>
+<td>gfortran</td>
+<td>Fortran 95</td>
+</tr>
+<tr>
+<td>Intel® Fortran, C++ Compilers</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>mpiicc</td>
+<td>icc</td>
+<td>C</td>
+</tr>
+<tr>
+<td>mpiicpc</td>
+<td>icpc</td>
+<td>C++</td>
+</tr>
+<tr>
+<td>mpiifort</td>
+<td>ifort</td>
+<td>Fortran77/Fortran 95</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>编译器命令注意事项</p>
+<ul>
+<li>编译器命令仅在英特尔 MPI 库软件开发套件 (SDK) 中可用。</li>
+<li>有关所列编译器的支持版本，请参阅发行说明。</li>
+<li>要显示编译器命令的小帮助，请在不带任何参数的情况下执行它。</li>
+<li>编译器包装脚本位于<code>&lt;install-dir&gt;/bin</code>目录中，其中<code>&lt;install-dir&gt;</code>是英特尔 MPI 库安装目录。</li>
+<li>可以通过获取<code>&lt;install-dir&gt;/env/vars.[c]sh</code>脚本来建立环境设置。 要使用特定的库配置，请将以下参数之一传递给脚本以切换到相应的配置：release、debug、release_mt 或 debug_mt。</li>
+<li>确保相应的底层编译器已在您的 PATH 中。 如果您使用英特尔® 编译器，请从安装目录获取<code>vars.sh</code>脚本以设置编译器环境。</li>
+</ul>
+<h2 id="编译选项"><a href="#编译选项" class="headerlink" title="编译选项"></a>编译选项</h2><p><code>-nostrip</code>：使用此选项可在静态链接英特尔® MPI 库时关闭调试信息。</p>
+<p><code>-config=&lt;名称&gt;</code>：使用此选项来获取编译器配置文件。该文件应包含要设置与指定的编译器一起使用的环境设置。对配置文件使用以下命名约定：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;安装目录&gt;/etc/mpi&lt;编译器&gt;-&lt;名称&gt;.conf</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;compiler&gt;=&#123;cc,cxx,f77,f90&#125;</code>，取决于编译的语言。</li>
+<li><code>&lt;name&gt;</code>是底层编译器的名称，其中空格被连字符替换；例如，<code>cc -64</code>的<code>&lt;name&gt;</code>值为<code>cc--64</code>。</li>
+</ul>
+<p><code>-profile=&lt;profile_name&gt;</code>：使用此选项指定 MPI 分析库。<code>&lt;profile_name&gt;</code>是配置文件的名称，加载相应的分析库。配置文件取自<code>&lt;install-dir&gt;/etc</code>。英特尔 MPI 库为英特尔® 跟踪收集器提供了几个预定义的配置文件：</p>
+<ul>
+<li><code>&lt;install-dir&gt;/etc/vt.conf</code> — 常规跟踪库</li>
+<li><code>&lt;install-dir&gt;/etc/vtfs.conf</code> — 故障安全跟踪库</li>
+<li><code>&lt;install-dir&gt;/etc/vtmc.conf</code> — 正确性检查跟踪库</li>
+<li><code>&lt;install-dir&gt;/etc/vtim.conf</code> — 负载不平衡跟踪库</li>
+</ul>
+<p>您还可以将自己的配置文件创建为<code>&lt;profile-name&gt;.conf</code>。您可以定义以下环境配置文件中的变量：</p>
+<ul>
+<li><code>PROFILE_PRELIB</code> - 在英特尔 MPI 库之前加载的库（和路径）</li>
+<li><code>PROFILE_POSTLIB</code> - 在英特尔 MPI 库之后加载的库</li>
+<li><code>PROFILE_INCPATHS</code> - 任何包含文件的 C 预处理器参数</li>
+</ul>
+<p>例如，使用以下几行创建文件<code>myprof.conf</code>：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PROFILE_PRELIB=&quot;-L&lt;path_to_myprof&gt;/lib -lmyprof&quot;</span><br><span class="line">PROFILE_INCPATHS=&quot;-I&lt;paths_to_myprof&gt;/include&quot;</span><br></pre></td></tr></table></figure></p>
+<p>使用相关编译器包装器的<code>-profile=myprof</code>选项来选择此新配置文件。</p>
+<p><code>-t</code>或<code>-trace</code>：使用<code>-t</code>或<code>-trace</code>选项将生成的可执行文件链接到英特尔® 跟踪收集器库。使用此选项与<code>-profile=vt</code>选项具有相同的效果。您还可以使用<code>I_MPI_TRACE_PROFILE</code>环境变量到<code>&lt;profile_name&gt;</code>来指定另一个分析库。例如，将<code>I_MPI_TRACE_PROFILE</code>设置为<code>vtfs</code>以链接到故障安全版本的英特尔跟踪收集器。</p>
+<p><code>-trace-imbalance</code>：使用<code>-trace-imbalance</code>选项将生成的可执行文件链接到负载不平衡跟踪库。使用此选项与<code>-profile=vtim</code>选项具有相同的效果。要使用此选项，请在<code>VT_ROOT</code>环境中包含 Intel Trace Collector 的安装路径</p>
+<p><code>-check_mpi</code>：使用此选项将生成的可执行文件链接到英特尔® 跟踪收集器正确性检查库。默认值为<code>libVTmc.so</code>。使用此选项与<code>-profile=vtmc</code>具有相同的效果</p>
+<p>您还可以使用<code>I_MPI_CHECK_PROFILE</code>环境变量给<code>&lt;profile_name&gt;</code>指定另一个库。</p>
+<p>要使用此选项，请在<code>VT_ROOT</code>环境中包含 Intel Trace Collector 的安装路径变量。</p>
+<p><code>-ilp64</code>：使用此选项可启用部分 ILP64 支持。英特尔 MPI 库的所有整数参数都被视为 64 位值。</p>
+<p><code>-no_ilp64</code>：使用此选项可明确禁用 ILP64 支持。此选项必须与 -i8 结合使用</p>
+<p>如果您为使用英特尔 Fortran 编译器的单独编译指定 -i8 选项，您仍然必须使用用于链接的 i8 orilp64 选项。</p>
+<p><code>-dynamic_log</code>：将此选项与 -t 选项结合使用可动态链接英特尔跟踪收集器库。</p>
+<p>要运行生成的程序，请将<code>$VT_ROOT/slib</code>包含在<code>LD_LIBRARY_PATH</code>环境变量中。</p>
+<p><code>-G</code>：使用此选项在调试模式下编译程序并将生成的可执行文件链接到英特尔 MPI 库的调试版本。有关如何使用附加的信息，请参阅<code>I_MPI_DEBUG</code>。默认情况下，优化的库与 -g 选项链接。</p>
+<p>在运行时使用<code>vars.&#123;sh|csh&#125; [debug|debug_mt]</code>加载特定的 libmpi.so 配置。</p>
+<p><code>-link_mpi=&lt;参数&gt;</code>：使用此选项始终链接指定版本的英特尔 MPI 库。查看用于详细参数描述的<code>I_MPI_LINK</code>环境变量。此选项会覆盖所有其他选择特定选项的选项。</p>
+<p>在运行时使用<code>vars.&#123;sh|csh&#125;[debug|debug_mt]</code>加载特定的 libmpi.so 配置。</p>
+<p><code>-O</code>：使用此选项可启用编译器优化。</p>
+<p><code>-fast</code>：使用此选项可最大限度地提高整个程序的速度。此选项强制英特尔 MPI 库的静态链接方法。此选项仅受 mpiicc、mpiicpc 和 mpiifort 英特尔® 编译器包装器支持。</p>
+<p><code>-echo</code>：使用此选项可显示命令脚本执行的所有操作。</p>
+<p><code>-show</code>：使用此选项可了解如何调用底层编译器，而无需实际运行它。使用以下命令查看所需的编译器标志和选项：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiicc -show -c test.c</span><br></pre></td></tr></table></figure></p>
+<p>使用以下命令查看所需的链接标志、选项和库：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiicc -show -o a.out test.o</span><br></pre></td></tr></table></figure><br>此选项对于确定直接使用底层编译器的复杂构建过程的命令行特别有用。</p>
+<p><code>-show_env</code>：使用此选项可查看调用底层编译器时生效的环境设置。</p>
+<p><code>-&#123;cc,cxx,fc&#125;=&lt;编译器&gt;</code>：使用此选项可选择底层编译器。下表列出了可用的 LLVM 和 IL0 编译器选项以及用于调用它们的命令。<br><img src="/img/1639492360.jpg" alt=""></p>
+<p><code>-nofortbind, -nofortran</code>：使用此选项可禁用 mpiicc 与 Fortran 绑定的链接。这与<code>I_MPI_FORT_BIND</code>变量具有相同的效果。</p>
+<p><code>-v</code>：使用此选项打印编译器包装器脚本版本及其底层编译器版本。</p>
+<p><code>-norpath</code>：使用此选项可为英特尔® MPI 库的编译器包装器禁用 rpath。</p>
+<p><code>mpirun</code>：启动 MPI 作业并提供与作业调度程序的集成。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mpirun &lt;选项&gt;</span><br></pre></td></tr></table></figure></p>
+<p>参数</p>
+<ul>
+<li><code>&lt;options&gt;</code>：<code>mpiexec.hydra</code>选项，如<code>mpiexec.hydra</code>部分所述。这是默认操作模式。</li>
+</ul>
+<p>使用此命令启动 MPI 作业。 mpirun 命令使用 Hydra 作为底层进程管理器。<code>mpirun</code>命令检测 MPI 作业是否是从使用<code>Torque*</code>、<code>PBS Pro*</code>、<code>LSF*</code>、<code>Parallelnavi* NQS*</code>、<code>Slurm*</code>、<code>Univa* Grid Engine*</code>或<code>LoadLeveler*</code>等作业调度程序分配的会话内提交的。<code>mpirun</code>命令从各自的环境中提取主机列表，并根据上述方案自动使用这些节点。在这种情况下，您不需要创建主机文件。使用系统上安装的作业调度程序分配会话，并在此会话中使用 mpirun 命令运行 MPI 作业。</p>
+<p>例子<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -n &lt;# of processes&gt; ./myprog</span><br></pre></td></tr></table></figure></p>
+<p>此命令调用 mpiexec.hydra 命令（Hydra 进程管理器），该命令启动 myprog。</p>
+<p><code>mpiexec.hydra</code>：使用 Hydra 进程管理器启动 MPI 作业。</p>
+<p>句法<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mpiexec.hydra&lt;g-options&gt; &lt;l-options&gt; &lt;executable&gt;</span><br></pre></td></tr></table></figure></p>
+<p>或者<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mpiexec.hydra&lt;g-options&gt; &lt;l-options&gt; &lt;executable1&gt; : &lt;l-options&gt; &lt;executable2&gt;</span><br></pre></td></tr></table></figure></p>
+<p>参数</p>
+<ul>
+<li><code>&lt;g-options&gt;</code>：适用于所有 MPI 进程的全局选项</li>
+<li><code>&lt;l-options&gt;</code>：适用于单个参数集的本地选项</li>
+<li><code>&lt;executable&gt;</code>：<code>./a.out</code>或可执行文件的路径/名称</li>
+</ul>
+<p>描述</p>
+<ul>
+<li>使用 mpiexec.hydra 实用程序通过 Hydra 进程管理器运行 MPI 应用程序。</li>
+</ul>
+<p>使用第一个简短的命令行语法以单个参数集启动<code>&lt;executable&gt;</code>的所有 MPI 进程。例如，以下命令对指定的进程和主机执行<code>a.out</code>：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiexec.hydra -f &lt;hostfile&gt; -n &lt;# of processes&gt; ./a.out</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;# of processes&gt;</code>指定运行 a.out 可执行文件的进程数</li>
+<li><code>&lt;hostfile&gt;</code>指定运行 a.out 可执行文件的主机列表</li>
+</ul>
+<p>使用第二个长命令行语法为不同的 MPI 程序运行设置不同的参数集。例如，以下命令使用不同的参数集执行两个不同的二进制文件：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiexec.hydra -f &lt;hostfile&gt; -env &lt;VAR1&gt; &lt;VAL1&gt; -n 2 ./a.out : -env &lt;VAR2&gt; &lt;VAL2&gt; -n 2 ./b.out</span><br></pre></td></tr></table></figure></p>
+<p>注意您需要区分全局选项和本地选项。在命令行语法中，将本地选项放在全局选项之后。</p>
+<h2 id="Global-Hydra-Options"><a href="#Global-Hydra-Options" class="headerlink" title="Global Hydra Options"></a>Global Hydra Options</h2><p>英特尔® MPI 库的 Hydra 进程管理器的全局选项。全局选项应用于启动命令中的所有参数集。参数集由冒号“:”分隔。</p>
+<p><code>-tune &lt;文件名&gt;</code>：使用此选项指定包含二进制格式的调优数据的文件名。</p>
+<p><code>-usize &lt;usize&gt;</code>：使用此选项设置<code>MPI_UNIVERSE_SIZE</code>，它可用作<code>MPI_COMM_WORLD</code>的属性。</p>
+<ul>
+<li><code>&lt;size&gt;</code>定义 Universe 大小</li>
+<li><code>SYSTEM</code>设置大小等于通过主机文件或资源管理器传递给 mpiexec 的内核数。</li>
+<li><code>INFINITE</code>不限制大小。这是默认值。</li>
+<li><code>&lt;value&gt;</code>将大小设置为 ≥ 0 的数值。</li>
+</ul>
+<p><code>-hostfile &lt;hostfile&gt;</code>或<code>-f &lt;hostfile&gt;</code>：使用此选项指定运行应用程序的主机名。如果主机名重复，则此名称仅使用一次。有关更多详细信息，另请参阅<code>I_MPI_HYDRA_HOST_FILE</code>环境变量。</p>
+<p>注意使用以下选项更改集群节点上的进程排布：</p>
+<ul>
+<li>使用<code>-perhost</code>、<code>-ppn</code>和<code>-grr</code>选项通过循环调度将连续的MPI 进程放置在每个主机上。</li>
+<li>使用<code>-rr</code>选项使用循环调度将连续的MPI 进程放置在不同的主机上。</li>
+</ul>
+<p><code>-machinefile &lt;机器文件&gt;</code>或<code>-machine &lt;机器文件&gt;</code>：使用此选项可通过机器文件控制进程放置。要定义要启动的进程总数，请使用<code>-n</code>选项。例如：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cat ./machinefile</span><br><span class="line">node0:2</span><br><span class="line">node1:2</span><br><span class="line">node0:1</span><br></pre></td></tr></table></figure></p>
+<p><code>-hosts-group</code>：使用此选项可使用方括号、逗号和破折号设置节点范围（如在<code>Slurm*</code>工作负载管理器中）。有关更多详细信息，请参阅 Hydra 环境变量中的<code>I_MPI_HYDRA_HOST_FILE</code>环境变量。</p>
+<p><code>-silent-abort</code>：使用此选项可禁用中止警告消息。有关更多详细信息，请参阅 Hydra 环境变量中的<code>I_MPI_SILENT_ABORT</code>环境变量。</p>
+<p><code>-nameserver</code>：使用此选项以<code>主机名:端口</code>格式指定名称服务器。有关更多详细信息，请参阅 Hydra 环境变量中的<code>I_MPI_HYDRA_NAMESERVER</code>环境变量。</p>
+<p><code>-genv &lt;ENVVAR&gt; &lt;value&gt;</code>：使用此选项可为所有 MPI 进程将<code>&lt;ENVVAR&gt;</code>环境变量设置为指定的<code>&lt;value&gt;</code>。</p>
+<p><code>-genvall</code>：使用此选项可以将所有环境变量传播到所有 MPI 进程。</p>
+<p><code>-genvnone</code>：使用此选项可禁止将任何环境变量传播到任何 MPI 进程。</p>
+<p><code>-genvexcl &lt;环境变量名称列表&gt;</code>：使用此选项可禁止将列出的环境变量传播到任何 MPI 进程。</p>
+<p><code>-genvlist &lt;列表&gt;</code>：使用此选项可传递带有当前值的环境变量列表。<code>&lt;list&gt;</code>是要发送到所有 MPI 进程的环境变量的逗号分隔列表。</p>
+<p><code>-pmi-connect &lt;mode&gt;</code>：使用此选项可选择进程管理接口 (PMI) 消息的缓存模式。<code>&lt;mode&gt;</code>的可能值为：</p>
+<ul>
+<li><code>&lt;mode&gt;</code>：要使用的缓存模式</li>
+<li><code>nocache</code>：不缓存 PMI 消息。</li>
+<li><code>cache</code>：在本地 pmi_proxy 管理进程上缓存 PMI 消息，以最大限度地减少 PMI 请求的数量。缓存的信息会自动传播到子管理进程。</li>
+<li><code>lazy-cache</code>：带有 PMI 信息的请求传播。</li>
+<li><code>alltoall</code>：信息在所有 pmi_proxy 之间自动交换，然后才能完成任何获取请求。这是默认模式。</li>
+</ul>
+<p>有关更多详细信息，请参阅<code>I_MPI_HYDRA_PMI_CONNECT</code>环境变量。</p>
+<p><code>-perhost &lt;# of processes &gt;</code>、<code>-ppn &lt;# of processes &gt;</code>或<code>-grr &lt;# of processes &gt;</code>：使用此选项可以使用循环调度在组中的每个主机上放置指定数量的连续 MPI 进程。有关更多详细信息，请参阅<code>I_MPI_PERHOST</code>环境变量。注意在作业调度程序下运行时，默认情况下会忽略这些选项。为了能够使用这些选项控制进程放置，请禁用<code>I_MPI_JOB_RESPECT_PROCESS_PLACEMENT</code></p>
+<p><code>-rr</code>：使用此选项可以使用循环调度将连续的 MPI 进程放置在不同的主机上。此选项等效于<code>-perhost 1</code>。有关更多详细信息，请参阅<code>I_MPI_PERHOST</code>环境变量。</p>
+<p><code>-trace [&lt;profiling_library&gt;]</code>或<code>-t [&lt;profiling_library&gt;]</code>：使用此选项，使用指定的英特尔® 跟踪收集器<code>&lt;profiling_library&gt;</code>来分析您的 MPI 应用程序。如果未指定<code>&lt;profiling_library&gt;</code>，则使用默认分析库<code>libVT.so</code>。设置<code>I_MPI_JOB_TRACE_LIBS</code>环境变量以覆盖默认分析库。</p>
+<p><code>-trace-imbalance</code>：使用此选项通过使用<code>libVTim.so</code>库的英特尔® 跟踪收集器来分析您的 MPI 应用程序。</p>
+<p><code>-aps</code>：使用此选项可使用应用程序性能快照从 MPI 应用程序收集统计信息。收集的数据包括硬件性能指标、内存消耗数据、内部 MPI 不平衡和 OpenMP* 不平衡统计。使用此选项时，会生成一个包含统计数据的新文件夹<code>aps_result_&lt;date&gt;-&lt;time&gt;</code>。您可以使用 aps 实用程序分析收集的数据，例如：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -aps -n 2 ./myApp</span><br><span class="line">$ aps aps_result_20171231_235959</span><br></pre></td></tr></table></figure></p>
+<p><code>-mps</code>：使用此选项仅从使用应用程序性能快照的 MPI 应用程序收集 MPI 和 OpenMP* 统计信息。与<code>-aps</code>选项不同，<code>-mps</code>不收集硬件指标。该选项等效于：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -n 2 aps -c mpi,omp ./myapp</span><br></pre></td></tr></table></figure></p>
+<p><code>-trace-pt2pt</code>：使用此选项来收集有关使用英特尔® 跟踪分析器和收集器的点对点操作的信息。该选项要求您还使用<code>-trace</code>选项。</p>
+<p><code>-trace-collectives</code>：使用此选项来收集有关使用英特尔® 跟踪分析器和收集器的集合操作的信息。该选项要求您还使用<code>-trace</code>选项。</p>
+<p>使用<code>-trace-pt2pt</code>和<code>-trace-collectives</code>减少生成的跟踪文件的大小或消息检查器报告的数量。这些选项适用于静态和动态链接的应用程序。</p>
+<p><code>-configfile &lt;文件名&gt;</code>：使用此选项指定包含命令行选项的文件<code>&lt;filename&gt;</code>，每行一个可执行文件。空行和以“#”开头的行将被忽略。命令行中指定的其他选项被视为全局选项。您可以在默认加载的配置文件中指定全局选项（<code>&lt;installdir&gt;/etc</code>中的<code>mpiexec.conf</code>、<code>~/.mpiexec.conf</code>和工作目录中的<code>mpiexec.conf</code>）。其余选项可以在命令行指定。</p>
+<p><code>-branch-count &lt;数量&gt;</code>：使用此选项来限制 Hydra 管理进程启动的子管理进程的数量。有关更多详细信息，请参阅<code>I_MPI_HYDRA_BRANCH_COUNT</code>环境变量。</p>
+<p><code>-pmi-aggregate</code>或<code>-pmi-noaggregate</code>：使用此选项分别打开或关闭 PMI 请求的聚合。默认值为<code>-pmi-aggregate</code>，表示默认启用聚合。有关更多详细信息，请参阅<code>I_MPI_HYDRA_PMI_AGGREGATE</code>环境变量。</p>
+<p><code>-gdb</code>：使用此选项可在 GDB*（GNU 调试器）下运行可执行文件。您可以使用以下命令：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiexeс.hydra -gdb -n &lt;进程数&gt;&lt;可执行文件&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>-gdba &lt;pid&gt;</code>：使用此选项将 GNU* 调试器附加到现有的 MPI 作业。您可以使用以下命令：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiexec.hydra -gdba &lt;pid&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>-nolocal</code>：使用此选项可避免在启动<code>mpiexec.hydra</code>的主机上运行<code>&lt;executable&gt;</code>。您可以在部署专用主节点以启动 MPI 作业和一组专用计算节点以运行实际 MPI 进程的集群上使用此选项。</p>
+<p><code>-hosts &lt;节点列表&gt;</code>：使用此选项指定应在其上运行 MPI 进程的特定<code>&lt;nodelist&gt;</code>。例如，以下命令在主机 host1 和 host2 上运行可执行文件 a.out：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiexec.hydra -n 2 -ppn 1 -hosts host1,host2 ./a.out</span><br></pre></td></tr></table></figure></p>
+<p>注意如果<code>&lt;nodelist&gt;</code>仅包含一个节点，则此选项被解释为本地选项。有关详细信息，请参阅本地选项。</p>
+<p><code>-iface &lt;interface&gt;</code>：使用此选项可选择适当的网络接口。例如，如果您的 InfiniBand* 网络的 IP 仿真配置为 ib0，您可以使用以下命令。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiexec.hydra -n 2 -iface ib0 ./a.out</span><br></pre></td></tr></table></figure><br>有关更多详细信息，请参阅<code>I_MPI_HYDRA_IFACE</code>环境变量。</p>
+<p><code>-demux &lt;mode&gt;</code><br>使用此选项可为多个 I/O 设置轮询模式。默认值为轮询。</p>
+<ul>
+<li><code>&lt;spec&gt;</code>定义多个 I/O 的轮询模式</li>
+<li><code>poll</code>设置 poll 为轮询方式。这是默认值。</li>
+<li><code>select</code>：select 作为轮询模式。</li>
+</ul>
+<p>有关更多详细信息，请参阅<code>I_MPI_HYDRA_DEMUX</code>环境变量。</p>
+<p><code>-enable-x</code>或<code>-disable-x</code>：使用此选项来控制 Xlib* 流量转发。默认值为<code>-disable-x</code>，表示不转发Xlib 流量。</p>
+<p><code>-l</code>,<code>-prepend-rank</code>：使用此选项可在写入标准输出的所有行的开头插入 MPI 进程编号。</p>
+<p><code>-ilp64</code>：使用此选项预加载 ILP64 接口。</p>
+<p><code>-s &lt;规格&gt;</code>：使用此选项将标准输入定向到指定的 MPI 进程。</p>
+<ul>
+<li><code>&lt;spec&gt;</code>定义 MPI 进程等级</li>
+<li><code>all</code>使用所有进程。</li>
+<li><code>none</code>不要将标准输出定向到任何进程。</li>
+<li><code>&lt;l&gt;</code>,<code>&lt;m&gt;</code>,<code>&lt;n&gt;</code>指定一个确切的列表并仅使用进程<code>&lt;l&gt;</code>、<code>&lt;m&gt;</code>和<code>&lt;n&gt;</code>。默认的值为零。</li>
+<li><code>&lt;k&gt;</code>,<code>&lt;l&gt;-&lt;m&gt;</code>,<code>&lt;n&gt;</code>指定范围并使用进程<code>&lt;k&gt;</code>、<code>&lt;l&gt;</code>到<code>&lt;m&gt;</code>和<code>&lt;n&gt;</code>。</li>
+</ul>
+<p><code>-noconf</code>：使用此选项可禁用对 mpiexec.hydra 配置文件的处理。</p>
+<p><code>-ordered-output</code>：使用此选项可避免混合来自 MPI 进程的数据输出。此选项影响标准输出和标准错误流。注意 使用此选项时，每个进程的最后输出行以行尾 ‘\n’ 字符结束。否则应用程序可能会停止响应。</p>
+<p><code>-path &lt;目录&gt;</code>：使用此选项指定可执行文件的路径。</p>
+<p><code>-tmpdir &lt;目录&gt;</code>：使用此选项为临时文件设置目录。有关更多详细信息，请参阅<code>I_MPI_TMPDIR</code>环境变量。</p>
+<p><code>-version</code>或<code>-V</code>：使用此选项显示英特尔® MPI 库的版本。</p>
+<p><code>-info</code>：使用此选项可显示英特尔® MPI 库的构建信息。使用此选项时，将忽略其他命令行参数。</p>
+<p><code>-localhost</code>：使用此选项可显式指定启动节点的本地主机名。</p>
+<p><code>-rmk &lt;RMK&gt;</code>：使用此选项可选择要使用的资源管理内核。英特尔® MPI 库仅支持 pbs。有关更多详细信息，请参阅<code>I_MPI_HYDRA_RMK</code>环境变量。</p>
+<p><code>-outfile-pattern &lt;文件&gt;</code>：使用此选项将标准输出重定向到指定的文件。</p>
+<p><code>-errfile-pattern &lt;文件&gt;</code>：使用此选项将 stderr 重定向到指定的文件。</p>
+<p><code>-gpath &lt;路径&gt;</code>：使用此选项指定可执行文件的路径。</p>
+<p><code>-gwdir &lt;目录&gt;</code>：使用此选项指定可执行文件运行的工作目录。</p>
+<p><code>-gumask &lt;umask&gt;</code>：使用此选项为远程可执行文件执行<code>umask &lt;umask&gt;</code>命令。</p>
+<p><code>-gdb-ia</code>：使用此选项可在特定于英特尔® 架构的 GNU* 调试器下运行进程。</p>
+<p><code>-prepend-pattern</code>：使用此选项可指定前置到进程输出的模式。</p>
+<p><code>-verbose</code>或<code>-v</code>：使用此选项从 mpiexec.hydra 打印调试信息，例如：</p>
+<ul>
+<li>服务进程参数</li>
+<li>为启动应用程序传递的环境变量和参数</li>
+<li>作业生命周期中的 PMI 请求/响应</li>
+</ul>
+<p>有关更多详细信息，请参阅<code>I_MPI_HYDRA_DEBUG</code>环境变量。</p>
+<p><code>-print-rank-map</code>：使用此选项打印出 MPI 编号映射。</p>
+<p><code>-print-all-exitcodes</code>：使用此选项打印所有进程的退出代码。</p>
+<p><code>-bootstrap &lt;引导服务器&gt;</code>：使用此选项可选择要使用的内置引导服务器。引导服务器是系统提供的基本远程节点访问机制。 Hydra 支持多个运行时引导服务器，例如 ssh、rsh、pdsh、fork、persist、slurm、ll、lsf 或 sge，以启动 MPI 进程。默认引导服务器是 ssh。通过选择 slurm、ll、lsf 或 sge，您可以使用相应的 srun、llspawn.stdio、blaunch 或 qrsh 内部作业调度程序实用程序在各自选定的作业调度程序（Slurm<em>、LoadLeveler</em>、LSF<em> 和SGE</em>）。</p>
+<ul>
+<li><code>&lt;arg&gt;</code>字符串参数</li>
+<li><code>ssh</code>使用安全shell。这是默认值。</li>
+<li><code>rsh</code>使用远程shell。</li>
+<li><code>pdsh</code> 使用并行分布式shell。</li>
+<li><code>pbs</code> 使用 Torque* pbsdsh。</li>
+<li><code>pbsdsh</code> pbs bootstrap的别名。</li>
+<li><code>fork</code> 使用fork调用。</li>
+<li><code>persist</code> 使用Hydra服务</li>
+<li><code>slurm</code> 使用Slurm* srun。</li>
+<li><code>ll</code> 使用LoadLeveler* llspawn.stdio。</li>
+<li><code>lsf</code> 使用LSF blaunch。</li>
+<li><code>sge</code> 使用Univa<em> Grid Engine</em> qrsh。</li>
+</ul>
+<p><code>-bootstrap-exec &lt;引导服务器&gt;</code>：使用此选项可将可执行文件设置为用作引导服务器。默认引导服务器是 ssh。例如：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiexec.hydra -bootstrap-exec &lt;bootstrap_server_executable&gt; -f hosts -env &lt;VAR1&gt; &lt;VAL1&gt; -n 2 ./a.out</span><br></pre></td></tr></table></figure></p>
+<p>有关更多详细信息，请参阅<code>I_MPI_HYDRA_BOOTSTRAP</code>。</p>
+<p><code>-bootstrap-exec-args &lt;args&gt;</code>：使用此选项为引导服务器可执行文件提供附加参数。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiexec.hydra -bootstrap-exec-args &lt;参数&gt; -n 2 ./a.out</span><br></pre></td></tr></table></figure></p>
+<p>要与 Slurm* 调度程序紧密集成（包括对挂起/恢复的支持），请使用 Slurm 页面上概述的方法：<a href="http://www.schedmd.com/slurmdocs/mpi_guide.html#intel_mpi。有关更多详细信息，请参阅`I_MPI_HYDRA_BOOTSTRAP_EXEC_EXTRA_ARGS`。">http://www.schedmd.com/slurmdocs/mpi_guide.html#intel_mpi。有关更多详细信息，请参阅`I_MPI_HYDRA_BOOTSTRAP_EXEC_EXTRA_ARGS`。</a></p>
+<p><code>-v6</code>：使用此选项可强制使用 IPv6 协议。</p>
+<h2 id="Local-Hydra-Options"><a href="#Local-Hydra-Options" class="headerlink" title="Local Hydra Options"></a>Local Hydra Options</h2><p>本节介绍英特尔® MPI 库的 Hydra 进程管理器的本地选项。局部选项仅应用于指定它们的参数集。参数集由冒号“:”分隔。</p>
+<p><code>-n &lt;进程数&gt;</code>或<code>-np &lt;进程数&gt;</code>：使用此选项可设置使用当前参数集运行的 MPI 进程数。</p>
+<p><code>-env &lt;envar&gt; &lt;value&gt;</code>：使用此选项将<code>&lt;envar&gt;</code>环境变量设置为当前参数集中所有 MPI 进程的指定<code>&lt;value&gt;</code>。</p>
+<p><code>-envall</code>：使用此选项可传播当前参数集中的所有环境变量。有关更多详细信息，请参阅<code>I_MPI_HYDRA_ENV</code>环境变量。</p>
+<p><code>-envnone</code>：使用此选项可禁止将任何环境变量传播到当前参数集中的 MPI 进程。注意 该选项不适用于本地主机。</p>
+<p><code>-envexcl &lt;list-of-envvar-names&gt;</code>：使用此选项可禁止将列出的环境变量传播到当前参数集中的 MPI 进程。</p>
+<p><code>-envlist &lt;list&gt;</code>：使用此选项可传递带有当前值的环境变量列表。<code>&lt;list&gt;</code>是要发送到 MPI 进程的环境变量的逗号分隔列表。</p>
+<p><code>-host &lt;nodename&gt;</code>：使用此选项指定要在其上运行 MPI 进程的特定<code>&lt;nodename&gt;</code>。 例如，以下命令在主机 host1 和 host2 上执行 a.out：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiexec.hydra -n 2 -host host1 ./a.out : -n 2 -host host2 ./a.out</span><br></pre></td></tr></table></figure></p>
+<p><code>-path &lt;dir&gt;</code>：使用此选项指定要在当前参数集中运行的<code>&lt;executable&gt;</code>文件的路径。</p>
+<p><code>-wdir &lt;dir&gt;</code>：使用此选项指定<code>&lt;executable&gt;</code>文件在当前参数中运行的工作目录</p>
+<h2 id="gtool-options"><a href="#gtool-options" class="headerlink" title="gtool options"></a>gtool options</h2><p><code>-gtool</code>：使用此选项可通过<code>mpiexec.hydra</code>和<code>mpirun</code>命令为指定进程启动英特尔® VTune™ Amplifier XE、英特尔® Advisor、Valgrind<em> 和 GDB</em>（GNU 调试器）等工具。 此选项的替代方法是<code>I_MPI_GTOOL</code>环境变量。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-gtool &quot;&lt;command line for tool 1&gt;:&lt;ranks set 1&gt;[=launch mode 1][@arch 1]; </span><br><span class="line">        &lt;command line for tool 2&gt;:&lt;ranks set 2&gt;[=exclusive][@arch 2]; </span><br><span class="line">        … ;</span><br><span class="line">        &lt;command line for tool n&gt;:&lt;ranks set n&gt;[=exclusive][@arch n]&quot; </span><br><span class="line">        &lt;executable&gt;</span><br></pre></td></tr></table></figure></p>
+<p>or:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -n &lt;# of processes&gt; </span><br><span class="line">    -gtool &quot;&lt;command line for tool 1&gt;:&lt;ranks set 1&gt;[=launch mode 1][@arch 1]&quot; </span><br><span class="line">    -gtool &quot;&lt;command line for tool 2&gt;:&lt;ranks set 2&gt;[=launch mode 2][@arch 2]&quot; </span><br><span class="line">    …</span><br><span class="line">    -gtool &quot;&lt;command line for a tool n&gt;:&lt;ranks set n&gt;[=launch mode 3][@arch n]&quot; </span><br><span class="line">    &lt;executable&gt;</span><br></pre></td></tr></table></figure></p>
+<p>在语法中，分隔符<code>;</code>和<code>-gtool</code>选项可以互换。</p>
+<p>参数</p>
+<ul>
+<li><code>&lt;rank set&gt;</code>：指定工具执行中涉及的进程范围。用逗号分隔等级或使用“-”符号表示一组连续的进程。 要为所有进程运行该工具，请使用 all 参数。注意如果您指定了不正确的排名索引，则会打印相应的警告，并且该工具会继续为有效的排名工作。</li>
+<li><code>[=launch mode]</code> 指定启动模式（可选）。 有关可用值，请参见下文。</li>
+<li><code>[@arch]</code>指定工具运行的架构（可选）。对于给定的<code>&lt;rank set&gt;</code>，如果指定此参数，则仅为驻留在具有指定架构的主机上的进程启动该工具。该参数是可选的。注意相同<code>@arch</code>参数的进程集不能重叠。缺少<code>@arch</code>参数也被认为是不同的架构。因此，以下语法被认为是有效的：<code>-gtool &quot;gdb: 0-3=attach;gdb:0-3=attach@hsw;/usr/bin/gdb:0-3=attach@knl</code>。另外，请注意一些工具不能一起工作，或者同时使用它们可能会导致不正确的结果。</li>
+</ul>
+<p>下表列出了<code>[=launch mode]</code>的参数值。您可以为每个工具指定多个值，这些值用逗号“,”分隔。</p>
+<ul>
+<li><code>exclusive</code> 指定此值可防止工具在每个主机上启动超过一个进程。</li>
+<li><code>attach</code> 指定此值以将工具从<code>-gtool</code>附加到可执行文件。如果您使用调试器或其他可以以调试器方式附加到进程的工具，则需要指定此值。此模式仅通过调试器进行了测试。</li>
+<li><code>node-wide</code> 指定此值以将<code>-gtool</code>中的工具应用于<code>&lt;rank set&gt;</code>所在的所有进程或在所有进程的情况下应用于所有节点。也就是说，该工具应用于比可执行文件更高的级别（应用于 pmi_proxy 守护程序）。将<code>-remote</code>参数用于<code>rank</code>以仅在远程节点上使用该工具。</li>
+</ul>
+<p>以下示例演示了使用<code>-gtool</code>选项的不同场景。通过 mpirun 命令启动英特尔® VTune™ Amplifier XE 和 Valgrind*：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -n 16 -gtool &quot;vtune -collect hotspots -analyze-system \</span><br><span class="line">-r result1:5,3,7-9=exclusive@bdw;valgrind -log-file=log_%p:0,1,10-12@hsw&quot; a.out</span><br></pre></td></tr></table></figure></p>
+<p>此命令为在代号为 Broadwell 的英特尔® 微架构上运行的进程启动 vtune。每个主机只启动一个 vtune 副本，索引最小的进程会受到影响。同时，为在代号为 Haswell 的英特尔® 微架构上运行的所有指定进程启动 Valgrind*。 Valgrind 的结果保存到文件<code>log_&lt;process ID&gt;</code>。</p>
+<p>为不同的rank set设置不同的环境变量：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -n 16 -gtool &quot;env VARIABLE1=value1 VARIABLE2=value2:3,5,7-9; env VARIABLE3=value3:0,11&quot; a.out</span><br></pre></td></tr></table></figure></p>
+<p>示例 3通过<code>-machinefile</code>选项为特定进程应用工具。<code>m_file</code>中有如下信息<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cat ./m_file</span><br><span class="line">hostname_1:2</span><br><span class="line">hostname_2:3</span><br><span class="line">hostname_3:1</span><br></pre></td></tr></table></figure></p>
+<p>以下命令行演示了如何使用<code>-machinefile</code>选项来应用工具<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -n 6 -machinefile m_file -gtool &quot;vtune -collect hotspots -analyze-system \</span><br><span class="line">-r result1:5,3=exclusive@hsw;valgrind:0,1@bdw&quot; a.out</span><br></pre></td></tr></table></figure></p>
+<p>在此示例中，使用<code>-machinefie</code>选项意味着索引为 0 和 1 的进程位于<code>hostname_1</code>机器上，进程 3 位于<code>hostname_2</code>机器上，而进程 5 位于<code>hostname_3</code>机器上。之后，如果<code>hostname_2</code>和<code>hostname_3</code>机器具有代号为Haswell 的英特尔® 微架构，则vtune 仅应用于rank 3 和5（因为这些rank属于不同的机器，所以exclusive 选项匹配它们）。同时，Valgrind* 工具适用于在<code>hostname_1</code>机器上分配的两个进程，以防它具有代号为 Broadwell 的英特尔® 微架构。</p>
+<p><code>-gtoolfile &lt;gtool_config_file&gt;</code>：使用此选项在配置文件中指定<code>-gtool</code>参数。所有相同的规则都适用。此外，您可以使用分节符分隔不同的命令行。例如，如果<code>gtool_config_file</code>包含以下设置：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">env VARIABLE1=value1 VARIABLE2=value2:3,5,7-9; env VARIABLE3=value3:0,11</span><br><span class="line">env VARIABLE4=value4:1,12</span><br></pre></td></tr></table></figure></p>
+<p>以下命令为进程 3、5、7、8 和 9 设置<code>VARIABLE1</code>和<code>VARIABLE2</code>，并为进程 0 和 11 设置<code>VARIABLE3</code>，而为进程 1 和 12 设置<code>VARIABLE4</code>：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -n 16 -gtoolfile gtool_config_file a.out</span><br></pre></td></tr></table></figure><br>注意选项和环境变量<code>-gtool</code>、<code>-gtoolfile</code>和<code>I_MPI_GTOOL</code>是互斥的。选项<code>-gtool</code>和<code>-gtoolfile</code>具有相同的优先级并且比<code>I_MPI_GTOOL</code>具有更高的优先级。命令行中的第一个指定选项有效，第二个被忽略。因此，如果您未指定<code>-gtool</code>或<code>-gtoolfile</code>，请使用<code>I_MPI_GTOOL</code>。</p>
+<h2 id="cpuinfo"><a href="#cpuinfo" class="headerlink" title="cpuinfo"></a>cpuinfo</h2><p>提供有关系统中使用的处理器的信息。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cpuinfo [[-]&lt;选项&gt;]</span><br></pre></td></tr></table></figure></p>
+<p><code>g</code>：关于单个集群节点的一般信息显示：</p>
+<ul>
+<li>处理器产品名称</li>
+<li>节点上的包/套接字数</li>
+<li>节点上和每个包内的核心和线程数</li>
+<li>SMT 模式启用</li>
+</ul>
+<p><code>i</code>：逻辑处理器标识表，相应地标识每个逻辑处理器的线程、内核和包。</p>
+<ul>
+<li>ThreadId - 内核中的唯一处理器标识符。</li>
+<li>CoreId - 包内的唯一核心标识符。</li>
+<li>PackageId - 节点内的唯一包标识符。</li>
+</ul>
+<p><code>d</code>：节点分解表显示节点内容。每个条目都包含有关包、内核和逻辑处理器的信息。</p>
+<ul>
+<li>包裹ID - 物理包裹标识符。</li>
+<li>内核 ID - 属于此包的内核标识符列表。</li>
+<li>处理器ID - 属于该包的处理器列表。这个列表顺序直接对应于核心列表。括号中的一组处理器属于一个内核。</li>
+</ul>
+<p><code>c</code>：逻辑处理器的缓存共享显示共享特定缓存级别的大小和处理器组的信息。</p>
+<ul>
+<li>大小——以字节为单位的缓存大小。</li>
+<li>处理器- 括在括号中的处理器组列表，它们共享此缓存或不共享其他缓存。</li>
+</ul>
+<p><code>s</code>：微处理器签名十六进制字段（英特尔平台符号）显示签名值：</p>
+<ul>
+<li>extended family</li>
+<li>extended model</li>
+<li>family</li>
+<li>model</li>
+<li>type</li>
+<li>stepping</li>
+</ul>
+<p><code>f</code>：微处理器功能标志指示微处理器支持哪些功能。使用 Intel 平台符号。</p>
+<p><code>n</code>：表显示了有关 NUMA 节点的以下信息：</p>
+<ul>
+<li>NUMA Id - NUMA 节点标识符。</li>
+<li>处理器 - 此节点中的处理器列表。</li>
+<li>如果节点没有处理器，则不会显示该节点。</li>
+</ul>
+<p>cpuinfo 实用程序打印出可用于定义合适的进程固定设置的处理器体系结构信息。输出由多个表组成。每个表对应于参数表中列出的单个选项之一。</p>
+<p>cpuinfo 实用程序可用于 Intel 微处理器和非 Intel 微处理器，但它可能仅提供有关非 Intel 微处理器的部分信息。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">$ cpuinfo -gdcs</span><br><span class="line">===== Processor composition =====</span><br><span class="line">Processor name : Intel(R) Xeon(R) X5570</span><br><span class="line">Packages(sockets) : 2</span><br><span class="line">Cores : 8</span><br><span class="line">Processors(CPUs) : 8</span><br><span class="line">Cores per package : 4</span><br><span class="line">Threads per core : 1</span><br><span class="line">===== Processor identification =====</span><br><span class="line">Processor Thread Id. Core Id. Package Id.</span><br><span class="line">0         0          0        0</span><br><span class="line">1         0          0        1</span><br><span class="line">2         0          1        0</span><br><span class="line">3         0          1        1</span><br><span class="line">4         0          2        0</span><br><span class="line">5         0          2        1</span><br><span class="line">6         0          3        0</span><br><span class="line">7         0          3        1</span><br><span class="line">===== Placement on packages =====</span><br><span class="line">Package Id. Core Id. Processors</span><br><span class="line">0           0,1,2,3  0,2,4,6</span><br><span class="line">1           0,1,2,3  1,3,5,7</span><br><span class="line">===== Cache sharing =====</span><br><span class="line">Cache Size   Processors</span><br><span class="line">L1    32 KB  no sharing</span><br><span class="line">L2    256 KB no sharing</span><br><span class="line">L3    8 MB   (0,2,4,6)(1,3,5,7)</span><br><span class="line">===== Processor Signature =====</span><br><span class="line">_________ ________ ______ ________ _______ __________</span><br><span class="line">| xFamily | xModel | Type | Family | Model | Stepping |</span><br><span class="line">|_________|________|______|________|_______|__________|</span><br><span class="line">| 00      | 1      | 0    | 6      | a     | 5        |</span><br><span class="line">|_________|________|______|________|_______|__________|</span><br></pre></td></tr></table></figure></p>
+<h2 id="impi-info"><a href="#impi-info" class="headerlink" title="impi_info"></a>impi_info</h2><p>提供有关可用英特尔® MPI 库环境变量的信息。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">impi_info &lt;选项&gt;</span><br></pre></td></tr></table></figure></p>
+<p>参数</p>
+<ul>
+<li><code>-a | -all</code>：显示所有 IMPI 变量。</li>
+<li><code>-h | -help</code>：显示帮助信息。</li>
+<li><code>-v | -variable</code>：显示所有可用变量或指定变量的描述。</li>
+<li><code>-c | -category</code>：显示指定类别的所有可用类别或变量。</li>
+<li><code>-e | -expert</code>：显示所有专家变量。</li>
+</ul>
+<p>impi_info 实用程序提供有关英特尔 MPI 库中可用环境变量的信息。 对于每个变量，它打印出名称、默认值和值数据类型。 默认情况下，会显示一个简化的变量列表。 使用 -all 选项显示所有可用变量及其说明。 impi_info 输出示例：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ ./impi_info</span><br><span class="line">| NAME                 | DEFAULT VALUE | DATA TYPE |</span><br><span class="line">====================================================</span><br><span class="line">| I_MPI_THREAD_SPLIT   | 0             | MPI_INT   |</span><br><span class="line">| I_MPI_THREAD_RUNTIME | none          | MPI_CHAR  |</span><br><span class="line">| I_MPI_THREAD_MAX     | -1            | MPI_INT   |</span><br><span class="line">| I_MPI_THREAD_ID_KEY  | thread_id     | MPI_CHAR  |</span><br></pre></td></tr></table></figure></p>
+<h2 id="mpitune"><a href="#mpitune" class="headerlink" title="mpitune"></a>mpitune</h2><p>为给定的 MPI 应用程序调整英特尔® MPI 库参数。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mpitune &lt;options&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>-c | --config-file &lt;file&gt;</code>指定一个配置文件来运行一个调整会话。</li>
+<li><code>-d | --dump-file &lt;file&gt;</code>指定存储收集结果的文件。 该选项用于分析模式。</li>
+<li><code>-m | --mode &#123;collect | analyze&#125;</code> 指定 mpitune 模式。 支持的模式是收集和分析：<ul>
+<li>收集模式运行调整过程并将结果保存在临时文件中；</li>
+<li>分析模式将临时文件转换为英特尔 MPI 库使用的 JSON 树，并生成一个表，以人类可读的格式表示算法值。</li>
+</ul>
+</li>
+<li><code>-h | --help</code>显示帮助信息。</li>
+<li><code>-v | --version</code>显示产品版本。</li>
+</ul>
+<p>mpitune 实用程序允许您根据集群配置或应用程序自动调整英特尔 MPI 库参数，例如集合操作算法。</p>
+<p>tuner迭代地启动具有不同配置的基准测试应用程序，以测量性能并存储每次启动的结果。基于这些结果，tuner为被调优的参数生成最佳值。</p>
+<p>注意从英特尔 MPI 库 2019 更新 4 版本开始，您必须指定两个 mpitune 配置文件，它们的模式和转储文件字段不同。一种更简单的替代方法是使用英特尔 MPI 库附带的单个配置文件模板之一。在这种情况下，您必须使用命令行来定义模式和转储文件字段。</p>
+<ul>
+<li><code>-mode</code>选项定义两种可能的 MPI 调优模式之一：收集或分析。</li>
+<li><code>-dump-file</code>选项定义处于分析模式时临时文件的路径。该路径在第一次迭代后由 mpitune 返回。</li>
+</ul>
+<p>配置文件应指定所有tuner参数，这些参数通过<code>--config-file</code>选项传递给调优器。典型的配置文件由主要部分、指定通用选项和特定库参数的搜索空间部分（例如，用于特定集合操作）组成。要注释一行，请使用#。<code>&lt;installdir&gt;/etc/tune_cfg</code>中提供了所有配置文件示例。请注意，英特尔® MPI 基准测试的配置文件已经创建。调优过程包括两个步骤：数据收集（收集模式）和数据分析（分析模式）：</p>
+<ul>
+<li><code>$ mpitune -m collect -c &lt;path-to-config-file2&gt;</code></li>
+<li><code>$ mpitune -m analyze -c &lt;path-to-config-file1&gt;</code></li>
+</ul>
+<p>另一个变体是：</p>
+<ul>
+<li><code>$ mpitune -m analyze -c &lt;path-to-config-file1&gt;</code></li>
+</ul>
+<p>其中第一步中接收到的转储文件的路径在包含模板的配置文件中使用。调整结果以 JSON 树的形式呈现，可以使用<code>I_MPI_TUNING</code>环境变量添加到库中。</p>
+<p>以下选项也可以用：</p>
+<ul>
+<li><code>-f &lt;filename&gt;</code>指定包含主机名的文件。</li>
+<li><code>-hosts &lt;hostlist&gt;</code>指定以逗号分隔的主机列表。</li>
+<li><code>-np &lt;value&gt;</code>指定进程数。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mpitune -np 2 -ppn 1 -hosts HOST1,HOST2 -m collect -c &lt;path-to-config-file2&gt;</span><br><span class="line">$ mpitune -np 2 -ppn 1 -hosts HOST1,HOST2 -m analyze -c &lt;path-to-config-file1&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="mpitune-Configuration-Options"><a href="#mpitune-Configuration-Options" class="headerlink" title="mpitune Configuration Options"></a>mpitune Configuration Options</h3><h4 id="Application-Options"><a href="#Application-Options" class="headerlink" title="Application Options"></a>Application Options</h4><p><code>-app</code>：为要启动的命令行设置模板以收集调整结果。命令行可以包含声明为<code>@&lt;var_name&gt;@</code>的变量。使用其他选项进一步定义变量。例如：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-app: mpirun -np @np@ -ppn @ppn@ IMB-MPI1 -msglog 0:@logmax@ -npmin @np@ @func@</span><br></pre></td></tr></table></figure></p>
+<p>注意应用程序必须产生输出（在标准输出或文件或任何其他目标中），调优器可以解析这些输出以选择要调整的值和其他变量。有关详细信息，请参阅下面的<code>-app-regex</code>和<code>-appregex-legend</code>选项。</p>
+<p><code>-app-regex</code>：设置要计算的正则表达式以从应用程序输出中提取所需的值。使用正则表达式组将值分配给变量。变量和组关联使用<code>-app-regex-legend</code>选项设置。例如，要从此输出中提取<code>#bytes</code>和<code>t_max[usec]</code> 值：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#bytes #repetitions t_min[usec] t_max[usec] t_avg[usec]</span><br><span class="line">0      1000         0.06        0.06        0.06</span><br><span class="line">1      1000         0.10        0.10        0.10</span><br></pre></td></tr></table></figure></p>
+<p>使用以下配置：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-app-regex: (\d+)\s+\d+\s+[\d.+-]+\s+([\d.+-]+)</span><br></pre></td></tr></table></figure></p>
+<p><code>-app-regex-legend</code>指定从正则表达式中提取的变量列表。变量对应于正则表达式组。调优器使用最后一个变量作为启动的性能指标。使用<code>-tree-opt</code>设置指标的优化方向。例如：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-app-regex-legend: size, time</span><br></pre></td></tr></table></figure></p>
+<p><code>-iter</code>使用一组给定的参数设置每次启动的迭代次数。更多的迭代次数会提高结果的准确性。例如：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-iter: 3</span><br></pre></td></tr></table></figure></p>
+<h1 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h1><h2 id="编译环境变量"><a href="#编译环境变量" class="headerlink" title="编译环境变量"></a>编译环境变量</h2><p><code>I_MPI_&#123;CC,CXX,FC,F77,F90&#125;_PROFILE</code>指定默认的分析库。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_CC_PROFILE=&lt;profile-name&gt;</span><br><span class="line">I_MPI_CXX_PROFILE=&lt;profile-name&gt;</span><br><span class="line">I_MPI_FC_PROFILE=&lt;profile-name&gt;</span><br><span class="line">I_MPI_F77_PROFILE=&lt;profile-name&gt;</span><br><span class="line">I_MPI_F90_PROFILE=&lt;profile-name&gt;</span><br></pre></td></tr></table></figure>
+<p><code>&lt;profile-name&gt;</code>指定默认的分析库。</p>
+<p>设置此环境变量以选择默认使用的特定 MPI 分析库。这与使用<code>-profile=&lt;profile-name&gt;</code>作为 mpiicc 或其他英特尔® MPI 库编译器包装器的参数具有相同的效果。</p>
+<p><code>I_MPI_TRACE_PROFILE</code>为<code>-trace</code>选项指定默认配置文件。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_TRACE_PROFILE=&lt;profile-name&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;profile-name&gt;</code>指定跟踪profile-name。默认值为 vt。设置此环境变量以选择要与<code>mpiicc</code>的<code>-trace</code>选项或其他英特尔 MPI 库编译器包装器一起使用的特定 MPI 分析库。<code>I_MPI_&#123;CC,CXX,F77,F90&#125;_PROFILE</code>环境变量覆盖<code>I_MPI_TRACE_PROFILE</code>。</p>
+<p><code>I_MPI_CHECK_PROFILE</code>为<code>-check_mpi</code>选项指定默认配置文件。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_CHECK_PROFILE=&lt;profile-name&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;profile-name&gt;</code>指定检查profile-name。默认值为<code>vtmc</code>。设置此环境变量以选择特定 MPI 检查库，以与 mpiicc 或其他英特尔 MPI 库编译器包装器的<code>-check_mpi</code>选项一起使用。<code>I_MPI_&#123;CC,CXX,F77,F90&#125;_PROFILE</code>环境变量覆盖<code>I_MPI_CHECK_PROFILE</code>。</p>
+<p><code>I_MPI_CHECK_COMPILER</code>打开/关闭编译器兼容性检查。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_CHECK_COMPILER=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<p>参数</p>
+<ul>
+<li>enable  |yes | on | 1 启用检查编译器。</li>
+<li>disable |no| off | 0 禁用检查编译器。这是默认值。</li>
+</ul>
+<p>如果<code>I_MPI_CHECK_COMPILER</code>设置为启用，英特尔 MPI 库编译器包装器会检查底层编译器的兼容性。正常编译需要使用已知版本的底层编译器。</p>
+<p><code>I_MPI_&#123;CC,CXX,FC,F77,F90&#125;</code>设置要使用的底层编译器的路径/名称。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_CC=&lt;compiler&gt;</span><br><span class="line">I_MPI_CXX=&lt;compiler&gt;</span><br><span class="line">I_MPI_FC=&lt;compiler&gt;</span><br><span class="line">I_MPI_F77=&lt;compiler&gt;</span><br><span class="line">I_MPI_F90=&lt;compiler&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;compiler&gt;</code>指定要使用的编译器的完整路径/名称。设置此环境变量以选择要使用的特定编译器。如果编译器不在搜索路径中，请指定编译器的完整路径。注意某些编译器可能需要额外的命令行选项。注意 如果配置文件存在于指定的编译器中，则该配置文件是源文件。有关详细信息。</p>
+<p><code>I_MPI_ROOT</code>设置英特尔 MPI 库安装目录路径。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_ROOT=&lt;path&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;path&gt;</code>指定英特尔 MPI 库的安装目录。设置此环境变量以指定英特尔 MPI 库的安装目录。注意如果您使用的是 Visual Studio 集成，则可能需要使用<code>I_MPI_ONEAPI_ROOT</code>。</p>
+<p><code>VT_ROOT</code>设置英特尔® Trace Collector 安装目录路径。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VT_ROOT=&lt;path&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;path&gt;</code>指定 Intel Trace Collector 的安装目录。设置此环境变量以指定 Intel Trace Collector 的安装目录。</p>
+<p><code>I_MPI_COMPILER_CONFIG_DIR</code>设置编译器配置文件的位置。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_COMPILER_CONFIG_DIR=&lt;path&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;path&gt;</code>指定编译器配置文件的位置。默认值为<code>&lt;install-dir&gt;/etc</code>。设置此环境变量以更改编译器配置文件的默认位置。</p>
+<p><code>I_MPI_LINK</code>选择特定版本的英特尔 MPI 库进行链接。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_LINK=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>opt</code>多线程优化库（带全局锁）。这是默认值</li>
+<li><code>dbg</code>多线程调试库（带全局锁）</li>
+<li><code>opt_mt</code>多线程优化库（线程拆分模型具有每个对象的锁）</li>
+<li><code>dbg_mt</code>多线程调试库（线程拆分模型具有每个对象的锁）</li>
+</ul>
+<p>将此变量设置为始终链接到英特尔 MPI 库的指定版本。</p>
+<p><code>I_MPI_DEBUG_INFO_STRIP</code>在静态链接应用程序时打开/关闭调试信息剥离。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_DEBUG_INFO_STRIP=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<p>参数</p>
+<ul>
+<li>enable  |yes | on | 1 启用。这是默认值。</li>
+<li>disable |no| off | 0 禁用。</li>
+</ul>
+<p>使用此选项可在静态链接英特尔 MPI 库时打开/关闭调试信息剥离。默认情况下会去除调试信息。</p>
+<p><code>I_MPI_&#123;C,CXX,FC,F&#125;FLAGS</code>设置编译所需的特殊标志。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_CFLAGS=&lt;flag&gt;</span><br><span class="line">I_MPI_CXXFLAGS=&lt;flag&gt;</span><br><span class="line">I_MPI_FCFLAGS=&lt;flag&gt;</span><br><span class="line">I_MPI_FFLAGS=&lt;flag&gt;</span><br></pre></td></tr></table></figure></p>
+<p>使用此环境变量来指定特殊的编译标志。</p>
+<p><code>I_MPI_LDFLAGS</code>设置链接所需的特殊标志。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_LDFLAGS=&lt;flag&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>I_MPI_FORT_BIND</code>禁用 mpiicc 与 Fortran 绑定的链接。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_FORT_BIND=&lt;args&gt;</span><br></pre></td></tr></table></figure></p>
+<p>参数</p>
+<ul>
+<li>enable  |yes | on | 1 启用。这是默认值。</li>
+<li>disable |no| off | 0 禁用。</li>
+</ul>
+<p>默认情况下，即使不使用 Fortran，mpiicc 也会针对 Fortran 绑定进行链接。 使用此环境变量来更改此默认行为。 与<code>-nofortbind</code>选项具有相同的效果。</p>
+<h2 id="Hydra-环境变量"><a href="#Hydra-环境变量" class="headerlink" title="Hydra 环境变量"></a>Hydra 环境变量</h2><p><code>I_MPI_HYDRA_HOST_FILE</code>设置主机文件以运行应用程序。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_HOST_FILE=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;hostsfile&gt;</code>主机文件的完整或相对路径</p>
+<p><code>I_MPI_HYDRA_HOSTS_GROUP</code>使用方括号、逗号和破折号设置节点范围。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_HOSTS_GROUP=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<p>将此变量设置为能够使用方括号、逗号和破折号设置节点范围（如在 Slurm* 工作负载管理器中）。例如：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_HOSTS_GROUP=&quot;hostA[01-05],hostB,hostC[01-05,07,09-11]&quot;</span><br></pre></td></tr></table></figure><br>您可以使用<code>-hosts-group</code>选项设置节点范围。</p>
+<p><code>I_MPI_HYDRA_DEBUG</code>打印调试信息。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_DEBUG=&lt;参数&gt;</span><br></pre></td></tr></table></figure></p>
+<p>参数</p>
+<ul>
+<li>enable  |yes | on | 1 启用。</li>
+<li>disable |no| off | 0 禁用。这是默认值。</li>
+</ul>
+<p><code>I_MPI_HYDRA_ENV</code>设置此环境变量以控制环境变量传播到 MPI 进程。默认情况下，整个启动节点环境传递给 MPI 进程。设置此变量还会覆盖远程 shell 设置的环境变量。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_ENV=&lt;参数&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>all</code>将所有环境传递给所有 MPI 进程</li>
+</ul>
+<p><code>I_MPI_JOB_TIMEOUT</code>设置 mpiexec.hydra 的超时时间。以秒为单位定义 mpiexec.hydra 超时时间<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_JOB_TIMEOUT=&lt;timeout&gt;</span><br><span class="line">I_MPI_MPIEXEC_TIMEOUT=&lt;timeout&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;n&gt; ≥ 0</code> 超时时间的值。默认超时值为零，即意味着没有超时。</li>
+</ul>
+<p>设置此环境变量以使 mpiexec.hydra 在启动后<code>&lt;timeout&gt;</code>秒内终止作业。<code>&lt;timeout&gt;</code>值应大于零。否则环境变量设置将被忽略。</p>
+<p><code>I_MPI_JOB_STARTUP_TIMEOUT</code>设置 mpiexec.hydra 作业启动超时。<code>&lt;timeout&gt;</code>以秒为单位定义 mpiexec.hydra 启动超时时间。如果某些进程未启动，则设置此环境变量以使 mpiexec.hydra 在<code>&lt;timeout&gt;</code>秒内终止作业。<code>&lt;timeout&gt;</code>值应大于零。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_JOB_STARTUP_TIMEOUT=&lt;timeout&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;n&gt; ≥ 0</code>超时时间的值。默认超时值为零，即意味着没有超时。</li>
+</ul>
+<p><code>I_MPI_JOB_TIMEOUT_SIGNAL</code>定义作业因超时而终止时要发送的信号。如果<code>I_MPI_JOB_TIMEOUT</code>环境变量指定的超时期限到期，则定义要发送的信号编号以停止 MPI 作业。 如果您设置了系统不支持的信号编号，则 mpiexec.hydra 命令会打印一条警告消息并使用默认信号编号 9 (SIGKILL) 继续终止任务。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_JOB_TIMEOUT_SIGNAL=&lt;number&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;n&gt; &gt; 0</code>信号编号。 默认值为 9（SIGKILL）</li>
+</ul>
+<p><code>I_MPI_JOB_ABORT_SIGNAL</code>定义当作业意外终止时要发送到所有进程的信号。设置此环境变量以定义任务终止的信号。 如果您设置了不受支持的信号编号，mpiexec.hydra 会打印一条警告消息并使用默认信号 9 (SIGKILL)。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_JOB_ABORT_SIGNAL=&lt;number&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;n&gt; &gt; 0</code>默认值为 9（SIGKILL）</li>
+</ul>
+<p><code>I_MPI_JOB_SIGNAL_PROPAGATION</code>控制信号传播。设置此环境变量以控制信号（SIGINT、SIGALRM 和 SIGTERM）的传播。 如果启用信号传播，则接收到的信号将发送到 MPI 作业的所有进程。 如果禁用信号传播，则 MPI 作业的所有进程都将使用默认信号 9 (SIGKILL) 停止。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_JOB_SIGNAL_PROPAGATION=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>enable | yes | on | 1 Turn on propagation</li>
+<li>disable | no | off | 0 Turn off propagation. This is the default value</li>
+</ul>
+<p><code>I_MPI_HYDRA_BOOTSTRAP</code>设置引导服务器。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_BOOTSTRAP=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>ssh</code>Use secure shell. This is the default value</li>
+<li><code>rsh</code>Use remote shell</li>
+<li><code>pdsh</code> Use parallel distributed shell</li>
+<li><code>pbsdsh</code> Use Torque<em> and PBS</em> pbsdsh command</li>
+<li><code>fork</code> Use fork call</li>
+<li><code>slurm</code> Use Slurm* srun command</li>
+<li><code>ll</code> Use LoadLeveler* llspawn.stdio command</li>
+<li><code>lsf</code> Use LSF* blaunch command</li>
+<li><code>sge</code> Use Univa<em> Grid Engine</em> qrsh command</li>
+</ul>
+<p><code>I_MPI_HYDRA_BOOTSTRAP_EXEC</code>将可执行文件设置为用作引导服务器。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_BOOTSTRAP_EXEC=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;executable&gt;</code>可执行文件的名称</li>
+</ul>
+<p><code>I_MPI_HYDRA_BOOTSTRAP_EXEC_EXTRA_ARGS</code>为引导服务器设置其他参数。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_BOOTSTRAP_EXEC_EXTRA_ARGS=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<p>设置此环境变量以指定引导服务器的其他参数。 注意如果启动器（blaunch、lsf、pdsh、pbsdsh）回退到 ssh，请通过调用 ssh 传递参数。</p>
+<p><code>I_MPI_HYDRA_BOOTSTRAP_AUTOFORK</code>控制对本地进程的 fork 调用的使用。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_BOOTSTRAP_AUTOFORK = &lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>enable | yes | on | 1 对本地进程使用 fork。 这是 ssh、rsh、ll、lsf 和 pbsdsh 引导服务器的默认值</li>
+<li>disable | no | off | 0 不要对本地进程使用 fork。 这是sge引导服务器的默认值</li>
+</ul>
+<p>设置此环境变量以控制本地进程对 fork 调用的使用。 注意此选项不适用于 slurm 和 pdsh 引导服务器。</p>
+<p><code>I_MPI_HYDRA_RMK</code>使用指定值作为资源管理内核获取可用节点的数据，外部设置进程计数。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_RMK=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;rmk&gt;</code> 资源管理内核。 支持的值为 slurm、ll、lsf、sge、pbs、cobalt。</li>
+</ul>
+<p><code>I_MPI_HYDRA_PMI_CONNECT</code>定义 PMI 消息的处理方法。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_PMI_CONNECT=&lt;value&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>nocache</code> 不缓存 PMI 消息</li>
+<li><code>cache</code> 在本地 pmi_proxy 管理进程上缓存 PMI 消息，以最大限度地减少 PMI 请求的数量。 缓存的信息会自动传播到子管理进程。</li>
+<li><code>lazy-cache</code> 按需传播。</li>
+<li><code>alltoall</code> 信息在所有 pmi_proxy 之间自动交换，然后才能完成任何获取请求。 这是默认值。</li>
+</ul>
+<p>使用此环境变量来选择 PMI 消息处理方法。<code>I_MPI_PERHOST</code>定义<code>mpiexec.hydra</code>命令的<code>-perhost</code>选项的默认行为。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_PERHOST=&lt;value&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;value&gt;</code>定义一个默认用于<code>-perhost</code>的值。</p>
+<ul>
+<li><code>integer &gt; 0</code> 选项的确切值</li>
+<li><code>all</code> 节点上的所有逻辑 CPU</li>
+<li><code>allcores</code> 节点上的所有内核（物理 CPU）。 这是默认值。</li>
+</ul>
+<p>设置此环境变量以定义<code>-perhost</code>选项的默认行为。 除非明确指定，否则<code>-perhost</code>选项隐含在<code>I_MPI_PERHOST</code>中设置的值中。 注意在作业调度程序下运行时，默认情况下会忽略此环境变量。 要使用<code>I_MPI_PERHOST</code>控制进程放置，请禁用<code>I_MPI_JOB_RESPECT_PROCESS_PLACEMENT</code>变量。</p>
+<p><code>I_MPI_JOB_TRACE_LIBS</code>通过<code>-trace</code>选项选择要预加载的库。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_JOB_TRACE_LIBS=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;list&gt;</code>要预加载的库的空白分隔列表。 默认值为<code>vt</code>。</p>
+<p>设置此环境变量以通过<code>-trace</code>选项选择用于预加载的替代库。</p>
+<p><code>I_MPI_JOB_CHECK_LIBS</code>通过<code>-check_mpi</code>选项选择要预加载的库。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_JOB_CHECK_LIBS=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;list&gt;</code>要预加载的库的空白分隔列表。 默认值为<code>vtmc</code>。设置此环境变量以通过<code>-check_mpi</code>选项选择用于预加载的替代库。</p>
+<p><code>I_MPI_HYDRA_BRANCH_COUNT</code>设置分层分支计数。设置此环境变量以限制由<code>mpiexec.hydra</code>操作或每个<code>pmi_proxy</code>管理进程启动的子管理进程的数量。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_BRANCH_COUNT =&lt;num&gt;</span><br></pre></td></tr></table></figure></p>
+<p>参数为<code>&lt;n&gt; &gt;= 0</code>。默认值为16。该值表示如果节点数大于16，则启用分层结构。如果<code>I_MPI_HYDRA_BRANCH_COUNT=0</code>，则不存在分层结构。 如果<code>I_MPI_HYDRA_BRANCH_COUNT=-1</code>，则分支计数等于默认值。</p>
+<p><code>I_MPI_HYDRA_PMI_AGGREGATE</code>打开/关闭 PMI 消息的聚合。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_PMI_AGGREGATE=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>enable | yes | on | 1 启用 PMI 消息聚合。 这是默认值。</li>
+<li>disable | no | off | 0 禁用 PMI 消息聚合。</li>
+</ul>
+<p><code>I_MPI_HYDRA_GDB_REMOTE_SHELL</code>设置远程 shell 命令以运行 GDB 调试器。 此命令使用 Intel® Distribution for GDB。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_GDB_REMOTE_SHELL=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>ssh Secure Shell (SSH). 这是默认值。</li>
+<li>rsh Remote shell (RSH)</li>
+</ul>
+<p>设置此环境变量以指定远程 shell 命令以在远程机器上运行 GNU* 调试器。 您可以使用此环境变量来指定任何与 SSH 或 RSH 具有相同语法的 shell 命令。</p>
+<p><code>I_MPI_HYDRA_IFACE</code>设置网络接口。设置此环境变量以指定要使用的网络接口。 例如，如果您的 InfiniBand* 网络的 IP 模拟是在 ib0 上配置的，则使用“-iface ib0”。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_IFACE=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;network interface&gt;</code>设置您系统中配置的网络接口。</p>
+<p><code>I_MPI_HYDRA_DEMUX</code>设置解复用器（demux）模式。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_DEMUX=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>poll</code> 将 poll 设置为多 I/O 解复用器 (demux) 模式引擎。 这是默认值。</li>
+<li><code>select</code> 将 select 设置为多 I/O 解复用器 (demux) 模式引擎</li>
+</ul>
+<p>设置此环境变量以指定多 I/O 解复用模式引擎。 默认值为轮询。</p>
+<p><code>I_MPI_TMPDIR</code>指定一个临时目录。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_TMPDIR=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;path&gt;</code>临时目录。 默认值为<code>/tmp</code>。</li>
+</ul>
+<p>设置此环境变量以指定临时文件的目录。</p>
+<p><code>I_MPI_JOB_RESPECT_PROCESS_PLACEMENT</code>指定是使用作业调度程序提供的 process-per-node 放置，还是显式设置。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>enable | yes | on | 1 使用作业调度程序提供的进程放置。 这是默认值</li>
+<li>disable | no | off | 0 不要使用作业调度程序提供的进程放置</li>
+</ul>
+<p>如果设置了该变量，Hydra 管理器将使用作业调度程序提供的流程放置（默认）。 在这种情况下，<code>-ppn</code>选项及其等效项将被忽略。 如果禁用该变量，Hydra 进程管理器将使用带有<code>-ppn</code>或其等效项的进程放置集。</p>
+<p><code>I_MPI_GTOOL</code>指定要为选定进程启动的工具。 此变量的替代方法是<code>-gtool</code>选项。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_GTOOL=&quot;</span><br><span class="line">    &lt;command line for a tool 1&gt;:&lt;ranks set 1&gt;[=exclusive][@arch 1]; </span><br><span class="line">    &lt;command line for a tool 2&gt;:&lt;ranks set 2&gt;[=exclusive][@arch 2]; … ;</span><br><span class="line">    &lt;command line for a tool n&gt;:&lt;ranks set n&gt;[=exclusive][@arch n]&quot;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;command-line-for-a-tool&gt;</code>指定工具的启动命令，包括参数。</li>
+<li><code>&lt;rank set&gt;</code>指定工具执行中涉及的进程范围。 用逗号分隔等级或使用“-”符号表示一组连续的等级。 要为所有等级运行该工具，请使用 all 参数。 注意如果您指定了不正确的排名索引，则会打印相应的警告，并且该工具会继续为有效的排名工作。</li>
+<li><code>[=exclusive]</code> 指定此参数可防止为每个主机启动超过一个等级的工具。 该参数是可选的。</li>
+<li><code>[@arch]</code> 指定工具运行的架构（可选）。 对于给定的<code>&lt;rank set&gt;</code>，如果指定此参数，则仅为驻留在具有指定架构的主机上的进程启动该工具。 该参数是可选的。</li>
+</ul>
+<p>使用此选项可为指定进程启动英特尔® VTune™ Amplifier XE、Valgrind<em> 和 GNU</em> Debugger 等工具。</p>
+<p>以下命令行示例演示了使用<code>I_MPI_GTOOL</code>环境变量的不同场景。 通过设置<code>I_MPI_GTOOL</code>环境变量启动英特尔® VTune™ Amplifier XE 和 Valgrind*：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ export I_MPI_GTOOL=&quot;vtune -collect hotspots -analyze-system -r result1:5,3,7-9=exclusive@bdw; valgrind -log-file=log_%p:0,1,10-12@hsw&quot;</span><br><span class="line">$ mpiexec.hydra -n 16 a.out</span><br></pre></td></tr></table></figure></p>
+<p>此命令为在代号为 Broadwell 的英特尔® 微架构上运行的进程启动 vtune。 每个主机只启动一个 vtune 副本，索引最小的进程会受到影响。 同时，为在代号为 Haswell 的英特尔® 微架构上运行的所有指定进程启动 Valgrind*。 Valgrind 的结果保存到文件<code>log_&lt;process ID&gt;</code>。 </p>
+<p>通过设置<code>I_MPI_GTOOL</code>环境变量启动 GDB（对于英特尔® oneAPI，这将启动英特尔® GDB 分发版）：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpiexec.hydra -n 16 -genv I_MPI_GTOOL=&quot;gdb:3,5,7-9&quot; a.out</span><br></pre></td></tr></table></figure></p>
+<p>使用此命令将 GDB 应用于给定的进程集。</p>
+<p>注意选项和环境变量<code>-gtool</code>、<code>-gtoolfile</code>和<code>I_MPI_GTOOL</code>是互斥的。 选项<code>-gtool</code>和<code>-gtoolfile</code>具有相同的优先级并且比<code>I_MPI_GTOOL</code>具有更高的优先级。 命令行中的第一个指定选项有效，第二个被忽略。 因此，如果您未指定<code>-gtool</code>或<code>-gtoolfile</code>，请使用<code>I_MPI_GTOOL</code>。</p>
+<p><code>I_MPI_HYDRA_TOPOLIB</code>设置拓扑检测接口。设置这个环境变量来定义平台检测的接口。 默认情况下使用 hwloc* 接口，但您可以显式设置变量以使用本机英特尔 MPI 库接口<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_TOPOLIB=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>hwloc</code>：hwloc* 库函数被调用以进行拓扑检测。</li>
+</ul>
+<p><code>I_MPI_PORT_RANGE</code>指定允许的端口号范围。设置此环境变量以指定英特尔® MPI 库的允许端口号范围。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_PORT_RANGE=&lt;range&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;min&gt;:&lt;max&gt;</code>允许的端口范围。</p>
+<p><code>I_MPI_SILENT_ABORT</code>控制中止警告消息。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SILENT_ABORT=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>enable | yes | on | 1 不打印中止警告消息</li>
+<li>disable | no | off | 0 打印中止警告消息。 这是默认值</li>
+</ul>
+<p>设置此变量以禁用打印中止警告消息。 在<code>MPI_Abort</code>调用的情况下打印消息。 您还可以使用<code>-silent-abort</code>选项禁用这些消息的打印。</p>
+<p><code>I_MPI_HYDRA_NAMESERVER</code>指定名称服务器。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_NAMESERVER=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;hostname&gt;:&lt;port&gt;</code>设置主机名和端口。</p>
+<p>设置此变量以按以下格式为 MPI 应用程序指定名称服务器：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HYDRA_NAMESERVER = hostname:port</span><br></pre></td></tr></table></figure></p>
+<h2 id="I-MPI-ADJUST-Family-Environment-Variables"><a href="#I-MPI-ADJUST-Family-Environment-Variables" class="headerlink" title="I_MPI_ADJUST Family Environment Variables"></a>I_MPI_ADJUST Family Environment Variables</h2><p><code>I_MPI_ADJUST_&lt;opname&gt;</code>控制集合运算算法选择。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_ADJUST_&lt;opname&gt;=&quot;&lt;algid&gt;[:&lt;conditions&gt;][;&lt;algid&gt;:&lt;conditions&gt;[...]]&quot;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;algid&gt;</code>算法标识符<ul>
+<li><code>&gt;= 0</code> 设置一个数字以选择所需的算法。 值 0 使用集合算法选择的基本逻辑。</li>
+</ul>
+</li>
+<li><code>&lt;conditions&gt;</code> 逗号分隔的条件列表。 空列表选择所有消息大小和进程组合<ul>
+<li><code>&lt;l&gt;</code>：<code>&lt;l&gt;</code>大小的消息</li>
+<li><code>&lt;l&gt;-&lt;m&gt;</code>：大小从<code>&lt;l&gt;</code>到<code>&lt;m&gt;</code>的消息</li>
+<li><code>&lt;l&gt;@&lt;p&gt;</code>：消息大小<code>&lt;l&gt;</code>和进程数<code>&lt;p&gt;</code></li>
+<li><code>&lt;l&gt;-&lt;m&gt;@&lt;p&gt;-&lt;q&gt;</code>：消息大小从<code>&lt;l&gt;</code>到<code>&lt;m&gt;</code>，进程数从<code>&lt;p&gt;</code>到<code>&lt;q&gt;</code></li>
+</ul>
+</li>
+</ul>
+<p>设置此环境变量以在特定条件下为集合操作<code>&lt;opname&gt;</code>选择所需的算法。 每个集合操作都有自己的环境变量和算法。以下是各种集合操作及对应的算法</p>
+<p><code>I_MPI_ADJUST_ALLGATHER</code>：<code>MPI_Allgather</code></p>
+<ol>
+<li>Recursive doubling</li>
+<li>Bruck’s</li>
+<li>Ring</li>
+<li>Topology aware Gatherv + Bcast</li>
+<li>Knomial</li>
+</ol>
+<p><code>I_MPI_ADJUST_ALLGATHERV</code>：<code>MPI_Allgatherv</code></p>
+<ol>
+<li>Recursive doubling</li>
+<li>Bruck’s</li>
+<li>Ring</li>
+<li>Topology aware Gatherv + Bcast</li>
+</ol>
+<p><code>I_MPI_ADJUST_ALLREDUCE</code>：<code>MPI_Allreduce</code> </p>
+<ol>
+<li>Recursive doubling</li>
+<li>Rabenseifner’s</li>
+<li>Reduce + Bcast</li>
+<li>Topology aware Reduce + Bcast</li>
+<li>Binomial gather + scatter</li>
+<li>Topology aware binominal gather + scatter</li>
+<li>Shumilin’s ring</li>
+<li>Ring</li>
+<li>Knomial</li>
+<li>Topology aware SHM-based flat</li>
+<li>Topology aware SHM-based Knomial</li>
+<li>Topology aware SHM-based Knary</li>
+</ol>
+<p><code>I_MPI_ADJUST_ALLTOALL</code>：<code>MPI_Alltoall</code></p>
+<ol>
+<li>Bruck’s</li>
+<li>Isend/Irecv + waitall</li>
+<li>Pair wise exchange</li>
+<li>Plum’s</li>
+</ol>
+<p><code>I_MPI_ADJUST_ALLTOALLV</code>：<code>MPI_Alltoallv</code></p>
+<ol>
+<li>Isend/Irecv + waitall</li>
+<li>Plum’s</li>
+</ol>
+<p><code>I_MPI_ADJUST_ALLTOALLW</code>：<code>MPI_Alltoallw</code></p>
+<ol>
+<li>Isend/Irecv + waitall</li>
+</ol>
+<p><code>I_MPI_ADJUST_BARRIER</code>：<code>MPI_Barrier</code> </p>
+<ol>
+<li>Dissemination</li>
+<li>Recursive doubling</li>
+<li>Topology aware dissemination</li>
+<li>Topology aware recursive doubling</li>
+<li>Binominal gather + scatter</li>
+<li>Topology aware binominal gather + scatter</li>
+<li>Topology aware SHM-based flat</li>
+<li>Topology aware SHM-based Knomial</li>
+<li>Topology aware SHM-based Knary</li>
+</ol>
+<p><code>I_MPI_ADJUST_BCAST</code>：<code>MPI_Bcast</code> </p>
+<ol>
+<li>Binomial</li>
+<li>Recursive doubling</li>
+<li>Ring</li>
+<li>Topology aware binomial</li>
+<li>Topology aware recursive doubling</li>
+<li>Topology aware ring</li>
+<li>Shumilin’s</li>
+<li>Knomial</li>
+<li>Topology aware SHM-based flat</li>
+<li>Topology aware SHM-based Knomial</li>
+<li>Topology aware SHM-based Knary</li>
+<li>NUMA aware SHM-based (SSE4.2)</li>
+<li>NUMA aware SHM-based (AVX2)</li>
+<li>NUMA aware SHM-based (AVX512)</li>
+</ol>
+<p><code>I_MPI_ADJUST_EXSCAN</code>：<code>MPI_Exscan</code></p>
+<ol>
+<li>Partial results gathering</li>
+<li>Partial results gathering regarding layout of processes</li>
+</ol>
+<p><code>I_MPI_ADJUST_GATHER</code>：<code>MPI_Gather</code> </p>
+<ol>
+<li>Binomial</li>
+<li>Topology aware binomial</li>
+<li>Shumilin’s</li>
+<li>Binomial with segmentation</li>
+</ol>
+<p><code>I_MPI_ADJUST_GATHERV</code>：<code>MPI_Gatherv</code> </p>
+<ol>
+<li>Linear</li>
+<li>Topology aware linear</li>
+<li>Knomial</li>
+</ol>
+<p><code>I_MPI_ADJUST_REDUCE_SCATTER</code>：<code>MPI_Reduce_scatter</code></p>
+<ol>
+<li>Recursive halving</li>
+<li>Pair wise exchange</li>
+<li>Recursive doubling</li>
+<li>Reduce + Scatterv</li>
+<li>Topology aware Reduce + Scatterv</li>
+</ol>
+<p><code>I_MPI_ADJUST_REDUCE</code>：<code>MPI_Reduce</code> </p>
+<ol>
+<li>Shumilin’s</li>
+<li>Binomial</li>
+<li>Topology aware Shumilin’s</li>
+<li>Topology aware binomial</li>
+<li>Rabenseifner’s</li>
+<li>Topology aware Rabenseifner’s</li>
+<li>Knomial</li>
+<li>Topology aware SHM-based flat</li>
+<li>Topology aware SHM-based Knomial</li>
+<li>Topology aware SHM-based Knary</li>
+<li>Topology aware SHM-based binomial</li>
+</ol>
+<p><code>I_MPI_ADJUST_SCAN</code>：<code>MPI_Scan</code> </p>
+<ol>
+<li>Partial results gathering</li>
+<li>Topology aware partial results gathering</li>
+</ol>
+<p><code>I_MPI_ADJUST_SCATTER</code>：<code>MPI_Scatter</code></p>
+<ol>
+<li>Binomial</li>
+<li>Topology aware binomial</li>
+<li>Shumilin’s</li>
+</ol>
+<p><code>I_MPI_ADJUST_SCATTERV</code>：<code>MPI_Scatterv</code> </p>
+<ol>
+<li>Linear</li>
+<li>Topology aware linear</li>
+</ol>
+<p><code>I_MPI_ADJUST_SENDRECV_REPLACE</code>：<code>MPI_Sendrecv_replace</code></p>
+<ol>
+<li>Generic</li>
+<li>Uniform (with restrictions)</li>
+</ol>
+<p><code>I_MPI_ADJUST_IALLGATHER</code>：<code>MPI_Iallgather</code> </p>
+<ol>
+<li>Recursive doubling</li>
+<li>Bruck’s</li>
+<li>Ring</li>
+</ol>
+<p><code>I_MPI_ADJUST_IALLGATHERV</code>：<code>MPI_Iallgatherv</code></p>
+<ol>
+<li>Recursive doubling</li>
+<li>Bruck’s</li>
+<li>Ring</li>
+</ol>
+<p><code>I_MPI_ADJUST_IALLREDUCE</code>：<code>MPI_Iallreduce</code></p>
+<ol>
+<li>Recursive doubling</li>
+<li>Rabenseifner’s</li>
+<li>Reduce + Bcast</li>
+<li>Ring (patarasuk)</li>
+<li>Knomial</li>
+<li>Binomial</li>
+<li>Reduce scatter allgather</li>
+<li>SMP</li>
+<li>Nreduce</li>
+</ol>
+<p><code>I_MPI_ADJUST_IALLTOALL</code>：<code>MPI_Ialltoall</code> </p>
+<ol>
+<li>Bruck’s</li>
+<li>Isend/Irecv + Waitall</li>
+<li>Pairwise exchange</li>
+</ol>
+<p><code>I_MPI_ADJUST_IALLTOALLV</code>：<code>MPI_Ialltoallv</code></p>
+<ol>
+<li>Isend/Irecv + Waitall</li>
+</ol>
+<p><code>I_MPI_ADJUST_IALLTOALLW</code>：<code>MPI_Ialltoallw</code></p>
+<ol>
+<li>Isend/Irecv + Waitall</li>
+</ol>
+<p><code>I_MPI_ADJUST_IBARRIER</code>：<code>MPI_Ibarrier</code></p>
+<ol>
+<li>Dissemination</li>
+</ol>
+<p><code>I_MPI_ADJUST_IBCAST</code>：`MPI_Ibcast</p>
+<ol>
+<li>Binomial</li>
+<li>Recursive doubling</li>
+<li>Ring</li>
+<li>Knomial</li>
+<li>SMP</li>
+<li>Tree knominal</li>
+<li>Tree kary</li>
+</ol>
+<p><code>I_MPI_ADJUST_IEXSCAN</code>：<code>MPI_Iexscan</code></p>
+<ol>
+<li>Recursive doubling</li>
+<li>SMP</li>
+</ol>
+<p><code>I_MPI_ADJUST_IGATHER</code>：<code>MPI_Igather</code></p>
+<ol>
+<li>Binomial</li>
+<li>Knomial</li>
+</ol>
+<p><code>I_MPI_ADJUST_IGATHERV</code>：<code>MPI_Igatherv</code> </p>
+<ol>
+<li>Linear</li>
+<li>Linear ssend</li>
+</ol>
+<p><code>I_MPI_ADJUST_IREDUCE_SCATTER</code>：<code>MPI_Ireduce_scatter</code></p>
+<ol>
+<li>Recursive halving</li>
+<li>Pairwise</li>
+<li>Recursive doubling</li>
+</ol>
+<p><code>I_MPI_ADJUST_IREDUCE</code>：<code>MPI_Ireduce</code> </p>
+<ol>
+<li>Rabenseifner’s</li>
+<li>Binomial</li>
+<li>Knomial</li>
+</ol>
+<p><code>I_MPI_ADJUST_ISCAN</code>：`MPI_Iscan</p>
+<ol>
+<li>Recursive Doubling</li>
+<li>SMP</li>
+</ol>
+<p><code>I_MPI_ADJUST_ISCATTER</code>：<code>MPI_Iscatter</code></p>
+<ol>
+<li>Binomial</li>
+<li>Knomial</li>
+</ol>
+<p><code>I_MPI_ADJUST_ISCATTERV</code>：<code>MPI_Iscatterv</code></p>
+<ol>
+<li>Linear</li>
+</ol>
+<p>下表中描述了集合操作的消息大小计算规则。 下表中<code>n/a</code>表示对应区间<code>&lt;l&gt;-&lt;m&gt;</code>应省略。注意<code>I_MPI_ADJUST_SENDRECV_REPLACE=2</code>（“uniform”）算法只能在所有进程的数据类型和对象计数都相同的情况下使用。</p>
+<ul>
+<li><code>MPI_Allgather</code>：<code>recv_count*recv_type_size</code></li>
+<li><code>MPI_Allgatherv</code>：<code>total_recv_count*recv_type_size</code></li>
+<li><code>MPI_Allreduce</code>：<code>count*type_size</code></li>
+<li><code>MPI_Alltoall</code>：<code>send_count*send_type_size</code></li>
+<li><code>MPI_Alltoallv</code>：<code>n/a</code></li>
+<li><code>MPI_Alltoallw</code>：<code>n/a</code></li>
+<li><code>MPI_Barrier</code>：<code>n/a</code></li>
+<li><code>MPI_Bcast</code>：<code>count*type_size</code></li>
+<li><code>MPI_Exscan</code>：<code>count*type_size</code></li>
+<li><code>MPI_Gather</code>：<ul>
+<li><code>recv_count*recv_type_size</code> if MPI_IN_PLACE is used</li>
+<li><code>send_count*send_type_size</code></li>
+</ul>
+</li>
+<li><code>MPI_Gatherv</code>：<code>n/a</code></li>
+<li><code>MPI_Reduce_scatter</code>：<code>total_recv_count*type_size</code></li>
+<li><code>MPI_Reduce</code>：<code>count*type_size</code></li>
+<li><code>MPI_Scan</code>：<code>count*type_size</code></li>
+<li><code>MPI_Scatter</code>：<ul>
+<li><code>send_count*send_type_size</code> if MPI_IN_PLACE is used,</li>
+<li><code>recv_count*recv_type_size</code></li>
+</ul>
+</li>
+<li><code>MPI_Scatterv</code>：<code>n/a</code></li>
+</ul>
+<p>使用以下设置为<code>MPI_Reduce</code>操作选择第二个算法：<code>I_MPI_ADJUST_REDUCE=2</code>使用以下设置来定义<code>MPI_Reduce_scatter</code>操作的算法：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_ADJUST_REDUCE_SCATTER=&quot;4:0-100,5001-10000;1:101-3200;2:3201-5000;3&quot;</span><br></pre></td></tr></table></figure><br>在这种情况下。 算法4用于0~100字节和5001~10000字节的消息大小，算法1用于101~3200字节的消息大小，算法2用于3201~5000字节的消息大小，算法 3 用于所有其他消息。</p>
+<p><code>I_MPI_ADJUST_&lt;opname&gt;_LIST</code>设置此环境变量以指定英特尔 MPI 运行时为指定的<code>&lt;opname&gt;</code>考虑的算法集。此变量在自动调整方案以及用户希望选择特定算法子集的调整方案中很有用。注意设置空字符串会禁用<code>&lt;opname&gt;</code>集合的自动调整。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_ADJUST_&lt;opname&gt;_LIST=&lt;algid1&gt;[-&lt;algid2&gt;][,&lt;algid3&gt;][,&lt;algid4&gt;-&lt;algid5&gt;]</span><br></pre></td></tr></table></figure></p>
+<p><code>I_MPI_COLL_INTRANODE</code>设置此环境变量以切换节点内通信类型以进行集合操作。如果有大量的通信器，您可以关闭 SHM 集合以避免内存过度消耗。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_COLL_INTRANODE=&lt;mode&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>pt2pt</code> 仅使用基于点对点通信的集合</li>
+<li><code>shm</code> 启用共享内存集合。 这是默认值</li>
+</ul>
+<p><code>I_MPI_COLL_INTRANODE_SHM_THRESHOLD</code><br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_COLL_INTRANODE_SHM_THRESHOLD=&lt;nbytes&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;nbytes&gt;</code>定义共享内存集合处理的最大数据块大小。</p>
+<ul>
+<li><code>&gt; 0</code>使用指定的大小。 默认值为 16384 字节。</li>
+</ul>
+<p>设置此环境变量以定义每个进程可用于数据放置的共享内存区域的大小。 大于这个值的消息将不会被基于 SHM 的集合操作处理，而是会被基于点对点的集合操作处理。 该值必须是 4096 的倍数。</p>
+<p><code>I_MPI_COLL_EXTERNAL</code><br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_COLL_EXTERNAL=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>enable | yes | on | 1 启用外部集合操作功能。</li>
+<li>disable | no | off | 0 禁用外部集合操作功能。 这是默认的</li>
+</ul>
+<p>设置此环境变量以启用外部集合操作。 该机制允许启用 HCOLL。 该功能启用以下集合操作：</p>
+<ul>
+<li><code>I_MPI_ADJUST_ALLREDUCE=24</code></li>
+<li><code>I_MPI_ADJUST_BARRIER=11</code></li>
+<li><code>I_MPI_ADJUST_BCAST=16</code></li>
+<li><code>I_MPI_ADJUST_REDUCE=13</code></li>
+<li><code>I_MPI_ADJUST_ALLGATHER=6</code></li>
+<li><code>I_MPI_ADJUST_ALLTOALL=5</code></li>
+<li><code>I_MPI_ADJUST_ALLTOALLV=5</code></li>
+<li><code>I_MPI_ADJUST_SCAN=3</code></li>
+<li><code>I_MPI_ADJUST_EXSCAN=3</code></li>
+<li><code>I_MPI_ADJUST_GATHER=5</code></li>
+<li><code>I_MPI_ADJUST_GATHERV=4</code></li>
+<li><code>I_MPI_ADJUST_SCATTER=5</code></li>
+<li><code>I_MPI_ADJUST_SCATTERV=4</code></li>
+<li><code>I_MPI_ADJUST_ALLGATHERV=5</code></li>
+<li><code>I_MPI_ADJUST_ALLTOALLW=2</code></li>
+<li><code>I_MPI_ADJUST_REDUCE_SCATTER=6</code></li>
+<li><code>I_MPI_ADJUST_REDUCE_SCATTER_BLOCK=4</code></li>
+<li><code>I_MPI_ADJUST_IALLGATHER=5</code></li>
+<li><code>I_MPI_ADJUST_IALLGATHERV=5</code></li>
+<li><code>I_MPI_ADJUST_IGATHERV=3</code></li>
+<li><code>I_MPI_ADJUST_IALLREDUCE=9</code></li>
+<li><code>I_MPI_ADJUST_IALLTOALLV=2</code></li>
+<li><code>I_MPI_ADJUST_IBARRIER=2</code></li>
+<li><code>I_MPI_ADJUST_IBCAST=5</code></li>
+<li><code>I_MPI_ADJUST_IREDUCE=4</code></li>
+</ul>
+<p>要强制使用<code>HCOLL</code>，请使用上述<code>I_MPI_ADJUST_&lt;opname&gt;</code>值。 为了获得更好的性能，一旦启用<code>I_MPI_COLL_EXTERNAL</code>就使用自动tuner以获得最佳集合设置。</p>
+<p><code>I_MPI_CBWR</code>在相同数量的进程的情况下，控制跨不同平台、网络和拓扑的浮点运算结果的再现性。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_CBWR=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;arg&gt;</code>：CBWR 兼容模式</p>
+<ul>
+<li>0：None <ul>
+<li>不要在库范围模式下使用 CBWR。 可以使用<code>MPI_Comm_dup_with_info</code>显式创建 CNR 安全通信器。 这是默认值。</li>
+</ul>
+</li>
+<li>1：Weak mode<ul>
+<li>禁用拓扑相关集合操作。集合操作的结果不取决于rank位置。该模式保证了同一集群上不同运行的结果可重复性（独立于rank位置）。</li>
+</ul>
+</li>
+<li>2：Strict mode<ul>
+<li>在算法选择期间禁用拓扑相关集合、忽略 CPU 架构和互连。 该模式可确保结果在不同集群上的不同运行之间具有可重复性（独立于rank位置、CPU 架构和互连）</li>
+</ul>
+</li>
+</ul>
+<p>有条件数值再现性 (Conditional Numerical Reproducibility, CNR) 提供控制以在集合运算中获得可再现的浮点结果。 借助此功能，英特尔 MPI 集合运算旨在在 MPI 进程数相同的情况下，每次运行返回相同的浮点结果。</p>
+<p>在库范围内使用<code>I_MPI_CBWR</code>环境变量控制此功能，其中所有通信器上的所有集合都保证具有可重现的结果。 要以更精确和每个通信器的方式控制浮点运算的可重复性，请将<code>&#123;“I_MPI_CBWR”, “yes”&#125;</code>键值对传递给<code>MPI_Comm_dup_with_info</code>调用。</p>
+<p>注意使用环境变量在库范围模式下设置<code>I_MPI_CBWR</code>会导致性能下降。使用<code>MPI_Comm_dup_with_info</code>创建的 CNR 安全通信器始终在严格模式下工作。 例如：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">MPI_Info hint;</span><br><span class="line">MPI_Comm cbwr_safe_world, cbwr_safe_copy;</span><br><span class="line">MPI_Info_create(&amp;hint);</span><br><span class="line">MPI_Info_set(hint, “I_MPI_CBWR”, “yes”);</span><br><span class="line">MPI_Comm_dup_with_info(MPI_COMM_WORLD, hint, &amp; cbwr_safe_world);</span><br><span class="line">MPI_Comm_dup(cbwr_safe_world, &amp; cbwr_safe_copy);</span><br></pre></td></tr></table></figure></p>
+<p>在上面的例子中，<code>cbwr_safe_world</code>和<code>cbwr_safe_copy</code>都是 CNR 安全的。 使用<code>cbwr_safe_world</code>及其副本为关键操作获得可重现的结果。 请注意，<code>MPI_COMM_WORLD</code>本身可用于性能关键操作，而没有可重复性限制。</p>
+<h2 id="Tuning-Environment-Variables"><a href="#Tuning-Environment-Variables" class="headerlink" title="Tuning Environment Variables"></a>Tuning Environment Variables</h2><p><code>I_MPI_TUNING_MODE</code>选择tuning方法。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_TUNING_MODE=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>none</code>：禁用tuning模式。 这是默认值。</li>
+<li><code>auto</code>：启用自动tuner.</li>
+<li><code>auto:application</code>：使用专注于应用程序的策略（auto 的别名）启用自动tuner。</li>
+<li><code>auto:cluster</code>：在没有应用程序特定逻辑的情况下启用自动tuner。 这通常在基准测试（例如 IMB-MPI1）和代理应用程序的帮助下执行。</li>
+</ul>
+<p>设置此环境变量以启用自动调优器功能并设置自动调优器策略。</p>
+<p><code>I_MPI_TUNING_BIN</code>：以二进制格式指定调整设置的路径。设置此环境变量以二进制格式加载调整设置。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_TUNING_BIN=&lt;path&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;path&gt;</code>带有调整设置的二进制文件的路径。 默认情况下，英特尔® MPI 库使用位于<code>&lt;$I_MPI_ONEAPI_ROOT/etc&gt;</code>的二进制调整文件。</p>
+<p><code>I_MPI_TUNING_BIN_DUMP</code>指定用于以二进制格式存储调整设置的文件。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_TUNING_BIN_DUMP=&lt;filename&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;filename&gt;</code>存储调整设置的二进制文件的文件名。 默认情况下，未指定路径。</p>
+<p><code>I_MPI_TUNING</code>以 JSON 格式加载调整设置。设置此环境变量以加载 JSON 格式的调整设置。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_TUNING=&lt;path&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;path&gt;</code>带有调整设置的 JSON 文件的路径。</p>
+<p>注意 JSON 格式的调整设置由 mpitune 实用程序生成。默认情况下，英特尔® MPI 库以二进制格式加载调整设置。 如果不可能，英特尔 MPI 库会以通过<code>I_MPI_TUNING</code>环境变量指定的 JSON 格式加载调优文件。 因此，要启用 JSON 调整，请关闭默认的二进制调整：<code>I_MPI_TUNING_BIN=&quot;&quot;</code>。 如果无法从 JSON 文件以二进制格式加载调整设置，则使用默认调整值。 如果您使用<code>I_MPI_ADJUST</code>系列环境变量，则不需要关闭二进制或 JSON 调整设置。 使用<code>I_MPI_ADJUST</code>环境变量指定的算法始终优先于二进制和 JSON 调整设置。</p>
+<h2 id="Autotuning"><a href="#Autotuning" class="headerlink" title="Autotuning"></a>Autotuning</h2><p>调整非常依赖于特定平台的规格。 英特尔仔细确定了调整参数，并使用<code>I_MPI_TUNING_MODE</code>和<code>I_MPI_TUNING_AUTO</code>系列环境变量使它们可用于自动调整，以找到最佳设置（请参阅调整环境变量和<code>I_MPI_TUNING_AUTO</code>系列环境变量）。 注意<code>I_MPI_TUNING_MODE</code>和<code>I_MPI_TUNING_AUTO</code>系列环境变量仅支持 Intel 处理器，不能在其他平台上使用。 自动调优器功能可让您自动找到集体操作的最佳算法。 自动调优器搜索空间可以通过·I_MPI_ADJUST_<opname>_LIST·变量进行修改。</p>
+<p>当前可用于自动调整的集合是:<code>MPI_Allreduce</code>, <code>MPI_Bcast</code>, <code>MPI_Barrier</code>, <code>MPI_Reduce</code>, <code>MPI_Gather</code>, <code>MPI_Scatter</code>, <code>MPI_Alltoall</code>, <code>MPI_Allgatherv</code>, <code>MPI_Reduce_scatter</code>, <code>MPI_Reduce_scatter_block</code>, <code>MPI_Scan</code>, <code>MPI_Exscan</code>, <code>MPI_Iallreduce</code>, <code>MPI_Ibcast</code>, <code>MPI_Ibarrier</code>, <code>MPI_Ireduce</code>, <code>MPI_Igather</code>, <code>MPI_Iscatter</code>, <code>MPI_Ialltoall</code>, <code>MPI_Iallgatherv</code>, <code>MPI_Ireduce_scatter</code>, <code>MPI_Ireduce_scatter_block</code>, <code>MPI_Iscan</code>,<code>MPI_Iexscan</code>。</p>
+<p>要开始自动调整，请按照下列步骤操作：</p>
+<ol>
+<li>在启用自动调优器的情况下启动应用程序并指定存储结果的转储文件：<code>I_MPI_TUNING_MODE=auto</code>，<code>I_MPI_TUNING_BIN_DUMP=&lt;tuning-results.dat&gt;</code></li>
+<li>使用上一步生成的调整结果启动应用程序：<code>I_MPI_TUNING_BIN=&lt;tuning-results.dat&gt;</code>或使用<code>-tune Hydra</code>选项。</li>
+<li>如果您遇到性能问题，请参阅自动调整的环境变量。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. $ export I_MPI_TUNING_MODE=auto</span><br><span class="line">$ export I_MPI_TUNING_AUTO_SYNC=1</span><br><span class="line">$ export I_MPI_TUNING_AUTO_ITER_NUM=5</span><br><span class="line">$ export I_MPI_TUNING_BIN_DUMP=./tuning_results.dat</span><br><span class="line">$ mpirun -n 128 -ppn 64 IMB-MPI1 allreduce -iter 1000,800 -time 4800</span><br><span class="line">2. $ export I_MPI_TUNING_BIN=./tuning_results.dat</span><br><span class="line">$ mpirun -n 128 -ppn 64 IMB-MPI1 allreduce -iter 1000,800 -time 4800</span><br></pre></td></tr></table></figure>
+<h2 id="I-MPI-TUNING-AUTO-Family-Environment-Variables"><a href="#I-MPI-TUNING-AUTO-Family-Environment-Variables" class="headerlink" title="I_MPI_TUNING_AUTO Family Environment Variables"></a>I_MPI_TUNING_AUTO Family Environment Variables</h2><p>注意您必须设置<code>I_MPI_TUNING_MODE</code>以使用任何<code>I_MPI_TUNING_AUTO</code>系列环境变量。注意<code>I_MPI_TUNING_AUTO</code>系列环境变量仅支持 Intel 处理器，不能在其他平台上使用。</p>
+<p><code>I_MPI_TUNING_AUTO_STORAGE_SIZE</code>定义每个通信器调整存储的大小。设置此环境变量以更改通信器调整存储的大小。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_TUNING_AUTO_STORAGE_SIZE=&lt;size&gt;</span><br></pre></td></tr></table></figure><br><code>&lt;size&gt;</code>指定通信器调优存储的大小。 存储的默认大小为 512 Kb。</p>
+<p><code>I_MPI_TUNING_AUTO_ITER_NUM</code>设置此环境变量以指定自动调优器迭代次数。 更大的迭代次数会产生更准确的结果。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_TUNING_AUTO_ITER_NUM=&lt;number&gt;</span><br></pre></td></tr></table></figure><br><code>&lt;number&gt;</code>定义迭代次数。 默认情况下，它是 1。</p>
+<p>注意要检查是否所有可能的算法都被迭代，请确保目标应用程序中特定消息大小的集合调用总数至少等于<code>I_MPI_TUNING_AUTO_ITER_NUM</code>的值乘以算法数</p>
+<p><code>I_MPI_TUNING_AUTO_WARMUP_ITER_NUM</code>指定预热自动调优器迭代次数。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_TUNING_AUTO_WARMUP_ITER_NUM=&lt;number&gt;</span><br></pre></td></tr></table></figure></p>
+<p><code>&lt;number&gt;</code>定义迭代次数。 默认情况下，它是 1。</p>
+<p>设置此环境变量以指定自动调优器预热迭代的次数。 预热迭代不会影响自动调优器的决策，并允许跳过额外的迭代，例如基础设施准备。</p>
+<p><code>I_MPI_TUNING_AUTO_SYNC</code>在自动调优器的每次迭代中启用内部屏障。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_TUNING_AUTO_SYNC=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>enable | yes | on | 1 将自动调优器与 IMB 测量方法对齐。</li>
+<li>disable | no | off | 0 不要在自动调优器的每次迭代中使用屏障。这是默认值。</li>
+</ul>
+<p>设置此环境变量以控制 IMB 测量逻辑。 由于额外的<code>MPI_Barrier</code>调用，将此变量设置为 1 可能会导致开销。</p>
+<p><code>I_MPI_TUNING_AUTO_COMM_DEFAULT</code>用默认值标记所有通信器。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_TUNING_AUTO_COMM_DEFAULT=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>enable | yes | on | 1 </li>
+<li>disable | no | off | 0 </li>
+</ul>
+<p>设置此环境变量以使用默认值标记应用程序中的所有通信器。 在这种情况下，所有通信器将具有相同的默认 comm_id 等于 -1。</p>
+<h2 id="Process-Pinning"><a href="#Process-Pinning" class="headerlink" title="Process Pinning"></a>Process Pinning</h2><p>使用此功能将特定 MPI 进程固定到节点内的相应 CPU 集，并避免意外的进程迁移。此功能在提供必要内核接口的操作系统上可用。此页面描述了固定过程。您可以使用 Intel MPI 库的 Pinning Simulator 模拟您的 pinning 配置。</p>
+<h3 id="处理器标识"><a href="#处理器标识" class="headerlink" title="处理器标识"></a>处理器标识</h3><p>以下方案用于识别系统中的逻辑处理器：</p>
+<ul>
+<li>系统定义的逻辑枚举</li>
+<li>通过三元组（包/套接字、内核、线程）基于三级分层标识的拓扑枚举</li>
+</ul>
+<p>一个逻辑 CPU 的编号定义为该 CPU 位在内核关联位掩码中的对应位置。使用随英特尔 MPI 库安装提供的 cpuinfo 实用程序或 cat /proc/cpuinfo 命令找出逻辑 CPU 编号。三级分层标识使用提供有关处理器位置及其顺序的信息的三元组。三元组按层次排序（包、核心和线程）。请参阅一个可能的处理器编号示例，其中有两个socket、四个内核（每个socket两个内核）和八个逻辑处理器（每个内核两个处理器）。</p>
+<p>注：逻辑枚举和拓扑枚举不同。</p>
+<h3 id="Default-Settings"><a href="#Default-Settings" class="headerlink" title="Default Settings"></a>Default Settings</h3><p>如果您没有为任何进程固定环境变量指定值，则使用下面的默认设置。 有关这些设置的详细信息，请参阅环境变量和与 OpenMP API 的互操作性。</p>
+<ul>
+<li><code>I_MPI_PIN=on</code></li>
+<li><code>I_MPI_PIN_RESPECT_CPUSET=on</code></li>
+<li><code>I_MPI_PIN_RESPECT_HCA=on</code></li>
+<li><code>I_MPI_PIN_CELL=unit</code></li>
+<li><code>I_MPI_PIN_DOMAIN=auto:compact</code></li>
+<li><code>I_MPI_PIN_ORDER=bunch</code></li>
+</ul>
+<h3 id="Environment-Variables-for-Process-Pinning"><a href="#Environment-Variables-for-Process-Pinning" class="headerlink" title="Environment Variables for Process Pinning"></a>Environment Variables for Process Pinning</h3><p><code>I_MPI_PIN</code>打开/关闭进程固定。设置此环境变量以控制英特尔® MPI 库的进程固定功能。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_PIN=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>enable | yes | on | 1 启用进程固定。 这是默认值。</li>
+<li>disable | no | off | 0 禁用进程固定。</li>
+</ul>
+<p><code>I_MPI_PIN_PROCESSOR_LIST</code> (<code>I_MPI_PIN_PROCS</code>)定义处理器子集和该子集中的 MPI 进程的映射规则。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_PIN_PROCESSOR_LIST=&lt;value&gt;</span><br></pre></td></tr></table></figure></p>
+<p>环境变量值具有三种语法形式：</p>
+<ol>
+<li><code>&lt;proclist&gt;</code></li>
+<li><code>[&lt;procset&gt; ][:[grain=&lt;grain&gt; ][,shift=&lt;shift&gt; ][,preoffset=&lt;preoffset&gt; ] [,postoffset=&lt;postoffset&gt; ]</code></li>
+<li><code>[&lt;procset&gt; ][:map=&lt;map&gt; ]</code></li>
+</ol>
+<p>以下段落详细描述了这些语法形式的值。注意 postoffset 关键字具有偏移别名。注意固定过程的第二种形式包括三个步骤：</p>
+<ol>
+<li>源处理器列表在<code>preoffset*grain</code>值上的循环移位。</li>
+<li>在<code>shift*grain</code>值的第一步中导出的列表的循环移位。</li>
+<li>在<code>postoffset*grain</code>值上的第二步导出的列表的循环移位。</li>
+</ol>
+<p>注意<code>grain</code>、<code>shift</code>、<code>preoffset</code>和<code>postoffset</code>参数具有统一的定义样式。此环境变量可用于 Intel 和非 Intel 微处理器，但它对 Intel 微处理器执行的优化可能比对非 Intel 微处理器执行的优化多。</p>
+<p>语法 1<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_PIN_PROCESSOR_LIST=&lt;proclist&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;proclist&gt;</code>以逗号分隔的逻辑处理器编号和/或处理器范围列表。 具有第 i 个等级的进程被固定到列表中的第 i 个处理器。 该数量不应超过节点上的处理器数量。<ul>
+<li><code>&lt;l&gt;</code> 具有逻辑编号<code>&lt;l&gt;</code>的处理器。</li>
+<li><code>&lt;l&gt;-&lt;m&gt;</code> 具有从<code>&lt;l&gt;</code>到<code>&lt;m&gt;</code>的逻辑编号的处理器范围。</li>
+<li><code>&lt;k&gt;,&lt;l&gt;-&lt;m&gt;</code> 处理器<code>&lt;k&gt;</code>，以及<code>&lt;l&gt;</code>到<code>&lt;m&gt;</code>。</li>
+</ul>
+</li>
+</ul>
+<p>语法 2<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_PIN_PROCESSOR_LIST=[&lt;procset&gt;][:[grain=&lt;grain&gt;][,shift=&lt;shift&gt;]</span><br><span class="line">[,preoffset=&lt;preoffset&gt;][,postoffset=&lt;postoffset&gt;]</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;procset&gt;</code>根据拓扑编号指定处理器子集。 默认值为 allcores。<ul>
+<li><code>all</code>所有逻辑处理器。 指定此子集以定义节点上的 CPU 数量。</li>
+<li><code>allcores</code>所有内核（物理 CPU）。 指定此子集以定义节点上的核心数。 这是默认值。</li>
+<li><code>allsocks</code> 所有包/socket。 指定此子集以定义节点上的套接字数。</li>
+</ul>
+</li>
+<li><code>&lt;grain&gt;</code>为定义的<code>&lt;procset&gt;</code>指定固定粒度单元格。 最小的<code>&lt;grain&gt;</code>值是<code>&lt;procset&gt;</code>的单个元素。 最大<code>&lt;grain&gt;</code>值是套接字中<code>&lt;procset&gt;</code>元素的数量。<code>&lt;grain&gt;</code>值必须是<code>&lt;procset&gt;</code>值的倍数。 否则，假定最小<code>&lt;grain&gt;</code>值。默认值是最小的<code>&lt;grain&gt;</code>值。</li>
+<li><code>&lt;shift&gt;</code> 为<code>&lt;procset&gt;</code>指定单元的循环调度班次的粒度。<code>&lt;shift&gt;</code>以定义的<code>&lt;grain&gt;</code>单位测量。<code>&lt;shift&gt;</code>值必须是正整数。 否则，不执行移位。 默认值为无移位，等于 1 个正常增量。</li>
+<li><code>&lt;preoffset&gt;</code>指定在循环移位之前定义的处理器子集<code>&lt;procset&gt;</code>的循环移位<code>&lt;preoffset&gt;</code>值。 该值以定义的<code>&lt;grain&gt;</code>单位测量。<code>&lt;preoffset&gt;</code>值必须是非负整数。 否则，不执行移位。 默认值为无移位。</li>
+<li><code>&lt;postoffset&gt;</code> 指定在<code>&lt;postoffset&gt;</code>值上循环移位后派生的处理器子集<code>&lt;procset&gt;</code>的循环移位。 该值以定义的<code>&lt;grain&gt;</code>单位测量。<code>&lt;postoffset&gt;</code>值必须是非负整数。 否则不执行移位。 默认值为无移位。</li>
+</ul>
+<p>下表显示了<code>&lt;grain&gt;</code>、<code>&lt;shift&gt;</code>、<code>&lt;preoffset&gt;</code>和<code>&lt;postoffset&gt;</code>选项的值：</p>
+<ul>
+<li><code>&lt;n&gt;</code>指定相应参数的显式值。<code>&lt;n&gt;</code>是非负整数<ul>
+<li><code>fine</code>指定相应参数的最小值。</li>
+<li><code>core</code>指定参数值等于一个核中包含的相应参数单元的数量。</li>
+<li><code>cache1</code>指定的参数值等于共享一级缓存的相应参数单元的数量。</li>
+<li><code>cache2</code>指定的参数值等于共享一个 L2 缓存的相应参数单元的数量。</li>
+<li><code>cache3</code>指定的参数值等于共享一个 L3 缓存的相应参数单元的数量。</li>
+<li><code>cache</code>：cache1、cache2 和cache3 中的最大值。</li>
+<li><code>socket|sock</code>指定的参数值等于一个物理包/套接字中包含的相应参数单元的数量。</li>
+<li><code>half|mid</code>指定等于socket/2的参数值。</li>
+<li><code>third</code>指定等于socket/3的参数值。</li>
+<li><code>quarter</code>指定等于socket/4的参数值。</li>
+<li><code>octavo</code>指定等于 socket/8 的参数值。</li>
+</ul>
+</li>
+</ul>
+<p>语法 3<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_PIN_PROCESSOR_LIST=[&lt;procset&gt;][:map=&lt;map&gt;]</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;map&gt;</code>用于进程放置的映射模式。<ul>
+<li><code>bunch</code> 进程被映射到尽可能接近的套接字上。</li>
+<li><code>scatter</code> 进程尽可能远程映射，以免共享公共资源：FSB、缓存和核心。</li>
+<li><code>spread</code> 进程被连续映射，可能不共享公共资源。</li>
+</ul>
+</li>
+</ul>
+<p>设置<code>I_MPI_PIN_PROCESSOR_LIST</code>环境变量以定义处理器放置。 为避免与不同 shell 版本冲突，环境变量值可能需要用引号括起来。 注意 此环境变量仅在启用<code>I_MPI_PIN</code>时有效。</p>
+<p><code>I_MPI_PIN_PROCESSOR_LIST</code>环境变量具有以下不同的语法变体：</p>
+<ul>
+<li>显式处理器列表。 这个逗号分隔的列表是根据逻辑处理器编号定义的。 进程的相对节点rank是处理器列表的索引，因此第 i 个进程固定在第 i 个列表成员上。 这允许在 CPU 上定义任何进程放置。例如，<code>I_MPI_PIN_PROCESSOR_LIST=p0,p1,p2,...,pn</code>的进程映射如下：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Rank on a node  0  1  2  ... n-1  N</span><br><span class="line">Logical CPU     p0 p1 p2 ... pn-1 Pn</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>grain/shift/offset mapping. 此方法提供沿处理器列表的定义粒度的循环移位，步长等于<code>shift*grain</code>，最后在<code>offset*grain</code>上进行单次移位。 这种换档动作是重复换档次数。 例如：<code>grain = 2</code>个逻辑处理器，<code>shift = 3 个grain</code>，<code>offset = 0</code>。</p>
+</li>
+<li><p>Predefined mapping scenario. 在这种情况下，流行的进程固定方案被定义为在运行时可选择的关键字。 有两种这样的场景：bunch and scatter.</p>
+</li>
+</ul>
+<p>在bunch场景中，进程尽可能按比例映射到套接字。 这种映射对于部分处理器加载是有意义的。 在这种情况下，进程数小于处理器数。</p>
+<p>在scatter场景中，进程尽可能远程映射，以免共享公共资源：FSB、缓存和内核。</p>
+<p>要将进程全局固定到每个节点上的 CPU0 和 CPU3，请使用以下命令：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -genv I_MPI_PIN_PROCESSOR_LIST=0,3 -n &lt;number-of-processes&gt;&lt;executable&gt;</span><br></pre></td></tr></table></figure></p>
+<p>要将进程单独固定到每个节点上的不同 CPU（主机 1 上的 CPU0 和 CPU3，主机 2 上的 CPU0、CPU1 和 CPU3），请使用以下命令：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -host host1 -env I_MPI_PIN_PROCESSOR_LIST=0,3 -n &lt;number-of-processes&gt; &lt;executable&gt; : \</span><br><span class="line">-host host2 -env I_MPI_PIN_PROCESSOR_LIST=1,2,3 -n &lt;number-of-processes&gt; &lt;executable&gt;</span><br></pre></td></tr></table></figure></p>
+<p>要打印有关进程固定的额外调试信息，请使用以下命令：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -genv I_MPI_DEBUG=4 -m -host host1 \</span><br><span class="line">-env I_MPI_PIN_PROCESSOR_LIST=0,3 -n &lt;number-of-processes&gt; &lt;executable&gt; :\</span><br><span class="line">-host host2 -env I_MPI_PIN_PROCESSOR_LIST=1,2,3 -n &lt;number-of-processes&gt; &lt;executable&gt;</span><br></pre></td></tr></table></figure></p>
+<p>注意如果进程数大于用于固定的 CPU 数，则进程列表将环绕到处理器列表的开头。</p>
+<p><code>I_MPI_PIN_PROCESSOR_EXCLUDE_LIST</code>定义要为预期主机上的固定进程的功能排除的逻辑处理器子集。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_PIN_PROCESSOR_EXCLUDE_LIST=&lt;proclist&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;proclist&gt;</code>以逗号分隔的逻辑处理器编号和/或处理器范围列表。<ul>
+<li><code>&lt;l&gt;</code> 具有逻辑编号<code>&lt;l&gt;</code>的处理器。</li>
+<li><code>&lt;l&gt;-&lt;m&gt;</code> 具有从<code>&lt;l&gt;</code>到<code>&lt;m&gt;</code>的逻辑编号的处理器范围。</li>
+<li><code>&lt;k&gt;,&lt;l&gt;-&lt;m&gt;</code> 处理器<code>&lt;k&gt;</code>，以及<code>&lt;l&gt;</code>到<code>&lt;m&gt;</code>。</li>
+</ul>
+</li>
+</ul>
+<p>设置此环境变量以定义英特尔® MPI 库不用于在预期主机上固定功能的逻辑处理器。 逻辑处理器在<code>/proc/cpuinfo</code>中编号。</p>
+<p><code>I_MPI_PIN_CELL</code>设置此环境变量以定义固定分辨率粒度。<code>I_MPI_PIN_CELL</code>指定 MPI 进程运行时分配的最小处理器单元。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_PIN_CELL=&lt;cell&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;cell&gt;</code>指定分辨率粒度<ul>
+<li><code>unit</code>基本处理器单元（逻辑 CPU）</li>
+<li><code>core</code> 物理处理器内核</li>
+</ul>
+</li>
+</ul>
+<p>设置此环境变量以定义进程运行时使用的处理器子集。 您可以从两种场景中进行选择：</p>
+<ul>
+<li>节点中所有可能的 CPU（单位值）</li>
+<li>一个节点中的所有核心（核心价值）</li>
+</ul>
+<p>环境变量对两种固定类型都有影响：</p>
+<ul>
+<li>通过<code>I_MPI_PIN_PROCESSOR_LIST</code>环境变量一对一固定</li>
+<li>通过<code>I_MPI_PIN_DOMAIN</code>环境变量进行一对多固定</li>
+</ul>
+<p>默认值规则是：</p>
+<ul>
+<li>如果您使用<code>I_MPI_PIN_DOMAIN</code>，则单元格粒度为unit。</li>
+<li>如果您使用<code>I_MPI_PIN_PROCESSOR_LIST</code>，则以下规则适用：<ul>
+<li>当进程数大于核数时，单元粒度为unit。</li>
+<li>当进程数等于或小于核心数时，单元粒度为core。</li>
+</ul>
+</li>
+</ul>
+<p>注意内核值不受系统中英特尔® 超线程技术的启用/禁用的影响。</p>
+<p><code>I_MPI_PIN_RESPECT_CPUSET</code>以进程亲和掩码为准，这里的尊重可能说的是怎样设置mask的优先级高<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_PIN_RESPECT_CPUSET=&lt;value&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>enable | yes | on | 1 尊重进程亲和掩码。 这是默认值。</li>
+<li><p>disable | no | off | 0 不尊重进程关联掩码。</p>
+</li>
+<li><p>如果您设置<code>I_MPI_PIN_RESPECT_CPUSET=enable</code>，Hydra 进程启动器在每个预期主机上使用作业管理器的进程关联掩码来确定应用英特尔 MPI 库固定功能的逻辑处理器。</p>
+</li>
+<li>如果您设置<code>I_MPI_PIN_RESPECT_CPUSET=disable</code>，Hydra 进程启动器将使用其自己的进程关联掩码来确定应用英特尔 MPI 库固定功能的逻辑处理器。</li>
+</ul>
+<h3 id="Interoperability-with-OpenMP-API"><a href="#Interoperability-with-OpenMP-API" class="headerlink" title="Interoperability with OpenMP* API"></a>Interoperability with OpenMP* API</h3><p><code>I_MPI_PIN_DOMAIN</code>：英特尔® MPI 库提供了一个额外的环境变量来控制混合 MPI/OpenMP* 应用程序的进程固定。该环境变量用于定义节点上逻辑处理器的多个非重叠子集（域），以及一组关于 MPI 进程如何通过以下公式绑定到这些域的规则：每个domain一个 MPI 进程。 见下图。</p>
+<p><img src="/img/1639659501.jpg" alt=""></p>
+<p>每个 MPI 进程可以创建多个子线程以在相应的域中运行。 进程线程可以自由地从一个逻辑处理器迁移到特定域内的另一个。</p>
+<ul>
+<li>如果定义了<code>I_MPI_PIN_DOMAIN</code>环境变量，则忽略<code>I_MPI_PIN_PROCESSOR_LIST</code>环境变量设置。</li>
+<li>如果未定义<code>I_MPI_PIN_DOMAIN</code>环境变量，则根据<code>I_MPI_PIN_PROCESSOR_LIST</code>环境变量的当前值固定 MPI 进程。</li>
+</ul>
+<p><code>I_MPI_PIN_DOMAIN</code>环境变量具有以下语法形式：</p>
+<ul>
+<li>通过多核术语<code>&lt;mc-shape&gt;</code>的域描述</li>
+<li>通过域大小和域成员布局的域描述<code>&lt;size&gt;[:&lt;layout&gt;]</code></li>
+<li>通过位掩码<code>&lt;masklist&gt;</code>的显式域描述</li>
+</ul>
+<p>下表描述了这些语法形式</p>
+<ul>
+<li>多核形状：<code>I_MPI_PIN_DOMAIN=&lt;mc-shape&gt;</code><ul>
+<li><code>&lt;mc-shape&gt;</code>通过多核术语定义域。</li>
+<li><code>core</code> 每个域由共享特定核心的逻辑处理器组成。节点上的域数等于节点上的核心数。</li>
+<li><code>socket | sock</code>每个域由共享特定套接字的逻辑处理器组成。一个节点上的域数等于节点上的套接字数。这是推荐值。</li>
+<li><code>numa</code>每个域由共享特定 NUMA 节点的逻辑处理器组成。一台机器上的域数等于机器上的 NUMA 节点数。</li>
+<li><code>node</code> 一个节点上的所有逻辑处理器都安排在一个域中。</li>
+<li><code>cache1</code> 共享特定一级缓存的逻辑处理器被安排在一个域中。</li>
+<li><code>cache2</code> 共享特定二级缓存的逻辑处理器被安排在一个域中。</li>
+<li><code>cache3</code> 共享特定的第 3 级缓存的逻辑处理器被安排在一个域中。</li>
+<li><code>cache</code> 选择cache1、cache2 和cache3 中最大的域。</li>
+</ul>
+</li>
+</ul>
+<p>注意如果在一台机器上禁用了 Cluster on Die，则 NUMA 节点的数量等于套接字的数量。 在这种情况下，固定<code>I_MPI_PIN_DOMAIN = numa</code>等效于固定<code>I_MPI_PIN_DOMAIN = socket</code>。</p>
+<ul>
+<li>显式形状，<code>I_MPI_PIN_DOMAIN=&lt;size&gt;[:&lt;layout&gt;]</code></li>
+<li><code>&lt;size&gt;</code>定义每个域中的逻辑处理器数量（域大小）<ul>
+<li><code>omp</code>域大小等于<code>OMP_NUM_THREADS</code>环境变量值。如果未设置<code>OMP_NUM_THREADS</code>环境变量，则每个节点都被视为一个单独的域。</li>
+<li><code>auto</code>域大小由公式<code>size=#cpu/#proc</code>定义，其中<code>#cpu</code>为节点上的逻辑处理器数，<code>#proc</code>为节点上启动的 MPI 进程数</li>
+<li><code>&lt;n&gt;</code>域大小由正十进制数定义<code>&lt;n&gt;</code></li>
+</ul>
+</li>
+<li><code>&lt;layout&gt;</code>域成员的排序。默认值是紧凑的</li>
+<li><code>platform</code>域成员根据其 BIOS 编号（平台相关编号）进行排序</li>
+<li><code>compact</code>根据资源（内核、缓存、套接字等）紧凑，域成员的位置尽可能靠近彼此。这是默认值</li>
+<li><p><code>scatter</code>域成员在公共资源（核心、缓存、套接字等）方面尽可能远离彼此</p>
+</li>
+<li><p>显式域掩码，<code>I_MPI_PIN_DOMAIN=&lt;掩码列表&gt;</code></p>
+</li>
+<li><code>&lt;masklist&gt;</code>通过逗号分隔的十六进制数字列表（域掩码）定义域<ul>
+<li><code>[m1,...,mn]</code>对于<code>&lt;masklist&gt;</code>，每个<code>mi</code>是一个定义单个域的十六进制邮件位掩码。使用以下规则：如果相应的 mi 值设置为 1，则第 i 个逻辑处理器被包含在域中。所有剩余的处理器都被放入一个单独的域中。使用 BIOS 编号。</li>
+</ul>
+</li>
+</ul>
+<p>注意 为确保<code>&lt;masklist&gt;</code>中的配置被正确解析，请使用方括号将<code>&lt;masklist&gt;</code>指定的域括起来。例如：<code>I_MPI_PIN_DOMAIN=[55,aa]</code></p>
+<p>注意这些选项可用于 Intel® 和非 Intel 微处理器，但它们对 Intel 微处理器执行的优化可能比对非 Intel 微处理器执行的优化更多。要在域内固定 OpenMP* 进程或线程，应使用相应的 OpenMP 功能（例如，英特尔® 编译器的<code>KMP_AFFINITY</code>环境变量）。注意以下配置实际上与未应用固定相同：</p>
+<ul>
+<li>如果您设置<code>I_MPI_PIN_DOMAIN=auto</code>并且一个节点上正在运行单个进程（例如，由于<code>I_MPI_PERHOST=1</code>）</li>
+<li><code>I_MPI_PIN_DOMAIN=node</code></li>
+</ul>
+<p>如果您不希望进程在多套接字平台上的套接字之间迁移，请将域大小指定为<code>I_MPI_PIN_DOMAIN=socket</code>或更小。您还可以使用<code>I_MPI_PIN_PROCESSOR_LIST</code>，它为每个rank生成一个单 CPU 进程关联掩码（应该在 IBA* HCA 存在的情况下自动调整关联掩码）。</p>
+<p>请参阅示例中的对称多处理 (SMP) 节点的以下模型<br><img src="/img/1639662456.jpg" alt=""></p>
+<p>上图代表了 SMP 节点模型，在 2 个socket上共有 8 个内核。 英特尔® 超线程技术已禁用。 相同颜色的核心对共享 L2 缓存。</p>
+<p>Figure3<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mpirun -n 2 -env I_MPI_PIN_DOMAIN socket ./a.out</span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/1639662711.jpg" alt=""></p>
+<p>在图 3 中，根据套接字的数量定义了两个域。 进程rank 0 可以在第 0 个套接字上的所有内核上迁移。 进程rank 1 可以在第一个socket上的所有内核上迁移。</p>
+<p>Figure 4 <code>mpirun -n 4 -env I_MPI_PIN_DOMAIN cache2 ./a.out</code><br><img src="/img/1639662806.jpg" alt=""></p>
+<p>在图 4 中，根据常用 L2 缓存的数量定义了四个域。 进程rank 0 在共享 L2 缓存的内核 {0,4} 上运行。 进程rank 1 在共享 L2 缓存的内核 {1,5} 上运行，依此类推。</p>
+<p>Figure 5 <code>mpirun -n 2 -env I_MPI_PIN_DOMAIN 4:platform ./a.out</code><br><img src="/img/1639662910.jpg" alt=""></p>
+<p>在图 5 中，定义了两个大小为 4 的域。 第一个域包含内核 {0,1,2,3}，第二个域包含内核 {4,5,6,7}。 域成员（核心）具有由平台选项定义的连续编号。</p>
+<p>Figure 6 <code>mpirun -n 4 -env I_MPI_PIN_DOMAIN auto:scatter ./a.out</code><br><img src="/img/1639662962.jpg" alt=""></p>
+<p>在图6中，域大小=2（定义为CPU数=8/进程数=4），scatter布局。 定义了四个域 {0,2}、{1,3}、{4,6}、{5,7}。 域成员不共享任何公共资源。</p>
+<p>Figure 7 <code>setenv OMP_NUM_THREADS=2 mpirun -n 4 -env I_MPI_PIN_DOMAIN omp:platform ./a.out</code><br><img src="/img/1639663013.jpg" alt=""></p>
+<p>在图 7 中，域大小=2（由<code>OMP_NUM_THREADS=2</code>定义），platform布局。 定义了四个域 {0,1}、{2,3}、{4,5}、{6,7}。 域成员（核心）具有连续编号。</p>
+<p>Figure 8 <code>mpirun -n 2 -env I_MPI_PIN_DOMAIN [55,aa] ./a.out</code><br><img src="/img/1639663084.jpg" alt=""></p>
+<p>在图 8（<code>I_MPI_PIN_DOMAIN=&lt;masklist&gt;</code>的示例）中，第一个域由 55 掩码定义。它包含所有具有偶数 {0,2,4,6} 的内核。第二个域由 AA 掩码定义。它包含所有奇数为 {1,3,5,7} 的内核。</p>
+<p><code>I_MPI_PIN_ORDER</code>设置此环境变量以定义 MPI 进程到<code>I_MPI_PIN_DOMAIN</code>环境变量指定的域的映射顺序。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_PIN_ORDER=&lt;订单&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;order&gt;</code>指定顺序</li>
+<li><code>range</code>根据处理器的 BIOS 编号对域进行排序。这是一个平台相关的编号。</li>
+<li><code>scatter</code>域是有序的，以便相邻域尽可能共享最少的公共资源。</li>
+<li><code>compact</code> 域是有序的，以便相邻域尽可能共享公共资源。</li>
+<li><code>spread</code> 域是连续排序的，可能不共享公共资源。</li>
+<li><code>bunch</code> 进程按比例映射到套接字，域在套接字上的排序尽可能接近。这是默认值。</li>
+</ul>
+<p>此环境变量的最佳设置是特定于应用程序的。如果相邻的 MPI 进程更喜欢共享公共资源，例如核心、缓存、套接字、FSB，请使用compact或bunch。否则，使用scatter或spread。根据需要使用范围值。有关这些值的详细信息和示例，请参阅本主题中<code>I_MPI_PIN_ORDER</code>的参数表和示例部分。选项<code>scatter</code>、<code>compact</code>、<code>spread</code>和<code>bunch</code>可用于Intel® 和非Intel 微处理器，但它们对Intel 微处理器执行的优化可能比对非Intel 微处理器执行的优化多。</p>
+<p>对于以下配置：</p>
+<ul>
+<li>具有四个内核的两个socket节点和用于相应内核对的共享 L2 缓存。</li>
+<li>您希望使用以下设置在节点上运行的 4 个 MPI 进程。</li>
+</ul>
+<p>Compact order：<code>I_MPI_PIN_DOMAIN=2 I_MPI_PIN_ORDER=compact</code>。<br><img src="/img/1639663518.jpg" alt=""></p>
+<p>Scatter order：<code>I_MPI_PIN_DOMAIN=2 I_MPI_PIN_ORDER=scatter</code>。<br><img src="/img/1639663572.jpg" alt=""></p>
+<p>Spread order：<code>I_MPI_PIN_DOMAIN=2 I_MPI_PIN_ORDER=spread</code>。<br>注意对于<code>I_MPI_PIN_ORDER=spread</code>，如果没有足够的 CPU 来放置所有域，则顺序将切换为“compact”。<br><img src="/img/1639663640.jpg" alt=""></p>
+<p>Bunch order：<code>I_MPI_PIN_DOMAIN=2 I_MPI_PIN_ORDER=bunch</code><br><img src="/img/1639663678.jpg" alt=""></p>
+<h2 id="GPU-支持"><a href="#GPU-支持" class="headerlink" title="GPU 支持"></a>GPU 支持</h2><p>除了 GPU 固定之外，英特尔 MPI 库还支持 GPU 缓冲区（见下文）。</p>
+<h3 id="GPU-固定"><a href="#GPU-固定" class="headerlink" title="GPU 固定"></a>GPU 固定</h3><p>使用此功能在 MPI rank之间分配 Intel GPU 设备。要启用此功能，请设置<code>I_MPI_OFFLOAD_TOPOLIB=level_zero</code>。 此功能要求在节点上安装 LevelZero* 库。 设备固定信息在<code>I_MPI_DEBUG=3</code>处的英特尔 MPI 调试输出中打印出来。默认设置：</p>
+<ul>
+<li><code>I_MPI_OFFLOAD_CELL=tile</code></li>
+<li><code>I_MPI_OFFLOAD_DOMAIN_SIZE=-1</code></li>
+<li><code>I_MPI_OFFLOAD_DEVICES=all</code></li>
+</ul>
+<p>默认情况下，所有可用资源都在 MPI rank 之间尽可能平均地分配给给定的 rank 位置； 即资源的分配考虑了rank和资源位于哪个NUMA节点上。 理想情况下，rank将仅在等级所在的同一 NUMA 节点上拥有资源。下面的所有示例都代表具有两个 NUMA 节点和两个带有两个图块的 GPU 的机器配置。图 1显示了四个 MPI 等级<br><img src="/img/1639663898.jpg" alt=""></p>
+<p>Debug output I_MPI_DEBUG=3:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[0] MPI startup(): ===== GPU pinning on host1 =====</span><br><span class="line">[0] MPI startup(): Rank Pin tile</span><br><span class="line">[0] MPI startup(): 0 &#123;0&#125;</span><br><span class="line">[0] MPI startup(): 1 &#123;1&#125;</span><br><span class="line">[0] MPI startup(): 2 &#123;2&#125;</span><br><span class="line">[0] MPI startup(): 3 &#123;3&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="fabric控制的环境变量"><a href="#fabric控制的环境变量" class="headerlink" title="fabric控制的环境变量"></a>fabric控制的环境变量</h2><p>通信结构控制<code>I_MPI_FABRICS</code>选择要使用的特定fabric。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_FABRICS=ofi | shm:ofi | shm</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;fabric&gt;</code>定义网络结构。<ul>
+<li><code>shm</code>共享内存传输（仅用于节点内通信）。</li>
+<li><code>ofi</code> OpenFabrics 接口<em> (OFI) 网络结构，例如英特尔® True Scale Fabric、英特尔® Omni-Path 架构、InfiniBand</em> 和以太网（通过 OFI API）。</li>
+</ul>
+</li>
+</ul>
+<p>设置此环境变量以选择特定的结构组合。常规模式的默认值为<code>shm:ofi</code>，多端点模式的默认值为<code>ofi</code>。在多端点模式下，默认值<code>ofi</code>无法更改。</p>
+<p>此选项不适用于 slurm 和 pdsh 引导服务器。不推荐使用 DAPL、TMI 和 OFA 结构。</p>
+<p>共享内存控制<code>I_MPI_SHM</code>选择要使用的共享内存传输。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM=&lt;transport&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;transport&gt;</code>定义共享内存传输解决方案。<ul>
+<li><code>disable | no | off | 0</code>不要使用共享内存传输。</li>
+<li><code>auto</code>自动选择共享内存传输解决方案。</li>
+<li><code>bdw_sse</code>共享内存传输解决方案针对英特尔® 微架构代号 Broadwell 进行了调整。 SSE4.2。使用指令集。</li>
+<li><code>bdw_avx2</code>共享内存传输解决方案针对英特尔® 微架构代号 Broadwell 进行了调整。使用了 AVX2 指令集。</li>
+<li><code>skx_sse</code>共享内存传输解决方案针对基于英特尔® 微架构代号 Skylake 的英特尔® 至强® 处理器进行了调整。使用了 CLFLUSHOPT 和 SSE4.2 指令集。</li>
+<li><code>skx_avx2</code>共享内存传输解决方案针对基于英特尔® 微架构代号 Skylake 的英特尔® 至强® 处理器进行了调整。使用了 CLFLUSHOPT 和 AVX2 指令集。</li>
+<li><code>skx_avx512</code>共享内存传输解决方案针对基于英特尔® 微架构代号 Skylake 的英特尔® 至强® 处理器进行了调整。使用了 CLFLUSHOPT 和 AVX512 指令集。</li>
+<li><code>knl_ddr</code>共享内存传输解决方案针对英特尔® 微架构代号 Knights Landing 进行了调整。</li>
+<li><code>knl_mcdram</code>共享内存传输解决方案针对英特尔® 微架构代号 Knights Landing 进行了调整。共享内存缓冲区可能部分位于多通道 DRAM (MCDRAM) 中。</li>
+<li><code>clx_sse</code>共享内存传输解决方案针对基于英特尔® 微架构代号 Cascade Lake 的英特尔® 至强® 处理器进行了调整。使用了 CLFLUSHOPT 和 SSE4.2 指令集。</li>
+<li><code>clx_avx2</code>共享内存传输解决方案针对基于英特尔® 微架构代号 Cascade Lake 的英特尔® 至强® 处理器进行了调整。使用了 CLFLUSHOPT 和 AVX2 指令集。</li>
+<li><code>clx_avx512</code>共享内存传输解决方案针对基于英特尔® 微架构代号 Cascade Lake 的英特尔® 至强® 处理器进行了调整。使用了 CLFLUSHOPT 和 AVX512 指令集。</li>
+<li><code>clx-ap</code>共享内存传输解决方案针对基于英特尔® 微架构代号 Cascade Lake Advanced Performance 的英特尔® 至强® 处理器进行了调整。</li>
+<li><code>icx</code>共享内存传输解决方案针对基于英特尔® 微架构代号 Ice Lake 的英特尔® 至强® 处理器进行了优化。</li>
+</ul>
+</li>
+</ul>
+<p>设置此环境变量以选择特定的共享内存传输解决方案。</p>
+<p>自动选择的传输：</p>
+<ul>
+<li><code>icx</code>用于基于英特尔® 微架构的英特尔® 至强® 处理器，代号为 Ice Lake</li>
+<li><code>clx-ap</code>用于基于英特尔® 微架构的英特尔® 至强® 处理器，代号为 Cascade Lake Advanced Performance</li>
+<li><code>bdw_avx2</code>用于英特尔® 微架构代号 Haswell、Broadwell 和 Skylake</li>
+<li><code>skx_avx2</code>用于基于英特尔® 微体系结构代号 Skylake 的英特尔® 至强® 处理器</li>
+<li><code>ckx_avx2</code>用于基于英特尔® 微体系结构代号 Cascade Lake 的英特尔® 至强® 处理器</li>
+<li><code>knl_mcdram</code>用于英特尔® 微架构，代号为 Knights Landing 和 Knights Mill</li>
+<li><code>bdw_sse</code>适用于所有其他平台</li>
+</ul>
+<p><code>I_MPI_SHM</code>的值取决于<code>I_MPI_FABRICS</code>的值，如下所示：如果<code>I_MPI_FABRICS</code>为<code>ofi</code>，则<code>I_MPI_SHM</code>被禁用。如果<code>I_MPI_FABRICS</code>是<code>shm:ofi</code>，则<code>I_MPI_SHM</code>默认为<code>auto</code>或采用指定值。</p>
+<p><code>I_MPI_SHM_CELL_FWD_SIZE</code>更改共享内存前向单元的大小。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_CELL_FWD_SIZE=&lt;nbytes&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;nbytes&gt;</code>共享内存转发单元的大小（以字节为单位）</li>
+<li><code>&gt; 0</code> 默认的<code>&lt;nbytes&gt;</code>值取决于所使用的传输方式，通常应该在 64K 到 1024K 的范围内。</li>
+</ul>
+<p>转发单元是用于发送少量数据的缓存中消息缓冲区单元。建议使用较低的值。设置此环境变量以定义共享内存传输中前向单元的大小。</p>
+<p><code>I_MPI_SHM_CELL_BWD_SIZE</code>更改共享内存后向单元的大小。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_CELL_BWD_SIZE=&lt;nbytes&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;nbytes&gt;</code>共享内存后向单元的大小（以字节为单位）</li>
+<li><code>&gt; 0</code>默认的<code>&lt;nbytes&gt;</code>值取决于所使用的传输方式，通常应该在 64K 到 1024K 的范围内。</li>
+</ul>
+<p>后向单元是用于发送大量数据的缓存外消息缓冲区单元。建议使用更高的值。设置此环境变量以定义共享内存传输中 backwrad 单元的大小。</p>
+<p><code>I_MPI_SHM_CELL_EXT_SIZE</code>更改共享内存扩展单元的大小。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_CELL_EXT_SIZE=&lt;nbytes&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;nbytes&gt;</code>共享内存扩展单元的大小（以字节为单位）</li>
+<li><code>&gt; 0</code>默认的<code>&lt;nbytes&gt;</code>值取决于所使用的传输方式，通常应该在 64K 到 1024K 的范围内。</li>
+</ul>
+<p>当前向和后向单元用完时，扩展信元用于不平衡的应用中。扩展单元没有特定的所有者——它在计算节点上的所有等级之间共享。设置此环境变量以定义共享内存传输中扩展单元的大小。</p>
+<p><code>I_MPI_SHM_CELL_FWD_NUM</code>更改共享内存传输中前向单元的数量（每列）。设置此环境变量以定义共享内存传输中的前向单元数。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_CELL_FWD_NUM=&lt;num&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;num&gt;</code>共享内存转发单元的数量</li>
+<li><code>&gt; 0</code>默认值取决于所使用的传输，通常应在从 4 到 16范围内。</li>
+</ul>
+<p><code>I_MPI_SHM_CELL_BWD_NUM</code>更改共享内存传输中的后向单元数（每列）。设置此环境变量以定义共享内存传输中向后单元的数量。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_CELL_BWD_NUM=&lt;num&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;num&gt;</code>共享内存后向单元的数量</li>
+<li><code>&gt; 0</code>默认值取决于所使用的传输，通常应在从 4 到 64范围内。</li>
+</ul>
+<p><code>I_MPI_SHM_CELL_EXT_NUM_TOTAL</code>更改共享内存传输中扩展单元的总数。设置此环境变量以定义共享内存传输中扩展单元的数量。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_CELL_EXT_NUM_TOTAL=&lt;num&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;num&gt;</code>共享内存后向单元的数量</li>
+<li><code>&gt; 0</code>默认值取决于所使用的传输方式，通常范围为 2K 到 8K。</li>
+</ul>
+<p><code>I_MPI_SHM_CELL_FWD_HOLD_NUM</code>更改共享内存传输中的保留单元数量（每列）。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_CELL_FWD_HOLD_NUM=&lt;num&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;num&gt;</code>共享内存保持前向单元的数量</li>
+<li><code>&gt; 0</code>默认值取决于使用的传输并且必须小于</li>
+</ul>
+<p><code>I_MPI_SHM_CELL_FWD_NUM</code>设置此环境变量以定义一个 rank 可以同时容纳的共享内存传输中的前向单元格数。推荐值是 1 到 8 范围内的 2 的幂。</p>
+<p><code>I_MPI_SHM_MCDRAM_LIMIT</code>更改绑定到多通道 DRAM (MCDRAM) 的共享内存的大小（每列大小）。设置此环境变量以定义共享内存传输允许每列使用多少 MCDRAM 内存。此变量仅在<code>I_MPI_SHM=knl_mcdram</code>时生效。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_MCDRAM_LIMIT=&lt;nbytes&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;nbytes&gt;</code>每列绑定到 MCDRAM 的共享内存的大小，1048576 这是默认值。</li>
+</ul>
+<p><code>I_MPI_SHM_SEND_SPIN_COUNT</code>控制用于发送消息的共享内存传输的自旋计数值。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_SEND_SPIN_COUNT=&lt;计数&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;count&gt;</code>定义旋转计数值。典型值范围在 1 到 1000 之间。</li>
+</ul>
+<p>如果接收方入口缓冲区已满，则发送方可能会被阻塞，直到达到此旋转计数值。发送小消息时不起作用。</p>
+<p><code>I_MPI_SHM_RECV_SPIN_COUNT</code>控制用于接收消息的共享内存传输的自旋计数值。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_RECV_SPIN_COUNT=&lt;计数&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;count&gt;</code>定义旋转计数值。典型值范围在 1 到 1000000 之间。</li>
+</ul>
+<p>如果接收是非阻塞的，则此自旋计数仅用于预期和意外消息的安全重新排序。它对接收小消息没有影响。</p>
+<p><code>I_MPI_SHM_FILE_PREFIX_4K</code>更改创建共享内存文件的 4 KB 页大小文件系统 (tmpfs) 的安装点。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_FILE_PREFIX_4K=&lt;path&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;path&gt;</code>定义 4 KB 页大小文件系统 (tmpfs) 的现有挂载点的路径。默认情况下，未设置路径。</li>
+</ul>
+<p>设置此环境变量以定义共享内存文件的新路径。默认情况下，共享内存文件创建在<code>/dev/shm/</code>。此变量影响共享内存传输缓冲区和 RMA 窗口。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_FILE_PREFIX_4K=/dev/shm/intel/</span><br></pre></td></tr></table></figure></p>
+<p><code>I_MPI_SHM_FILE_PREFIX_2M</code>更改创建共享内存文件的 2 MB 页大小文件系统 (hugetlbfs) 的挂载点。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_FILE_PREFIX_2M=&lt;路径&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;path&gt;</code>定义 2 MB 页大小的文件系统 (hugetlbfs) 的现有挂载点的路径。默认情况下，未设置路径。</li>
+</ul>
+<p>设置此环境变量以在英特尔 MPI 库上启用 2 MB 大页面。该变量影响共享内存传输缓冲区。如果窗口大小大于或等于 2 MB，它也可能影响 RMA 窗口。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_FILE_PREFIX_2M=/dev/hugepages</span><br></pre></td></tr></table></figure></p>
+<p>配置大页面子系统需要 root 权限。请联系您的系统管理员以获得许可。</p>
+<p><code>I_MPI_SHM_FILE_PREFIX_1G</code>更改创建共享内存文件的 1 GB 页大小文件系统 (hugetlbfs) 的挂载点。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_FILE_PREFIX_1G=&lt;路径&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;path&gt;</code>定义 1 GB 页面大小文件系统 (hugetlbfs) 的现有挂载点的路径。默认情况下，未设置路径。</li>
+</ul>
+<p>设置此环境变量以在英特尔 MPI 库上启用 1 GB 大页面。该变量影响共享内存传输缓冲区。如果窗口大小大于或等于 1 GB，它也可能影响 RMA 窗口。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_FILE_PREFIX_1G=/dev/hugepages1G</span><br></pre></td></tr></table></figure></p>
+<p>配置大页面子系统需要 root 权限。 请联系您的系统管理员以获得许可。</p>
+<h3 id="OFI-capable-Network-Fabrics-Control"><a href="#OFI-capable-Network-Fabrics-Control" class="headerlink" title="OFI*-capable Network Fabrics Control"></a>OFI*-capable Network Fabrics Control</h3><p><code>I_MPI_OFI_PROVIDER</code>定义要加载的 OFI 提供程序的名称。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_OFI_PROVIDER=&lt;name&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;name&gt;</code>要加载的 OFI 提供程序的名称</li>
+</ul>
+<p>设置此环境变量以定义要加载的 OFI 提供程序的名称。 如果不指定此变量，OFI 库会自动选择提供者。 您可以使用<code>I_MPI_OFI_PROVIDER_DUMP</code>环境变量检查所有可用的提供程序。 如果您为可用的提供程序设置了错误的名称，请使用<code>FI_LOG_LEVEL=debug</code>获取正确设置名称的提示。</p>
+<p><code>I_MPI_OFI_PROVIDER_DUMP</code>控制从 OFI 库打印有关所有 OFI 提供者及其属性的信息的能力。设置此环境变量以控制从 OFI 库打印有关所有 OFI 提供程序及其属性的信息的能力。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_OFI_PROVIDER_DUMP=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;arg&gt;</code>二元指标<ul>
+<li>enable | yes | on | 1 从 OFI 库打印所有 OFI 提供商及其属性的列表</li>
+<li>disable | no | off | 0 没有行动。 这是默认值</li>
+</ul>
+</li>
+</ul>
+<p><code>I_MPI_OFI_DRECV</code>控制 OFI 结构中直接接收的能力。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_OFI_DRECV=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;arg&gt;</code>二元指标<ul>
+<li>enable | yes | on | 1 Enable direct receive. This is the default value</li>
+<li>disable | no | off | 0 禁用直接接收</li>
+</ul>
+</li>
+</ul>
+<p>使用直接接收功能仅阻止<code>MPI_Recv</code>调用。 在使用直接接收功能之前，请确保将其用于单线程 MPI 应用程序，并通过设置<code>I_MPI_FABRICS=ofi</code>检查是否已选择 OFI 作为网络结构。</p>
+<p><code>I_MPI_OFI_LIBRARY_INTERNAL</code>控制随英特尔® MPI 库提供的 libfabric* 的使用。设置此环境变量以禁用或启用英特尔 MPI 库中的 libfabric。 必须在获取<code>vars.[c]sh</code>脚本之前设置该变量。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_OFI_LIBRARY_INTERNAL=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;arg&gt;</code>二元指标<ul>
+<li>enable | yes | on | 1 使用英特尔 MPI 库中的 libfabric</li>
+<li>disable | no | off | 0 不要使用来自英特尔 MPI 库的 libfabric</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ export I_MPI_OFI_LIBRARY_INTERNAL=1</span><br><span class="line">$ source &lt;installdir&gt; /bin/vars.sh</span><br></pre></td></tr></table></figure>
+<h2 id="Environment-Variables-for-Memory-Policy-Control"><a href="#Environment-Variables-for-Memory-Policy-Control" class="headerlink" title="Environment Variables for Memory Policy Control"></a>Environment Variables for Memory Policy Control</h2><p>英特尔® MPI 库支持在英特尔® 至强融核™ 处理器（代号为 Knights Landing）上具有高带宽 (HBW) 内存 (MCDRAM) 的非统一内存访问 (NUMA) 节点。 英特尔® MPI 库可以将 MPI 进程的内存附加到特定 NUMA 节点的内存。 本节描述了这种内存布局控制的环境变量。</p>
+<p><code>I_MPI_HBW_POLICY</code>设置使用 HBW 内存的 MPI 进程内存放置策略。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_HBW_POLICY=&lt;user memory policy&gt;[,&lt;mpi memory policy&gt;][,&lt;win_allocate policy&gt;]</span><br></pre></td></tr></table></figure></p>
+<p>在语法中：</p>
+<ul>
+<li><code>&lt;user memory policy&gt;</code> - 用于为用户应用程序分配内存的内存策略（必需）</li>
+<li><code>&lt;mpi memory policy&gt;</code> - 用于分配内部 MPI 内存的内存策略（可选）</li>
+<li><code>&lt;win_allocate policy&gt;</code> - 用于为 RMA 操作的窗口段分配内存的内存策略（可选）</li>
+</ul>
+<p>每个列出的策略可能具有以下值：</p>
+<ul>
+<li><code>&lt;value&gt;</code>使用的内存分配策略。<ul>
+<li><code>hbw_preferred</code> 为每个进程分配本地 HBW 内存。 如果 HBW 内存不可用，则分配本地动态随机存取内存。</li>
+<li><code>hbw_bind</code> 只为每个进程分配本地 HBW 内存。</li>
+<li><code>hbw_interleave</code> 以循环方式在本地节点上分配 HBW 内存和动态随机存取内存。</li>
+</ul>
+</li>
+</ul>
+<p>使用此环境变量为具有 HBW 内存的机器上的 MPI 进程内存放置指定策略。 默认情况下，英特尔 MPI 库为本地 DDR 中的进程分配内存。 仅当您指定<code>I_MPI_HBW_POLICY</code>变量时，才能使用 HBW 内存。</p>
+<p>以下示例演示了不同的内存布局配置：</p>
+<ul>
+<li><code>I_MPI_HBW_POLICY=hbw_bind,hbw_preferred,hbw_bind</code><br>  仅将在用户应用程序和窗口段中分配的本地 HBW 内存用于 RMA 操作。 首先使用英特尔® MPI 库中内部分配的本地 HBW 内存。 如果 HBW 内存不可用，请使用英特尔 MPI 库中内部分配的本地 DDR。</li>
+<li><code>I_MPI_HBW_POLICY=hbw_bind,,hbw_bind</code><ul>
+<li>仅将在用户应用程序和窗口段中分配的本地 HBW 内存用于 RMA 操作。 使用英特尔 MPI 库中内部分配的本地 DDR。</li>
+</ul>
+</li>
+<li><code>I_MPI_HBW_POLICY=hbw_bind,hbw_preferred</code><ul>
+<li>仅使用在用户应用程序中分配的本地 HBW 内存。 首先使用英特尔 MPI 库中内部分配的本地 HBW 内存。 如果 HBW 内存不可用，请使用英特尔 MPI 库中内部分配的本地 DDR。 将窗口段中分配的本地 DDR 用于 RMA 操作。</li>
+</ul>
+</li>
+</ul>
+<p><code>I_MPI_BIND_NUMA</code>为内存分配设置 NUMA 节点。设置此环境变量以指定内存分配过程中涉及的 NUMA 节点集。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_BIND_NUMA=&lt;value&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;value&gt;</code> 指定用于内存分配的 NUMA 节点。<ul>
+<li><code>localalloc</code> 在本地节点上分配内存。 这是默认值。</li>
+<li><code>Node_1,…,Node_k</code>在指定的 NUMA 节点上根据<code>I_MPI_BIND_ORDER</code>分配内存。</li>
+</ul>
+</li>
+</ul>
+<p><code>I_MPI_BIND_ORDER</code>设置这个环境变量来定义内存分配方式。设置该环境变量来定义<code>I_MPI_BIND_NUMA</code>中指定的NUMA 节点之间的内存分配方式。 如果未设置<code>I_MPI_BIND_NUMA</code>，该变量无效。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_BIND_ORDER=&lt;value&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;value&gt;</code>指定分配方式。<ul>
+<li><code>compact</code>在<code>I_MPI_BIND_NUMA</code>中指定的 NUMA 节点中，为尽可能接近的进程分配内存（就 NUMA 节点而言）。 这是默认值。</li>
+<li><code>scatter</code>使用循环方式在<code>I_MPI_BIND_NUMA</code>中指定的 NUMA 节点之间分配内存。</li>
+</ul>
+</li>
+</ul>
+<p><code>I_MPI_BIND_WIN_ALLOCATE</code>设置此环境变量以控制窗口段的内存分配。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_BIND_WIN_ALLOCATE=&lt;value&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;value&gt;</code>指定窗口段的内存分配行为。<ul>
+<li><code>localalloc</code>在本地节点上分配内存。 这是默认值。</li>
+<li><code>hbw_preferred</code> 为每个进程分配本地 HBW 内存。 如果 HBW 内存不可用，则分配本地动态随机存取内存。</li>
+<li><code>hbw_bind</code>只为每个进程分配本地 HBW 内存。</li>
+<li><code>hbw_interleave</code>以循环方式在本地节点上分配HBW内存和动态随机存取内存。</li>
+<li><code>&lt;NUMA node id&gt;</code>在给定的 NUMA 节点上分配内存。</li>
+</ul>
+</li>
+</ul>
+<p>设置此环境变量以在<code>MPI_Win_allocate_shared</code>或<code>MPI_Win_allocate</code>函数的帮助下创建在 HBW 内存中分配的窗口段。</p>
+<h3 id="MPI-Info"><a href="#MPI-Info" class="headerlink" title="MPI_Info"></a>MPI_Info</h3><p>您可以借助<code>MPI_Info</code>对象控制窗口段的内存分配，该对象作为参数传递给<code>MPI_Win_allocate</code>或<code>MPI_Win_allocate_shared</code>函数。在应用程序中，如果使用<code>numa_bind_policy</code>键指定这样的对象，则根据<code>numa_bind_policy</code>的值分配窗口段。可能的值与<code>I_MPI_BIND_WIN_ALLOCATE</code>的相同。</p>
+<p>演示<code>MPI_Info</code>使用的代码片段：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">MPI_Info info;</span><br><span class="line">...</span><br><span class="line"><span class="built_in">MPI_Info_create</span>( &amp;info );</span><br><span class="line"><span class="built_in">MPI_Info_set</span>( info, <span class="string">&quot;numa_bind_policy&quot;</span>, <span class="string">&quot;hbw_preferred&quot;</span> );</span><br><span class="line">...</span><br><span class="line"><span class="built_in">MPI_Win_allocate_shared</span>( size, disp_unit, info, comm, &amp;baseptr, &amp;win );</span><br></pre></td></tr></table></figure></p>
+<p>当您为窗口段指定内存放置策略时，英特尔 MPI 库根据以下优先级识别配置：</p>
+<ol>
+<li><code>MPI_Info</code>的设置。</li>
+<li><code>I_MPI_HBW_POLICY</code>的设置，如果你指定了<code>&lt;win_allocate policy&gt;</code>。</li>
+<li><code>I_MPI_BIND_WIN_ALLOCATE</code>的设置。</li>
+</ol>
+<h2 id="Environment-Variables-for-Asynchronous-Progress-Control"><a href="#Environment-Variables-for-Asynchronous-Progress-Control" class="headerlink" title="Environment Variables for Asynchronous Progress Control"></a>Environment Variables for Asynchronous Progress Control</h2><p>仅<code>release_mt</code>和<code>debug_mt</code>库配置支持此功能。要指定配置，请运行以下命令：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">source</span> &lt;installdir&gt;/bin/vars.sh release_mt</span><br></pre></td></tr></table></figure></p>
+<p><code>I_MPI_ASYNC_PROGRESS</code>控制进程线程的使用。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_ASYNC_PROGRESS=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;arg&gt;</code>二元指标<ul>
+<li><code>disable | no | off | 0</code> 禁用每个进程的异步进度线程。 这是默认值。</li>
+<li><code>enable | yes | on | 1</code>  启用进度线程。</li>
+</ul>
+</li>
+</ul>
+<p>设置此环境变量以启用异步进度。 如果禁用，则忽略·I_MPI_ASYNC_PROGRESS_*`。</p>
+<p><code>I_MPI_ASYNC_PROGRESS_THREADS</code>控制进度线程的数量。设置此环境变量以控制每个rank的进度线程。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_ASYNC_PROGRESS_THREADS=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;nthreads&gt;</code> 定义进度线程的数量。 默认值为 1。</li>
+</ul>
+<p><code>I_MPI_ASYNC_PROGRESS_PIN</code>控制异步进度线程固定。设置此环境变量以控制本地进程的所有进程线程的固定。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_ASYNC_PROGRESS_PIN=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;arg&gt;</code> 逗号分隔的逻辑处理器列表</li>
+<li><code>&lt;CPU list&gt;</code>将本地进程的所有进程线程固定到列出的 CPU。 默认情况下，N 个进程线程被固定到最后 N 个逻辑处理器。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_ASYNC_PROGRESS_THREADS=3</span><br><span class="line">I_MPI_ASYNC_PROGRESS_PIN=”0,1,2,3,4,5”</span><br></pre></td></tr></table></figure>
+<p>在每个节点有三个 MPI 进程的情况下，第一个进程的进度线程被固定到 0、1，第二个进程被固定到 2、3，第三个进程被固定到 4、5。</p>
+<p><code>I_MPI_ASYNC_PROGRESS_ID_KEY</code>设置用于显式定义通信器的进度线程 ID 的<code>MPI_info</code>对象键。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_ASYNC_PROGRESS_ID_KEY=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;key&gt;</code>MPI_info 对象键。 默认值为thread_id。</li>
+</ul>
+<p>设置此环境变量以控制用于定义通信器的进度线程 ID 的<code>MPI_info</code>对象键。 进度线程 id 用于进度线程之间的工作分配。 默认情况下，通过第一个进度线程通信。从计算线程的固定中排除进程线程的选定处理器。</p>
+<p>如需更多信息和示例，请参阅英特尔® MPI 库开发人员指南的异步进度控制部分。</p>
+<h2 id="Environment-Variables-for-Multi-EP"><a href="#Environment-Variables-for-Multi-EP" class="headerlink" title="Environment Variables for Multi-EP"></a>Environment Variables for Multi-EP</h2><p>注意此功能仅支持<code>release_mt</code>和<code>debug_mt</code>库配置。要指定配置，请运行以下命令：<code>$ source &lt;install-dir&gt;/bin/vars.sh release_mt</code></p>
+<p><code>I_MPI_THREAD_SPLIT</code>使用此环境变量来控制<code>I_MPI_THREAD_SPLIT</code>编程模型。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_THREAD_SPLIT=&lt;value&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>value</code>二元指标<ul>
+<li><code>0 | no | off | disable</code>禁用<code>MPI_THREAD_SPLIT</code>模型支持。这是默认值。</li>
+<li><code>1 | yes | on | enable</code> 启用<code>MPI_THREAD_SPLIT</code>模型支持。</li>
+</ul>
+</li>
+</ul>
+<p><code>I_MPI_THREAD_RUNTIME</code>使用此环境变量来控制线程运行时支持。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_THREAD_RUNTIME=&lt;value&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>value</code>线程运行时</li>
+<li><code>generic</code>启用运行时支持（例如，pthreads、TBB）。 如果在运行时无法检测到 OpenMP*，则这是默认值。</li>
+<li><code>openmp</code>启用 OpenMP 运行时支持。 如果在运行时检测到 OpenMP，则这是默认值。</li>
+</ul>
+<p><code>I_MPI_THREAD_MAX</code>使用此环境变量来设置每个进程同时使用的最大线程数。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_THREAD_MAX=&lt;int&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;int&gt;</code> 每个rank的最大线程数。如果<code>I_MPI_THREAD_RUNTIME</code>设置为<code>openmp</code>，则默认值为<code>omp_get_max_threads()</code>。</li>
+</ul>
+<p><code>I_MPI_THREAD_ID_KEY</code>使用此环境变量设置用于显式定义逻辑线程号<code>thread_id</code>的 MPI 信息对象键。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_THREAD_ID_KEY=&lt;string&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;string&gt;</code>定义<code>MPI_info</code>对象键。 默认值为<code>thread_id</code></li>
+</ul>
+<h2 id="Other-Environment-Variables"><a href="#Other-Environment-Variables" class="headerlink" title="Other Environment Variables"></a>Other Environment Variables</h2><p><code>I_MPI_DEBUG</code>当 MPI 程序开始运行时打印调试信息。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_DEBUG=&lt;level&gt;[,&lt;flags&gt;]</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;level&gt;</code>指示提供的调试信息的级别。<ul>
+<li><code>0</code> 不输出调试信息。 这是默认值。</li>
+<li><code>1,2</code> 输出 libfabric* 版本和提供程序。</li>
+<li><code>3</code> 输出有效的MPI rank、pid 和节点映射表。</li>
+<li><code>4</code> 输出进程锁定信息。</li>
+<li><code>5</code> 特定于英特尔® MPI 库的输出环境变量。</li>
+<li><code>&gt; 5</code> 添加额外级别的调试信息。</li>
+</ul>
+</li>
+<li><code>&lt;flags&gt;</code> 以逗号分隔的调试标志列表<ul>
+<li><code>pid</code> 显示每个调试消息的进程 ID。</li>
+<li><code>tid</code> 为多线程库的每条调试消息显示线程 ID。</li>
+<li><code>time</code> 显示每个调试消息的时间。</li>
+<li><code>datetime</code> 显示每条调试消息的时间和日期。</li>
+<li><code>host</code>显示每条调试消息的主机名。</li>
+<li><code>level</code> 显示每个调试消息的级别。</li>
+<li><code>scope</code> 显示每个调试消息的范围。</li>
+<li><code>line</code> 显示每条调试消息的源代码行号。</li>
+<li><code>file</code> 显示每条调试消息的源文件名。</li>
+<li><code>nofunc</code> 不显示例程名称。</li>
+<li><code>norank</code> 不显示rank。</li>
+<li><code>nousrwarn</code> 禁止针对不当用例（例如，不兼容的控件组合）发出警告。</li>
+<li><code>flock</code> 同步来自不同进程或线程的调试输出。</li>
+<li><code>nobuf</code> 不要将缓冲 I/O 用于调试输出。</li>
+</ul>
+</li>
+</ul>
+<p>设置此环境变量以打印有关应用程序的调试信息。注意为所有rank设置相同的<code>&lt;level&gt;</code>值。您可以通过设置<code>I_MPI_DEBUG_OUTPUT</code>环境变量来指定调试信息的输出文件名。每个打印的行具有以下格式：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[&lt;identifier&gt;] &lt;message&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;identifier&gt;</code>默认情况下是 MPI 进程rank。 如果在<code>&lt;level&gt;</code>编号前添加“+”号，<code>&lt;identifier&gt;</code>将采用以下格式：<code>rank#pid@hostname</code>。 这里，<code>pid</code>是 UNIX* 进程 ID，<code>hostname</code>是主机名。 如果添加“-”符号，则根本不打印<code>&lt;identifier&gt;</code>。</li>
+<li><code>&lt;message&gt;</code>包含调试输出。</li>
+</ul>
+<p>以下示例演示了可能的命令行以及相应的输出：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -n 1 -env I_MPI_DEBUG=2 ./a.out</span><br><span class="line">...</span><br><span class="line">[0] MPI startup(): shared memory data transfer mode</span><br></pre></td></tr></table></figure></p>
+<p>以下命令相等并产生相同的输出：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -n 1 -env I_MPI_DEBUG=2,pid,host ./a.out</span><br><span class="line">...</span><br><span class="line">[0#1986@mpicluster001] MPI startup(): shared memory data transfer mode</span><br></pre></td></tr></table></figure></p>
+<p>注意 使用 -g 选项进行编译会添加大量打印的调试信息。</p>
+<p><code>I_MPI_DEBUG_OUTPUT</code>设置调试信息的输出文件名。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_DEBUG_OUTPUT=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>stdout</code> 输出到标准输出。 这是默认值。</li>
+<li><code>stderr</code> 输出到标准错误。</li>
+<li><code>&lt;file_name&gt;</code> 指定调试信息的输出文件名（最大文件名长度为 256 个符号）。</li>
+</ul>
+<p>如果要将调试信息的输出与应用程序生成的输出分开，请设置此环境变量。 如果您使用 %r、%p 或 %h 等格式，则会相应地将rank、进程 ID 或主机名添加到文件名中。</p>
+<p><code>I_MPI_DEBUG_COREDUMP</code>在 MPI 应用程序执行期间出现故障时控制核心转储文件的生成。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_DEBUG_COREDUMP=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>enable|yes|on|1 启用核心转储文件生成。</li>
+<li>disable|no|off|0 不生成核心转储文件。 默认值。</li>
+</ul>
+<p>设置此环境变量以在分段错误导致终止的情况下启用核心转储文件转储。 可用于发布和调试版本。</p>
+<p><code>I_MPI_STATS</code>使用应用程序性能快照从您的应用程序收集 MPI 统计信息。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_STATS=&lt;level&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;level&gt;</code>表明收集的统计数据的级别<ul>
+<li>1,2,3,4,5 指定级别以指示应用程序性能快照 (APS) 收集的 MPI 统计信息量。官方 APS 文档中提供了对级别的完整描述。</li>
+</ul>
+</li>
+</ul>
+<p>设置此变量以使用应用程序性能快照从 MPI 应用程序收集与 MPI 相关的统计信息。 该变量创建一个包含统计数据的新文件夹<code>aps_result_&lt;date&gt;-&lt;time&gt;</code>。 要分析收集的数据，请使用 aps 实用程序。 例如：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ export I_MPI_STATS=5</span><br><span class="line">$ mpirun -n 2 ./myApp</span><br><span class="line">$ aps-report aps_result_20171231_235959</span><br></pre></td></tr></table></figure></p>
+<p><code>I_MPI_STARTUP_MODE</code>为英特尔® MPI 库进程启动算法选择一种模式。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_STARTUP_MODE=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>pmi_shm</code> 使用共享内存来减少 PMI 调用的次数。 默认情况下启用此模式。</li>
+<li><code>pmi_shm_netmod</code> 除 PMI 和共享内存外，还使用<code>netmod</code>基础结构进行地址交换逻辑。</li>
+</ul>
+<p><code>pmi_shm</code>和<code>pmi_shm_netmod</code>模式减少了应用程序启动时间。 使用更高的<code>-ppn</code>值可以更清楚地观察到模式的效率，而使用<code>-ppn 1</code>则根本没有改善。</p>
+<p><code>I_MPI_PMI_LIBRARY</code>指定 PMI 库的第三方实现的名称。设置<code>I_MPI_PMI_LIBRARY</code>以指定第三方 PMI 库的名称。 设置此环境变量时，请提供库的完整名称及其完整路径。 当前支持的 PMI 版本：<code>PMI1</code>、<code>PMI2</code><br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_PMI_LIBRARY=&lt;name&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;name&gt;</code>第三方PMI库全称</li>
+</ul>
+<p><code>I_MPI_PMI_VALUE_LENGTH_MAX</code>在客户端控制 PMI 中值缓冲区的长度。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_PMI_VALUE_LENGTH_MAX=&lt;length&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;length&gt;</code>以字节为单位定义缓冲区长度的值。</li>
+<li><code>&lt;n&gt; &gt; 0</code> 默认值为 -1，这意味着不覆盖从<code>PMI_KVS_Get_value_length_max()</code>函数接收的值。</li>
+</ul>
+<p>设置这个环境变量来控制客户端PMI中值缓冲区的长度。 缓冲区的长度将是<code>I_MPI_PMI_VALUE_LENGTH_MAX</code>和<code>PMI_KVS_Get_value_length_max()</code>中的较小者。</p>
+<p><code>I_MPI_OUTPUT_CHUNK_SIZE</code>设置<code>stdout/stderr</code>输出缓冲区的大小。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_OUTPUT_CHUNK_SIZE=&lt;size&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;size&gt;</code> 以千字节为单位定义输出块大小</li>
+<li><code>&lt;n&gt; &gt; 0</code> 默认块大小值为 1 KB</li>
+</ul>
+<p>设置此环境变量以增加用于拦截来自进程的标准输出和标准错误流的缓冲区的大小。 如果<code>&lt;size&gt;</code>值不大于零，则忽略环境变量设置并显示警告消息。 将此设置用于从不同进程创建大量输出的应用程序。 使用<code>mpiexec.hydra</code>的<code>-ordered-output</code>选项，此设置有助于防止输出出现乱码。</p>
+<p>注意 在执行<code>mpiexec.hydra/mpirun</code>命令之前，在 shell 环境中设置<code>I_MPI_OUTPUT_CHUNK_SIZE</code>环境变量。 不要使用<code>-genv</code>或<code>-env</code>选项来设置<code>&lt;size&gt;</code>值。这些选项仅用于将环境变量传递给 MPI 进程环境。</p>
+<p><code>I_MPI_REMOVED_VAR_WARNING</code>如果设置了已删除的环境变量，则打印出警告。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_REMOVED_VAR_WARNING=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>enable | yes | on | 1 打印警告。 这是默认值</li>
+<li>disable | no | off | 0 不要打印警告</li>
+</ul>
+<p><code>I_MPI_VAR_CHECK_SPELLING</code>如果设置了未知环境变量，则打印警告。如果设置了不受支持的环境变量，请使用此环境变量打印警告。如果删除或打印错误的环境变量，将打印警告。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_VAR_CHECK_SPELLING=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>enable | yes | on | 1 把警告打印出来。这是默认值</li>
+<li>disable | no | off | 0 不要打印警告</li>
+</ul>
+<p><code>I_MPI_LIBRARY_KIND</code>指定英特尔MPI库配置。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_LIBRARY_KIND=&lt;value&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>release</code> 多线程优化库（带有全局锁）。这是默认值</li>
+<li><code>debug</code> 多线程调试库（带全局锁）</li>
+<li><code>release_mt</code>多线程优化库（线程拆分模型的每个对象锁）</li>
+<li><code>debug_mt</code> 多线程调试库（对于线程拆分模型具有每个对象锁）</li>
+</ul>
+<p>使用此变量为<code>vars.[c]sh</code>脚本设置参数。 该脚本建立英特尔® MPI 库环境并使您能够指定适当的库配置。 要确保设置了所需的配置，请检查<code>LD_LIBRARY_PATH</code>变量。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ export I_MPI_LIBRARY_KIND=debug</span><br></pre></td></tr></table></figure></p>
+<p>设置这个变量相当于直接向<code>vars.[c]sh</code>脚本传递一个参数：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ . &lt;installdir&gt;/bin/vars.sh release</span><br></pre></td></tr></table></figure></p>
+<p><code>I_MPI_PLATFORM</code>选择预期的优化平台。设置此环境变量以使用预定义的平台设置。 默认值是每个节点的本地平台。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_PLATFORM=&lt;platform&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;platform&gt;</code> 预期的优化平台（字符串值）<ul>
+<li><code>auto</code> 仅用于异构运行以确定跨所有节点的适当平台。由于跨所有节点的集体操作，可能会减慢 MPI 初始化时间。</li>
+<li><code>ivb</code>针对英特尔® 至强® 处理器 E3、E5 和 E7 V2 系列以及以前代号为 Ivy Bridge 的其他英特尔® 架构处理器进行优化。</li>
+<li><code>hsw</code>针对英特尔至强处理器 E3、E5 和 E7 V3 系列以及以前代号为 Haswell 的其他英特尔® 架构处理器进行优化。</li>
+<li><code>bdw</code>针对英特尔至强处理器 E3、E5 和 E7 V4 系列以及以前代号为 Broadwell 的其他英特尔架构处理器进行优化。</li>
+<li><code>knl</code>优化英特尔® 至强融核™ 处理器和协处理器，以前代号为 Knights Landing。</li>
+<li><code>skx</code>针对英特尔至强处理器 E3 V5 和英特尔至强可扩展家族系列以及其他以前代号为 Skylake 的英特尔架构处理器进行优化。</li>
+<li><code>clx</code>针对第二代英特尔至强可扩展处理器和其他以前代号为 Cascade Lake 的英特尔® 架构处理器进行优化。</li>
+<li><code>clx-ap</code>针对第二代英特尔至强可扩展处理器和其他以前代号为 Cascade Lake AP 的英特尔架构处理器进行优化。注意：如果实际平台不是 Intel，则忽略显式 clx-ap 设置。</li>
+</ul>
+</li>
+</ul>
+<p>该变量可用于 Intel 和非 Intel 微处理器，但它可能对 Intel 微处理器使用比对非 Intel 微处理器使用的其他优化。 注意<code>auto[:min]</code>、<code>auto:max</code>和<code>auto:most</code>值可能会增加 MPI 作业启动时间。</p>
+<p><code>I_MPI_MALLOC</code>控制私有内存的英特尔® MPI 库自定义分配器。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_MALLOC=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>1</code> 启用私有内存的英特尔 MPI 库自定义分配器。 为<code>MPI_Alloc_mem/MPI_Free_mem</code>使用私有内存的英特尔 MPI 自定义分配器。</li>
+<li><code>0</code> 禁用私有内存的英特尔 MPI 库自定义分配器。将系统提供的内存分配器用于<code>MPI_Alloc_mem/MPI_Free_mem</code>。</li>
+</ul>
+<p>使用此环境变量来启用或禁用<code>MPI_Alloc_mem/MPI_Free_mem</code>专用内存的英特尔 MPI 库自定义分配器。默认情况下，<code>I_MPI_MALLOC</code>为<code>release</code>和<code>debug</code>英特尔 MPI 库配置启用，而为<code>release_mt</code>和<code>debug_mt</code>配置禁用。注意如果专用内存的英特尔 MPI 库自定义分配器不支持该平台，则使用系统提供的内存分配器并忽略<code>I_MPI_MALLOC</code>变量。</p>
+<p><code>I_MPI_SHM_HEAP</code>控制共享内存的英特尔® MPI 库自定义分配器。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_HEAP=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>1</code> 为<code>MPI_Alloc_mem/MPI_Free_mem</code>使用共享内存的英特尔 MPI 自定义分配器。</li>
+<li><code>0</code> 不要将共享内存的英特尔 MPI 自定义分配器用于<code>MPI_Alloc_mem/MPI_Free_mem</code>。</li>
+</ul>
+<p>使用此环境变量为<code>MPI_Alloc_mem/MPI_Free_mem</code>启用或禁用共享内存的英特尔 MPI 库自定义分配器。默认情况下，禁用<code>I_MPI_SHM_HEAP</code>。如果启用，它可以提高共享内存传输的性能，因为在这种情况下，可以只进行一次内存复制操作，而不是两次拷入/拷出内存复制操作。如果同时启用了<code>I_MPI_SHM_HEAP</code>和<code>I_MPI_MALLOC</code>，则首先使用共享内存分配器。仅当所需的共享内存量不可用时才使用私有内存分配器。</p>
+<p>默认情况下，共享内存段在<code>/dev/shm/</code>挂载点上的<code>tmpfs</code>文件系统上分配。从 Linux 内核 4.7 开始，可以在共享内存上启用透明大页面。如果使用英特尔 MPI 库共享内存堆，建议在您的系统上启用透明大页面。要在<code>/dev/shm</code>上启用透明大页面，请联系您的系统管理员或执行以下命令：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mount -o remount,huge=advise /dev/shm</span><br></pre></td></tr></table></figure></p>
+<p>为了使用另一个<code>tmpfs</code>挂载点而不是<code>/dev/shm/</code>，请使用<code>I_MPI_SHM_FILE_PREFIX_4K</code>、<code>I_MPI_SHM_FILE_PREFIX_2M</code>和<code>I_MPI_SHM_FILE_PREFIX_1G</code>。</p>
+<p>注意如果您的应用程序不直接使用<code>MPI_Alloc_mem/MPI_Free_mem</code>，您可以通过预加载<code>libmpi_shm_heap_proxy.so</code>库来覆盖标准<code>malloc/calloc/realloc/free</code>过程：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export LD_PRELOAD=$I_MPI_ROOT/lib/libmpi_shm_heap_proxy.so</span><br><span class="line">export I_MPI_SHM_HEAP=1</span><br></pre></td></tr></table></figure></p>
+<p>在这种情况下，<code>malloc/calloc/realloc</code>是<code>MPI_Alloc_mem</code>的代理，<code>free</code>是<code>MPI_Free_mem</code>的代理。注意如果共享内存的英特尔 MPI 库自定义分配器不支持该平台，则<code>I_MPI_SHM_HEAP</code>变量将被忽略。</p>
+<p><code>I_MPI_SHM_HEAP_VSIZE</code>更改可用于英特尔 MPI 库自定义共享内存分配器的虚拟共享内存的大小（每列）。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_HEAP_VSIZE=&lt;size&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;size&gt;</code> 共享内存堆中使用的共享内存的大小（每列）（以兆字节为单位）。</li>
+<li><code>&gt; 0</code> 如果为<code>MPI_Alloc_mem/MPI_Free_mem</code>启用共享内存堆，则默认值为 4096。</li>
+</ul>
+<p>共享内存的英特尔 MPI 库自定义分配器适用于固定大小的虚拟共享内存。 共享内存段是在<code>MPI_Init</code>上分配的，以后不能扩大。<code>I_MPI_SHM_HEAP_VSIZE=0</code>完全禁用英特尔 MPI 库共享内存分配器。</p>
+<p><code>I_MPI_SHM_HEAP_CSIZE</code>更改共享内存的英特尔 MPI 库自定义分配器中缓存的共享内存的大小（每列）。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_HEAP_CSIZE=&lt;size&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&lt;size&gt;</code> 英特尔 MPI 库共享内存分配器中使用的共享内存大小（每列）（以兆字节为单位）。</li>
+<li><code>&gt; 0</code> 这取决于可用的共享内存大小和等级数。 通常大小小于 256。</li>
+</ul>
+<p><code>I_MPI_SHM_HEAP_CSIZE</code>的小值可能会减少整体共享内存消耗。 此变量的较大值可能会加速<code>MPI_Alloc_mem/MPI_Free_mem</code>。</p>
+<p><code>I_MPI_SHM_HEAP_OPT</code>更改共享内存的英特尔 MPI 库自定义分配器的优化模式。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_SHM_HEAP_OPT=&lt;mode&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>rank</code> 在这种模式下，每个<code>rank</code>都有自己专用的共享内存量。 这是<code>I_MPI_SHM_HEAP=1</code>时的默认值</li>
+<li><code>numa</code> 在这种模式下，来自 NUMA 节点的所有列使用相同数量的共享内存。</li>
+</ul>
+<p>当每个<code>rank</code>使用相同数量的内存时，建议使用<code>I_MPI_SHM_HEAP_OPT=rank</code>，当<code>rank</code>使用显着不同的内存量时，建议使用<code>I_MPI_SHM_HEAP_OPT=numa</code>。 通常，<code>I_MPI_SHM_HEAP_OPT=rank</code>的工作速度比<code>I_MPI_SHM_HEAP_OPT=numa</code>快，但<code>numa</code>优化模式可能会消耗较小的共享内存量。</p>
+<p><code>I_MPI_WAIT_MODE</code>控制超额订阅模式的英特尔® MPI 库优化。建议在超额认购模式下使用该变量。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_WAIT_MODE=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>0</code> 优化 MPI 应用程序在正常模式下工作（1 个 CPU 上的 1 个rank）。 如果计算节点上的进程数小于或等于节点上的 CPU 数，则这是默认值。</li>
+<li><code>1</code> 优化 MPI 应用工作在超额订阅模式（1 CPU 上多列）。 如果计算节点上的进程数大于节点上的 CPU 数，则这是默认值。</li>
+</ul>
+<p><code>I_MPI_THREAD_YIELD</code>在 MPI 忙等待时间控制英特尔® MPI 库线程行为。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_THREAD_YIELD=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>0</code> 在忙等待（自旋等待）期间对线程挂起不做任何事情。 这是<code>I_MPI_WAIT_MODE=0</code>时的默认值</li>
+<li><code>1</code> 在忙等待期间为<code>I_MPI_PAUSE_COUNT</code>执行暂停处理器指令。</li>
+<li><code>2</code> 在忙等待期间执行<code>shied_yield()</code>系统调用以获得线程挂起。 这是<code>I_MPI_WAIT_MODE=1</code>时的默认值</li>
+<li><code>3</code> 在忙等待期间执行<code>usleep()</code>系统调用<code>I_MPI_THREAD_SLEEP</code>微秒数，用以线程挂起。</li>
+</ul>
+<p><code>I_MPI_THREAD_YIELD=0</code>或<code>I_MPI_THREAD_YIELD=1</code>在正常模式下和<code>I_MPI_THREAD_YIELD=2</code>或<code>I_MPI_THREAD_YIELD=3</code>在超额订阅模式下。</p>
+<p><code>I_MPI_PAUSE_COUNT</code>在 MPI 繁忙等待时间内，控制英特尔® MPI 库暂停计数以实现线程挂起自定义。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_PAUSE_COUNT=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&gt;=0</code> 在 MPI 繁忙等待时间内，线程挂起定制的暂停计数。 默认值为 0。通常情况下，该值小于 100。</li>
+</ul>
+<p>该变量在<code>I_MPI_THREAD_YIELD=1</code>时适用。<code>I_MPI_PAUSE_COUNT</code>的小值可能会提高性能，而较大的值可能会降低能耗。</p>
+<p><code>I_MPI_THREAD_SLEEP</code>控制英特尔® MPI 库线程睡眠微秒超时时间，以在 MPI 忙等待过程中自定义线程挂起。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_THREAD_SLEEP=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>&gt;=0</code> 线程睡眠微秒超时数。 默认值为 0。通常情况下，该值小于 100。</li>
+</ul>
+<p>当<code>I_MPI_THREAD_YIELD=3</code>时，该变量适用。<code>I_MPI_PAUSE_COUNT</code>的小值可能会提高正常模式下的性能，而较大的值可能会提高超额订阅模式下的性能</p>
+<p><code>I_MPI_EXTRA_FILESYSTEM</code>控制对并行文件系统的本机支持。使用此环境变量来启用或禁用对并行文件系统的本机支持。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_EXTRA_FILESYSTEM=&lt;arg&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>enable | yes | on | 1</code>启用对并行文件系统的本机支持。</li>
+<li><code>disable | no | off | 0</code> 禁用对并行文件系统的本机支持。 这是默认值。</li>
+</ul>
+<p><code>I_MPI_EXTRA_FILESYSTEM_FORCE</code> 强制文件系统识别逻辑。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I_MPI_EXTRA_FILESYSTEM_FORCE=&lt;ufs|nfs|gpfs|panfs|lustre&gt;</span><br></pre></td></tr></table></figure></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/12/06/openmp%E5%9F%BA%E7%A1%80/" rel="prev" title="OpenMP基础">
+      <i class="fa fa-chevron-left"></i> OpenMP基础
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/12/17/cs267/" rel="next" title="CS267 并行计算应用课程笔记">
+      CS267 并行计算应用课程笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Intel-MPI%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">Intel MPI安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.1.</span> <span class="nav-text">设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E9%93%BE%E6%8E%A5"><span class="nav-number">1.2.</span> <span class="nav-text">编译链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8CMPI%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.3.</span> <span class="nav-text">运行MPI程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE-MPD-%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">设置 MPD 守护进程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84%E9%80%89%E6%8B%A9"><span class="nav-number">2.</span> <span class="nav-text">网络结构选择</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%90%E8%A1%8CMPI%E7%A8%8B%E5%BA%8F-1"><span class="nav-number">3.</span> <span class="nav-text">运行MPI程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MPI%E9%94%99%E8%AF%AF%E4%BB%A3%E7%A0%81%E5%AF%B9%E7%85%A7%E8%A1%A8"><span class="nav-number">4.</span> <span class="nav-text">MPI错误代码对照表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MPI%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="nav-number">5.</span> <span class="nav-text">MPI的命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%91%BD%E4%BB%A4%E5%88%97%E8%A1%A8"><span class="nav-number">5.1.</span> <span class="nav-text">编译命令列表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">5.1.1.</span> <span class="nav-text">编译器命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E9%80%89%E9%A1%B9"><span class="nav-number">5.2.</span> <span class="nav-text">编译选项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Global-Hydra-Options"><span class="nav-number">5.3.</span> <span class="nav-text">Global Hydra Options</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Local-Hydra-Options"><span class="nav-number">5.4.</span> <span class="nav-text">Local Hydra Options</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gtool-options"><span class="nav-number">5.5.</span> <span class="nav-text">gtool options</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cpuinfo"><span class="nav-number">5.6.</span> <span class="nav-text">cpuinfo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#impi-info"><span class="nav-number">5.7.</span> <span class="nav-text">impi_info</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mpitune"><span class="nav-number">5.8.</span> <span class="nav-text">mpitune</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mpitune-Configuration-Options"><span class="nav-number">5.8.1.</span> <span class="nav-text">mpitune Configuration Options</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Application-Options"><span class="nav-number">5.8.1.1.</span> <span class="nav-text">Application Options</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">6.</span> <span class="nav-text">环境变量</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">6.1.</span> <span class="nav-text">编译环境变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hydra-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">6.2.</span> <span class="nav-text">Hydra 环境变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-MPI-ADJUST-Family-Environment-Variables"><span class="nav-number">6.3.</span> <span class="nav-text">I_MPI_ADJUST Family Environment Variables</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tuning-Environment-Variables"><span class="nav-number">6.4.</span> <span class="nav-text">Tuning Environment Variables</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Autotuning"><span class="nav-number">6.5.</span> <span class="nav-text">Autotuning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-MPI-TUNING-AUTO-Family-Environment-Variables"><span class="nav-number">6.6.</span> <span class="nav-text">I_MPI_TUNING_AUTO Family Environment Variables</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Process-Pinning"><span class="nav-number">6.7.</span> <span class="nav-text">Process Pinning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E6%A0%87%E8%AF%86"><span class="nav-number">6.7.1.</span> <span class="nav-text">处理器标识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Default-Settings"><span class="nav-number">6.7.2.</span> <span class="nav-text">Default Settings</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Environment-Variables-for-Process-Pinning"><span class="nav-number">6.7.3.</span> <span class="nav-text">Environment Variables for Process Pinning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Interoperability-with-OpenMP-API"><span class="nav-number">6.7.4.</span> <span class="nav-text">Interoperability with OpenMP* API</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GPU-%E6%94%AF%E6%8C%81"><span class="nav-number">6.8.</span> <span class="nav-text">GPU 支持</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GPU-%E5%9B%BA%E5%AE%9A"><span class="nav-number">6.8.1.</span> <span class="nav-text">GPU 固定</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fabric%E6%8E%A7%E5%88%B6%E7%9A%84%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">6.9.</span> <span class="nav-text">fabric控制的环境变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#OFI-capable-Network-Fabrics-Control"><span class="nav-number">6.9.1.</span> <span class="nav-text">OFI*-capable Network Fabrics Control</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Environment-Variables-for-Memory-Policy-Control"><span class="nav-number">6.10.</span> <span class="nav-text">Environment Variables for Memory Policy Control</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MPI-Info"><span class="nav-number">6.10.1.</span> <span class="nav-text">MPI_Info</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Environment-Variables-for-Asynchronous-Progress-Control"><span class="nav-number">6.11.</span> <span class="nav-text">Environment Variables for Asynchronous Progress Control</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Environment-Variables-for-Multi-EP"><span class="nav-number">6.12.</span> <span class="nav-text">Environment Variables for Multi-EP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Other-Environment-Variables"><span class="nav-number">6.13.</span> <span class="nav-text">Other Environment Variables</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Hao Yu</p>
+  <div class="site-description" itemprop="description">Introduce something interesting and recode learning process, some articles are written by others, the original link has been given as much as possible, thanks to the original author</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">128</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

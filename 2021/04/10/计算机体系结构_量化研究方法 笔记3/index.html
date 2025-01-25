@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="zn-ch">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="指令集基本原理引言本附录主要介绍指令集体系结构。我们主要关注四个主题。  第一，对各种指令集进行了分类并对各种方法的优势和劣势进行某种量化评估。 第二，给出一些指令集测量数据，并对其进行分析，这些数据大体与特定的指令集无关。 第三，讨论语言与编译器问题以及它们对指令集体系结构的影响。 最后，展示这些思想如何在MIPS指令集中得到反映，MIPS 指令集是-种典型的RISC体系结构。 在附录的末尾是有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机体系结构 量化研究方法 笔记3">
+<meta property="og:url" content="http://yoursite.com/2021/04/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84_%E9%87%8F%E5%8C%96%E7%A0%94%E7%A9%B6%E6%96%B9%E6%B3%95%20%E7%AC%94%E8%AE%B03/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="指令集基本原理引言本附录主要介绍指令集体系结构。我们主要关注四个主题。  第一，对各种指令集进行了分类并对各种方法的优势和劣势进行某种量化评估。 第二，给出一些指令集测量数据，并对其进行分析，这些数据大体与特定的指令集无关。 第三，讨论语言与编译器问题以及它们对指令集体系结构的影响。 最后，展示这些思想如何在MIPS指令集中得到反映，MIPS 指令集是-种典型的RISC体系结构。 在附录的末尾是有">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/img/1618121590.png">
+<meta property="og:image" content="http://yoursite.com/img/1618121653.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618121705.png">
+<meta property="og:image" content="http://yoursite.com/img/1618121739.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618121843.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618121892.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618121936.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618121964.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618121996.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618122033.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618122086.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618122133.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618122167.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618123343.png">
+<meta property="og:image" content="http://yoursite.com/img/1618123389.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618123422.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618123449.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618124439.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618124501.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618124554.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618124585.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618124727.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618124784.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618124868.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618124894.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618124926.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618124944.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618124978.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618125015.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618125031.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618125053.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618234219.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618234334.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618234443.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618234501.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618234573.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618234723.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618332884.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618332885.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618235013.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618235057.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618235116.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618235164.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618235430.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618235515.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618235601.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618235938.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618236074.png">
+<meta property="og:image" content="http://yoursite.com/img/1618236143.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618236211.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618236251.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618236399.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618236435.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618236460.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618278585.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618278638.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618278691.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618312889.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618312953.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618313026.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618313027.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618313378.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618332185.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618332242.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618332352.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618332413.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618332523.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618332600.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618332660.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618332843.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618332883.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618457217.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618457428.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618457459.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618457503.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474243.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474328.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474360.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474388.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474414.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474504.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474548.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474588.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474640.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474678.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474715.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474746.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474793.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474819.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474865.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618474880.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475152.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475196.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475295.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475343.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475373.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475393.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475453.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475484.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475586.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475619.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475666.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475685.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475711.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475738.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475765.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475792.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475823.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475863.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475890.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475905.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475935.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618475974.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618476014.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618476032.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618476114.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618476194.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618476271.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618476292.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1618476324.jpg">
+<meta property="article:published_time" content="2021-04-10T06:45:00.000Z">
+<meta property="article:modified_time" content="2021-04-17T07:16:55.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="积累">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/1618121590.png">
+
+<link rel="canonical" href="http://yoursite.com/2021/04/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84_%E9%87%8F%E5%8C%96%E7%A0%94%E7%A9%B6%E6%96%B9%E6%B3%95%20%E7%AC%94%E8%AE%B03/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zn-ch'
+  };
+</script>
+
+  <title>计算机体系结构 量化研究方法 笔记3 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hao Yu's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">The program monkey was eaten by the siege lion.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zn-ch">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84_%E9%87%8F%E5%8C%96%E7%A0%94%E7%A9%B6%E6%96%B9%E6%B3%95%20%E7%AC%94%E8%AE%B03/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Hao Yu">
+      <meta itemprop="description" content="Introduce something interesting and recode learning process, some articles are written by others, the original link has been given as much as possible, thanks to the original author">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计算机体系结构 量化研究方法 笔记3
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-04-10 14:45:00" itemprop="dateCreated datePublished" datetime="2021-04-10T14:45:00+08:00">2021-04-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-04-17 15:16:55" itemprop="dateModified" datetime="2021-04-17T15:16:55+08:00">2021-04-17</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="指令集基本原理"><a href="#指令集基本原理" class="headerlink" title="指令集基本原理"></a>指令集基本原理</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>本附录主要介绍指令集体系结构。我们主要关注四个主题。</p>
+<ul>
+<li>第一，对各种指令集进行了分类并对各种方法的优势和劣势进行某种量化评估。</li>
+<li>第二，给出一些指令集测量数据，并对其进行分析，这些数据大体与特定的指令集无关。</li>
+<li>第三，讨论语言与编译器问题以及它们对指令集体系结构的影响。</li>
+<li>最后，展示这些思想如何在MIPS指令集中得到反映，MIPS 指令集是-种典型的RISC体系结构。</li>
+<li>在附录的末尾是有关指令集设计的一些谬论和易犯错误。</li>
+</ul>
+<p>在这个附录中，我们将研究大量体系结构方面的测试结果。显然，这些测量结果依赖于被测程序和用于进行这些测量的编译器。</p>
+<h2 id="指令集体系结构的分类"><a href="#指令集体系结构的分类" class="headerlink" title="指令集体系结构的分类"></a>指令集体系结构的分类</h2><p>处理器中的内部存储类型是最基本的区别，所以在这一节，我们将主要关注体系结构中这一部分的各种选项。主要选项包括栈、累加器或寄存器组。操作数可以显式命名，也可以隐式命名：在栈体系结构中，操作数隐式位于栈的顶部，而在累加器体系结构中，操作数隐式为累加器。通用寄存器体系结构只有显式操作数，或者为寄存器，或者为存储器位置。图A-1显示了此类体系结构的框图，表A-1显示了代码序列 C=A+B 在这三类指令集中通常是如何显示的。显式操作数也许可以直接从存储器访问，也可能需要首先加载到临时存储中，具体取决于体系结构的类别及特定指令的选择。</p>
+<p><img src="/img/1618121590.png" alt=""><br>图A-1 4类指令集体系结构的操作数位置。这些箭头指示操作数是算术逻辑单元（ALU）操作的输入还是结果，或者既是输入又是结果。较浅的阴影表示输入，深色阴影表示结果。在（a）中，栈顶寄存器（TOS）指向顶部输入操作数，它与下面的操作数合并在一起。第一个操作数从栈中移走，结果占据第二个操作数的位置，对TOS进行更新，以指向结果值。所有操作数都是隐式的。在（b）中，累加器既是隐式输入操作数，也是结果。在（c）中，一个输入操作数是寄存器，一个在存储器中，结果保存在寄存器中。在（d）中，所有操作数都是寄存器，而且和栈体系结构类似，只能通过独立指令将其传送到存储器中：在（a）中为push或pop，在（d）中为1oad或store</p>
+<p><img src="/img/1618121653.jpg" alt=""></p>
+<ul>
+<li>注意，对于栈和累加器体系结构，Add指令拥有隐式操作数，对于寄存器体系结构拥有显式操作数。假定A、B和C都属于存储器，A和B的值不能被销毁。图A-1显示了针对每类体系结构的Add运算。</li>
+</ul>
+<p>如上面的图和表所示，实际上有两种类型的寄存器计算机。一类可以用任意指令来访问存储器，称为寄存器-存储器体系结构，另一类则只能用载入和存储指令来访问存储器，称为载入-存储体系结构。第三类将所有操作数都保存在存储器中，称为存储器-存储器体系结构。一些指令集体系结构的寄存器要多于单个累加器，但对这些特殊寄存器的使用设置了一些限制。 此类体系结构有时被称为扩展累加器或专用寄存器计算机。</p>
+<p>尽管大多数早期计算机都使用栈或累加器类型的体系结构，但在1980年之后的几乎所有新体系结构都使用了载入-存储寄存器体系结构。通用寄存器（GPR）计算机之所以会出现，其主要原因有两个。第一，寄存器（类似于处理器内部其他形式的存储器）快于存储器。第二，对编译器来说，使用寄存器要比使用其他内部存储形式的效率更高。例如，在寄存器计算机中，在对表达式（AXB） - （BXC） - （AXD）求值时，可以按任意顺序执行乘法计算，这种做法的效率更高一些，可能是操作数位置的原因，也可能是流水线因素的原因。不过，在栈计算机上，硬件只能按唯一的顺序对表达式进行求值， 这是因为操作数是隐藏在栈中的，它必须多次载入操作数。</p>
+<p>更重要的是，寄存器可用于保存变量。当变量被分配到寄存器中时，可以降低存储器通信流量、加快程序速度（由于寄存器的速度快于存储器），提高代码密度（由于寄存器的名称位数少于存储器位置的名称位数）。</p>
+<p>在A.8节将会解释，编译器编写入员希望所有寄存器都是等价的、无保留的。较早的计算机在满足这一期望方面打了折扣，将一些寄存器专门用于一些特殊应用，显著降低了通用寄存器的数量。如果真正通用寄存器的数目过小，那尝试将变量分配到寄存器中就没有什么好处。</p>
+<p>编译器将所有未确认用途的寄存器保留给表达式求值使用。有多少个寄存器才是足够的呢?其答案当然取决于编译器的有效性。大多数编译器会为表达式求值保留一些寄存器，为参数传递使用一些，其余寄存器可用于保存变量。现代编译器技术能够有效地使用大量寄存器，从而增加了最新体系结构的寄存器数目。</p>
+<p>有两个重要指令集特性可以用来区分GPR体系结构。这两个特性都关注一个典型算术或逻辑指令（ALU指令）操作的本质。第一个特性关注一个ALU指令是有两个还是三个操作数。在三操作数格式中，指令包含一个结果操作数和两个源操作数。在两操作数格式中，操作数之一既是运算的源操作数，又是运算的结果操作数。GPR体系结构的第二个区别是考虑ALU指令中可能有多少个操作数是存储器地址。一个典型ALU指令所支持的存储器操作数数量可以是<br>0~3个。表A-2给出了这两种特性的组合及其计算机示例。尽管共有7种可能组合方式，但其中3种就可以对几乎全部现有计算机进行分类。前面曾经提到，这3种是载入存储（也称为寄存器-寄存器）、寄存器-存储器和存储器-存储器。</p>
+<p><img src="/img/1618121705.png" alt=""></p>
+<p>ALU指令中没有存储器引用的计算机称为载入-存储或寄存器-寄存器计算机。每条典型ALU指令中有多个存储器操作数的指令称为寄存器-存储器或存储器-存储器，具体取决于它们是拥有一个还是 一个以上的存储器操作教。</p>
+<p>表A-3显示了每一类型的优势和劣势。当然，这些优势和劣势不是绝对的：它们是定性的，它们的实际影响取决于编译器和实现策略。采用存储器存储器运算的GPR计算机很容易被编译器忽略，用作一种载入存储计算机。体系结构方面最普遍的影响之一是对指令编码和执行一项任务所需指令数的影响。在附录C和第3章中可以了解这些不同体系结构对实现方法的影响。<br><img src="/img/1618121739.jpg" alt=""></p>
+<ul>
+<li>符号（m，n）表示存储器操作数有m个，共有n个操作数。一般来说，可选项较少的计算机简化了编译器的任务，因为编译器需要作出的决策较少。具有大量灵活指令格式的计算机减少了程序编码需要的位数。寄存器的数目对指令大小也有所影响，因为对于指令中的每个寄存器分类符，需要log2（寄存器个数）。因此，对于寄存器-寄存器体系结构而言，寄存器个数加倍需要增加3个位，大约是32位指令的10%。</li>
+</ul>
+<h2 id="存储器寻址"><a href="#存储器寻址" class="headerlink" title="存储器寻址"></a>存储器寻址</h2><p>一个体系结构，无论是载入存储式，还是允许任何操作数都是存储器引用，它都必须定义如何解释存储器地址以及如何指定这些地址。这里给出的测量值大体与计算机无关，但并非绝对如此。在某些情况下，这些测量值受编译器技术的影响很大。由于编译器技术扮演着至关重要的角色，所以这些测量都是使用一种优化编译器测得的。</p>
+<h3 id="解释存储器地址"><a href="#解释存储器地址" class="headerlink" title="解释存储器地址"></a>解释存储器地址</h3><p>根据地址和长度会访问到什么对象呢?本书中讨论的所有指令集都是字节寻址的，提供对字节（8位）半字（16位）和字（32位）的访问方式。大多数计算机还提供了对双字（64位）的访问。关于如何对一个较大对象中的字节进行排序，有两种不同的约定方式。小端字节顺序将地址为“…x000” 的字节放在双字的最低有效位置（小端）。字节的编号为：</p>
+<p>7 6 5 4 3 2 1 0</p>
+<p>大端字节顺序将地址为“x.. .x000”的字节放在双字的最高有效位置（大端）。字节的编号为：</p>
+<p>0 1 2 3 4 5 6 7</p>
+<p>在同一台计算机内部进行操作时，字节顺序通常不会引起人们的注意——只有那些将相同位置同时作为字和字节进行访问的程序才会注意到这一区别。但是，在采用不同排序方式的计算机之间交换数据时，字节顺序就会成为一个问题。在对比字符串时，小端排序也不能与字的正常排序方式相匹配。字符串在寄存器中是反向表示的，如backwards显示为“SDRAWKCAB”。</p>
+<p>第二个存储器问题是：在许多计算机中，对大于一字节的对象进行寻址时都必须是对齐的。大小为s字节的对象，字节地址为A，如果A mod s=0，则对该对象的寻址是对齐的。图A-2显示了寻址为对齐和不对齐时的地址。</p>
+<p><img src="/img/1618121843.jpg" alt=""></p>
+<p>图A-2在字节寻址计算机中，字节、半宇、字和双字对象的对齐与未对齐地址。对于每种未对齐示例，一些对象需要两次存储器访问才能完成。每个对齐对象总是可以在一次存储器访问中完成，只要存储器与对象的宽度相同即可。本图显示的存储器宽度为8个字节。标记各列的字节偏移指定了该地址的低3位</p>
+<p>由于存储器通常与一个字或双字的倍数边界对齐，所以非对齐寻址会增加硬件复杂性。一个非对齐存储器寻址可能需要多个对齐的存储器引用。因此，即使在允许非对齐寻址的计算机中，采用对齐寻址的程序也可以运行得更快些。即使数据是对齐的，要支持字节、半字和字寻址也需要一个对齐网络来对齐64位寄存器中的字节、半字和字。例如，在表A-4中，假定从低3位取值为4的地址中读取一个字节。我们需要右移3个字节，对准64位寄存器中正确位置的字节。根据具体指令，计算机可能还需要对这个量进行符号扩展。存储过程很容易：只有存储器的寻址字节可被修改。在某些计算机中，字节、半字和字操作不会影响到寄存器的上半部分。尽管本书中讨论的所有计算机都允许对存储器进行字节、半字和字访问，但只有IBM 360/370、Intel 80x86和VAX支持对不足完整宽度的寄存器操作数进行ALU运算。</p>
+<p>既然已经讨论了存储器寻址的各种解释方法，现在可以讨论指令用来指定地址的方式了，这些方式称为寻址方式。</p>
+<h3 id="寻址方式"><a href="#寻址方式" class="headerlink" title="寻址方式"></a>寻址方式</h3><p>给定地址后，我们就知道了去访问存储器的哪些字节。在这一小节中，我们将研究寻址方式——体系结构如何指定要访问对象的地址。除了存储器中的位置之外，寻址方式还指定常量和寄存器。在使用存储器位置时，由寻址方式指定的实际存储器地址称为有效地址。</p>
+<p>表A-4显示了在最近计算机中用到的所有数据寻址方式。立即数或直接操作数寻址通常被看作存储器寻址模式（即使它们访问的值位于指令流中也是如此），不过，由于寄存器通常没有存储器地址，所以我们将它们分离出来。我们已经将那些依赖于程序计数器的寻址模式（称为PC相对寻址）分离出来。PC相对寻址主要用于在控制转移指令中指定代码地址，A.6 节将对此进行讨论。</p>
+<p><img src="/img/1618121892.jpg" alt=""></p>
+<ul>
+<li>在自动递增/递减和比例寻址方式中，变量d指定所访问数据项的大小（即，该指令访问的是1、2、4或8字节中的哪一种）。只有当被访问元素位于存储器中的连续位置时，这些寻址方式才有用。RISC计算机使用位移量寻址来模拟寄存器间接寻址（地址为0）和直接寻址（基址寄存器中为0）。在我们的测量结果中，使用为每种模式显示的第一个名称。在A.9.5节定义了用作硬件描述的C语言扩展。</li>
+</ul>
+<p><code>Mem[Regs[R1]]</code>是指存储器位置的内容，这一位置的地址由寄存器1（R1）的内容给出。对于小于一个字的数据 ，我们将在后面介绍用于访问和转移此类数据的扩展。</p>
+<p>寻址模式能够大幅臧少指令数目，它们也会增加构建计算机的复杂度，对于实施这些方式的计算机，还可能增加每条指令的平均时钟周期数目（CPI）。 因此，各种寻址模式的使用对于帮助架构师选择包含哪些功能是十分重要的。</p>
+<p>图A-3中给出在VAX体系结构上对3个程序中寻址方式使用样式的测量结果。在这个附录中，我们使用较旧的VAX体系结构进行一些测量， 这是因为它拥有最丰富的寻址方式，对存储器寻址的限制最少。例如，表A-2给出了VAX支持的所有方式。</p>
+<p><img src="/img/1618121936.jpg" alt=""></p>
+<p>图A-3 存储器寻址方式（包括立即数）的用法小结。几乎所有存储器访问都采用这几种主要寻址方式。一半的操作数引用采用寄存器寻址方式，而另一半则采用存储器寻址方式（包括立即数）。当然，编译器会影响到选用哪种寻址模式。VAX上的存储器间接寻址方式可使用位移量、自动递增或自动递减来形成初始存储器地址；在这些程序中，几乎所有存储器间接引用都以位移量寻址方式为基准方式。</p>
+<h3 id="位移量寻址方式，"><a href="#位移量寻址方式，" class="headerlink" title="位移量寻址方式，"></a>位移量寻址方式，</h3><p>在使用位移量类型的寻址方式时，一个主要问题就是所用位移量的范围。根据所使用的各种位移量大小，可以决定支持哪些位移量大小。由于位移量字段的大小直接影响到指令的长度，所以其选择非常重要。图A-4是利用基准测试程序对载入-存储体系结构中数据访问进行的测量结果。</p>
+<p><img src="/img/1618121964.jpg" alt=""></p>
+<p>图A-4 位移值的分布非常广泛。既存在大量小数值，又有相当数量的大数值。位移值的广泛分布是由于变量有多个存储区域，而且访问它们的位移量不同，而且编译器使用的总寻址机制也各不相同。x轴是位移量以2为底的对数值，即表示该位移量所需要的字节大小。x轴上的零表示位移值0的百分比。该曲线没有包含符号位，存储布局对它会有严重影响。大多数位移值是正数，但最大的位移值（14位以上）为负值。</p>
+<h3 id="立即数或直接操作数寻址方式"><a href="#立即数或直接操作数寻址方式" class="headerlink" title="立即数或直接操作数寻址方式"></a>立即数或直接操作数寻址方式</h3><p>在进行算术运算、比较（主要用于分支）和移动时，如果希望将常量放在寄存器中，可以使用立即数。后一种情景可用于写在代码中的常量（这种常量较小）和地址常量（这种常量可能很大）。对于立即数的使用，重点是要知道是需要对所有运算都支持立即数，还是仅对一部分运算支持立即数。图A-5显示了在一个指令集中，立即数在一般类型的整数和浮点运算中的使用频率。</p>
+<p><img src="/img/1618121996.jpg" alt=""></p>
+<p>图A-5 大约有四分之一的数据传送和ALU运算拥有立即操作数。下面的长条表示整数程序在大约五分之一的指令中使用立即数，而浮点程序在大约六分之一的指令中使用立即数。对于载入操作，载入立即数指令将16位载入一个32位寄存器的任一半中。载入立即数并不是严格意义上的载入，因为它们并不访问存储器。偶尔会使用一对载入立即数来载入32位常量，但这种情况很少见。</p>
+<p>另一个重要指令集测量是立即数的取值范围。与位移值相似，立即数取值的大小也影响到指令长度。如图A-6所示，小立即数的应用最多。不过，有时也会使用大型立即数，更多的是用在地址计算中。<br><img src="/img/1618122033.jpg" alt=""></p>
+<p>图A-6 立即数值的分布。 x轴给出表示立即值取值大小所需要的位数——0表示立即数字段值为0。大多数立即数取值为正数。对于CINT2000，大约20%为负数，对于CFP2000，大约30%为负数。这些测量是在Alpha上执行的，其中最大立即数为16位，被测程序与图A-4中相同。对VAX进行的类似测量（它支持32位立即数）表明：大约20%~25%的立即数长于16位。因此，16 位的长度覆盖大约80%，8位可以覆盖大约50%</p>
+<h3 id="小结：存储器寻址"><a href="#小结：存储器寻址" class="headerlink" title="小结：存储器寻址"></a>小结：存储器寻址</h3><p>首先，我们预测一种新的体系结构至少支持以下寻址方式：位移量寻址、立即数寻址和寄存器间接寻址，这主要是因为它们非常普及。图A-3显示它们代表了我们测量中所使用的75%~99%的寻址方式。其次，我们预测位移量寻址方式中的地址大小至少为12~16位，根据图A-4的图题，这些大小将占到位移量的75%~99%。最后，我们预测立即数字段的大小至少为8~16位。这一说法在它提到的图题中没有得到证实。</p>
+<p>我们已经介绍了指令集分类并决定采用寄存器-寄存器体系结构，再加上前面关于数据寻址模式的建议，下面将介绍数据的大小与意义。</p>
+<h2 id="操作数的类型与大小"><a href="#操作数的类型与大小" class="headerlink" title="操作数的类型与大小."></a>操作数的类型与大小.</h2><p>如何指定操作数的类型呢?通常，通过在操作码中进行编码来指定操作数的类型。或者，用一些可以被硬件解读的标签对数据进行标记。这些标签指定操作数的类型，并相应选择操作。</p>
+<p>我们首先从台式机和服务器体系结构开始。通常操作数的类型（整数、单精度浮点、字符等）有效地确定了其大小。常见操作数类型包括字符（8位）半字（16位）字（32位）、单精度浮点（也是1个字）和双精度浮点（2个字）。整数几乎都是用二进制补码数字表示的。字符通常用ASCII表示，但随着计算机的国际化，16位Unicode（在Java中使用）也正在普及。几乎所有的计算机都遵循了相同的浮点标准——IEEE标准。</p>
+<p>一些体系结构提供了对字符串的操作，不过这些操作通常都十分有限，将字符串中的每个字符都看作单个字符。支持对字符串执行的典型操作包括比较和移动。</p>
+<p>对于商务应用程序，一些体系结构支持二进制格式，通常称为压缩十进制或二进制编码十进制——用4个位对0至9的数值进行编码，两个十进制数位被压缩到两个字节中。数值字符串有时称为非压缩十进制，通常提供在被称为压缩和解压缩的操作之间来回转换。</p>
+<p>使用十进制操作数的一个理由是获得与二进制数字完全匹配的结果，这是因为一些十进制小数无法用二进制准确表示。十进制中的准确计算在二进制中可能十分接近但并非完全准确。</p>
+<p>我们的SPEC基准测试使用字节或字符、半字（短整数）字（整数）双字（长整数）和浮点数据类型。图A-7给出了为这些程序引用存储器对象的大小动态分布。对不同数据类型的访问频率有助于确定哪些类型最为重要，应当加以高效支持。计算机是否应当拥有64位访问路径，或者用两个时钟周期来访向一个双字是否可行?我们前面曾经看到，字节访问需要一个对齐网络：将字节作为基元类型提供支持有多么重要?图A-7使用存储器引用来查看被访问数据<br>的类型。</p>
+<p><img src="/img/1618122086.jpg" alt=""></p>
+<p>图A-7 对于基准测试程序，所访问数据的大小分布。双字数据类型用于表示浮点程序中的双精度浮点值，还用于表示地址，这是因为该计算机使用64位地址。在采用32位地址的计算机上，64 位地址将被32位地址代替，所以整数程序中的几乎所有双字访问都变为单字访问</p>
+<p>在一些体系结构中，寄存器中的对象可以作为字节或半字进行访问。但是，这种访问是非常罕见的——在VAX上，不超过12%的寄存器引用采用这种方式，也就是这些程序中所有操作数访问的大约6%。</p>
+<h2 id="指令集中的操作"><a href="#指令集中的操作" class="headerlink" title="指令集中的操作"></a>指令集中的操作</h2><p>大多数指令集体系结构支持的操作符可以如表A-5那样进行分类。关于所有体系结构的一条经验规律是：执行最多的指令是一个指令集中的简单操作。例如，表A-6给出了10种简单指令，对于一组在流行80x86上运行的整数程序，这10种简单指令占所执行指令的96%。因为它们很常见，所以这些指令的实现应当确保它们能够快速完成。<br><img src="/img/1618122133.jpg" alt=""></p>
+<ul>
+<li>在不同体系结构中，指令集中对系统功能的支持有所不同，但所有计算机都必须对一些基本的系统功能提供指令支持。指令集对后4类的支持数量可能为0，也可能包含大量特殊指令。在任何计算机中都提供浮点指令，供那些大量使用浮点数的应用程序使用。这些指令有时是可选指令集的一部分。十进制和字符串指令有时是基元类型，比如在VAX或IBM360中，也可能是由编译器使用更简单的指令合成的。图形指令通常会对许多较小的数据项进行并行操作。例如，对2个64位操作数执行8个8位加法。</li>
+</ul>
+<p>前面曾经提到，表A-6中的指令在每一台计算机的每个应用程序（台式机、服务器和嵌入式）中都可以找到，会对表A-5中的操作进行一些变化，而这主要取决于该指令集包含哪些数据类型。</p>
+<p><img src="/img/1618122167.jpg" alt=""></p>
+<ul>
+<li>简单指令是这个列表的主体，占所执行指令的96%。 这些百分数是5个SPECint92程序的均值。.</li>
+</ul>
+<h2 id="控制流指令"><a href="#控制流指令" class="headerlink" title="控制流指令"></a>控制流指令</h2><p>由于分支与跳转行为的测量在相当程度上与其他测量值和程序无关，所以我们现在研究控制流指令的使用，它与上一节的操作之间没有什么共同点。</p>
+<p>关于改变控制流的指令，没有非常一致的术语。在20世纪50年代，它们通常被称为转移（transfer）。在20世纪60年代，开始使用分支（branch）一词。后来计算机还另外引入了一些名称。在本书中，当控制中的改变是无条件时，我们使用跳转（jump），当改变是有条件时，使用分支。</p>
+<p>我们可以区分4种不同类型的控制流变化：</p>
+<ul>
+<li>条件分支；</li>
+<li>跳转；</li>
+<li>过程调用；</li>
+<li>过程返回；</li>
+</ul>
+<p>由于每个事件都是不同的，可能使用不同指令，可能拥有不同行为，所以我们希望知道这些事件的相对频率。图A-8中给出了这些控制流指令在一个载入-存储计算机上的出现频率，我们就是在这种计算机上运行基准测试的。</p>
+<p><img src="/img/1618123343.png" alt=""></p>
+<p>图A-8 将控制流指令分为三类：调用或返回、跳转和条件分支。条件分支显然占绝大多数。每种类型的计数分别用三个长条来显示。用于收集这些统计数字的程序和计算机与图A-3中的数字相同</p>
+<h3 id="控制流指令的寻址方式"><a href="#控制流指令的寻址方式" class="headerlink" title="控制流指令的寻址方式"></a>控制流指令的寻址方式</h3><p>控制流指令中的目标地址在任何情况下都必须指定。在绝大多数情况下，这个目标是在指令中明确指定的，但过程返回是一个重要例外，这是因为在编译时无法知道要返回的目标位置。指定目标的最常见方法是提供一个将被加到程序计数器（PC）的位移量。这类控制流指令被称为PC相对指令。由于目标位置通常与当前指令的距离较近，而且，在指定相对于当前PC的位置时，需要的位数较少，所以PC相对分支或跳转具备一些优势。采用PC相对寻址还可以使代码的运行不受装载位置的影响。这一特性称为位置无关，可以在链接程序时减少一些工作，而且对于在执行期间进行动态链接的程序也比较有用。</p>
+<p>如果在编译时不知道目标位置，为了实现返回和间接跳转，需要一种不同于PC相对寻址的方法。这时，必须有一种动态指定目标的方法，使目标能够在运行时发生变化。这种动态寻址可能非常简单，只需要给出包含目标地址的寄存器名称即可；跳转可能允许使用任意寻址方式来提供目标地址。</p>
+<p>这些寄存器间接跳转对于其他4种重要功能也是有用的。</p>
+<ul>
+<li>case或switch语句，大多数编程语言中都会有这些语句（用于选择几种候选项之一）。</li>
+<li>虚拟函数或虚拟方法，存在于诸如C++或Java之类的面向对象式语言中（允许根据参数类型调用不同例程）。</li>
+<li>高阶函数或函数指针，存在于诸如C或C++等语言中（它允许以参数方式传递一些函数，提供面向对象编程的一种好处）。</li>
+<li>动态共享库（允许仅当程序实际调用一个库时才在运行时加载和链接，而不是在运行程序之前进行静态加载和链接）。</li>
+</ul>
+<p>在所有这4种情况下，目标地址在编译时都是未知的，因此，通常是在寄存器间接跳转之前从存储器加载到寄存器中。</p>
+<p>由于分支通常使用PC相对寻址来指定其目标，一个重要的问题就是关注分支目标距离分支有多远。了解这些位移量的分布有助于选择支持哪些分支偏移量，从而会影响到指令长度和编码。图A-9给出了指令中PC相对分支的位移量分布。这些分支中大约有75%是正向的。</p>
+<p><img src="/img/1618123389.jpg" alt=""></p>
+<p>图A-9 分支距离（以目标与分支指令之间的指令数来表示）。整数程序中的最常见分支是转向可以用4~8位编码的目标地址。这一结果告诉我们，短位移量字段对于分支指令通常足够了，有了较小分支位移量的较短指令，设计者可以提高编码密度。这些测量结果是在载入-存储计算机上测得的，所有指令都与字边界对齐。对于同一程序，如果体系结构需要的指令较少（比如VAX），那分支距离就较短。但是，如果计算机的指令长度是变化的，可以与任意字节连接对齐，则表示该位移量所需要的位数可能会增加。</p>
+<h3 id="条件分支选项"><a href="#条件分支选项" class="headerlink" title="条件分支选项"></a>条件分支选项</h3><p>由于大多数控制流改变都是分支，所以决定如何指定分支条件是很重要的。表A-7列出了当前使用的3种主要技术及其优缺点。</p>
+<p>分支的最明显特性之一是大量比较都是简单的测试，其中有很多是与0进行比较。因此，一些体系结构选择将这些比较当作特殊情景进行处理，特别是在使用比较并分支指令中。图A-10给出了条件分支中用到的各种不同比较的频率。</p>
+<p><img src="/img/1618123422.jpg" alt=""></p>
+<ul>
+<li>尽管条件代码可以由ALU运算设定（用于其他目的），但对程序的测量显示，这种情况会很少发生。当条件代码由一大组指令或一组偶然选定的指令设定，而不是由指令中的一个比特来设定时，就会出现条件代码的重要实现问题。拥有比较和分支指令的计算机通常会限制比较范围，使用条件寄存器进行更复杂的比较。通常，对于根据浮点比较进行的分支和基于整数比较进行的分支会采用不同技术。由于根据浮点比较执行的分支数目要远小于根据整数比较进行的分支数目，所以这种做法是合理的。</li>
+</ul>
+<p><img src="/img/1618123449.jpg" alt=""></p>
+<p>图A-10 条件分支中不同比较类型的使用频率。编译器与体系结构的这种组合中，小于（或等于）分支占主导地位。这些测量值包含了分支中的整数和浮点比较。用于收集这些统计数字的程度和计算机与图A4中相同</p>
+<h3 id="过程调用选项"><a href="#过程调用选项" class="headerlink" title="过程调用选项"></a>过程调用选项</h3><p>过程调用和返回包括控制转移，还可能涉及一些状态保存过程；至少必须将返回地址保存在某个地方，有时保存在特殊的链接寄存器中，有时只是保存在GPR中。一些较早的体系结构提供了一种用于保存许多寄存器的机制，而较新的体系结构需要编译器为所存储和恢复的每个寄存器生成存储和载入操作。</p>
+<p>在保存寄存器时，有两种基本约定：要么保存在调用位置，要么保存在被调用的过程内部。调用者保存是指发出调用的过程必须保存它希望在调用之后进行访问的寄存器，因此，被调用的过程不需要为寄存器操心。被调用者保存与之相反：被调用过程必须保存它希望使用的寄存器，而调用者不受限制。在某些时间必须使用调用者保存方法，其原因在于两种不同过程中对全局可见变量的访向样式。例如，假定我们有一个过程P1，它调用过程P2，这两个过程都对全局变量x进行处理。如果P1已经将x分配给一个寄存器，它必须确保在调用P2之前将x保存到P2知晓的一个位置。编译器希望知道被调用过程可能在什么时候访问寄存器分配量，由于不同进程可能是分别编译的，所以增加了获知这一信息的难度。假定P2可能不会触及x，但可能调用另一个可能访向x的进程P3，而P2和P3是分别编译的。由于这些复杂性的存在，大多数编译器会采用比较稳健的方式，由<strong>调用者将所有可能在调用期间访问的变量都保存起来</strong>。</p>
+<p>在可以采用任一约定的情况下，有些程序更适于采用被调用者保存，有些程序更适于采用调用者保存。结果，今天的大多数实际系统都采用这两种机制的组合方式。这一约定在应用程序二进制接口（ABI）中指定，它确定了一些基本规则，指出哪些寄存器应当由调用者保存，哪些应当由被调用者保存。</p>
+<h3 id="小结：控制流指令"><a href="#小结：控制流指令" class="headerlink" title="小结：控制流指令"></a>小结：控制流指令</h3><p>控制流指令属于执行频率最高的一部分指令。尽管条件分支有许多选项，但我们希望新体系结构中的分支寻址能够跳转到分支指令之前或之后数百条指令处。这一要求意味着PC相对分支位移量至少为8位。我们还希望看到跳转指令采用寄存器间接和PC相对寻址，来支持过程返回和当前系统的许多其他功能。</p>
+<p>我们现在已经从汇编语言程序员或编译器编写人员的层次，完成了对指令体系结构的浏览。我们介绍了一种采用位移量、立即数和寄存器间接寻址方式的载入-存储体系结构。所介绍的数据为8位、16位、32位和64位整数，还有32位和64位浮点数。指令包括简单操作、PC相对条件分支、用于过程调用的跳转和链接指令，还有用于过程返回的寄存器间接跳转（还有其他一些应用）。</p>
+<p>现在我们需要选择如何采用一种便于硬件执行的方式来表示这一体系结构。</p>
+<h2 id="指令集编码"><a href="#指令集编码" class="headerlink" title="指令集编码"></a>指令集编码</h2><p>显然，上述选择会影响到如何对这些指令进行编码，表示为供计算机执行的二进制形式。这种表示形式不仅影响到程序经过编译后的大小，还会影响到处理器的实现，处理器必须对这种表示形式进行译码，快速找出操作和操作数。操作通常在一个称为操作码的字段中指定。后面将会看到，一个重要决定是如何通过编码将寻址方式与操作结合在一起。</p>
+<p>这一决定取决于寻址方式的范围和操作码与寻址方式之间的独立程序。一些较早的计算机有1~5个操作数，每个操作数有10种寻址方式。对于如此大量的组合情况，通常需要为每个操作数使用独立地址标识符：地址标识符告诉使用哪种寻址方式来访问该操作数。</p>
+<p>另一个极端是仅有一个存储器操作数、仅有一或两种寻址方式的载入存储计算机；显然，在这种情况下，可以将寻址方式作为操作码的一部分进行编码。</p>
+<p>在对指令进行编码时，由于寄存器字段和寻址方式字段可能在-条指令中出现许多次，所以寄存器数目和寻址方式的数目都对指令大小有显著影响。事实上，对于大多数指令，对寻址方式字段和寄存器字体进行编码时所占用的位数，要远多于指定操作码所占用的位数。在对指令集进行编码时，架构师必须平衡以下几种竞争力量。</p>
+<ol>
+<li>希望允许尽可能多的寄存器和寻址方式。</li>
+<li>寄存器字段和寻址方式字段的大小对平均指令大小存在影响，从而对平均程序大小产生影响。</li>
+<li>希望编码后的指令长度易于以流水线实施方式处理。至少，架构师希望指令长度为字节的总数，而不是任意位长度。</li>
+</ol>
+<p>图A-11给出三种常见的指令集编码选择。第一种称为变长编码，这是因为它几乎允许对所有操作使用所有寻址方式。当存在许多寻址方式和操作时，这是最佳选择。第二种选择称为定长编码，因为它将操作和寻址方式合并到操作码中。通常，采用定长编码时，所有指令的大小都相同；当寻址方式与操作数较少时，其效果最好。变长编码与定长编码之间进行的权衡是程序大小与处理器译码的难易程度。变长编码在表示程序时尽力减少所用位数，各条指令的大小和要执行的工作量可能会有很大变化。</p>
+<p><img src="/img/1618124439.jpg" alt=""><br>图A~11指令编码的三种基本变体：变长编码、定长编码、混合编码。变长格式可以支持任何数目的操作数，每个地址标识符确定操作数的寻址方式和标识符的长度。这种方式的代码表示长度通常是最短的，因为不会包含没有使用的字段。定长格式中的操作数个数总是相同的，寻址方式作为操作码的一部分进行指定。它生成的代码规模通常是最大的。尽管字段的位置不会变化，但不同指令会将其用于不同目的。混合编码方法拥有多种由操作码指定的格式，添加了一到两个字段来指定寻址方式，还有一到两个字段来指定操作数地址</p>
+<p>让我们看一条80x86指令，作为变长编码的一个例子。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add EAX, 1000(EBX)</span><br></pre></td></tr></table></figure><br>add是指一条有两个操作数的32位整数加法指令，这个操作码占1个字节。80x86地址标识符为1或2个字节，指定源/目标寄存器（EAX）和第二个操作数的寻址方式（在这个例子中为位移量）与基址寄存器（EBX）。这一组合占用1个字节来指定操作数。在32位模式中，地址字段的大小为1或4个字节。由于1000大于2^8，所以这条指令的长度是1+1+4=6个字节。</p>
+<p>80x86指令的长度介于1~17个字节之间。80x86程序通常短于RISC体系结构，后者使用定长格式。</p>
+<p>有了变长编码和定长编码这两种指令集设计的极端情况之后，立即就可以想到第三种选择：降低变长体系结构中指令大小与任务的变化程度，但提供多种指令长度，以缩小代码尺寸。这种混合式方法是第三种编码选择，稍后将会看到其示例。</p>
+<h3 id="RISC中-的精简代码"><a href="#RISC中-的精简代码" class="headerlink" title="RISC中 的精简代码"></a>RISC中 的精简代码</h3><p>嵌入式应用程序中的成本和缩短代码非常重要，随着RISC计算机开始进入这一领域，32位定长格式已经成为一种负担。为应对这一情况，几家制造商提供了其RISC指令集的一种新混合版本，同时拥有16位和32位指令。这些较窄的指令支持较少的运算、较小的地址：与立即数字段、较少的寄存器和两地址格式，而不是RISC计算机的典型三地址格式。</p>
+<h3 id="小结：指令集编码"><a href="#小结：指令集编码" class="headerlink" title="小结：指令集编码"></a>小结：指令集编码</h3><p>前几节讨论了指令集设计时所作的决策，这些决策决定了架构师是否能够在变长指令编码和定长指令编码之间进行选择。给定选择之后，那些看重代码规模多于性能的架构师会选择变长编码，而看重性能多于看重代码规模的架构师则会选择定长编码。附录E给出了架构师的13个选择结果示例。在第3章和附录C中进一步讨论这种变化对处理器性能的影响。我们几乎已经为将在A.9节介绍的MIPS指令集体系结构奠定了基础。但在开始介绍之前，先来简要地了解一下编译器技术及其对程序特性的影响，这也会有所帮助。</p>
+<h2 id="交叉问题：编译器的角色"><a href="#交叉问题：编译器的角色" class="headerlink" title="交叉问题：编译器的角色"></a>交叉问题：编译器的角色</h2><p>今天，几乎所有的台式机和服务器应用程序都是用高级语言编写的。这种开发意味着：由于所执行的大多数指令都是编译器的输出，所以指令集体系结构基本上就是编译器目标。在这些应用程序的早期，在体系结构方面作出的决策经常是为了简化汇编语言编程，或者是针对特定内核。由于编译器会显著影响到计算机的性能，所以理解今天的编译器技术对于设计、高效实现指令集是至关重要的。</p>
+<p>体系结构方面的选择会影响到为一台计算机生成的代码质量和为其构造优良编译器的复杂性，这种影响可能是正面的，也可能是负面的。在这一节，我们主要从编译器的视角来讨论指令集的关键目标。首先回顾对当前编译器的剖析。接下来讨论编译器技术如何影响架构师的决策，还有架构师如何增大或降低编译器生成良好代码的难度。最后回顾编译器和多媒体处理。</p>
+<h3 id="目前编译器的结构"><a href="#目前编译器的结构" class="headerlink" title="目前编译器的结构"></a>目前编译器的结构</h3><p>首先让我们看看今天的最佳编译器是什么样的。图A-12显示了目前编译器的结构。</p>
+<p><img src="/img/1618124501.jpg" alt=""></p>
+<p>图A-12 编译器通常包括2~4遍扫描（pass），一些优化程度更高的编译器会有更多遍扫描。当输入相同时，以不同优化级别编译的程序应当给出相同结果，图上的结构将这种可能性增至最大。优化扫描的设计是希望获得最优代码，如果希望加快编译速度，并且可以接受较低质量的代码，那就可以跳过优化扫描。扫描就是编译器读取和转换整个程序的一个阶段（phase）。由于优化扫描是独立的，所以有多种语言使用了相同的优化和代码生成扫描。一种新的语言只需要一个新的前端即可</p>
+<p>编译器编写人员的首要目标是正确性——所有有效程序的编译结果都必须正确。第二个目标通常是编译后的代码速度。通常，还有一整套目标排在这两个目标之后，包括快速编译、支持调试、语言之间的互操作性。正常情况下，编译器中的各次扫描将更抽象的高级表示转换为逐渐降低层级的表示方式。最后到达指令集级别。这种结构可以帮助控制转换的复杂度，更容易编写出没有错误的编译器。</p>
+<p>正确编写编译器是一件很复杂的事情，而所能完成的优化程度主要受这一复杂度的限制。尽管采用多遍扫描结构可以帮助降低编译器的复杂性，但它也意味普编译器必须进行排序，某些转换必须在其他转换之前完成。在图A-12所示的优化编译器框图中可以看出，某些高级优化要在执行很久之后，才可能知道最终代码会是什么样子。一旦执行这种转换，编译器就不太可能再返回并重新审视所有步骤，甚至撤消这些转换，这样的成本太过高昂。无论是编译时间还是复杂性，都不允许进行这种迭代。因此，编译器假定最后的几个步骤有能力处理特殊的问题。</p>
+<p>例如，在知道被调用过程的确切大小之前，编译器通常就必须选择对哪些进程调用进行内联展开。编译器编写人员将这一问题称为阶段排序问题。这种转换排序如何与指令集体系结构互动呢?一种名为<strong>全局公共子表达式消去法</strong>的优化提供了一个很好的例子。这种优化找出一个表达式计算相同取值的两个实例，并将第一次计算的结果值保存在临时存储位置。然后利用这个临时值，清除这一公共表达式的第二次计算。为使这一优化发挥显著效用，必须将临时值分配到寄存器中。否则，先将临时值存储在存储器中，之后再重新载入它，其成本将会抵消因为不用重复计算该表达式所节省的成本。</p>
+<p>的确存在一些情况：如果没有将临时值保存到寄存器中，这一优化会减缓代码的运行速度。寄存器分配通常是全局优化扫描即将结束、马上要生成代码时进行的，所以阶段排序使上述问题变得复杂。因此，执行这一优化的优化程序必须假定寄存器分配器会将这一临时值分配到寄存器中。根据转移类型，可以将现代编译器执行的优化进行如下分类：</p>
+<ul>
+<li>高级优化一般对源代码执行，并将输出结果传送给之后的优化扫描；</li>
+<li>本地优化仅对直行代码段（编译器设计者称为基本块）内的代码进行优化；</li>
+<li>全局优化将本地优化扩展到分支范围之外，并引入了一组专为优化循环的转换；</li>
+<li>寄存器分配将寄存器与操作数关联在一起；</li>
+<li>与处理器相关的优化尝试充分利用特定的体系结构知识；</li>
+</ul>
+<h3 id="寄存器分配"><a href="#寄存器分配" class="headerlink" title="寄存器分配"></a>寄存器分配</h3><p>鉴于寄存器分配在加快代码速度和使其他优化发挥效用方面扮演的角色，可以说它是最重要的优化之一。今天的寄存器分配算法以一种称为<strong>图形着色</strong>的技术为基础。这种图形着色技术背后的基本思想是构造一幅图，用来表示可能执行的寄存器分配方案，然后利用这个图来分配寄存器。大致来说，问题在于如何使用有限种颜色，使相关图中两个相邻节点的颜色都不相同。这种方法的重点是将活跃变量全部分配到寄存器中。图形着色问题的求解时间通常是图形大小的指数函数。不过，有一些启发式算法在实际中的应用效果很好，生成分配结果的时间近似与图形大小成线性关系。</p>
+<p>当至少有16个通用寄存器（多多益善）可用于为整数变量进行全局分配，而且有其他寄存器分配为浮点变量时，图形着色方法的效果最好。遗憾的是，如果寄存器的数目很少，图形着色的启发式算法很可能会失败，所以图形着色的效果不是太好。</p>
+<h3 id="优化对性能的影响"><a href="#优化对性能的影响" class="headerlink" title="优化对性能的影响"></a>优化对性能的影响</h3><p>有时很难将一些较简单的优化（本地优化和与处理器相关的优化）与代码生成器中完成的转换隔离开来。典型优化的示例在表A-8中给出。表A-8的最后一列指明对源程序执行所列优化转换的频率。</p>
+<p><img src="/img/1618124554.jpg" alt=""></p>
+<ul>
+<li>第三列给出一些常见优化在一组12个小型Fortran和Pascal程序中的静态应用频率。在测量过程中，编译器共完成了9个本地与全局优化。图中给出了这些优化中的6种，剩下3种的总静态频率占18%。“未测量”是指没有测上该优化方法的使用次数。与处理器相关的优化通常是在代码生成器中完成，所有这些优化都未在此次试验中测量。所示百分比是特定类型的静态优化所占的比例。</li>
+</ul>
+<p>图A-13显示了对两个程序的指令进行各种优化的效果。在这个例子中，与未经优化的程序相比，已优化程序执行的指令数会减少大约25%~90%。该图表明在提议新指令集功能之前首先浏览已优化代码的重要性，因为编译器可能会将架构师正在尝试改进的指令完全清除。</p>
+<p><img src="/img/1618124585.jpg" alt=""></p>
+<p>图A-13 当编译器优化级别变化时，SPEC2000 中lucas和mcf程序中指令数目的变化。第0级表示未优化代码。第1级包含本地优化、代码调度和本地寄存器分配。第2级包括全局优化、循环转换（软件流水线）和全局寄存器分配。第3级增加了过程整合。</p>
+<p>编译器与高级语言之间的互动显著影响着程序利用指令集体系结构的方式。这里有两个重要问题：如何对变量进行分配和寻址?需要多少个寄存器才能对变量进行适当分配?为了回答这些问题，必须看看当前高级语言用来保存数据的三个独立区域。</p>
+<ul>
+<li>栈用于分配本地变量。栈会在进程调用与返回时相应增大或缩小。栈内的对象是相对于栈指针进行行寻址的，这些对象主要是标量（单变量），而不是数组。栈用于活动记录，而不是用于表达式求值。因此，几乎从来不会在栈中压入或弹出数值。</li>
+<li>全局数据区用于静态分配所声明的对象，比如全局变量和常量。这些对象中有很大一部分都是数组或者其他聚合数据结构。</li>
+<li>堆用于分配那些不符合栈规则的动态对象。堆中的对象用指针访问，通常不是标量。</li>
+</ul>
+<p>对于分配到栈中的对象，寄存器分配的处理效率要远高于对全局变量的处理效率，而寄存器分配对于分配到堆中的对象基本上不可能实现，因为它们是用指针访问的。全局变量和一些栈变量也不可能分配，因为它们具有别名，也就是说有多种方法可以引用变量的地址，从而不能合法地将其放到寄存器中。</p>
+<p>例如，考虑以下代码序列，其中<code>&amp;</code>返回变量的地址，<code>*</code>取得指针所指向的对象：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">p = &amp;a;  <span class="comment">// 将a的地址放入p中</span></span><br><span class="line">a = ..   <span class="comment">// 直接为a赋值</span></span><br><span class="line">*p =  .. <span class="comment">// 使用ρ为a赋值</span></span><br><span class="line">...a...  <span class="comment">// 访问a</span></span><br></pre></td></tr></table></figure></p>
+<p>不可能跨过对<code>*p</code>的赋值而对变量<code>a</code>进行寄存器分配，同时还不生成错误代码。在使用别名时，通常很难甚至不可能判断指针可能指向哪些对象，所以会导致一个实质性问题。编译器必然为保守的，如果有指针可能指向过程中的多个本地变量之一，某些编译器就不会在寄存器中分配该过程的任意本地变量。</p>
+<h3 id="架构师如何帮助编译器编写人员"><a href="#架构师如何帮助编译器编写人员" class="headerlink" title="架构师如何帮助编译器编写人员"></a>架构师如何帮助编译器编写人员</h3><p>今天，编译器的复杂性并非来自对诸如A=B+C等简单语句的转换。大多数程序都具有局部简单性，简单转换的效果很好。之所以会有这种复杂性，是因为程序规模庞大而且其全局互动非常复杂，还因为编译器的结构决定了在判定哪种代码序列最佳时，一次只能判断一步。编译器编写人员在工作时，通常会遵循他们自己对一条体系结构基础原理的推论：加快常见情况的速度、保证少见情况的正确性。</p>
+<p>一些指令集特性可以为编译器编写人员提供帮助。这些特性不应被看作需要严格执行的规则，而应当看到一种指南，便于编写出生成高效、正确代码的编译器。</p>
+<ul>
+<li>提供正则性——只要可能，指令集的三个要素操作、数据类型和寻址方式，就应当是正交的。如果体系结构的两个方面互不影响，就说它们是正交的。以操作和寻址方式为例，如果对于任何一个可以应用寻址方式的操作，都可以向其应用所有寻址方式，那就说操作和寻址是正交的。这种正则性有助于简化代码生成过程，如果在决定生成何种代码时，需要分散在编译器的两遍扫描中做出决策，那这一特性尤为重要。这一特性的一个典型反例是：限制可供特定指令类型使用的寄存器。针对专用寄存器体系结构的编译器通常会陷入这种两难境地。因为这一限制，编译器可能会发现有许多空闲寄存器，但却都不适用!</li>
+<li>提供原型而非解决方案——与一种语言构造或内核功能“相匹配”的特殊功能通常是无法使用的。为支持高级语言所做的尝试可能仅对一种语言有效，也可能与该种语言的正确、高效实现相偏离，可能有点过头，也可能有所不及。</li>
+<li>简化候选项之间的权衡——对于编译器编写人员来说，最艰巨的任务之一就是对于所出现的任何一段代码，都能指出哪种指令序列最为适合。设计者所<br>做的任何事情，只要能够帮助编译器编写人员了解替代代码序列的成本，就能帮助改进代码。在进行这种复杂权衡时，最困难的情景之一发生在寄存器存储器体系结构中，就是判断一个变量的引用次数达到多大数值以后，将其载入寄存器的成本才会更低一些。</li>
+<li>提供一些指令，将编译时的已知量绑定为常量——编译器编写人员特别讨厌处理器在运行时费力解读一个在编译时就已经知晓的取值。有些指令需要解读在编译时就已经固定的取值，这就是以上原则的绝佳反例之一。例如， VAX进程调用指令（calls）会动态解释一个掩码，这个掩码说明在进行调用时要保存哪些寄存器，但它在编译时就已经固定下来了。</li>
+</ul>
+<h3 id="编译器对多媒体指令的支持"><a href="#编译器对多媒体指令的支持" class="headerlink" title="编译器对多媒体指令的支持"></a>编译器对多媒体指令的支持</h3><p>SIMD指令实际是一种出色体系结构的简化版本，它拥有自己的编译器技术。多媒体内核最初是为科学代码发明的，通常也是可以向量化的，当然通常是处理较短的向量。我们可以将Intel 的MMX和SSE或者PowerPC的AltiVec 看作简单的短向量计算机：MMX的向量可以有8个8位元素、4个16位元素或2个32位元素，AItiVec 的向量长度是以上长度的两倍。它们被实现为宽寄存器中的相邻窄元素。</p>
+<p>这些微处理器体系结构将向量寄存器大小设定到体系结构内部：对于MMX，元素大小的总和限制为64位，AltiVec 限制为128位。当Intel决定扩展到128位向量时，它添加了一整套新指令，名为流式SIMD扩展（SSE）。</p>
+<p>向量计算机的一个主要优势是：一次载入许多元素，然后将执行与数据传输重叠起来，从而隐藏存储器访问的延迟。向量寻址方式的目标是收集散布在存储器中的数据，以紧凑方式放置它们，便于对其进行高效处理，然后再将处理结果放回所属位置。向量计算机包括步幅寻址和集中/分散寻址，以提高可向量化程序的数目。步幅寻址在每次访问之间跳过数量固定的一些字，所以顺序寻址经常被称为单位步幅寻址。集中与分散寻址在另一个向量寄存器中查找其地址：将其看作向量计算机的寄存器间接寻址。与之相对，从向量的角度来看，这些短向量SIMD计算机仅支持单位步幅访问：存储器访向一次从单个宽存储器位置载入或存储所有元素。由于多媒体应用程序的数据经常是一些流，起始点和终止点都在存储器中，步幅寻址方式和集中/分散寻址方式是成功实现向量化的必备条件。</p>
+<p>下面的例子将一个向量计算机与MMX进行对比，将像素的色彩表示方式由RGB（红、绿、蓝）转换为YUV （发光度色度），每个像素用3个字节表示。这种转换只需要三行C代码，放在循环中即可：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Y = (<span class="number">9798</span>*R  + <span class="number">19235</span>*G + <span class="number">3736</span>*B) / <span class="number">32768</span>;</span><br><span class="line">U = (<span class="number">-4784</span>*R - <span class="number">9437</span>*G + <span class="number">4221</span>*B) / <span class="number">32768</span> + <span class="number">128</span>;</span><br><span class="line">V = (<span class="number">20218</span>*R - <span class="number">16941</span>*G - <span class="number">3277</span>*B) / <span class="number">32768</span> + <span class="number">128</span>;</span><br></pre></td></tr></table></figure><br>宽度为64位的向量计算机可以同时计算8个像素。一个采用步幅寻址的媒体向量计算机将执行以下操作：</p>
+<ul>
+<li>3次向量载入（以获得RGB）;</li>
+<li>3次向量相乘（转换R）;</li>
+<li>6次向量乘加（转换G和B）;</li>
+<li>3次向量移位（除以32768）;</li>
+<li>2次向量加（加上128）;</li>
+<li>3次向量存储（存储YUV）。</li>
+</ul>
+<p>总共有20条指令用于执行前面C代码中转换8个像素的20个操作。（由于向量可能有32 个64 位元素，这一代码实际上可以转换最多32x 8 = 256个像素。）</p>
+<p>与之相对，Intel网站显示一个对8个像素执行相同计算的库例程使用了116条MMX指令和6个80x86指令。指令数之所以会增加到6倍是因为没有步幅存储器访问，需要大量的指令来载入RGB像素并解包，然后再打包并存储YUV像素。</p>
+<p>采用受体系结构限制的短向量，而且没有多少寄存器和简单的存储器寻址方式，就很难利用向量化编译器技术。因此，这些SIMD指令更可能出现于硬编码库中，而不是编译后的代码中。</p>
+<h3 id="小结：编译器的角色"><a href="#小结：编译器的角色" class="headerlink" title="小结：编译器的角色"></a>小结：编译器的角色</h3><p>这一节给出了几点建议。第一，我们希望一种新的指令集体系结构中至少拥有16个通用寄存器（另外用于浮点数的寄存器不计在内），以简化使用图形着色的寄存器分配。关于正交性的建议意味着所支持的全部寻址方式都适用于所有传送数据的指令。最后的三点建议（提供原型而非解决方案、简化候选项之间的权衡、不要在运行时绑定常量）都意味着注重简单性是最稳妥的。换句话说，要想清楚，在指令集设计中，少就是多。SIMD扩展是一个出色营销的例子，而不是软硬件协调设计的杰出成果。</p>
+<h2 id="融会贯通：MIPS体系结构"><a href="#融会贯通：MIPS体系结构" class="headerlink" title="融会贯通：MIPS体系结构"></a>融会贯通：MIPS体系结构</h2><p>在这一节，我们介绍一种名为MIPS的简单64位载入-存储体系结构。MIPS和RISC系列的指令集体系结构的基础与前几节讨论的内容相似。下面回顾一 下我们在每一节对桌面应用程序的期望。</p>
+<ul>
+<li>A.2节——以载入-存储体系结构使用通用寄存器。</li>
+<li>A.3节——支持以下寻址方式：位移量（地址偏移大小为12~16位）立即数（大小为8~16位）和寄存器间接寻址。</li>
+<li>A.4节——支持以下数据大小和类型： 8位、16位、32位和64位整数以及64位IEEE 754浮点数。</li>
+<li>A.5节——支持以下简单指令（它们占所执行指令的绝大多数）：载入、存储、加、减、移动寄存器和移位。</li>
+<li>A.6节——相等、 不相等、小于、分支（长度至少为8位的PC相对地址）、跳转、调用和返回。</li>
+<li>A.7节——如果关注性能则使用定长指令编码， 如果关注代码规模则使用变长指令编码。</li>
+<li>A.8节——至少提供 16个通用寄存器，确保所有寻址模式可应用于所有数据传送指令，希望获得最小规模的指令集。这一节并没有包含浮点程序，但它们经常使用独立的浮点寄存器。其理由是增大寄存器的总数，但不会在指令格式或通用寄存器堆的速度方面产生问题。不过，这两个方面并非相互独立。</li>
+</ul>
+<p>我们在介绍MIPS时，将展示它是如何遵循这些建议的。与最近的大多数计算机类似， MIPS强调：</p>
+<ul>
+<li>简单的载入-存储指令集；</li>
+<li>针对流水线效率的设计，包括定长指令集编码；</li>
+<li>编译器目标的效率。</li>
+</ul>
+<p>从1985年诞生第一个MIPS处理器以来，已经发布了MIPS的许多版本。我们将使用其中一个现在被称为MIPS64的子集，它经常被简写为MIPS。</p>
+<h3 id="MIPS的寄存器"><a href="#MIPS的寄存器" class="headerlink" title="MIPS的寄存器"></a>MIPS的寄存器</h3><p>MIPS64有32个64位通用寄存器（GPR），郎R0、R…..R31。GPR有时也称为整数寄存器。此外，还有一组32位浮点寄存器（FPR），即F0、F…..F31，它可以保存32个单精度（32位）值或32位双精度（64位）值。（在保存一个单精度数时，另一半FPR没有使用。）它提供了单精度和双精度浮点运算（32位和64位）。MIPS还包括在单个64位浮点寄存器中对两个单精度操作数进行运算的指令。</p>
+<p>R0的值总是0。一些特殊寄存器可以与通用寄存器进行相互转换。其中一个例子就是浮点状态寄存器，用于保存有关浮点运算结果的信息。还有一些指令用于在FPR和GPR之间移动数据。</p>
+<h3 id="MIPS的数据类型"><a href="#MIPS的数据类型" class="headerlink" title="MIPS的数据类型"></a>MIPS的数据类型</h3><p>MIPS的数据类型包括8位字节、16 位半字、32 位字和64位双字整型数据和32位单精度与64位双精度浮点数据。添加半字是因为它们在诸如C之类的语言中存在这一类型，而且在一些关注数据结构大小的程序（比如操作系统）中非常普遍。出于类似原因添加了单精度浮点操作数。</p>
+<p>MIPS64操作对64位整数和32位或64位浮点数进行操作。字节、半字和字被载入通用寄存器中，并通过重复0或符号位来填充GPR的64个位。一旦载入之后，就可以用64位整数运算对其进行操作。</p>
+<h3 id="MIPS的数据传输的寻址方式"><a href="#MIPS的数据传输的寻址方式" class="headerlink" title="MIPS的数据传输的寻址方式"></a>MIPS的数据传输的寻址方式</h3><p>仅有的数据寻址方式就是立即数寻址和位移寻址，均采用16位字段。寄存器间接寻址通过在16位位移字段中放置0来实现，而采用16位字段的寻址则是以寄存器0为基址寄存器来完成的。尽管这种体系结构中仅支持两种寻址方式，但通过包含0提供了四种有效方式。MIPS存储器可以用64位地址进行字节寻址。它有一个方式位，允许软件选择大端或小端。由于它是一个载入-存储体系结构，介于存储器与GPS或FRP之间的所有引用都是通过载入或存储完成的。通过支持上述数据类型，涉及GPR的存储器访问可以是字节、半字、字或双字。FPR可以载入和存储单精度或双精度数。所有存储器访问都必须对齐。</p>
+<h3 id="MIPS指令格式"><a href="#MIPS指令格式" class="headerlink" title="MIPS指令格式"></a>MIPS指令格式</h3><p>由于MIPS只有两种寻址方式，所以能把它们编码到操作码中。为便于处理器实现流水线和译码，所有指令的长度都是32位，其中有一个6位的主操作码。图A-14显示了指令布局。这些格式非常简单，提供16位字段用于位移量寻址、立即数常量寻址或PC相对分支寻址。</p>
+<p><img src="/img/1618124727.jpg" alt=""></p>
+<p>图A-14 MIPS的指令布局。所有指令均采用三种类型之一进行编码 ，在每种格式的相同位置有公共字段</p>
+<h3 id="MIPS-操作"><a href="#MIPS-操作" class="headerlink" title="MIPS 操作"></a>MIPS 操作</h3><p>MIPS支持前面推荐的简单操作及其他一些操作。共有四大类指令：载入与存储、ALU运算、分支与跳转、浮点运算。</p>
+<p>任意通用或浮点寄存器都可以载入或存储，只是载入R0没有任何效果。表A-9给出载入与存储指令的一些例子。单精度浮点数占据浮点寄存器的一半。单、双精度之间的转换必须显式完成。浮点格式为IEEE754。表A-12中列出了这部分给出的全部MIPS指令。</p>
+<p><img src="/img/1618124784.jpg" alt=""></p>
+<ul>
+<li>均使用单一寻址方式，需要存储器值对齐。当然，载入和存储都可用于全部所示数据类型。</li>
+</ul>
+<p>为理解这些图形，需要对最初在A.3.2节使用的C描述语言再进行些扩展。</p>
+<ul>
+<li>只要所传送数据的长度不够明确，则向符号←附加一个下标。因此，←n表示传送一个n位量。我们使用x, y←z表示应当将z传送给x和y</li>
+<li>使用一个下标来表示选择字段中的某一位。在标记字段中的各个位时，最高有效位从0开始。下标可能是单个数位，也可能是一个子范围。</li>
+<li>变量Mem用作一个表示主存储器的数组，它是按字节地址索引，可以传送任意数目的字节。</li>
+<li>使用一个上标来表示复制字段（例如，048 给出长度为48位的全零字段）。</li>
+<li>使用符号#将两个字段串联在一起， 可能出现在数据传输的任一端。</li>
+</ul>
+<p>例如，假定R8和R10为64位寄存器：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Regs[R10]32, 63 ←32 (Mem[Regs [R8]]10) 24 ## Mem[Regs&#123;R8]]</span><br></pre></td></tr></table></figure><br>上式的含义是对某一存储器位置的字节进行符号扩展（该存储器位置由寄存器R8的内容寻址），构成一个32位量，存储在寄存器R10的低位。（R10的高位不变。）</p>
+<p>所有ALU指令都是寄存器-寄存器指令。表A-10给出了算术/逻辑指令的一些例子。这些操作包括简单的算术和逻辑运算：加、减、AND、 OR、XOR 和移位。所有这些指令的立即数形式都是用16位符号扩展立即数提供的。操作LUI （加载高位立即数）加载一个寄存器的第32~47位，并将该寄存器的其他位设置为0。LUI 允许在两条指令中内置一个32位常数，也可以在一个额外指令中使用任意常数32位地址进行数据传送。<br><img src="/img/1618124868.jpg" alt=""></p>
+<p>前面曾经提到，R0用于合并常见操作。载入常数的操作，其实就是执行一个源操作数为R的加立即数指令，寄存器-寄存器移动就是源操作数之一为 R0的加法。我们有时会使用助记符LI（表示载入立即数， load immediate）来表示前者，用助记符MOV表示后者。</p>
+<h3 id="MIPS控制流指令"><a href="#MIPS控制流指令" class="headerlink" title="MIPS控制流指令"></a>MIPS控制流指令</h3><p>MIPS提供比较指令，它比较两个寄存器，查看第一个寄存器是否小于第二个寄存器。如果该条件为真，则这些指令在目标寄存器中放入1 （表示真）;否则，放入数值0。因为这些操作会对寄存器进行“置位”，所以它们被称为“相等置位”、“不相等置位”、“小于置位”，等等。这些比较指令还有立即数形式。</p>
+<p>控制是通过一组跳转指令和一组分支指令处理的。表A-11给出了一些典型的分支与跳转指定。通过两种指定目标地址的方法以及是否设定链接来区分四种跳转指令。两种跳转指令使用一个进行两位移位的26位偏移量，然后替代程序计数器的低28位，以确定目标地址（程序计数器是指该跳转指令后面指令的程序计数器）。另两种跳转指令指定了包含目标地址的寄存器。共有两类跳转：单纯跳转和跳转并链接（用于过程调用）。后者将返回地址（下-条顺序指令的地址）放在R31中。</p>
+<p><img src="/img/1618124894.jpg" alt=""></p>
+<p>所有分支都是有条件的。分支条件由指令指定，它可以测试寄存器源操作数是否为0；寄存器可以包含一个数据值或比较的结果。还有一些条件分支指令用于判断一个寄存器是否为负数，以及两个寄存器是否相等。分支目标地址由一个16位有符号偏移量指定，该偏移量被左移两位，然后加到指向下一顺序指令的程序计数器。还有一个分支用来关注浮点条件分支的浮点状态寄存器，如下文所述。</p>
+<p>条件分支是流水线执行的主要挑战；因此，许多体系结构增加了用于将简单分支转换为条件算术指令的指令。MIPS 包含在等于零或不等于零时执行的条件移动。目标寄存器的值或者保持不变，或者由源寄存器之一的副本 替代，具体取决于其他源寄存器的值是否为零。</p>
+<h3 id="MIPS浮点运算"><a href="#MIPS浮点运算" class="headerlink" title="MIPS浮点运算"></a>MIPS浮点运算</h3><p>浮点运算操控浮点寄存器，并指出运算是以单精度还是双精度执行。操作MOV.S和MOV.D将一个单精度（Mov.S）或双精度（MOV.D）浮点寄存器复制到另一个同种类型的寄存器中。操作MFC1、MTC1、 DMFC1 和DMTC1在单精度或双精度寄存器与整数寄存器之间移动数据，而且还提供了整数向浮点的转换，反之亦然。</p>
+<p>浮点运算为加、臧、乘、除；后缀D表示双精度，后缀S表示单精度（例如， ADD.D、 ADD.S、SUB.D、SUB.S、MUL.D、MUL.S、DIV.D、DIV.S）。 浮点比较指令会对特殊浮点状态寄存器中的一个位进行置位，有一对分支指令可以检测这个位，即： BC1T 和BC1F，也就是浮点真分支和浮点假<br>分支。</p>
+<p>为进一步提高图形例程的性能， MIPS64中提供了一些可以针对64位高低位执行2个32位浮点操作的指令。这些成对单精度操作包括：ADD.PS、 SUB.PS、MUL.PS和DIV.PS。（它们使用双精度载入和存储指令进行载入和存储。）MIPS64认识到多媒体应用程序的重要性，还引入了整数与浮点乘加指令： MADD、 MADD.S、MADD.D和MADD.PS。在这些合并操作中，寄存器的宽度都相同。表A-12给出了一部分 MIPS64操作的清单及其含义。</p>
+<p><img src="/img/1618124926.jpg" alt=""><br><img src="/img/1618124944.jpg" alt=""></p>
+<h3 id="MIPS指令集的使用"><a href="#MIPS指令集的使用" class="headerlink" title="MIPS指令集的使用"></a>MIPS指令集的使用</h3><p>为使读者了解哪些指令使用得更为频繁，表A-13中给出了5个SPECint2000程序中各指令及指令类别的使用频率，表A-14给出了对于5个SPECfp2000程序的相同数据。<br><img src="/img/1618124978.jpg" alt=""><br><img src="/img/1618125015.jpg" alt=""></p>
+<p><img src="/img/1618125031.jpg" alt=""><br><img src="/img/1618125053.jpg" alt=""></p>
+<h1 id="存储器层次结构回顾"><a href="#存储器层次结构回顾" class="headerlink" title="存储器层次结构回顾"></a>存储器层次结构回顾</h1><h2 id="引言-1"><a href="#引言-1" class="headerlink" title="引言"></a>引言</h2><p>本附录对存储器层次结构进行了快速回顾，包括缓存与虚拟存储器的基础知识、性能公式、简单优化。第一节介绍下面36个术语。</p>
+<ul>
+<li>缓存（cache）</li>
+<li>全相联（fully associative）</li>
+<li>写入分派（write allocate）</li>
+<li>虚拟存储器（virtual memory）</li>
+<li>重写（脏）位（dirtybit）</li>
+<li>统一缓存（unifed cache）</li>
+<li>存储器停顿周期（memorystallcycles）</li>
+<li>块偏移（block offset）</li>
+<li>每条指令缺失数（misses per instruction）</li>
+<li>直接映射（direct mnapped）</li>
+<li>写回（write back）</li>
+<li>块（block）</li>
+<li>有效位（valid bit）</li>
+<li>数据缓存（data cache）</li>
+<li>局域性（locality）</li>
+<li>块地址（block address）</li>
+<li>命中时间（hittime）</li>
+<li>地址跟踪（address trace）</li>
+<li>直写（write through）</li>
+<li>缓存缺失（cache miss）</li>
+<li>组（set）</li>
+<li>指令缓存（instruction cache）</li>
+<li>页面错误（page fault）</li>
+<li>随机替换（random replacement）</li>
+<li>存储器平均访问时间（average memory access time）</li>
+<li>缺失率（missrate）</li>
+<li>索引字段（index feld）</li>
+<li>缓存命中（cache hit）</li>
+<li>n路组相联（n-way set associative）</li>
+<li>无写入分派（no-write allocate）</li>
+<li>页（page）</li>
+<li>最近最少使用（least-recently used）</li>
+<li>写入缓冲区（write buffer）</li>
+<li>缺失代价（miss penalty）</li>
+<li>标志字段（tagfield）</li>
+<li>写停顿（write stall）</li>
+</ul>
+<p>缓存是指地址离开处理器后遇到的最高级或第一级存储器层次结构。由于��域性原理适用于许多级别，而且充分利用局域性来提高性能的做法非常普遍，所以现在只要利用缓冲方法来重复使用常见项目，就可以使用缓存，文件缓存、名称缓存等都是一些实例。</p>
+<p>如果处理器在缓存中找到了所需要的数据项，就说发生了缓存命中。如果处理器没有在缓存中找到所需要的数据项，就是发生了缓存缺失。从主存储器中提取固定大小且包含所需字的数据集，并将其放在缓存中，这个数据集称为块。时域局域性告诉我们：我们很可能会在不远的将来再用到这个字，所以把它放在缓存中是有用的，在这里可以快速访问它。由于空域局域性，马上用到这个块中其他数据的可能性也很高。</p>
+<p>缓存缺失需要的时间取决于存储器的延迟和带宽。延迟决定了提取块中第一个字的时间，带宽决定了提取这个块中其他内容的时间。缓存缺失由硬件处理，会导致采用循序执行方式的处理器暂停或停顿，直到数据可用为止。在采用乱序执行方式时，需要使用该结果的指令仍然必须等待，但其他指令可以在缺失期间继续进行。</p>
+<p>与此类似，程序引用的所有对象不一定都要驻存在主存储器中。虚拟存储器意味着一些对象可以驻存在磁盘上。地址空间通常被分为固定大小的块，称为页。在任何时候，每个页要么在主存储器中，要么在磁盘上。当处理器引用一个页中既不在缓存中也不在主存储器中的数据项时，就会发生页错误，并把整个页从磁盘移到主存储器中。由于页错误消耗的时间太长，所以它们由软件处理，处理器不会停顿。在进行磁盘访问时，处理器通常会切换到其他某一任务。从更高级别来看，缓存和主存储器在对引用局域性的依赖性方面、在大小和单个位成本等方面的关系，类似于主存储器与磁盘的相应关系。</p>
+<p>表B-1给出了各种计算机（从高端台式机到低端服务器）每一级存储器层次结构的大小与访问时间范围。<br><img src="/img/1618234219.jpg" alt=""></p>
+<ul>
+<li>嵌入式计算机可能没有磁盘存储，存储器和缓存也要小得多。在移向层次结构的更低级别时，访问时间延长，从而有可能以较低的反应速度来管理数据传输。实现技术显示了这些功能所用的典型技术。</li>
+</ul>
+<h3 id="缓存性能回顾"><a href="#缓存性能回顾" class="headerlink" title="缓存性能回顾"></a>缓存性能回顾</h3><p>由于局域性的原因，再加上存储器越小其速度越快，所以存储器层次结构可以显著提高性能。评价缓存性能的一种方法是扩展第1章给出的处理器执行时间公式。我们现在考虑处理器在等待存储器访问而停顿时的周期数目，称为存储器停顿周期。性能结果为处理器周期与存储器停顿周期之和与时钟周期时间的乘积：</p>
+<p>CPU执行时间 = （CPU时钟周期+存储器停顿周期） x时钟周期时间</p>
+<p>此公式假定CPU时钟周期包括处理缓存命中的时间，并假定处理器在发生缓存缺失时停顿。</p>
+<p>存储器停顿周期数取决于缺失数目和每次缺失的成本，后者称为缺失代价：</p>
+<p>存储器停顿周期 = 缺失数 x 缺失代价 = IC x 缺失/指令 x 缺失代价 = IC x 存储器访问/指令 x 缺失率 x 缺失代价</p>
+<p>最后一种形式的优点在于其各个分量容易测量。我们已经知道如何测量指令数（IC）。（对于推测处理器，只计算提交的指令数。）可以采用同一方式来测量每条指令的存储器引用数；每条指令需要一次指令访问，很容易判断它是否还需要数据访问。</p>
+<p>注意，我们计算出缺失代价，作为平均值，但下面将其作为常数使用。在发生缺失时，缓存后面的存储器可能因为先前的存储器请求或存储器刷新而处于繁忙状态。在处理器、总线和存储器的不同时钟之间进行交互时，时钟周期数也可能发生变化。所以请记住，为缺失代价使用单一数值是一种简化。</p>
+<p>缺失率分量就是缓存访问中导致缺失的访问比例（即，导致缺失的访问数除以总访问数）。缺失率可以用缓存模拟器测量，它会取得指令与数据引用的地址跟踪，模拟该缓存行为，以判断哪些引用命中，哪些缺失，然后汇报命中与缺失总数。今天的许多微处理器提供了用于计算缺失与存储器引用数的硬件，这一缺失率测量方式要容易得多、快得多。</p>
+<p>由于读取和写入操作的缺失率和缺失代码通常是不同的，所以上面的公式得出的是一个近似值。存储器停顿时钟周期可以用每条指令的存储器访问次数、读写操作的缺失代价（以时钟周期为单位入读写操作的缺失率来定义：</p>
+<p>存储器停顿时钟周期 = IC x 每条指令的读取操作 x 读取缺失率 x 读取缺失代价 + IC x 每条指令的写入操作 x 写入缺失率 x 写入缺失代价</p>
+<p>我们通常会合并读写操作，求出读取与写入操作的平均缺失度与缺失代价，以简化上面的完整公式：</p>
+<p>存储器停顿时钟周期 = IC x 存储器访问/指令 x 缺失率 x 缺失代价</p>
+<p>缺失率是缓存设计中最重要的度量之一，但在后面各节将会看到，它不是唯一的度量标准。</p>
+<p>假定有一个计算机，当所有存储器访向都在缓存中命中时，其每条指令的周期数（CPI）为1.0。仅有的数据访问就是载入和存储，占总指令数的50%。如果缺失代价为25个时钟周期，缺失率为2%，当所有指令都在缓存中命中时，计算机可以加快多少?</p>
+<p>首先计算计算机总是命中时的性能：</p>
+<p>CPU执行时间 = (CPU时钟周期+存储器停顿周期) x 时钟周期 = (IC x CPI+0) x 时间周期 = IC x 1.0 x 时间周期</p>
+<p>现在，对于采用实际缓存的计算机，首先计算存储器停顿周期：</p>
+<p>存储器停顿周期 = IC x 存储器访问数/指令 x 缺失率 x 缺失代价 = IC x (1+0.5) x 0.02 x 25 = IC x 0.75</p>
+<p>式中，中间项（1+0.5）表示每条指令有1次指令访问和0.5次数据访问。总性能为：</p>
+<p>CPU执行时间（缓存） = (IC x 1.0 + IC x 0.75) x 时间周期 = 1.75 x IC x 时钟周期</p>
+<p>性能比是执行时间的倒数：</p>
+<p>CPU执行时间（缓存）/CPU执行时间 = (1.75 x IC x 时钟周期) / (1.0 x IC x 时钟周期) = 1.75</p>
+<p>没有缓存缺失时，计算机的速度为有缺失时的1.75倍。</p>
+<p>一些设计师在测量缺失率时更愿意表示为每条指令的缺失数，而不是每次存储器引用的缺失数。这两者的关系为：<br>缺失数/指令数 = 缺失数 x 存储器访问数 / 指令数 = 缺失数 x 存储器访问数 / 指令数</p>
+<p>如果知道每条指令的平均存储器访问数，后面一个公式是有用的，因为这样可以将缺失率转换为每条指令的缺失数，反之亦然。例如，我们可以将上面示例中每次存储器引用的缺失率转换为每条指令的缺失：</p>
+<p>缺失数/指令数 = 缺失数 x 存储器访问数/指令数 = 0.02 x 1.5 = 0.030</p>
+<p>顺便说一下， 每条指令的缺失数经常以每千条指令的缺失数给出，以显示整数而非小数。因此，上面的答案也可以表示为每1000条指令发生30次缺失。</p>
+<p>表示为“每条指令的缺失数”的好处在于它与硬件实现无关。例如，推测处理器提取的指令数大约是实际提交指令数的两倍，如果测量每次存储器引用而非每条指令的缺失数，那么就可以人为地降低缺失率。其缺点在于每条指令的缺失数与体系结构相关;例如，对于80x86与MIPS，每条指令的存储器访问平均数可能会有很大不同。因此，对于仅使用单一计算机系列的架构师，最常使用的是每条指令的缺失数，不过与RISC体系结构的相似性也可以让人们深入理解其他体系结构。</p>
+<p>为了展示这两个缺失率公式的等价性，让我们重做上面的例题，这一次假定每千条指令的缺失率为30。根据指令个数，存储器停顿时间为多少?</p>
+<p>重新计算存储器停顿周期：存储器停顿周期 = 缺失数 x 缺失代价 = IC x 缺失数/指令数 x 缺失代价 = IC/1000 x 缺失数/(指令数x1000) x 缺失代价 = IC/1000 x 30 x 25 = IC x 0.75</p>
+<p>得到的答案与前面的例题相同，表明这两个公式的等价性。</p>
+<h3 id="4个存储器层次结构问题"><a href="#4个存储器层次结构问题" class="headerlink" title="4个存储器层次结构问题"></a>4个存储器层次结构问题</h3><p>我们通过回答有关存储器层次结构第一级的4个常见问题来继续对缓存的介绍。</p>
+<ul>
+<li>问题1：一个块可以放在上-级的什么位置? （块的放置）</li>
+<li>问题2：如果一个块在上一级中，如何找到它? （块的识别）</li>
+<li>问题3：在缺失时应当替换哪个块? （块的替换）</li>
+<li>问题4：在写入时会发生什么? （写入策略）</li>
+</ul>
+<p>这些问题的答案可以帮助我们理解存储器在层次结构不同级别所做的不同折中；因此，我们对每个示例都会问这四个问题。</p>
+<p>问题1：一个块可以放在缓存中的什么位置?</p>
+<p>图B-1显示，根据对块放置位置的限制，可以将缓存组织方式分为以下三类。</p>
+<ul>
+<li>如果每个块只能出现在缓存中的一个位置，就说这一缓存是直接映射的。这种映射通常是：<code>(块地址)MOD(缓存中的块数)</code></li>
+<li>如果一个块可以放在缓存中的任意位置，就说该缓存是全相联的。</li>
+<li>如果一个块可以放在缓存中由有限个位置组成的组（set）内，则该缓存是组相联的。组就是缓存中的一组块。块首先映射到组，然后这个块可以放在这个组中的任意位置。通常以位选择方式来选定组：<code>(块地址)MOD(缓存中的组数)</code>，如果组中有n个块，则称该缓存放置为n路组相联。</li>
+</ul>
+<p>从直接映射到全相联的缓存范围实际上就是组相联的一个统一体。直接映射就是一路组相联，拥有m个块的全相联缓存可以称为“m路组相联”。同样，直接映射可以看作是拥有m个组，全相联可以看作拥有一个组。</p>
+<p><img src="/img/1618234334.jpg" alt=""></p>
+<p>图B-1 这一缓存示例有8个块帧，存储器有32个块。三种缓存选项由左向右给出。在全相联中，来自较低层级的块12可以进入该缓存8个块帧的任意一个。采用直接映射时，块12只能放在块帧4（12 mod 8）中。组相联拥有这两者的一些共同特性，允许这个块放在第0组的任意位置（12 mod 4）。由于每个组中有两个块，所以这意味着块12可以放在缓存的块0或块1中。实际缓存包含数千个块帧，实际存储器包含数百万个块。拥有四个组、每组两个块的组相联组织形式称为两路组相联。假定缓存中没有内容，而且所关心的块地址确认了较低级别的块12</p>
+<p>今天的绝大多数处理器缓存为直接映射、两路组相联或四路组相联，其原因将在稍后介绍。</p>
+<p>问题2：如果一个块就在缓存中，如何找到它?</p>
+<p>缓存中拥有每个块帧的地址标志，给出块地址。每个缓存块的标志中可能包含所需要的信息，会对这些标志进行查看，以了解它是否与来自处理器的块地址匹配。由于速度非常重要，所以会对所有可能标志进行并行扫描，这是一条规则。</p>
+<p>必须存在一种方法来获知缓存块中不包含有效信息。最常见的过程是向标志中添加一个有效位，表明这一项是否包含有效地址。如果没有对这个位进行置位，那就不可能存在对这一地址的匹配。</p>
+<p>在继续讨论下一问题之前，先来研究一个处理器地址与缓存的关系。图B-2显示了址是如何划分的。第一次划分是在块地址和块偏移之间，然后再将块帧地址进一步分为标志字段和索引字段。块偏移字段从块中选择期望数据，索引字段选择组，通过对比标志字段来判断是否命中。尽管可以对标志之外的更多地址位进行对比，但并不需要如此，原因如下所述。</p>
+<ul>
+<li>在对比中不应使用偏移量，因为整个块或者存在或者不存在，因此，根据定义，所有块偏移都会导致匹配。</li>
+<li>核对索引是多余的，因为它是用来选择待核对组的。例如，存储在第0组的地址，其索引字段必须为0，否则就不能存储在第0组中；第1组的索引值必须为1，以此类推。这一优化通过缩小缓存标志的宽度来节省硬件和功率。</li>
+</ul>
+<p><img src="/img/1618234443.jpg" alt=""></p>
+<p>图B-2 组相联或直接映射缓存中地址的三个组成部分。标志用于检查组中的所有块，索引用于选择该组。块偏移是块中所需数据的地址。全相联缓存没有索引字段</p>
+<p>如果总缓存大小保持不变，增大相联度将提高每个组中的块数，从而降低索引的大小、增大标志的大小。即，图B-2中的标志索引边界因为相联度增大而向右移动，到端点处就是全相关缓存，没有索引字段。</p>
+<p>问题3：在缓存缺失时应当替换哪个块?</p>
+<p>当发生缺失时，缓存控制器必须选择一个用期望数据替换的块。直接映射布置方式的好处就是简化了硬件判决——事实上，简单到没有选择了：只会查看一个块帧，以确定是否命中，而且只有这个块可被替换。对于全相联或组相联布置方式，在发生缺失时会有许多块可供选择。主要有以下三种策略用来选择替换哪个块。</p>
+<ul>
+<li>随机——为进行均匀分配，候选块是随机选择的。一些系统生成伪随机块编号，以实现可重复的行为，这在调试硬件时有一定的用处。</li>
+<li>最近最少使用（LRU）——为尽量避免抛弃不久就会用到的信息，会记录下对数据块的访问。依靠过去行为来预测未来，将替换掉未使用时间最久的块。LRU依赖于局域性的一条推论：如果最近用过的块很可能被再次用到，那么放弃最近最少使用的块是一种不错的选择。</li>
+<li>先入先出（FIFO）——因为LRU的计算可能非常复杂，所以这一策略是通过确定最早的块来近似LRU，而不是直接确定LRU。</li>
+</ul>
+<p>随机替换的一个好处是易于用硬件实现。随着要跟踪块数的增加，LRU的成本也变得越得来高，通常只能采用近似法。一种常见的近似方法（经常称为“伪LRU”）是为缓存中的每个组设定一组比特，每个比特应于缓存中的一路，一路就是组相联缓存中的条（bank）；四路组相联缓存中有四路。在访向一组时开启一个特定比特，这一比特与包含所需块的路相对应；如果与一个组相关联的所有比特都被开启，除最近刚被开启的比特之外，将所有其他比特关闭。在必须替换一个块时，处理器从相应被关闭的路中选择一个块，如果有多种选择，则随机选定。这种方法会给出近似LRU，这是因为自上次访问组中的所有块之后，被替换块再没有被访问过。</p>
+<p>表B-2给出了LUR、随机和FIFO替换方式中的缺失率之差。<br><img src="/img/1618234501.jpg" alt=""></p>
+<ul>
+<li>对于最大的缓存，LRU和随机方式之间没有什么差别，当缓存较小时，LUR胜过其他几种方式。当缓存较小时，FIFO通常优于随机方式。</li>
+</ul>
+<p>问题4：在写入时发生什么?</p>
+<p>大多数处理器缓存访问都是读取操作。所有指令访问都是读取，大多数指令不会向存储器写入数据。要加快常见情景的执行速度，就意味着要针对读取操作对缓存进行优化，尤其是处理器通常会等待读取的完成，而不会等待写入操作。但Amdahl定律提醒我们，高性能设计不能忽视写入操作的速度。</p>
+<p>幸运的是，常见情景也是容易提升速度的情景。可以在读取和比对标志的同时从缓存中读取块，所以只要有了块地址就开始读取块。如果读取命中，则立即将块中所需部分传送给处理器。如果读取缺失，那就没有什么好处。</p>
+<p>不能对写入操作应用这一优化。要想修改一个块，必须先核对标志，以查看该地址是否命中。由于标志核对不能并行执行，所以写入操作需要的时间通常要长于读取。另一种复杂性在于处理器还指定写入的大小，通常介于1~8个字节之间；只能改变一个块的相应部分。而读取则与之不同，可以毫无顾虑地访问超出所需的更多字节。写入策略通常可以用来区分缓存设计。在写入缓存时，有下面两种基本选项。</p>
+<ul>
+<li>直写——信息被写入缓存中的块和低一级存储器中的块。</li>
+<li>写回——信息仅被写到缓存中的块。修改后的缓存块仅在被替换时才被写到主存储器。</li>
+</ul>
+<p>为减少在替换时写回块的频率，通常会使用一种称为重写（脏）位的功能。这一状态位表示一个块是脏的（在缓存中经历了修改）还是干净的（未被修改）。如果它是干净的，则在缺失时不会写回该块，因为在低级存储器中可以看到缓存中的相同信息。</p>
+<p>写回和直写策略都有自己的优势。采用写回策略时，写入操作的速度与缓存存储器的速度相同，一个块中的多个写入操作只需要对低一级存储器进行一次写入。由于一些写入内容不会进入存储器，所以写回方式使用的存储器带宽较少，使写回策略对多处理器更具吸引力。由于写回策略对存储器层次结构其余部分及存储器互连的使用少于直写，所以它还可以节省功耗，对于嵌入式应用极具吸引力。</p>
+<p>相对于写回策略，直写策略更容易实现。缓存总是清洁的，所以它与写回策略不同，读取缺失永远不会导致对低一级存储器的写入操作。直写策略还有一个好处：下一级存储器中拥有数据的最新副本，从而简化了数据一致性。数据一致性对于多处理器和IO来说非常重要。多级缓存使直写策略更适于高一级缓存，这是因为写入操作只需要传播到下一个较低级别，而不需要传播到所有主存储器。</p>
+<p>稍后将会看到，IO和多处理器有些反复无常：它们希望为处理器缓存使用写回策略，以减少存储器通信流量，又希望使用直写策略，以与低级存储器层次结构保持缓存一致。如果处理器在直写期间必须等待写入操作的完成，则说该处理器处于写入停顿状态。减少写入停顿的常见优化方法是写入缓冲区，利用这一优化，数据被写入缓冲区之后，处理器就可以立即继续执行，从而将处理器执行与存储器更新重叠起来。稍后将会看到，即使有了写入缓冲区也会发生写入停顿。</p>
+<p>由于在写入时并不需要数据，所以在发生写入缺失时共有以下两种选项。</p>
+<ul>
+<li>写入分派——在发生写入缺失时将该块读到缓存中，随后对其执行写入命中操作。在这一很自然的选项中，写入缺失与读取缺失类似。</li>
+<li>无写入分派——这显然是一种不太寻常的选项，写入缺失不会影响到缓存。而是仅修改低一级存储器中的块。</li>
+</ul>
+<p>因此，在采用无写入分派策略时，在程序尝试读取块之前，这些块一直都在缓存之外，但在采用写入分派策略时，即使那些仅被写入的块也会保存在缓存中。让我们看一个例子。</p>
+<p>假定一个拥有许多缓存项的全相联写回缓存，在开始时为空。下面是由5个存储器操作组成的序列（地址放在中括号内）：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Write Mem[100];</span><br><span class="line">Write Mem[100];</span><br><span class="line">Read  Mem[200];</span><br><span class="line">Write Mem[200];</span><br><span class="line">Write Mem[100] .</span><br></pre></td></tr></table></figure><br>在使用无写入分派和写入分派时，命中数和缺失数为多少?</p>
+<p>对于无写入分派策略，地址100不在缓存中，在写入时不进行分派，所以前两个写入操作将导致缺失。地址200 也不在缓存中，所以该读取操作也会导致缺失。接下来对地址200进行的写入将会命中。最后一个对地址100的写入操作仍然是缺失。所以对无写入分派策略，其结果是4次缺失和1次命中。</p>
+<p>对于写入分派策略，前面对地址100 和地址200的访问导致缺失，由于地址100和地址200都可以在缓存中找到，所以其他写入操作将会命中。因此，采用写入分派时，其结果为2次缺失和3次命中。</p>
+<p>任何一种写入缺失策略都可以与直写或写回策略起使用。通常，写回缓存采用写入分派策略，希望对该块的后续写入能够被缓存捕获。直写缓存通常使用无写入分派策略。其原因在于：即使存在对该块的后续写入操作，这些写入操作仍然必须进入低一级存储器，那还有什么好处呢? </p>
+<h3 id="举例：Opteron数据缓存"><a href="#举例：Opteron数据缓存" class="headerlink" title="举例：Opteron数据缓存"></a>举例：Opteron数据缓存</h3><p>为了展示这些思想的本质，图B-3给出了AMD Opteron微处理器中数据缓存的组织方式。该缓存包含65536 （64KB）字节的数据，块大小为64字节，采用两路组相联布置方式、最近使用最少替代策略、写缺失时采用写入分派。<br><img src="/img/1618234573.jpg" alt=""></p>
+<p>图B-3 Opteron 微处理器中数据缓存的组织方式。这个64 KB的缓存为两路组相联，块大小为64字节。长为9位的索引从512个组中进行选择。一次读取命中的四个步骤 （按发生顺序表示为带圆圈的数字）标记了这一组织方式。块偏移量的三位加上索引，提供了RAM地址，恰好选择8个字节。因此，该缓存保存了由4096个64位字组成的群组，每个群组包含512个组的一半。从低级存储器至缓存的线路用于在发生缺失时载入缓存，不过未在这一示例中 展示。离开处理器的地址大小为40位，这是因为它是物理地址而不是虚拟地址。图B-14解释了Opteron 如何从虚拟地址映射到物理地址，以进行缓存访问</p>
+<p>我们通过图B-3中标注的命中步骤来跟踪一次缓存命中的过程。（这4个步骤用带圆圈的数字表示。）如B.5节所述，Opteron 向缓存提供48位虚拟地址进行标志比对，它将同时被翻译为40位物理地址。</p>
+<p>Opteron之所以没有利用虚拟地址的所有64位，是因为它的设计者认为还没有人会需要那么大的虚拟地址空间，而较小的空间可以简化Opteron虚拟地址的映射。设计者计划在未来的微处理器中增大此虚拟地址。</p>
+<p>进入缓存的物理地址被分为两个字段：34 位块地址和6位块偏移量（64=2^6，34+6=40）。块地址进一步分为地址标志和缓存索引。第1步显示了这一划分。</p>
+<p>缓存索引选择要测试的标志，以查看所需块是否在此缓存中。索引大小取决于缓存大小、块大小和级相联度。Opteron 缓存的组相联度被设置为2，索引计算如下：</p>
+<p>2^索引 = 缓存大小/(块大小x组相联度) = 65536/(64x2) = 512 = 2^9</p>
+<p>因此，索引宽9位，标志宽34-9=25位。尽管这是选择正确块所需要的索引，但64个字节远多于处理器希望一次使用的数目。因此，将缓存存储器的数据部分安排为宽8个字节更有意义一些，这是64位Opteron处理器的自然数据字。因此，除了用于索引正确缓存块的9个位之外，还使用来自块偏移量的另外3个位来索引恰好8个字节。索引选择是图B-3中的第2步。</p>
+<p>在从缓存中读取这两个标志之后，将它们与处理器所提供块地址的标志部分进行对比。这一对比是图中第3步。为了确保标志中包含有效信息，必须设置有效位，否则，对比结果将被忽略。假定有一个标志匹配，最后一步是通知处理器，使用2选1多工器的获胜输入从缓存中载入正确数据。Opteron可以在2个时钟周期内完成这四个步骤，因此，如果后面2个时钟周期中的指令需要使用载入结果，那就得等待。</p>
+<p>在Opteron中，写入操作的处理要比读取操作更复杂，这一点与在任何缓存中都是一致的。如果要写入的字在缓存中，前三步相同。由于Opteron是乱序执行的，所以只有在它发出指令已提交而且缓存标志比对结果显示命中的信号之后，才会将数据写到缓存中。</p>
+<p>到目前为止，我们假定的是缓存命中的常见情景。那在缺失时会发生什么情况呢?在读取缺失时，缓存会向处理器发出信号，告诉它数据还不可用，并从下一级层级结构中读取64个字节。对于该块的前8个字节，延迟为7个时钟周期，对于块的其余部分，为每8个字节需要2个时钟周期。由于数据缓存是组相联的，所以需要选择替换哪个块。Opteron 使用LRU （选择在最早之前被引用的块），所以每次访问都必须更新LRU位。替换一个块意味着更新数据、地址标志、有效位和LRU位。</p>
+<p>由于Opteron使用写回策略，旧的数据块可能已经被修改，所以不能简单地放弃它。Opteron为每个块保存1个脏位，以记录该块是否被写入。如果“牺牲块”被修改，它的数据和地址就被发送给牺牲块缓冲区。（这种结构类似于其他计算机中的写入缓冲区。）Opteron有8个牺牲块的空间。它会将牺牲块写到低一级层次结构，这一操作与其他缓存操作并行执行。如果牺牲块缓冲区已满，缓存就必须等待。</p>
+<p>由于Opteron在读取缺失和写入缺失时都会分派一个块，所以写入缺失与读取缺失非常类似。</p>
+<p>我们已经看到数据缓存是如何工作的，但它不可能提供处理器所需要的所有存储器：处理器还需要指令。尽管可以尝试用一个缓存来提供数据、指令两种缓存，但这样可能会成为瓶颈。例如，在执行载入或存储指令时，流水化处理器将会同时请求数据字和指令字。因此，单个缓存会表现为载入与存储的结构性冒险，从而导致停顿。解决这一问题的一种简单方法是分开它：一个缓存专门用于指令，另一个缓存专门用于数据。最近的处理器中都使用了独立缓存，包括Opteron在内。因此，它有一个64 KB的指令缓存和64 KB的数据缓存。</p>
+<p>处理器知道它是在发射一个指令 地址，还是一个数据地址，所以可能存在用于这两者的独立端口，从而使存储器层次结构和处理器之间的带宽加倍。采用分离缓存还提供了分别优化每个缓存的机会：采用不同的容量、块大小和相联度可能会得到更佳性能。</p>
+<p>表B-3显示指令缓存的缺失率低于数据缓存。指令与数据缓存分离，消除了因为指令块和数据块冲突所导致的缺失，但这种分离固定了每种类型所能使用的缓存空间。与缺失率相比，哪个更重要呢?要公平地对比指令数据分离缓存和统一缓存， 需要总缓存大小相同。例如，分离的16 KB指令缓存和16 KB数据缓存应当与32KB统一缓存相对比。要计算分离指令与数据缓存的平均缺失率，需要知道对每种缓存的存储器引用百分比。从附录A中的数据可以找到：</p>
+<p>指令引用为100%（100%+26%+10%），大约为74%；数据引用为（26%+ 10%）（100%+26%+10%），大约为26%。稍后将会看到，分割对性能的影响并非仅限于缺失率的变化。</p>
+<p><img src="/img/1618234723.jpg" alt=""></p>
+<h2 id="缓存性能"><a href="#缓存性能" class="headerlink" title="缓存性能"></a>缓存性能</h2><p>由于指令的数目与硬件无关，所以用这个数值来评价处理器性能是很有诱惑力的。由于缺失率也与硬件的速度无关，所以评价存储器层次结构性能的相应焦点就主要集中在缺失率上。后面将会看到，缺失率可能与指令数目一样产生误导。存储器层次结构性能的一个更好度量标准是存储器平均访问时间：</p>
+<p>存储器平均访问时间=命中时间+缺失时间x缺失代价</p>
+<p>式中，命中时间是指在缓存中命中的时间；其他两项已经在前面看到过。平均访问时间的各个分量可以用绝对时间衡量，比如，一次命中的时间为0.25~1.0 ns，也可以用处理器等待该存储器的时间周期数来衡量，比如一次缺失代价为150~200 个时钟周期。注意，存储器平均访问时间仍然是性能的间接度量；尽管它优于缺失率，但并不能替代执行时间。</p>
+<p>这个公式可以帮助我们决定是选择分离缓存还是统一缓存。</p>
+<p>16KB指令缓存加上16KB数据缓存相对于一个32KB统一缓存，哪一种的缺失率较低?利用表B-3中的缺失率数据来帮助计算正确答案，假定36%的指令为数据传输指令。假定一次命中需要1个时钟周期，缺失代价为100个时钟周期。对于统一缓存，如果仅有一个缓存端口来满足两个同时请求，一次载入或存储命中另需要一个时钟周期。利用第3章的流水线技术，统一缓存会导致结构性冒险。每种情况下的存储器平均访问时间为多少?假定采用具有写入缓冲区的直写缓存，忽略由于写入缓冲区导致的停顿。</p>
+<p>首先让我们将每千条指令的缺失数转换为缺失率。求解上面的一般公式，缺失率为：</p>
+<p>缺失率 = ( (缺失率/1000条指令) / 1000) / (存储器访问数/指令数)</p>
+<p>由于每次指令访问都正好有一次存储器访问来提取指令，所以指令缺失率为：</p>
+<p>缺失率(16 KB指令) = 3.82 / 1000 = 0.004</p>
+<p>由于36%的指令为数据传输，所以数据缺失率为：</p>
+<p>缺失率(16 KB数据) = 40.9 / 1000 / 0.36 = 0.114</p>
+<p>统一缺失率需要考虑指令和数据访问：</p>
+<p>缺失率(32 KB统一) = 43.3 / 1000 / (1.00 +0.36) = 0.0318</p>
+<p>如上所述，大约74%的存储器访问为指令引用。因此，分离缓存的总缺失率为：</p>
+<p>(74% x 0.004)+(26% x 0.114) = 0.0326</p>
+<p>因此，32KB 统一缓存的实际缺失率略低于两个16 KB缓存。</p>
+<p>存储器平均访问时间公式可分为指令访问和数据访问：</p>
+<p>存储器平均访问时间 = 指令百分比 x (命中时间+指令缺失率x缺失代价) + 数据百分比 x (命中时间+数据缺失率x缺失代价)</p>
+<p>因此，每种组织方式的时间为：</p>
+<p>存储器平均访问时间(分离) = 74% x (1 + 0.004 x 200) + 26% x (1 + 0.114 x 200) = (74% x 1.80)+(26% x 23.80) = 7.52</p>
+<p>存储器平均访问时间(统一) = 74% x (1 + 0.0318 x 200) + 26% x (1 + 1 + 0.0318 x 200) = 7.62</p>
+<p>因此，在这个示例中，尽管分离缓存（每时钟周期提供两个存储器端口，从而避免了结构性冒险)的实际缺失率较差，但其存储器平均访问时间要优于单端口统一缓存。</p>
+<h3 id="存储器平均访问时间与处理器性能"><a href="#存储器平均访问时间与处理器性能" class="headerlink" title="存储器平均访问时间与处理器性能"></a>存储器平均访问时间与处理器性能</h3><p>一个显而易见的问题是：因缓存缺失导致的存储器平均访问时间能否预测处理器性能。</p>
+<p>首先，还有其他原因会导致停顿，比如使用存储器的I/O 设备产生争用。由于存储器层次结构导致的停顿远多于其他原因导致的停顿，所以设计人员经常假定所有存储器停顿都是由于缓存缺失导致的。我们这里也采用这一简化假定，但在计算最终性能时，一定要考虑所有存储器停顿。</p>
+<p>第二，上述问题的回答也受处理器的影响。采用循序执行处理器，那回答基本上就是肯定的。处理器会在缺失期间停顿，存储器停顿时间与存储器平均访问时间存在很强的相关性。现在假定采用循序执行，但下一小节会返回来讨论乱序处理器。</p>
+<p>如上一节所述，可以为CPU时间建立如下模型：</p>
+<p>CPU时间 = (CPU执行时钟周期+存储器停顿时钟周期) x 时钟周期时间</p>
+<p>这个公式会产生一个问题：一次缓存命中的时钟周期应看作CPU执行时钟周期的一部分，还是存储器停顿时钟周期的一部分?尽管每一种约定都有自己的正当理由，但最为人们广泛接受的是将命中时钟周期包含在CPU执行时钟周期中。</p>
+<p>我们现在可以研究缓存对性能的影响了。</p>
+<p>让我们对第一个示例使用循序执行计算机。假定缓存缺失代价为200个时钟周期，所有指令通常都占用1.0个时钟周期（忽略存储器停顿）。假定平均缺失率为2%，每条指令平均有1.5 次存储器引用，每千条指令的平均缓存缺失数为30。如果考虑缓存的行为特性，对性能的影响如何?使用每条指令的缺失数及缺失率来计算此影响。</p>
+<p>CPU时间=ICx( CPI执行 + 存储器停顿时钟周期/指令数)x时钟周期时间</p>
+<p>其性能（包括缓存缺失）为：</p>
+<p>CPU时间包括缓存= IC x [1.0+(30/1000 X 200)] x周期时钟时间 = ICx7.00x时钟周期时间</p>
+<p>现在使用缺失率计算性能：</p>
+<p>CPU时间 = IC x (CPU执行+缺失率x存储器访问/指令x缺失代价)x时钟周期时间</p>
+<p>CPU时间(包括缓存) = IC x [1.0x (1.5 x 2% X 200)] x 时钟周期时间 = ICx7.00x时钟周期时间</p>
+<p>在有、无缓存情况下，时钟周期时间和指令数均相同。因此，CPU时间提高至7倍，CPI 从“完美缓存”的1.00增加到可能产生缺失的缓存的7.00。在根本没有任何存储器层次结构时，CPU 将再次升高到1.0+200x1.5=301，比带有缓存的系统长出40多倍。</p>
+<p>如上例所示，缓存特性可能会对性能产生巨大影响。此外，对于低CPI、高时钟频率的处理器，缓存缺失会产生双重影响。</p>
+<ol>
+<li>CPI(执行)越低，固定数目的缓存缺失时钟周期产生的相对影响越高。</li>
+<li>在计算CPI时，一次缺失的缓存缺失代价是以处理器时钟周期进行计算的。因此，即使两个计算机的存储器层次结构相同，时钟频率较高的处理器在每次缺失时会占用较多的时钟周期，CPI的存储器部分也相应较高。</li>
+</ol>
+<p>对于低CPI、高时钟频率的处理器，缓存的重要性更高，因此，如果在评估此类计算机的性能时忽略缓存行为，其危险性更大。Amdahl 定律再次发挥威力!</p>
+<p>尽管将存储器平均访问时间降至最低是一个合理的目标(在本附录中大多使用这一目标），但请记住，最终目标是缩短处理器执行时间。下面的例子说明如何区分这两者。</p>
+<p>两种不同缓存组织方式对处理器性能的影响如何?假定完美缓存的CPI为1.6，时钟周期时间为0.35 ns，每条指令有1.4 次存储器引用，两个缓存的大小都是128 KB，两者的块大小都是64字节。一个缓存为直接映射，另一个为两路组相联。图B-3显示，对于组相联缓存，必须添加一个多工器，以根据标志匹配在组中的块之间作出选择。由于处理器的速度直接与缓存命中的速度联系在一起，所以假定必须将处理器时钟周期时间扩展1.35 倍，才能与组相联缓存的选择多工器相适应。对于一级近似，每一种缓存组织方式的缓存缺失代价都是65纳秒。</p>
+<p>首先，计算存储器平均访问时间，然后再计算处理器性能。假定命中时间为1 个时钟周期，128 KB直接映射缓存的缺失率为2.1%，同等大小的两路组相联缓存的缺失率为1.9%。</p>
+<p>存储器平均访问时间为：</p>
+<p>存储器平均访问时间=命中时间+缺失率x缺失代价</p>
+<p>因此，每种组织方式的时间为：</p>
+<p>存储器平均访问时间(一路) = 0.35+(0021 x 65)=1.72ns</p>
+<p>存储器平均访问时间(两路) = 0.35 x 1.35+(0019 X 65)=1.71ns</p>
+<p>这一存储器平均访问时间优于两路组相联缓存。</p>
+<p>处理器性能为：</p>
+<p>CPU时间= IC x ( CPI(执行) + 缺失数/指令数 x 缺失代价) x 时钟周期时间 = IC x [(CPI(执行) x 时钟周期时间) + (缺失率x(存储器访问次数/指令数)x缺失代价x时钟周期时间)]</p>
+<p>将(缺失代价x时钟周期时间)代以65ns，可得每种缓存组织方式的性能为：</p>
+<p>CPU时间(一路)= ICx [1.6 x 0.35 + (0.021x1.4x65)] = 2.47 x IC<br>CPU时间(两路)= ICx [1.6 x 0.35 x 1.35 + (0.019x1.4x65)] = 2.49 x IC</p>
+<p>相对性能为：</p>
+<p>CPU时间(两路)/CPU时间(一路) = (2.49x指令数)/(2.47x指令数) = 1.01</p>
+<p>与存储器平均访问时间的对比结果相反，直接映射缓存的平均性能略好一些，这是因为尽管两组组相联的缺失数较少，但针对所有指令扩展了时钟周期。由于CPU时间是我们的基本评估，而且由于直接映射的构建更简单一些，所以本示例中的优选缓存为直接映射。</p>
+<h3 id="缺失代价与乱序执行处理器"><a href="#缺失代价与乱序执行处理器" class="headerlink" title="缺失代价与乱序执行处理器"></a>缺失代价与乱序执行处理器</h3><p>对于乱序执行处理器，如何定义“缺失代价”呢?是存储器缺失的全部延迟，还是仅考虑处理器必须停顿时的“暴露”延迟或无重叠延迟?对于那些在完成数据缺失之前必须停顿的处理器，不存在这一问题。</p>
+<p>让我们重新定义存储器停顿，得到缺失代价的一种新定义，将其表示为非重叠延迟： </p>
+<p>存储器停顿周期/缺失数 = 缺失数/指令数 x (总缺失代价-直叠缺失延迟)</p>
+<p>与此类似，由于一些乱序处理器会拉长命中时间，所以性能公式的这一部分可以除以总命中延迟减去重叠命中延迟之差。可以对这一公式进一 步扩 展，将总缺失延迟分解为没有争用时的延迟和因为争用导致的延迟，以考虑乱序处理器中的存储器资源。我们仅关注缺失延迟。我们现在必须决定以下各项。</p>
+<ul>
+<li>存储器延迟长度——在乱序处理器中如何确定存储器操作的起止时刻。</li>
+<li>延迟重叠的长度——如何确定与处理器相重叠的起始时刻（或者说，在什么时刻我们说存储器操作使处理器停顿）。</li>
+</ul>
+<p>由于乱序执行处理器的复杂性，所以不存在单一的准确定义。</p>
+<p>由于在流水线退出阶段只能看到已提交的操作，所以我们说：如果处理器在一个时钟周期内没有退出（retire）最大可能数目的指令，它就在该时钟周期内停顿。我们将这一停顿记在第一条未退出指令的账上。这一定义绝不像看上去那么简单。例如，为缩短特定停顿时间而应用某一种优化，并不一定总能缩短执行时间，这是因为此时可能会暴露出另一种类型的停顿（原本隐藏在所关注的停顿背后）。</p>
+<p>关于延迟，我们可以从存储器指令在指令窗口中排队的时刻开始测量，也可以从生成地址的时刻开始，还可以从指令被实际发送给存储器系统的时刻开始。只要保持一致，任何一种选项都是可以的。</p>
+<p>让我们重做上面的例题，但这一次假定具有较长时钟周期时间的处理器支持乱序技术，但仍采用直接映射缓存。假定65 ns的缺失代价中有30%可以重叠，也就是说，CPU存储器平均停顿时间现在为45.5 ns。</p>
+<p>乱序计算机的存储器访问时间为：</p>
+<p>存储器平均访问时间(一路、乱序) = 0.35 x 1.35 + (0.021 x45.5)= 1.43 ns .</p>
+<p>乱序缓存的性能为：</p>
+<p>CPU时间(一路、乱序) = IC x [1.6 x 0.35 x 1.35 + (0.021 x 1.4 x 45.5)] = 2.09 x IC</p>
+<p>因此，尽管乱序计算机的时钟周期时间要慢得多，直接映射缓存的缺失率也更高一些，但如果它能隐藏30%的缺失代价，那仍然可以稍快一些。</p>
+<p>总而言之，尽管乱序处理器存储器停顿的定义和测量比较复杂，但由于它们会严重影响性能，所以应当了解这些问题。这一复杂性的出现是因为乱序处理器容忍由缓存缺失导致一定的延迟，不会对性能造成伤害。因此，设计师在评估存储器层次结构的权衡时，通常使用乱序处理器与存储器的模拟器，以确保一项帮 助缩短平均存储器延迟的改进能够真的有助于提高程序性能。为了帮助总结本节内容，同时也作为一个方便使用的参考，图B-4列出了本附录中的缓存公式。</p>
+<p><img src="/img/1618332884.jpg" alt=""><br><img src="/img/1618332885.jpg" alt=""><br>图B-4 本附录中的性能公式汇总。第一个公式计算缓存索引大小，其余公式帮助评估性能。后两个公式处理多级缓存</p>
+<h2 id="6种基本的缓存优化"><a href="#6种基本的缓存优化" class="headerlink" title="6种基本的缓存优化"></a>6种基本的缓存优化</h2><p>存储器平均访问时间公式为我们提供了一个框架，用于展示提高缓存性能的缓存优化方法：</p>
+<p>存储器平均访问时间=命中时间+缺失率x缺失代价</p>
+<p>因此，我们将6种缓存优化分为以下3类。</p>
+<ul>
+<li>降低缺失率——较大的块、较大的缓存、较高的关联度。</li>
+<li>降低缺失代价——多级缓存，为读取操作设定高于写入操作的优先级。</li>
+<li>缩短在缓存中命中的时间——在索引缓存时避免地址转换。</li>
+</ul>
+<p>改进缓存特性的经典方法是降低缺失率，我们给出3种实现技术。为了更好地理解导致缺失的原因，首先介绍一个模型，将所有缺失分为3个简单类别。</p>
+<ul>
+<li>强制缺失（Compulsory）——在第一次访问某个块时，它不可能会在缓存中，所以必须将其读到缓存中。这种缺失也被称为冷启动缺失或首次引用缺失。</li>
+<li>容量缺失（Capacity）——如果缓存无法容纳程序执行期间所需要的全部块，由于一些块会被放弃，过后再另行提取，所以会（在强制缺失之外）发生容量缺失。</li>
+<li>冲突缺失（Conflict）——如果块布置策略为组相联或直接映射，则会（在强制缺失和容量缺失之外）发生冲突缺失，这是因为如果有太多块被映射到一个组中，这个组中的某个块可能会被放弃，过后再另行提取。这种缺失也被称为碰撞缺失。其要点就是：由于对某些常用组的请求数超过n，所以本来在全相联缓存中命中的情景会在n路组相联缓存中变为缺失。</li>
+</ul>
+<p>表B-4显示了根据3C分类后的缓存缺失相对频率。强制缺失在无限缓存中发生，容量缺失在全相联缓存中发生。冲突缺失在从全相联变为八路相联、四路相联…时发生。图B-5以图形方式展示相同数据。上图显示绝对缺失率，下图绘制了当缓存大小变化时，各类缺失占总缺失数的百分比曲线。</p>
+<p><img src="/img/1618235013.jpg" alt=""></p>
+<ul>
+<li>强制缺失与缓存大小无关，而容量缺失随容量的增加而降低，冲突缺失随相联度的增大而降低。</li>
+</ul>
+<p>图B-5以围形方式显示了相同数据。注意，在不超过128KB时，大小为N的直接映射缓存的缺失率大约与大小为N/2的两路组相联缓存的缺失率相同。大于128KB的缓存不符合这一规则。注意，“容量” 列给出的也是全相联缺失率。</p>
+<p><img src="/img/1618235057.jpg" alt=""></p>
+<p>图B-5 根据表B-4中的3C数据，每种不同缓存大小的总缺失率（上）和缺失率分布（下）。上图显示实际数据缓存缺失率，下图显示每个类别的百分比</p>
+<p>为了展示相联度的好处，将冲突缺失划分为每次相联度下降时所导致的缺失。共有4类冲突缺失，其计算方式如下所示。</p>
+<ul>
+<li>八路——从全相联（无冲突）到八路相联时产生的冲突缺失。</li>
+<li>四路——从八路相联到四路相联时产生 的冲突缺失。</li>
+<li>两路——从四路相联到两路相联时产生的冲突缺失。</li>
+<li>一路——从两路相联到一路相联（直接映射）时产生的冲突缺失。</li>
+</ul>
+<p>从图中可以看出，SPEC2000程序的强制缺失率非常低，对许多长时间运行的程序都是如此。</p>
+<p>从概念上来讲，冲突缺失是最容易避免的：全相联布置策略就可以避免所有冲突缺失。但是，全相联的硬件实现成本非常高昂，可能会降低处理器时间频率，从而降低整体性能。除了增大缓存之外，针对容量缺失没有什么办法了。如果上一级存储器远小于程序所需要的容量，那就会有相当一部分时间用于在层次结构的两级之间移动数据，我们说这种存储器层次结构将会摆动。由于需要太多的替换操作，所以摆动意味着计算机的运行速度接近于低级存储器的速度，甚至会因为缺失开销变得更慢。</p>
+<p>另外一种降低3C缺失的方法是增大块的大小，以降低强制缺失数，但稍后将会看到，大型块可能会增加其他类型的缺失。</p>
+<p>3C分类使我们可以更深入地了解导致缺失的原因，但这个简单的模型也有它的局限性；它让我们深入地了解了平均性能，但不能解释个体缺失。例如，由于较大的缓存可以将引用扩展到更多个块中，所以改变缓存大小会改变冲突缺失和容量缺失。因此，当缓存大小变化时，一个缺失可能会由容量缺失变为冲突缺失。注意，3C分类还忽略了替换策略，一方面是因为其难以建模，另一方面是因为它总体来说不太重要。但在具体环境中，替换策略可能会实际导致异常行为，比如，在大相联度下得到较低的缺失率，这与3C模型的结果矛盾。</p>
+<p>遗憾的是，许多降低缺失率的技术也会增加命中时间或缺失代价。在使用3种优化方法降低缺失率时，必须综合考虑提高整体系统速度的目标，使两者达到平衡。第一个例子显示了平衡观点的重要性。</p>
+<h3 id="第一种优化方法：增大块大小以降低缺失率"><a href="#第一种优化方法：增大块大小以降低缺失率" class="headerlink" title="第一种优化方法：增大块大小以降低缺失率"></a>第一种优化方法：增大块大小以降低缺失率</h3><p>降低缺失率的最简单方法是增大块大小。图B-6针对一组程序及缓存大小，给出了块大小；与缺失率的折中。较大的块大小也会降低强制缺失。这一降低是因为局域性原理分为两个部分：时间局域性和空间局域性。较大的块充分利用了空间局域性的优势。</p>
+<p><img src="/img/1618235116.jpg" alt=""></p>
+<p>图B-6 对于5种不同大小的缓存，缺失率与块大小的相互关系。注意，如果与缓存大小相比，块大小过大，则缺失率实际上会上升。每条曲线表示一个不同大小的缓存。</p>
+<p>同时，较大的块也会增加缺失代价。由于它们降低了缓存中的块数，所以较大块可能会增大冲突缺失，如果缓存很小，甚至还会增加容量缺失。显然，没有理由要将块大小增大到会升高缺失率的程度。如果它会增加存储器平均访问时间，那降低缺失率也没有什么好处。缺失代价的增加会超过缺失率的下降。</p>
+<p><img src="/img/1618235164.jpg" alt=""></p>
+<ul>
+<li>注意，对于4KB缓存，块大小为256字节时的缺失率高于32字节。在本例中，缓存大小必须为256KB，以使块大小为256字节时能够降低缺失。</li>
+</ul>
+<p>表B-5显示了图B-6中绘制的实际缺失率。假定存储器系统的开销为80个时钟周期，然后每2个时钟周期提交16 个字节。因此，它可以在82个时钟周期内提供16个字节，在84个时钟周期内提供32个字节，以此类推。对于表B-5中的每种缓存大小，哪种缓存大小的存储器平均时间最短?</p>
+<p>如果我们假定命中时间为1个时钟周期，与块大小无关，那么在4KB缓存中，对16字节块的访问时间为：</p>
+<p>存储器平均访问时间 = 1+(8.57% x 82) = 8.027时钟周期</p>
+<p>在256 KB缓存中，对256字节块的存储器平均访问时间为：</p>
+<p>存储器平均访问时间 = 1+(0.49% x 112) = 1.549时钟周期</p>
+<p>表B-6显示了这两个极端值之间所有块与缓存大小的存储器平均访问时间。粗体项目表示对于给定缓存大小能够实现最快访问的块大小：若缓存大小为4KB，则块大小为32字节时的访问速度最快;若缓存大小大于4 KB，则块大小应为64字节。事实上，这些数值也正是当前处理器缓存的常见块大小。</p>
+<p><img src="/img/1618235430.jpg" alt=""></p>
+<ul>
+<li>注意，绝大多数的块大小为32字节和64字节。每种缓存大小的最短平均访问时间用黑体标出。</li>
+</ul>
+<p>在所有这些技术中，缓存设计者都在尝试尽可能同时降低缺失率和缺失代价。块大小的选择有赖于低级存储器的延迟和带宽。高延迟和高带宽鼓励采用大块，因为缓存在每次缺失射能够获取的字节可以多出许多，而缺失代价却很少增加。相反，低延迟和低带宽则鼓励采用小块，因为这种情况下采用较大块不会节省多少时间。例如，一个小块的两倍缺失代价可能接近一个两倍大小块的缺失代价。更多的小块还可能减少冲突缺失。注意，图B-6和表B-6给出了基于缺失率最低、存储器平均时间最短选择块大小时的差别。</p>
+<p>在了解了较大块对强制缺失和容量缺失的正面与负面影响之后，下面两小节将研究较高容量和较高相联度的可能性。</p>
+<h3 id="第二种优化方法：增大缓存以降低缺失率"><a href="#第二种优化方法：增大缓存以降低缺失率" class="headerlink" title="第二种优化方法：增大缓存以降低缺失率"></a>第二种优化方法：增大缓存以降低缺失率</h3><p>降低表B-4和图B-5中容量缺失的最明显方法是增加缓存的容量，其明显的缺点是可能延长命中时间、增加成本和功耗。这一技术在片外缓存中尤其常用。</p>
+<h3 id="第三种优化方法：提高相联度以降低缺失率"><a href="#第三种优化方法：提高相联度以降低缺失率" class="headerlink" title="第三种优化方法：提高相联度以降低缺失率"></a>第三种优化方法：提高相联度以降低缺失率</h3><p>表B-4和图B-5显示了缺失率是如何随着相联度的增大而得以改善的。从中可以看出两个一般性的经验规律。第一条规律是：对于这些特定大小的缓存，从实际降低缺失数的功效来说，八路组相联与全相联是一样有效的。通过对比表B-4中的八路项目与容量缺失列可以看出这差别，其中的容量缺失是使用全相联缓存计算得出的。</p>
+<p>从图中观察得到的第二条规则称为2：1缓存经验规律：大小为N的直接映射缓存与大小为N/2的两路组相联缓存具有大体相同的缺失率。这一规律对3C图形中小于128KB的缓存也是成立的。</p>
+<p>与许多此类示例类似，要改善存储器平均访问时间的一个方面，可能会导致另一方面的恶化。增大块大小可以降低缺失率，但会提高缺失代价；增大相联度可能会延长命中时间。因此，加快处理器时钟速度的压力鼓励使用简单的缓存设计，但提高相联度的回报是提高缺失代价，如下例所示。</p>
+<p>假定提高相联度将会延长时钟周期时间，如下所示：</p>
+<ul>
+<li>时钟周期时间(两路) = 1.36 x 时钟周期时间(一路)</li>
+<li>时钟周期时间(四路) = 1.44 x 时钟周期时间(一路)</li>
+<li>时钟周期时间(八路) = 1.52 x 时钟周期时间(一路)</li>
+</ul>
+<p>假定命中时间为1个时钟周期，直接映射情景的缺失代价为到达第2级缓存的25个时钟周期，在第2级缓存中绝对不会缺失，还假定不需要将缺失代价舍入为整数个时钟周期。</p>
+<p>每种相联度的存储器平均访问时间为：</p>
+<p>存储器平均访问时间(八路) = 命中时间(八路) + 缺失率路x缺失代价(八路) = 1.52+缺失率(八路)x25</p>
+<ul>
+<li>存储器平均访问时间(四路) = 1.44+缺失率(四路) x 25 </li>
+<li>存储器平均访问时间(两路) = 1.36+缺失率(两路) x 25</li>
+<li>存储器平均访问时间(一路) = 1.00+缺失率(一路) x 25</li>
+</ul>
+<p>每种情况下的缺失代价相同，所以我们使其保持25个时钟周期。例如，对于一个4 KB的直接映射缓存，存储器平均访问时间为：</p>
+<p>存储器平均访问时间(一路) = 1.00+ (0.098 x 25) = 3.44</p>
+<p>对于512 KB八路组相联缓存，该时间为：</p>
+<p>存储器平均访问时间(八路) = 1.52+(0.006x25) = 1.66</p>
+<p>利用这些公式及表B-4中的缺失率，表B-7给出了每种缓存和相联度时的存储器平均访问时间。该表显示，对于不大于8KB、不超过四路相联度的缓存，本例中的公式成立。从16 KB开始，较大相联度的较长命中时间超过了因为缺失降低所节省的时间。</p>
+<p><img src="/img/1618235515.jpg" alt=""></p>
+<p>注意，在本例中，我们没有考虑较慢时钟频率对程序其余部分的影响，因此低估了直接映射缓存的收益。</p>
+<h3 id="第四种优化方法：采用多级缓存降低缺失代价"><a href="#第四种优化方法：采用多级缓存降低缺失代价" class="headerlink" title="第四种优化方法：采用多级缓存降低缺失代价"></a>第四种优化方法：采用多级缓存降低缺失代价</h3><p>降低缓存缺失已经成为缓存研究的传统焦点，但缓存性能公式告诉我们：通过降低缺失代价同样可以获得降低缺失率所带来的好处。此外，图2-2显示的技术趋势表明：处理器的速度增长快于DRAM，从而使缺失代价的相对成本随时间的推移而升高。处理器与存储器之间的性能差距让架构师开始思考这样一个问题：是应当加快缓存速度以与处理器速度相匹配呢?还是让缓存更大一些，以避免加宽处理器与主存储器之间的鸿沟?</p>
+<p>一个回答是：两者都要。在原缓存与存储器之间再添加一级缓存可以简化这一决定。第一级缓存可以小到足以与快速处理器的时钟周期时间相匹配。而第二级缓存则大到足以捕获本来可能进入主存储器的访问，从而降低实际缺失代价。尽管再添加一级层次结构的思路非常简单，但它增加了性能分析的复杂程度。第二级缓存的定义也并非总是那么简单。首先让我们为一个二级缓存定义存储器平均访问时间。用下标L1和L2分别指代第一级、 第二级缓存，原公式为：</p>
+<p>存储器平均访问时间=命中时间L1 + 缺失率L1 x 缺失代价L1</p>
+<p>及</p>
+<p>缺失代价L1=命中时间L2 + 缺失率L2 x 缺失代价L2</p>
+<p>得</p>
+<p>存储器平均访问时间=命中时间L1 + 缺失率L1 x (命中时间L2 + 缺失率L2 x 缺失代价12)</p>
+<p>在这个公式中，第二级缺失率是针对第-级缓存未能找到的内容进行测量的。为了避免模糊，对二级缓存系统采用以下术语。</p>
+<ul>
+<li>局部缺失率——此比值即是缓存中的缺失数除以对该缓存进行存储器访问的总数。可以想到，对于第一级缓存， 它等于缺失率L1，对于第二级缓存，它等于缺失率L2</li>
+<li>全局缺失率——缓存中的缺失数除以处理器生成的存储器访问总数。利用以上术语，第一级缓存的全局缺失率仍然为缺失率L1，但对于第二级缓存则为缺失率L1x缺失率L2</li>
+</ul>
+<p>第二级缓存的这一局部缺失率很大，这是因为第一级缓存已经提前解决了存储器访问中便于实现的部分。这就是为什么说全局缺失率是一个更有用的度量标准：它指出在处理器发出的存储器访问中，有多大比例指向了存储器。</p>
+<p>这是一个让每条指令缺失数度量闪光的地方。利用这一度量标准，不用再担心局部缺失率或全局缺失率的混淆问题，只需要扩展每条指令的存储器停顿，以增加第二级缓存的影响。</p>
+<p>每条指令的平均存储器停顿时间=每条指令的缺失数L1x命中时间L2 + 每条指令的缺失数L2x缺失代价L2</p>
+<p>假定在1000次存储器引用中，第一级缓存中有40次缺失，第二级缓存中有20次缺失。各缺失率等于多少?假定L2缓存到存储器的缺失代价为200个时钟周期，L2缓存的命中时间为10个时钟周期，L1 的命中时间为1个时钟周期，每条指令共有1.5次存储器引用。每条指令的存储器平均访问时间和平均停顿周期为多少?</p>
+<p>第一级缓存的缺失率（局部缺失率或全局缺失率）为40/1000=4%。第二级缓存的局部缺失率为20/40=50%。第二级缓存的全局缺失率为20/1000=2%。则：</p>
+<p>存储器平均访问时间=命中时间L1+缺失率L1 x (命中时间L2+缺失率L2x缺失代价L2) = 1+4% x (10+50% x 200) = 5.4个时钟周期</p>
+<p>为了知道每条指令会有多少次缺失，我们将1000次存储器引用除以每条指令的1.5次存储器引用，得到667条指令。因此，我们需要将缺失数乘以1.5，得到每千条指令的缺失数。于是得到每千条指令的L1缺失数为40x 1.5=60次，L2缺失数为20x1.5= 30次。关于每条指令的平均存储器停顿，假定缺失数在指令与数据之间是均匀分布的：</p>
+<p>每条指令的平均存储器停顿=每条缺失的缺失数L1 x 命中时间L2 + 每条指令的缺失数L2 x 缺失代价L2 = (60/1000) x 10 + (30/1000) x 200 = 0.060 x 10 + 0.030 x 200 = 6.6个时钟周期</p>
+<p>如果从存储器平均访问时间（AMAT）中减去L1命中时间，然后再乘以每条指令的平均存储器引用数，则可以得到每条指令平均存储器停顿值：(5.4- 1.0) x 1.5 = 4.4 x 1.5 - 6.6个时钟周期</p>
+<p>注意，这些公式是针对混合式读取与写入操作的，假定采用写回第一级缓存。显然，直写第一级缓存会将所有写入操作都发往第二二级，而不是仅限于缺失，而且还可能使用写入缓冲区。</p>
+<p>图B-7和图B-8显示了一个设计中的缺失率和相对执行时间是如何随着第一二级缓存的大小而变化的。从两个图中可以有两点体悟。第一，如果第二级缓存远大于第一级缓存，则全局缓存缺失率与第二级缓存的单一缓存缺失率非常类似。第二，局部缓存缺失率不是第二级缓存的良好度量标准；它是第一级缓存缺失率的函数，因此可以通过改变第一级缓存而变化。所以，在评估第一级缓存时，应当使用全局缓存缺失率。</p>
+<p><img src="/img/1618235601.jpg" alt=""></p>
+<p>图B-7 多级缓存的缺失率随缓存大小的变化。小于两个64 KB一级缓存总和的第二级缓存没有什么意义，从其高缺失率中可以反映出这一点。大于256 KB之后，单个缓存在全局缺失率在10%以内。单级缓存的缺失率随大小的变化是根据第二级缓存的局部缺失率和全局缺失率绘制的，采用的是32 KB一级缓存。L2缓存（统一缓存）为两路组相联，采用替换策略。分别有独立的L2指令与数据缓存，它们都是64 KB两路组相联，采用LRU替换策略。L1与L2缓存的块大小均为64字节。</p>
+<p><img src="/img/1618235938.jpg" alt=""></p>
+<p>图B-8 相对执行时间与第二级缓存大小的关系。图中的每两个长条表示一次L2缓存命中的不同时钟周期。引用执行时间1.00 是指一个8192 KB第二级缓存在第二级命中的延迟为1个时钟周期。</p>
+<p>有了这些定义，我们可以考虑第二级缓存的参数。两级缓存之间的首要区别就是第一级缓存的速度影响着处理器的时钟频率，而第二级缓存的速度仅影响第一级缓存的缺失代价。因此，我们可以在第二级缓存中考虑许多不能用于第一级缓存的替代选项。在设计第二级缓存时，主要有两个问题：是否要降低CPI的存储器平均访问时间部分?其成本有多高?</p>
+<p>首先要决定的是第二级缓存的大小。由于第一级缓存中的所有内容都可能在第二级缓存中，所以第二级缓存应当远大于第一级缓存。如果第二级缓存只是稍大一点，那局部缺失率将会很高。这一观察结果激励了巨型第二级缓存的设计。</p>
+<p>给定以下数据，第二级缓存相联度对其缺失代价的影响如何?</p>
+<ul>
+<li>直接映射的命中时间L2为10个时钟周期。</li>
+<li>两路组相联将命中时间增加0.1个时钟周期，达到10.1个时钟周期。</li>
+<li>直接映射的局部缺失率L2为25%。</li>
+<li>缺失代价I2为200个时钟周期。</li>
+<li>两路组相联直接映射的局部缺失率L2为20%。</li>
+</ul>
+<p>对于直接映射第二级缓存，第一级缓存缺失代价为：<br>缺失代价(一路L2) = 10 + 25% x 200 = 60.0个时钟周期</p>
+<p>加上相联度的成本仅使命中成本增加0.1个时钟周期，由此得到新的第一级缓存缺失代价为：</p>
+<p>缺失代价(两路L2) = 10.1 + 20% x 200 = 50.1个时钟周期</p>
+<p>事实上，第二级缓存几乎总是与第一级缓存、处理器同步。相应地，第二级命中时间必须为整数个时钟周期。如果幸运的话，我们可以将第二级命中时间缩短到10个时钟周期；如果不够幸运，则会舍入到11个周期。相对于直接映射第二级缓存，任一选项都是一种改进：</p>
+<ul>
+<li>缺失代价两路L2 = 10+20% x 200 = 50.0个时钟周期</li>
+<li>缺失代价两路12 = 11+20% x 200 = 51.0个时钟周期</li>
+</ul>
+<p>现在我们可以通过降低第二级缓存的缺失率来降低缺失代价了。</p>
+<p>另一条关注事项涉及第一级缓存中的数据是否在第二级缓存中。多级包含是存储器层次结构的一种自然策略：L1 数据总是出现在L2中。这种包含性是我们所希望的，因为仅通过检查第二级缓存就能确定IO与缓存之间（或多处理器中的缓存之间）的一致性。</p>
+<p>包含性的一个缺点就是：测量结果可能提议对较小的第一级缓存使用较小的块，对较大的第二级缓存使用较大的块。例如，Pentium 4的L1缓存中的块为64个字节，L2缓存中的块为128个字节。包含性仍然能够得到保持，但在第二级缺失时要做更多工作。如果一级块所映射的二级块将被替换，则第二级缓存必须使所有此类一级块失效，从而会略微提高第一级缺失率。为了避免此类问题，许多缓存设计师使所有各级缓存的块大小保持一致。</p>
+<p>但是，如果设计师只能承受略大于L1缓存的L2缓存呢?它是不是有很大一部分空间要被用作L1缓存的冗余副本?在此种情况下，可以使用一种明显相反的策略：多级互斥，L1中的数据绝对不会出现在L2缓存中。典型情况下，在采用互斥策略时，L1中的缓存缺失将会导致L1与L2的块交换，而不是用L2块来替代L1块。这一策略防止了L2缓存中的空间浪费。例如，AMD Opteron芯片使用两个64 KB L1缓存和1 MB L1缓存来执行互斥策略。</p>
+<p>这些问题表明，尽管一些新手可能会独立地设计第一级和第二级缓存，但在给定一个兼容第二级缓存时，第一级缓存设计师的任务要简单一些。比如，如果下一级有写回缓存来为重复写入操作提供支持，而且使用了多级包含，那使用直写的风险就会小一些。所有缓存设计的基础都是在加速命中和减少缺失之间实现平衡。对于第二级缓存，命中数要比第一级缓存中少得多，所以重心更多地偏向减少缺失。因为这一认知，人们开始采用大得多的缓存和降低缺失率的技术，比如更高的相联度和更大的块。</p>
+<h3 id="第五种优化方法：使读取缺失的优先级高于写入缺失，以降低缺失代价"><a href="#第五种优化方法：使读取缺失的优先级高于写入缺失，以降低缺失代价" class="headerlink" title="第五种优化方法：使读取缺失的优先级高于写入缺失，以降低缺失代价"></a>第五种优化方法：使读取缺失的优先级高于写入缺失，以降低缺失代价</h3><p>这一优化方法在完成写入操作之前就可以为读取操作提供服务。我们首先看一下写入缓冲区的复杂性。</p>
+<p>采用直写缓存时，最重要的改进就是一个大小合适的写入缓冲区。但是，由于写入缓冲区可能包含读取缺失时所需要的更新值，所以它们的确会使存储器访问变得复杂。</p>
+<p>看以下序列：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SW R3, 512(R0)   ;M[512] ← R     (cache index 0)</span><br><span class="line">LW R1, 1024(R0)  ;R1 ← M[1024]   (cache index 0)</span><br><span class="line">LW R2, 512(R0)   ;R2 ← M[512]    (cache index 0)</span><br></pre></td></tr></table></figure><br>假定有一个直接映射直写缓存，它将512和1024映射到同一块中，假定有一个四字写入缓存区，在读取缺失时不会进行检查。R2中的值是否总等于R3中的值?</p>
+<p>使用第2章的术语，这是存储器中的一个“写后读”数据冒险。我们通过跟踪一次缓存访问来了解这种危险性。R3的数据在存储之后被放在写入缓冲区中。随后的载入操作使用相同的缓存索引，因此产生一次缺失。第二条载入指令尝试将位置512处的值放到寄存器R2 中，这样也会导致一次缺失。如果写入缓冲区还没有完成向存储器中位置512的写入，对位置512的读取就会将错误的旧值放到缓存块中，然后再放入R2中。如果没有事先防范，R3是不等于R2的!</p>
+<p>摆脱这一两难境地的最简单方法是让读取缺失一直等待到写入缓冲区为空为止。一种替代方法是在发生读取缺失时检查写入缓冲区的内容，如果没有冲突而且存储器系统可用，则让读取缺失继续。几乎所有桌面与服务器处理器都使用后一方法，使读取操作的优先级高于写入操作。</p>
+<p>处理器在写回缓存中的写入成本也可以降低。假定一次读取缺失将替换一个脏服务器块。我们不是将这个脏块写到存储器中，然后再读取存储器，而是将这个脏块复制到缓冲区中，然后读存储器，然后再写存储器。这样，处理器的读取操作将会很快结束（处理器可能正在等待这一操作的完成）。和前一种情况类似，如果发生了读取缺失，处理器或者停顿到缓冲区为空，或者检查缓冲区中各个字的地址，以了解是否存在冲突。</p>
+<p>命中时间会影响到处理器的时钟频率，所以它是至关重要的；在今天的许多处理器中，缓存访问时间限制都限制了时钟频率，即使那些使用多个时钟周期来访问缓存的处理器也是如此。因此，缩短命中时间可以对各个方面提供帮助，从而具有多重重要性，超出了存储器平均访问时间公式的限制。</p>
+<h3 id="第六种优化方法：避免在索引缓存期间进行地址转换，以缩短命中时间"><a href="#第六种优化方法：避免在索引缓存期间进行地址转换，以缩短命中时间" class="headerlink" title="第六种优化方法：避免在索引缓存期间进行地址转换，以缩短命中时间"></a>第六种优化方法：避免在索引缓存期间进行地址转换，以缩短命中时间</h3><p>即使一个小而简单的缓存也必须能够将来自处理器的虚拟地址转换为用以访问存储器的物理地址。如B.4节所述，处理器就是将主存储器看作另一级存储器层次结构，因此，必须将存在于磁盘上的虚拟存储器地址映射到主存储器。</p>
+<p>根据“加快常见情景速度”这一指导原则，我们为缓存使用虚拟地址，因为命中的出现频率当然远高于缺失。这种缓存被称为虚拟缓存，而物理缓存用于表示使用物理地址的传统缓存。问题是：在索引缓存中应当使用虚拟地址还是使用物理地址，在标志对比中应当使用虚拟地址还是使用物理地址。如果对索引和标志都完全采用虚拟寻址，那在缓存命中时就可以省掉地址转换的时间。</p>
+<p>那为什么不是所有体系结构都构建虚拟寻址的缓存呢?一个原因是要提供保护。在将虚拟地址转换为物理地址时，无论如何都必须检查页级保护。一种解决方案是在缺失时从TLB复制保护信息，添加一个字段来保存这一信息，然后在每次访问虚拟寻址缓存时进行核对。另一个原因是：在每次切换进程时，虚拟地址会指向不同的物理地址，需要对缓存进行刷新。图B-9显示了这一刷新对缺失率的影响。一种解决方案是增大缓存地址标志的宽度，增加一个进程识别符标志（PID）。如果操作系统将这些标志指定给进程，那么只需要在PID被回收时才刷新缓存；也就是说，PID 可以区分缓存中的数据是不是为此这个程序准备的。图B-9显示了通过PID避免缓存刷新而对缺失率的改善。</p>
+<p><img src="/img/1618236074.png" alt=""></p>
+<p>图B-9 一个程序的缺失率随虚拟寻址缓存大小的变化，分三种情况测量：没有进程切换（单进程）、使用进程识别符标志（PID）进行进程切换，有进程切换但没有PID，即清除（purge） 模式。PID使单进程绝对缺失率增加0.3%~0.6%，比清除模式节省0.6%~4.3%。</p>
+<p>虚拟缓存没有更加普及的第三个原因是操作系统和用户程序可能为同一物理地址使用两种不同的虚拟地址。这些重复地址称为同义地址或别名地址，可能会在虚拟缓存中生成同一数据的两个副本；如果其中一个被修改了，另一个就会包含错误值。而采用物理缓存是不可能发生的，因为这些访问将会首先被转换为相同的物理缓存块。</p>
+<p>同义地址问题的硬件解决方案称为别名消去，保证每个缓存块都拥有一个独一无二的物理地址。软件可以强制这些别名共享某些地址位，从而大大简化了这一问题。 比如Sun要求所有别名地址的后面18位都必须相同；这一限制称为页面着色。注意，页面着色就是向虚拟存储器应用的组相联映射：使用64（2%）个组来映射4 KB（212）个页面，确保物理地址和虚拟地址的后18位匹配。这一限制意味着不大于 218 （256 K）字节直接映射缓存绝对不会为块使用重复的物理地址。从缓存的角度来看，页着色有效地增大了页偏移，因为软件保证了虚拟、物理页地址的最后几位是相同的。</p>
+<p>最后一部分与虚拟地址相关的领域是I/O。I/O 通常使用物理地址，从而需要映射到虚拟地址，以与虚拟地址进行交换。一种使虚拟缓存与物理缓存均能实现最佳性能的备选方法是使用一部分页偏移量（也就是虚拟地址与物理地址保持一致的那一部分）来索引缓存。在使用索引读取缓存的同时，地址的虚拟部分被转换，标志匹配使用了物理地址。</p>
+<p>这一备选方法允许缓存读取操作立即开始，而标志对比仍然使用物理地址。这种虚拟索引、物理标志备选方法的局限性是直接映射缓存不能大于页大小。为了利用这一技巧，虚拟页大小至少为2（9+6）个字节，即32 KB。如果不是这样，则必须将该索引的一部分由虚拟地址转换为物理地址。图B-10显示了在使用这一技术时的缓存、转换旁视缓冲区（TLB）和虚拟存储器的组织方式。</p>
+<p><img src="/img/1618236143.jpg" alt=""></p>
+<p>图B-10 一种从虛拟地址到L2缓存访问的虚设存储器层次结构的整体图像。页大小为16 KB。TLB是拥有256项的两路组相联。L1 缓存是一个直接映射16 KB，L2缓存是一个总容量为4 MB的四路组相联。这两者的块大小都是64个字节。虚拟地址为64位，物理地址为40位</p>
+<p>相联度可以将此索引保存在地址的物理部分，但仍支持大型缓存。回想一下，索引的大小受以下公式的控制：</p>
+<p>2^索引 = 缓存大小/(块大小x组相联)</p>
+<p>例如，使相联度和缓存大小同时加倍并不会改变索引的大小。作为一个极端示例，IBM 3033缓存是一个十六路组相联，尽管研究表明：在八路以上的组相联中，对缺失率没有什么好处。尽管IBM体系结构中存在页大小为4KB这一障碍，这一高相联度允许使用物理索引对64 KB缓存进行寻址。</p>
+<h3 id="基本缓存优化方法小结"><a href="#基本缓存优化方法小结" class="headerlink" title="基本缓存优化方法小结"></a>基本缓存优化方法小结</h3><p>本节介绍了用于降低缺失率与缺失代价、缩短命中时间的技术，这些技术通常会影响到存储器平均访向公式的其他部分，还会影响到存储器层次结构的复杂性。表B-8总结了这些技术，并估计了对复杂性的影响，“+”表示该技术对该因素有改进，“-” 表示该技术对该因素有伤害，空白表示没有影响。本图中任何一项优化方法都不能对一个以上的类别提供帮助。</p>
+<p><img src="/img/1618236211.jpg" alt=""></p>
+<h2 id="虛拟存储器"><a href="#虛拟存储器" class="headerlink" title="虛拟存储器"></a>虛拟存储器</h2><p>必须有一种方法，用于在许多进程之间共享较少量的物理空间。</p>
+<p>其中一种做法——虚拟存储器，将物理存储器划分为块，并分配给不同的进程。这种方法必然要求采用一种保护机制来限制各个进程，使其仅能访问属于自己的块。虚拟存储器的许多形式还缩短了程序的启动时间，因为程序启动之前不再需要物理存储器中的所有代码和数据。尽管由虚拟存储器提供的保护对于目前的计算机来说是必需的，但共享并不是发明虚拟内存的原因。如果一个程序对物理内存来说变得过于庞大，就需要由程序员负责将其装进去。程序员将程序划分为片段，然后确认这些互斥的片断，在执行时间根据用户程序控制来加载或卸载这些覆盖段（overlay）。程序员确保程序绝对不会尝试访问超出计算机现有的物理主存储器，并确保会在正确的时间加载正确的覆盖段。容易想到，这种责任降低了程序员的生产效率。</p>
+<p>虚拟存储器的发明是为了减轻程序员的这一负担；它自动管理表示为主存储器和辅助存储的两级存储器层次结构。图B-11显示了程序从虚拟存储器到物理存储器的映射，共有4个页面。</p>
+<p>除了共享受保护的存储器空间和自动管理存储器层次结构之外，虚拟存储器还简化了为执行程序而进行的加载过程。这种被称为再定位（relocation）的机制允许同一程序在物理存储器中的任意位置运行。图B-11中的程序可以定位在物理存储器中的任何位置，也可以放在磁盘上，只需要改变它们之间的映射即可。（在虚拟存储器普通之前，处理器中包含一个用于此目的的再定位寄存器。）硬件解决方案的一种替代方法是使用软件，在每次运行一个程序时，改变其所有地址。</p>
+<p><img src="/img/1618236251.jpg" alt=""></p>
+<p>图B-11 左侧给出位于相邻虚拟地址空间中的逻辑程序。它包括A、B、C和D4个页。这些块中有3个的实际位置在物理主存储器中，另一个位于磁盘上</p>
+<p>第1章中几个有关缓存的一般性存储器层次结构思想与虚拟存储器类似，当然，其中有许多术语不同。页或段表示块，页错误或地址错误用于缺失。有了虚拟存储器，处理器会给出虚拟地址，由软硬件组合方式转换为物理地址，再来访问主存储器。这一过程称为存储器映射或地址转换。今天，由虚拟地址控制的两级存储器层次结构为DRAM和磁盘。表B-9显示了虚拟存储器存储器层次结构参数的典型范围。</p>
+<p>除了表B-9中提到的量化区别之外，缓存与虚拟存储器之间还有其他一些区别，如下所述。</p>
+<ul>
+<li>发生缓存缺失时的替换主要由硬件控制，而虚拟存储器替换主要由操作系统控制。缺失代价越长，正确作出决定就显得越重要，所以操作系统可以参与其中，花费一些时间来决定要替换哪些块。</li>
+<li>处理器地址的大小决定了虚拟存储器的大小，但缓存大小与处理器地址大小无关。</li>
+<li>除了在层次结构中充当主存储器的低一级后援存储之外，辅助存储还用于文件系统。事实上，文件系统占用了大多数辅助存储。它通常不在地址空间中。</li>
+</ul>
+<p><img src="/img/1618236399.jpg" alt=""></p>
+<p>虚拟存储器还包含几种相关技术。虚拟存储器系统可分为两类：页，采用大小固定的块；段，采用大小可变的块。页大小通常固定为4096至8 192字节，而段大小是变化的。任意处理器所支持的最大段范围为216个字节至232个字节，最小段为1个字节。图B-11显示了这两种方法可以如何划分代码和数据。</p>
+<p><img src="/img/1618236435.jpg" alt=""><br>图B-11 分页和分段方式对程序的划分示例</p>
+<p>是使用页虚拟存储器还是段虚拟存储器，这一决定会影响处理器。页寻址方式的地址是单一固定大小，分为页编号和页内偏移量，与缓存寻址类似。单一地址对分段地址无效，可变大小的段需要1个字来表示段号，1个字表示段内的偏移量，总共2个字。对编译器来说，不分段地址空间更简单一些。</p>
+<p>这两种方法的优缺点已经在操作系统教科书中进行了很好的阐述，表B-10总结了这些观点。由于替换问题（表中第三行），今天很少再有计算机使用纯粹的分段方法。一些计算机使用一种名为页式分段的混合方式，在这种方式中，一个段由整数个页组成。由于存储器不需要是连续的，也不需要所有段都在主存储器中，从而简化了替换过程。最近的一种混合方式是由计算机提供多种页面大小，较大页面的大小为最小页面大小的整数倍，且为2的幂。</p>
+<p><img src="/img/1618236460.jpg" alt=""></p>
+<ul>
+<li>这两者都可能浪费存储器，取决于块大小及各分段能否很好地容纳于主存储器中。采用不受限指针的编程语言需要传递段和地址。一种称为页式分段的混合方法可以发挥这两者的最佳状态：分段由页组成，所以替换一个块是很轻松的，而一个段仍被看作一个逻辑单位。</li>
+</ul>
+<h3 id="再谈存储器层次结构的4个问题"><a href="#再谈存储器层次结构的4个问题" class="headerlink" title="再谈存储器层次结构的4个问题"></a>再谈存储器层次结构的4个问题</h3><p>我们现在已经为回答虚拟存储器的四个存储器层次结构问题做好了准备。</p>
+<h4 id="问题1：一个块可以放在主存储器的什么位置"><a href="#问题1：一个块可以放在主存储器的什么位置" class="headerlink" title="问题1：一个块可以放在主存储器的什么位置?"></a>问题1：一个块可以放在主存储器的什么位置?</h4><p>虚拟存储器的缺失代价涉及旋转磁存储设备的访问，因此非常高。如果在较低缺失率与较简单放置算法之间进行选择，操作系统设计人员通常选择较低缺失率，因为其缺失代价可能会高得离谱。因此，操作系统允许将块放在主存储器中的任意位置。根据图B-1中的术语，这一策略可以标记为全相联的。</p>
+<h4 id="问题2：如果一个块在主存储器中，如何找到它"><a href="#问题2：如果一个块在主存储器中，如何找到它" class="headerlink" title="问题2：如果一个块在主存储器中，如何找到它?"></a>问题2：如果一个块在主存储器中，如何找到它?</h4><p>分页和分段都依靠一种按页号或段号索引的数据结构。这种数据结构包含块的物理地址。对于分段方式，会将偏移量加到段的物理地址中，以获得最终物理地址。对于分页方式，该偏移量只是被串接到这一物理分布地址。</p>
+<p><img src="/img/1618278585.jpg" alt=""></p>
+<p>图B-13 通过页表将虚拟地址映射到物理地址</p>
+<p>这一包含物理页地址的数据结构通常采用一种分页表的形式。这种表通常根据虚拟页号进行索引，其大小就是虚拟地址空间中的页数。如果虚拟地址为32位、4 KB页、每个页表项（PTE）大小为4字节，则页表的大小为(2^32/2^12) x 2^2 = 2^22即4 MB。</p>
+<p>为了缩小这一数据结构，一些计算机向虚拟地址应用了一种散列功能。这种散列允许数据结构的长度等于主存储器中物理页的数目。这一数目可以远小于虚拟页的数目。这种结构被称为反转分页表。利用前面的例子，一个512 MB的物理存储器可能只需要1 MB (8 x 512 MB/4KB)的反转分页表；每个页表项另外需要4字节，用于表示虚拟地址。</p>
+<p>为了缩短地址转换时间，计算机使用一个专门进行这些地址变换的缓存，称为变换旁视缓冲区，或者简称为变换缓冲区。</p>
+<h4 id="问题3：在虛拟存储器缺失时应当替换哪个块"><a href="#问题3：在虛拟存储器缺失时应当替换哪个块" class="headerlink" title="问题3：在虛拟存储器缺失时应当替换哪个块?"></a>问题3：在虛拟存储器缺失时应当替换哪个块?</h4><p>前面曾经提到，操作系统的最高指导原则是将页错误降至最低。几乎所有操作系统都与这一指导原则保持一致，尝试替换最近使用最少（LRU）的块，这是因为如果用过去的信息来预测未来，将来用到这种块的可能性最低。</p>
+<p>为了帮助操作系统评估LRU，许多处理器提供了一个使用位或参考位，从逻辑上来说，只要访问一个页，就应对其进行置位。（为了减少工作，通过仅在发生转换缓冲区缺失时对其进行置位，稍后将对此进行介绍。）操作系统定期对这些使用位清零，之后再记录它们，以判断在一个特定时间段时使用了哪些页。通过这种方式进行跟踪，操作系统可以选择最近引用最少的一个页。</p>
+<h4 id="问题4：在写入时发生什么"><a href="#问题4：在写入时发生什么" class="headerlink" title="问题4：在写入时发生什么?"></a>问题4：在写入时发生什么?</h4><p>主存储器的下一级包含旋转磁盘，其访问会耗时数百万个时钟周期。由于访问时间的巨大差异，还没有人构建一种虚拟存储器操作系统，在处理器每次执行存储操作时将主存储器直写到磁盘上。因此，这里总是采用写回策略。</p>
+<p>由于对低一级的非必需访问会带来如此之高的成本，所以虚拟存储器系统通常会包含一个重写位。利用这一重写位，可以仅将上次读取磁盘之后经过修改的块写至磁盘。</p>
+<h3 id="快速地址变换技术"><a href="#快速地址变换技术" class="headerlink" title="快速地址变换技术"></a>快速地址变换技术</h3><p>分页表通常很大，从而存储在主存储器中，有时它们本身就是分页的。分页意味着每次存储器访问在逻辑上至少要分两次进行，第一次存储器访问是为了获得物理地址，第二次访问是为了获得数据。第2章曾经提到，我们使用局域性来避免增加存储器访问次数。将地址变换局限在一个特殊缓存中，存储器访问就很少再需要第二次访问来转换数据。 这一特殊地址变换缓存被称为变换旁视缓冲区（TLB），有时也称为变换缓冲区（TB）。</p>
+<p>TLB项就像是一个缓存项目，其中的标志保存了虚拟地址部分，数据部分保存了特殊页帧编号、保护字段、有效位，通常还有一个使用位和重写位。要改变页表中某一项的特殊页帧编号或保护字段，操作系统必须确保旧项不在TLB中；否则，系统就不能正常运行。注意，这个重写位意味着对应页曾被改写过，而不是指TLB中的地址变换或数据缓存中的特殊块经过改写。操作系统通过改变页表中的值，然后再使相应TLB项失效来重置这些位。在从分页表中重新加载该项时，TLB会获得这些位的准确副本。</p>
+<p>图B-14给出了Opteron 数据TLB组织方式，并标出了每一个变换步骤。这个TLB使用全相联布置；因此，变换首先向所有标志发送虚拟地址（步骤1和步骤2）。当然，这些标志必须标记为有效，以允许进行匹配。同时，根据TLB中的保护信息核对存储器访问的类型，以确认其是否有效（也在步骤2中完成）。</p>
+<p><img src="/img/1618278638.jpg" alt=""><br>图B-14 在地址变换期间Opteron数据TLB的操作。一次 TLB命中的4个步骤用带圆圈的数字显示。这个TLB有40项。</p>
+<p>和缓存中的理由相似，TLB中也不需要包含页偏移量的12个位。匹配标志通过一个40选1多工器，高效地发送相应的物理地址（步骤3）。然后将页偏移量与物理页帧合并，生成一个完整的物理地址（步骤4）。地址大小为40位。</p>
+<h3 id="选择页大小"><a href="#选择页大小" class="headerlink" title="选择页大小"></a>选择页大小</h3><p>最显而易见的体系结构参数是页大小。页大小的选择实际就是在偏向较大页与偏向较小页的力量之间进行平衡的问题。以下因素偏向较大尺寸。</p>
+<ul>
+<li>页表的大小与页大小成反比，因此，增大页的大小可以节省存储器（或其他用于存储器映射的资源）。</li>
+<li>B.3节曾经提到，分页较大时，可以允许缓存命中时间较短的较大缓存。</li>
+<li>与传递较小页相比，从（向）辅助存储传递较大页（有可能通过网络）的效率更高一些。</li>
+<li>TLB项目的数量受限，所以分页较大意味着可以高效地映射更多存储器，从而可以降低TLB缺失数量。</li>
+</ul>
+<p>由于最后这个原因，近来的微处理器决定支持多种页大小；对于一些程序，TLB缺失对CPI的重要性可能与缓存缺失相同。</p>
+<p>采用较小分页的主要动机是节省存储。当虚拟内存的相邻区域不等于页大小的整数倍时，采用较小页可以减少存储的浪费空间。页面中这种未使用存储器的术语名称为内部碎片。假定每个进程有三个主要段（文本、堆和栈），每个进程的平均浪费存储量为页大小的1.5倍。当然，当页大小非常大（超过32KB）时，那就可能浪费存储（主存储器和辅助存储器）和I/O带宽了。</p>
+<p>最后一项关注是进程启动时间；许多进程都很小，较大的页面可能会延长调用一个进程的时间。</p>
+<h3 id="虚拟存储器和缓存小结"><a href="#虚拟存储器和缓存小结" class="headerlink" title="虚拟存储器和缓存小结"></a>虚拟存储器和缓存小结</h3><p>由于虚拟存储器、TLB、第一级缓存、第二级缓存都映射到虚拟与物理地址空间的一部分，所以人们可能会混淆哪些位去了哪里。图B-15给出了一个从64位虚拟地址到41位物理地址的假设示例，它采用两级缓存。这一L1缓存的缓存大小和页大小都是8 KB，所以它是虚拟寻址、物理标记的。L2缓存为4 MB。这两者的块大小都是64个字节。</p>
+<p>第一，64位虚拟地址在逻辑上被划分为虚拟页号和页偏移量。前者被发送到TLB，以备变换为物理地址，后者的高位被发送到L1缓存，充当索引。如果TLB匹配命中，则将物理页号发送到L1缓存标志，检查是否匹配。如果匹配，则是L1缓存命中。块偏移随后为处理器选择该字。</p>
+<p>如果L1缓存核对显示为缺失，则使用物理地址尝试L2缓存物理地址的中间部分用作4MB L2缓存的索引。将所得到的L2缓存标志与物理地址的上半部分对比，以检查是否匹配。如果匹配，我们得到一次L2缓存命中，数据被送往处理器，它使用块偏移量来选择所需字。在L2缺失时，会使用物理地址从存储器获取该块。</p>
+<p>尽管这是一个简单示例，但该图与真实缓存之间的主要区别只是重复问题。因为，只有一个L1缓存。如果有两个L1缓存，会重复该图的上半部分。注意，这会导致拥有两个TLB，而这正是典型情况。因此，一个缓存和TLB用于指令，由PC驱动，一个缓存和TLB用于数据，由实际地址驱动。</p>
+<p>第二种简化是所有缓存与TLB都是直接映射的。如果有任何一个是n路组相联的，则会将每一组标志存储器、比较器和数据存储器重复n次，并用一个 n选1多工器将数据存储器连接在一起，以选择命中内容。当然，如果总缓存大小保持不变，则缓存索引也会收缩log2n 位，如图B-4中的公式所示。</p>
+<p><img src="/img/1618278691.jpg" alt=""><br>图B-15 一个从虚拟地址到L2缓存访问的虚设存储器层次结构的整体图像。页大小为8 KB。TLB为直接映射，有256项。L1缓存为直接映射8 KB，L2缓存为直接映射，大小为4 MB。两者的块都是64字节。虚拟地址为64位，物理地址为41位。这一简单图像与实际缓存的主要差别在于这一图像多个组成部分的重复</p>
+<h2 id="虚拟存储器的保护与示例"><a href="#虚拟存储器的保护与示例" class="headerlink" title="虚拟存储器的保护与示例"></a>虚拟存储器的保护与示例</h2><p>在多重编程中，计算机由几个并行执行的程序共享，它的发明为程序之间的保护和共享提供了新的要求。这些要求与今天计算机中的虚拟存储器紧密捆绑在一起，所以我们在这里用两个虚拟存储器的示例来介绍这一主题。</p>
+<p>多重编程导致了进程概念的出现。打个比方，进程就是程序呼吸的空气和生活的空间——即一个正在运行的程序加上持续运行它所需要的所有状态。时分共享是多重编程的一种变体，由几个同时进行交互的用户来共享处理器和存储器，给人的感觉是所有用户都拥有自己的计算机。因此，它在任何时刻都必须能够从一个进程切换到另一进程。 这种交换被称为进程切换或上下文切换。</p>
+<p>一个进程无论是从头到尾持续执行，还是被反复中断，与其他进程进行切换，其运行都必须正常进行。维护正确进程行为的责任由程序和操作系统的设计者共同分担。计算机设计师必须确保进程状态的处理器部分能够保存和恢复。操作系统设计师必须确保这些进程不会相互干扰对方的计算。</p>
+<p>保护一个进程的状态免受其他进程损害的最安全方法就是将当前信息复制到磁盘上。但是，一次进程切换可能需要几秒的时间一这对时分共享环境来说过长了。这一问题的解决方法是由操作系统对主存储器进行划分，使几个不同进程能够在存储器同时拥有自己的状态。这种划分意味着操作系统设计师需要计算机设计师的帮助，以提供保护，使一个进程无法修改其他进程。除了保护之外，计算机还为进程之间共享代码和数据提供了支持，允许进程之间进行通信，或者通过减少相同信息的副本数目来节省存储器。</p>
+<h3 id="保护进程"><a href="#保护进程" class="headerlink" title="保护进程"></a>保护进程</h3><p>使进程拥有自己的分页表，分别指向存储器的不同页面，这样可以为进程提供保护，避免相互损害。显然，必须防止用户修改它们的分页表，或者以欺骗方式绕过保护措施。</p>
+<h3 id="分段虛拟存储器举例：Intel-Pentium中的保护方式"><a href="#分段虛拟存储器举例：Intel-Pentium中的保护方式" class="headerlink" title="分段虛拟存储器举例：Intel Pentium中的保护方式"></a>分段虛拟存储器举例：Intel Pentium中的保护方式</h3><p>最早的8086使用分段寻址，但它没有提供任何虚拟存储器或保护。分段拥有基础寄存器，但没是界限寄存器，也没有访问核查，在能够载入分段寄存器之前，必须将相应段载入物理存储器中。Intel对虚拟存储器和保护的专注在8086的后续产品中得到体现，扩展了一些字段来支持更大地址。这种保护机制非常精巧，精心设计了许多细节，以尝试避免安全漏洞。我们将其称为IA-32。接下来的几页内容将重点介绍Intel的一些安全措施。</p>
+<p>第一种增强是将传统的两级保护模型加倍： IA-32 有四级保护，最内层（0）对应于传统的内核模式，最外层（3）是权限最少的模型。IA-32 为每一级提供独立栈，以避免突破不同级别之间的安全措施。还有一些与传统分页表类似的数据结构，其中包含了段的物理地址，还有一个对变换地址进行的核对清单。</p>
+<p>Intel设计师并没有就此驻足不前。IA-32 划分了地址空间，让操作系统和用户都能访问整个空间。IA-32用户能够在保持全面保护的情况下调用这一空间 中的操作系统例程，甚至还可以向其传送参数。由于操作系统栈不同于用户栈，所以这一安全调用可不是一 个简单操作。另外，LA-32允许操作系统为那些传递给被调用例程的参数保持这些被调用例程的保护级别禁止用户进程要求操作系统间接访问一些该进程自己不能访问的东西，就可以防止这一潜在保护漏洞。</p>
+<p>Intel设计师有一条指导原则：尽可能对操作系统持怀疑态度，并支持共享和保护。作为这种受保护共享的一个应用示例，假定有一个薪金支付系统，它要填写支票，并更新有关本年度截至当前为止的总薪金和津贴支付信息。因此，我们希望赋予该程序读取薪金、当前信息和修改当前信息的功能，但不能修改薪金。稍后将会看到支持这些功能的机制。</p>
+<h4 id="增加界限检查和存储器映射"><a href="#增加界限检查和存储器映射" class="headerlink" title="增加界限检查和存储器映射"></a>增加界限检查和存储器映射</h4><p>增强Intel 处理器的第一个步骤是利用分段寻址来检查界限和提供基址。IA-32中的分段寄存器中包含的不是基址，而是指向虚拟存储器数据结构的索引，这种结构称为描述符表。描述符表扮演着传统分页表的角色。IA-32 上与页表项等价的是段描述符。它包含可以在PTE中找到的字段，如下所述。</p>
+<ul>
+<li>存在位——等价于 PTE有效位，用于表明这是一个有效变换。</li>
+<li>基址字段——等价于一个页帧地址，包含该段第一个字节的物理地址。</li>
+<li>访问位——类似于某些体系结构中的引用位或使用位，可以为替换算法提供帮助。</li>
+<li>属性字段——为使用这一段的操作指定有效操作和保护级别。</li>
+</ul>
+<p>还有一个在分页系统中没有出现的界限段，它确定这一分段有效偏移量的上限。图B-16给出了IA-32段描述符的示例。</p>
+<p><img src="/img/1618312889.jpg" alt=""><br>图B-16 IA-32 段描述符由其属性字段中的位进行区分。基址位、界限位、存在位、可读位和可写位的用途都是不言自明的。D是指令的默认寻址大小：16位或32位。G是段界限的粒度：0表示采用字段，1表示采用4 KB的页。在开启分页以设置页表大小时，将G设置为1。 DPL表示描述符权限级别一根据代码权限级别核对 DPL，以查看是否允许访问。一致性是指代码采用被调用代码的权限级别，而不是调用者的权限级别；用于库例程。向下扩展段颠倒检查过程，以基址字段为高位标记，界限字段为低位标记。可以猜到，这种方式用于向下发展的栈段。字数控制从当前栈向调用门上新栈复制的字数。调用门描述符的其他两个字段——目标选择位和目标偏移量，分别选择该调用目标的描述符及其内部的偏移量。IA-32 保护模型中的段描述符远不止这三种</p>
+<p>除了这种段式寻址之外，IA-32 提供了一种可选的分页系统。32位地址的上面部分选择段描述符，中间部分是描述符所选页表中的索引。下 面介绍不依赖分页的保护系统。</p>
+<h4 id="增加共享和保护"><a href="#增加共享和保护" class="headerlink" title="增加共享和保护"></a>增加共享和保护</h4><p>为提供受保持的共享，地址空间的一伴由所有进程共享，另一半由各进程独享，分别称为全局地址空间和局部地址空间。为每一半都提供一个拥有适当名字的描述符表。指向共享段的描述符被放在全局描述符表中，而指向专用段的描述符则被放在局部描述符表中。程序向IA-32 段寄存器中载入一个索引和一个位，索引指向描述符表，这一个位表明程序希望获得哪个表。根据描述符中的属性对操作进行检查，将来自处理器的偏移量加到描述符中的基址来构成物理地址，前提是这一偏移量要小于界限字段。每个段描述符都有一个独立的2位字段，提供这个段的合法访问级别。仅当程序尝试以段描述符中的较低保护级别使用段时，才会发生违反错误。</p>
+<p>我们现在可以介绍如何调用上述薪金支付程序来更新当前信息，但不允许它更新薪金数据。可以向程序提供该信息的一个描述符，描述符的可写字段被清零，表明程序能够读取数据但不能写数据。然后可以提供一个受信任的程序，它只会写入当前最新信息。在向这一程序提供的描述符中，其可写字段已被置位（见图B-16）。薪金支付程序使用一个代码段描述符来调用受信任的代码，描述符的一致性字段已被置位。这种设置意味着被调用程序取得了被调用代码的权限级别，而不是调用者的权限级别。因此，薪金支付程序可以读取薪金信息，并调用受信任的程序来更新当前总值，但薪金支付程序不能修改这些薪金信息。</p>
+<h4 id="增加从用户到操作系统门的安全调用，为参数继承保护级别"><a href="#增加从用户到操作系统门的安全调用，为参数继承保护级别" class="headerlink" title="增加从用户到操作系统门的安全调用，为参数继承保护级别"></a>增加从用户到操作系统门的安全调用，为参数继承保护级别</h4><p>允许用户介入操作系统是非常大胆的一步。但是，硬件设计师如何能在不信任操作系统或其他代码的情况下增加安全系统的可能性呢? IA-32 方法是限制用户能够进入代码段的位置，将参数安全地放到正确的栈中，并确保用户参数不会取得被调用代码的保护级别。为限制进入其他代码，IA-32 提供了一种被称为调用门（call gate）的特殊段描述符，用属性字段中的一位来识别。与其他描述符不同，调用门是一个对象在存储器中的完整物理地址；处理器提供的偏移量被忽略。如上所述，它们的目的是防止用户随机进入一段受保护或拥有更高权限的代码段中。在我们这个编程示例中，这意昧着薪金支付程序唯一能够调用受信任代码的位置就是在准确的边界位置。一致性段的正常工作需要这一限制。</p>
+<p>如果调用者和被调用者“相互怀疑”，都不相信对方，那会怎么样呢?在图B-16询问描述符的字数字段中可以找到解决方案。当一条调用指令调用一个调用门描述符时，描述符将局部栈中的一些字复制到这个段级别相对应的栈中，字的数量由描述符指定。这一复制过程允许用户首先将参数压入局部栈中，从而实现参数传递。随后由硬件将参数安全地传送给正确的栈。在从调用门返回时，会将参数从栈中弹出，并将返回值复制到正确的栈中。注意，这一模型与目前在寄存器中传递参数的实际做法不兼容。</p>
+<p>这一机制仍然未能关闭潜在的安全漏洞：操作系统以操作系统的安全级别来使用作为参数传递的用户地址，而不是使用用户级别。IA-32在每个处理器段寄存器中专门拿出2个位来指定所请求的保护级别，从而解决了上述问题。当这些地址参数载入段寄存器时，它们将所请求的保护级别设置为正确值。IA-32硬件随后使用所请求的保护级别来防止出现欺骗：对于使用这些参数的系统例程，如果其权限保护级别高于被请求级别，则不允许该例程访问任何段。</p>
+<h3 id="分页虚拟存储器举例：-64位Opteron存储器管理"><a href="#分页虚拟存储器举例：-64位Opteron存储器管理" class="headerlink" title="分页虚拟存储器举例： 64位Opteron存储器管理"></a>分页虚拟存储器举例： 64位Opteron存储器管理</h3><p>常用的模型是在80386中引入的一种平面32位地址空间，它将段寄存器的所有基址值都设置为0。因此，AMD在64位模式中摒弃了多个段。它假定段基址为0，忽略了界限字段。页大小为4KB、2 MB和4MB。</p>
+<p>AMD64体系结构的64位虚拟地址被映射到52位物理地址，当然，具体实现可以采用较少的位数，以简化硬件。例如，Opteron 使用48位虚拟地址和40位物理地址。AMD64需要虚拟地址的高16 位就是低48位的符号扩展，这称为规范格式。</p>
+<p>64位地址空间页表的大小是惊人的。因此，AMD64使用了一种多级层次结构分页表来映射地址空间，使其保持合理大小。级别数取决于虚拟地址空间的大小。图B-17显示了Opteron的48位虚拟地址的四级变换。</p>
+<p>这些页表中各个表的偏移量来自4个9位字段。地址变换时，首先将第一个偏移量加到页映射第4级基址寄存器，然后从这个位置读取存储器，获取下一级页表的基址。然后再将下一级地址偏移量添加到这个新获取的地址，再次访问存储器，以确定第三个页表的基址。再次重复以上过程。最后一个地址字段被加到这一最终基址，使用两者之和读取存储器，获得所引用页面的物理地址。这个地址与12位页面偏移量串接在一起，获得完整的物理地址。注意，Opteron体系结构中的页表可以放在单个4KB页中。</p>
+<p>Opteron在每个页表中使用64位的项目。前12位为保留位，供以后使用，接下来的52位包含物理页帧编号，最后12位提供保护、使用信息。尽管不同页表级别之间的字段会有所变化，但基本上都有以下位。</p>
+<ul>
+<li>存在位——表明该页存在于存储器中。</li>
+<li>读取/写入位——表明一个页是只读的，还是读写的。</li>
+<li>用户/管理员位——表明用户是可以访问该页，还是仅限于上面三个权限级别。</li>
+<li>脏位——表明该页是否已经被修改。</li>
+<li>访问位——表明自该位上次清零以来，是否曾读取或写入过该页。</li>
+<li>页面大小位——表明最后一级是4 KB页面，还是4 MB页面;如果是后者，则Opteron只使用3个页面级别，而不是4个。</li>
+<li>不执行位——未出现在 80386保护机制中，添加这个位是为了防止代码在某些页内执行。</li>
+<li>页级缓存禁用——表明是否可以缓存该页。</li>
+<li>页级直写——表明该页对数据缓存应用写回还是直写。</li>
+</ul>
+<p><img src="/img/1618312953.jpg" alt=""><br>图B-17 Opteron 虚拟地址的映射。拥有4个页表级别的Opteron虚拟存储器实现方式支持40位的有效物理地址大小。每个页表有512项，所以每一级字段的宽度为9位。AMD64体系结构文档允许虚拟地址大小从当前的48位增长到64位，允许物理地址从当前的40位增长到52位</p>
+<p>由于Opteron在TLB缺失时通常会经历四级页表，所以有3个可能位置来核对保护限制。Opteron仅服从底级PTE，检查其他各项只是为了确保设置了有效位。由于该项目的长度为8个字节，每个页表有512项，而且Opteron拥有大小为4 KB的页，所以这些页表的长度恰好为一页。 这些四级字段的每一个字段长9位，页偏移量为12位。这一推导留出64-(4 x 9 + 12)=16位进行符号扩展，以确保地址的规范化。</p>
+<p>尽管我们已经解释了合法地址的转换，那什么会防止用户创建非法地址转换并阻止故障发生呢?这些页表本身是受保护的，用户程序不能对其进行写入。因此，用户可以尝试任意虚拟地址，但操作系统通过控制页表项来控制访问哪个物理存储器。为了实现进程之间的存储器共享，在每个地址空间中都设置一个页表项，指向同一个物理存储器页。</p>
+<p>Opteron采用4个TLB来缩短地址转换时间，两个TLB用于指令访问，两个用于数据访问。与多级缓存类似，Opteron 通过两个较大的L2 TLB来减少TlB缺失：一个用于指令，一个用于数据。表B-11介绍了数据TLB。</p>
+<p><img src="/img/1618313026.jpg" alt=""><br><img src="/img/1618313027.jpg" alt=""></p>
+<h3 id="小结：32-位Intel-Pentium与64位AMD-Opteron的保护对比"><a href="#小结：32-位Intel-Pentium与64位AMD-Opteron的保护对比" class="headerlink" title="小结：32 位Intel Pentium与64位AMD Opteron的保护对比"></a>小结：32 位Intel Pentium与64位AMD Opteron的保护对比</h3><p>Opteron中的存储器管理是当今大多数桌面或服务器计算机的典型代表，依靠页级地址变换和操作系统的正确操作，为共享计算机的多个进程提供安全性。尽管Intel也提出了一些替代方案，但它还是沿袭了AMD的领先作法，接纳了AMD64体系结构。因此，AMD和Intel都支持80x86的64位扩展；但出于兼容性原因，这两者都支持复杂的分段保护机制。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>要想制造出能够跟上处理器步伐的存储器系统，其难度极大，无论多么先进的计算机，其主存储器的制造原材料都与最廉价的计算机一致，这一事实为上述难度添加了新的注脚。这里能为我们提供帮助的是局域性原理一当前计算机中存 储器层次结构的各个级别（从磁盘到TLB）都证明了它的正确性。</p>
+<p>但是，到存储器的相对延迟不断增加，2011 年达到数百个时钟周期，这就意味着，如果程序员和编译器编写入员希望自己的程序能够正常执行，就必须了解缓存和TLB的参数。</p>
+<h1 id="流水线：基础与中级概念"><a href="#流水线：基础与中级概念" class="headerlink" title="流水线：基础与中级概念"></a>流水线：基础与中级概念</h1><h2 id="引言-2"><a href="#引言-2" class="headerlink" title="引言"></a>引言</h2><p>我们在本附录中首先介绍流水线的基础知识，包括数据路径含义的讨论、冒险的介绍、流水线性能的研究。这一节介绍基本的五级RISC，它是本附录其余部分的基础。C.2 节介绍冒险问题、它们为什么会导致性能问题、应当如何应对。C.3节讨论如何实际实现这个简单的五级流水线，重点是控制和如何应对冒险。C.4节讨论流水线和指令集设计各个方面之间的相互关系，讨论了有关异常的重要主题以及它们与流水线的相互交互。C.5节讨论如何扩展五级流水线，以处理运行时间更长的浮点指令。C.6节在一个案例研究中将这些概念结合在一起，这个案例研究的对象是一个深度流水线处理器——MIPS R4000/4400，它既包括八级整数流水线，又包括浮点流水线。C.7节介绍了动态调度的概念，以及记分板在动态调度实现中的用法。它是作为交叉问题介绍的。C.7节还简单探讨了第3章中介绍的更复杂Tomasulo 算法。</p>
+<h3 id="什么是流水线"><a href="#什么是流水线" class="headerlink" title="什么是流水线"></a>什么是流水线</h3><p>流水线是一种将多条指令重叠执行的实现技术。一条指令的执行需要多个操作，流水线技术充分利用了这些操作之间的并行性。就像装配线一样，不同步骤并行完成不同指令的不同部分。这些步骤中的每一步都称为流水级或流水段。流水级前后相连形成流水线一指令在一端进入，通过这些流水级，在另一段退出。</p>
+<p>指令流水线的吞吐量由指令退出流水线的频率决定。由于流水线级是连在一起的，所以所有流水级都必须做好同时工作的准备。将一条指令在流水线中下移一步所需的时间为处理器周期。由于所有各级同时进行，所以处理器周期的长度由最缓慢流水线级所需时间决定。在计算机中，这一处理器周期通常为1个时钟周期（有时为2个，但要少见得多）。流水线设计者的目标是平衡每条流水线的长度。如果各级达到完美平衡，那么每条指定在流水线处理器中的时间（假定为理想条件）等于：</p>
+<p>非流水线机器上每条指令的时间/流水级的数目</p>
+<p>在这些条件下，因为实现流水线而得到的加速比等于流水级的数目，但一般情况下，这些流水线之间不会达到完美平衡；此外，流水线还会产生一些开销。因此，在流水线处理器上，处理每条指令的时间不会等于其最低可能值，但可以非常接近。</p>
+<p>流水线可以缩短每条指令的平均执行时间。根据我们认证的基准，这一缩短量可以计作每条指令时钟周期数（CPI）的下降、时钟周期时间的缩短，或者这两者的组合。如果在开始时，处理器需要多个时钟周期来处理一条指令，那我们通常将流水线的作用看作是降低了CPI。</p>
+<p>如果在开始时，处理器需要一个（长）时钟周期来处理一条指令，那就认为流水线缩短了时钟周期时间。流水线技术开发了串行指令流中各指令之间的并行度。它与某些加速技术不同，其真正的好处在于它对程序员是透明的。在这一附录中，我们将首先使用一个经典的五级流水线来介绍流水线的概念；其他章节研究了更复杂流水线技术在现代处理器的应用。在更深入地讨论流水线及其在处理器的应用之前，我们需要一个简单的指令集，下面将对此进行介绍。</p>
+<h3 id="RISC指令集基础知识"><a href="#RISC指令集基础知识" class="headerlink" title="RISC指令集基础知识"></a>RISC指令集基础知识</h3><p>在本书中，我们一直使用RISC（精简指令集计算机）体系结构或载入-存储体系结构来说明基本概念，当然，本书介绍的几乎所有思想都适用于其他处理器。本节介绍典型RISC 体系结构的核心。RISC体系结构有几个关键属性，这些属性大大简化了其实现方式。</p>
+<ul>
+<li>所有数据操作都是对寄存器中数据的操作，通常会改变整个寄存器（每个寄存器为32位或64位）。</li>
+<li>只有载入和存储操作会影响到存储器，它们分别将数据从存储器移到寄存器或从寄存器移到存储器。通常存在一些可以载入或存储低于一个完整寄存器的内容。</li>
+<li>指令格式的数量很少，所有指令通常都是同一种大小。</li>
+</ul>
+<p>这些简单属性极大地简化了流水线的实现，这也是如此设计这些指令集的原因。为与本书其他部分保持一致， 我们使用MIPS64，它是MIPS指令集的64位版本。这些扩展64位指令通常在助记符的开头或末尾加上字母D加以标识。例如，DADD是加法指令的64位版本，而LD则是载入指令的64位版本。</p>
+<p>与其他RISC体系结构类似，MIPS 指令集提供了32个寄存器，不过寄存器0的值总是0。大多数RISC体系结构，比如MIPS，通常有以下三类指令（更多详细信息请参见附录A）。</p>
+<p>（1） ALU指令——这些指令取得两个寄存器或者一个寄存器与一个符号扩展立即数（称为ALU立即数指令，它们在MIPS中有一个16位偏移量），对它们进行操作，然后将结果存储到第三个寄存器中。典型操作包括加（DADD）、减（DSUB）和逻辑运算（例如AND或OR），后者不区分32位和64位版本。这些指令的立即数版本使用相同助记符，但添加了后缀I。在MIPS中，包括算术运算的有符号形式和无符号形式；无符号形式的末尾有一个字母U（例如，DADDU、DSUBU、DADDIU），不会生成溢出异常（因此在32位和64位模式中是一样的）。</p>
+<p>（2）载入和存储指令——这些指令获取一个寄存器源（称为基址寄存器）和一个立即数字段（在MIPS中为16位，称为偏移量）作为操作数。基址寄存器的内容与符号扩展偏移量之和（称为有效地址）用作存储器地址。对于载入指令，使用第二个寄存器操作数，用于存放从存储器载入的数据。对于存储指令，第二个寄存器操作数是要存入存储器的数据源。载入字（LD）和存储字（SD）等指令载入或存储整个64位寄存器内容。</p>
+<p>（3）分支与跳转——分支是指控制的条件转移。在RISC体系结构中，通常有两种方式来指定分支条件：采用一组条件位（有时称为条件码），或者通过寄存器对之间、寄存器与零之间的有限对比来设定。MIPS采用后者。对于本附录，我们仅考虑两个寄存器是否相等。在所有RISC体系结构中，分支目的地都是通过将符号扩展偏移量（MIPS中为16位）加到当前程序计数器中获得的。在许多RISC体系结构中都提供了无条件跳转，但本附录中不会介绍跳转。</p>
+<h3 id="RISC指令集的简单实现"><a href="#RISC指令集的简单实现" class="headerlink" title="RISC指令集的简单实现"></a>RISC指令集的简单实现</h3><p>为了理解如何以流水线形式来实现RISC指令集，需要理解在没有流水线时它是如何实现的。这一节给出了一种简单实现，每一条指令 最多需要5个时钟周期。我们将这一基本实现扩展到流水线版本，从而大幅降低CPI。在所有不采用流水线的实现方式中，我们给出的方式并非最经济或性能最高的。它的设计只是可以很自然地引向流水线实现。实现此指令集需要引入几个不属于该体系结构的临时寄存器，引入它们是为了简化流水线。我们的实现将仅关注RISC体系结构中整数操作部分的流水线，这部分操作包括载入-存储字、分支和整数ALU操作。</p>
+<p>这个RISC子集中的每条指令都可以在最多5个时钟周期内实现。这5个时钟周期如下所述。</p>
+<ul>
+<li>指令提取周期（IF）<ul>
+<li>将程序计数器（PC）发送到存储器，从存储器提取当前指令。向程序计数器加4 （因为每条指令的长度为4个字节），将程序计数器更新到下一个连续程序计数器。</li>
+</ul>
+</li>
+<li>指令译码/寄存器提取周期（ID）<ul>
+<li>对指令进行译码，并从寄存器堆中读取与寄存器源说明符相对应的寄存器。在读取寄存器时对其进行相等测试，以确定是否为分支。必要时，对指令的偏移量字段进行符号扩展。符号扩展后的偏移量添加到所实现的程序计数器上，计算出可能的分支目标地址。在较为积极的实现方式中，如果这一条件判断的结果为真，则可以将分支目标地址存储到程序计数器中，以在这一级的末尾完成分支。</li>
+<li>指令译码与寄存器的读取是并行执行的，这可能是因为在RISC体系结构中，寄存器说明符位于固定位置。这一技术称为固定字段译码。注意，我们可能会读取一个不会使用的寄存器。由于一个指令的立即数部分也位于同一位置，所以在需要符号扩展立即数时，也是在这一周期计算的。</li>
+</ul>
+</li>
+<li>执行/有效地址周期（EX）<ul>
+<li>ALU对上一周期准备的操作数进行操作，根据指令类型执行三条指令之一。<ul>
+<li>存储器引用——ALU 将基址寄存器和偏移量加到一起，形成有效地址。</li>
+<li>寄存器-寄存器ALU指令——ALU 对读自寄存器堆的值执行由ALU操作码指定的操作。</li>
+<li>寄存器-立即数ALU指令——ALU对读自寄存器堆的第一个值和符号扩展立即数执行由ALU操作码指定的操作。</li>
+</ul>
+</li>
+<li>在载入-存储体系结构中，有效地址与执行周期可以合并到一个时钟周期中，这是因为没有指令需要计算数据地址并对数据执行操作。</li>
+</ul>
+</li>
+<li>存储器访问（MEM）<ul>
+<li>如果该指令是一条载入指令，则使用上一周期计算的有效地址从存储器中读取数据。如果是一条存储指令，则使用有效地址将从寄存器堆的第二个寄存器读取的数据写入存储器。</li>
+</ul>
+</li>
+<li>写回周期（WB）<ul>
+<li>寄存器寄存器ALU指令或载入指令。</li>
+<li>将结果写入寄存器堆，无论是来自寄存器系统（对于载入指令），还是来自ALU（对于ALU指令）。</li>
+</ul>
+</li>
+</ul>
+<p>在这一实现中，分支指令需要2个周期，存储指令需要4个周期，所有其他指令需要5个周期。假定分支频率为12%，存储频率为10%，对于这一典型指令分布， 总CPI 为4.54。但是，无论是在获取最佳性能方面，还是在给定性能级别的情况尽量减少使用硬件方面。</p>
+<h3 id="RISC处理-器的经典五级流水线"><a href="#RISC处理-器的经典五级流水线" class="headerlink" title="RISC处理 器的经典五级流水线"></a>RISC处理 器的经典五级流水线</h3><p>我们几乎不需要进行什么改变就能实现上述执行过程的流水化，只要在每个时钟周期开始一条新的指令就行。上一节的每个时钟周期都变成一个流水<br>线级——流水线中的一个周期。这样会得到表C-1所示的执行模式，这是绘制流水线结构的典型方式。尽管每条指令需要5个周期才能完成，但在每个时钟周期内，硬件都会启动一条新的命令，执行5个不同指令的某一部分。</p>
+<p><img src="/img/1618313378.jpg" alt=""></p>
+<ul>
+<li>在每个时钟周期，提取另一条指令，并开始它的五周期执行过程。如果在每个时钟周期都启动一条指令，其性能最多可达到非流水化处理器的5倍。流水线中各个阶段的名称与非流水线实现方式中各个周期的名称相同： IF=指令提取、ID=指令译码、EX=执行、MEM=存储器访问、WB=写回。</li>
+</ul>
+<p>首先，我们必须确定在处理器的每个时钟周期都会发生什么，确保不会在同一时钟周期内对相同数据路径源执行两个不同操作。例如，不能要求同一个ALU同时计算有效地址和执行减法操作。因此，我们必须确保流水线中的指令重叠不会导致这种冲突。幸运的是，RISC指令集比较简单，使资源评估变得相对容易。图C-1以流水线形式绘制了一个RISC数据路径的简化版本。可以看到，主要功能单元是在不同周期使用的，因此多条指令的执行重叠不会入多少冲突。从以下三点可以看出这一事实。</p>
+<p><img src="/img/1618332185.jpg" alt=""><br>图C-1 流水线可以看作一系列随时间移动的数据路径。本图给出了数据路径不同部分之间的重叠，时钟周期5 （CC5）表示稳定状态。由于寄存器用作ID级中的一个源和WB级中的目的地，所以它出现两次。我们表示它在该级的一个部分进行读取，在另一部分进行写入，分别用左右两侧的实线或虚线来表示。缩写IM表示指令存储器、DM表示数据存储器、CC表示时钟周期</p>
+<p>第一，我们使用分离的指令存储器和数据存储器，我们通常用分离的指令和数据缓存来实现它们。在使用存储器时，在指令提取和数据存储器访向之间可能会发生冲突，而使用分离缓存则可以消除这种冲突。注意，如果我们的流水线处理器的时钟周期等于非流水线版本的时钟周期，则存储器系统必须提供5倍的带宽。这一需求的增加是提高性能的一种成本。</p>
+<p>第二，在两个阶段都使用了寄存器堆：一个是在ID中进行读取，一个是在WB中进行写入。这些用法是不同的，所以我们干脆在两个地方画出了寄存器堆。因此，每个时钟周期需要执行两次读取和一次写入。为了处理对相同寄存器的多次读取和一次写入，我们在时钟周期的前半部分写寄存器，在后半部分读寄存器。</p>
+<p>第三，图C-1没有涉及程序计数器。为了在每个时钟周期都启动一条新指令，我们必须在每个时钟周期使程序计数器递增并存储它，这必须在IF阶段完成，以便为下一条指令做好准备。此外，还必须拥有一个加法器，在ID期间计算潜在的分支目标。另外一个问题是分支在ID级改变程序计数器。</p>
+<p>尽管确保流水线中的指令不会试图在相同时间使用硬件资源是至关重要的，我们还必须确保不同流水级中的指令不会相互干扰。这种分离是通过在连续流水级之间引入流水线寄存器来完成的，这样会在时钟周期的末尾，将一个给定流水级得出的所有结果都存储到寄存器中，在下一个时钟周期用作下一级的输入。图C-2给出了画有这些流水线寄存器的流水线。</p>
+<p><img src="/img/1618332242.jpg" alt=""></p>
+<p>图C-2 此流水线显示了连续流水级之间的流水线寄存器。注意，寄存器防止流水线相邻级中两条不同指令之间的干扰。在将一条给定指令的数据从一级带至另一级的过程中，寄存器也扮演着重要角色。寄存器的边沿触发特性（也就是说，取值在时钟沿即时改变）是非常关键的。否则，来自一条指<br>令的数据可能会干扰另一指令的执行!</p>
+<p>尽管许多图形都为了简便而省略了这些寄存器，但它们是流水线正常操作所必需的。当然，即使在一些没有 采用流水化的多周期数据路径中也需要类似寄存器（因为 只有寄存器中的值能够在跨过时钟边界之后仍然得以保存）。在流水化处理器中，如果要将中间结果从一级传送到另一级，而源位置与目标位置可能并非直接相邻，流水线寄存器也会在这种传送过程种扮演关键角色。例如，要在存储指令中存储的寄存器值是在ID期间读取的，但要等到MEM才会真正用到；它在MEM级中通过两个流水线寄存器传送给数据存储器。与此类似，ALU指令的结果是在EX期间计算的，但要等到WB才会实际存储；它通过两个流水线寄存器才到达那里。有时对流水线寄存器进行命名是有用的，根据这些寄存器所连接的流水级对其进行命名，所以这些<br>寄存器称为IF/ID、ID/EX、EXMEM和MEM/WB。</p>
+<h3 id="流水化的基本性能问题"><a href="#流水化的基本性能问题" class="headerlink" title="流水化的基本性能问题"></a>流水化的基本性能问题</h3><p>流水化提高了CPU指令吞吐量（单位时间内完成的指令数），但不会缩短单条指令的执行时间。事实上，由于流水线控制会产生开销，它通常还会稍微延长每条指令的执行时间。尽管单条指令的运行速度并没有加快，指令吞吐量的增长意味着程序可以更快速地运行，总执行时间缩短。除了因为流水线延迟产生的局限之外，流水级之间的失衡和流化化开销也会造成限制。流水级之间的不平衡会降低性能，这是因为时钟的运行速度不可能快于最缓慢的流水级。</p>
+<p>流水线开销包含流水线寄存器延迟和时钟偏差。流水线寄存器增加了建立时间，也就是在发出触发写操作的时钟信号之前，寄存器输入必须保持稳定的时间，而且时钟周期的传播也会产生延迟。时钟偏差是时钟到达任意两个寄存器时刻之间的最大延迟，时钟周期的下限也受此因素的影响。如果时钟周期小于时钟偏差与延迟开销之和，那时钟周期中就没有留给有用工作的时间了，所以再增加流水线也就没用了。</p>
+<p>考虑上一节的非流水化处理器。假定其时钟周期为1 ns，ALU运算和分支需要4个周期，存储器操作需要5个周期。假定这些操作的相对频率分别为40%、20%和40%。假设由于时钟偏差和建立时间的原因，对处理器实现流水化使时钟增加了0.2 ns的开销。忽略所有延迟影响，通过流水线获得的指令执行速率加速比为多少?</p>
+<p>在非流水化处理器上，指令平均执行时间为：</p>
+<p>指令平均执行时间=时钟周期x平均CPI = Ins x [(40% + 20%)x4 + 40%x5] = Ins x 4.4 = 4.4ns</p>
+<p>在流水线实现方式中，时钟的运行速度必须等于最慢流水级的速度加上开销时间，也就是1+0.2=1.2 ns；这就是指令平均执行时间。因此，通过流水化获得的加速比为：</p>
+<p>流水化加速比 = 非流水化指令平均执行时间/流水化指令平均执行时间 = 4.4ns/1.2ns = 3.7倍</p>
+<p>0.2 ns的开销基本上确定了流水化的效能限度。如果此开销不受时钟周期变化的影响，那么从Amdahl定律可知，这一开销限制了加速比。</p>
+<p>如果流水线中每条指令独立于所有其他指令，那这种简单的RISC 流水线对于整数指令可以正常运行。实际上，流水线中的指令可能是相互依赖的；这是下一节的主题。</p>
+<h2 id="流水化的主要阻碍——流水线冒险"><a href="#流水化的主要阻碍——流水线冒险" class="headerlink" title="流水化的主要阻碍——流水线冒险"></a>流水化的主要阻碍——流水线冒险</h2><p>有一些被称为冒险的情景，会阻止指令流中的下一条指令在其自己的指定时钟周期内执行。冒险降低了流水化所能获得的理想加速比。共有以下三类冒险。</p>
+<ol>
+<li>结构冒险，在重叠执行模式下，如果硬件无法同时支持指令的所有可能组合方式，就会出现资源冲突，从而导致结构冒险。</li>
+<li>数据冒险，根据流水线中的指令重叠，指令之间存在先后顺序，如果一条指令取决于先前指令的结果，就可能导致数据冒险。</li>
+<li>控制冒险，分支指令及其他改变程序计数器的指令实现流水化时可能导致控制冒险。</li>
+</ol>
+<p>流水线中的冒险会使流水线停顿。为了避免冒险，经常要求在流水线中的一些指令延迟时，其他一些指令能够继续执行。对于本附录中讨论的流水线，当一条指令被停顿时，在停顿指令之后发射的所有指令也被停顿（这些指令在流水线中的位置不会远于停顿指令）。而在停顿指令之前发射的指令必须继续执行（它们在流水线中的位置要更远一些），否则就永远不会清除冒险情况。结果，在停顿期间不会提取新的指令。</p>
+<h3 id="带有停顿的流水线性能"><a href="#带有停顿的流水线性能" class="headerlink" title="带有停顿的流水线性能"></a>带有停顿的流水线性能</h3><p>停顿会导致流水线性能下降，低于理想性能。现在让我们看一个简单的公式，求解流水化的实际加速比，首先从上一节的公式开始：</p>
+<p>流水化加速比=非流水化指令平均执行时间/流水化指令平均执行时间 = (非流水化CPI x 非流水化时钟周期)/(流水化CPI x流水化时钟周期) = (非流水化CPI/流水化CPI)x(非流水化时钟周期/流水化时钟周期)</p>
+<p>流水化可以看作CPI或时钟周期时间的降低。由于传统上使用CPI来比较流水线，所以让我们从这里开始。流水化处理器的理想CPI几乎总等于1。因此，可以计算流水化CPI为：</p>
+<p>流水化CPI = 理想CPI+每条指令的流水线停顿时钟周期 = 1+每条指令的流水线停顿时钟周期</p>
+<p>如果忽略流水化的周期时间开销，并假定流水级之间达到完美平衡，则两个处理器的周期时间相等，得到：</p>
+<p>加速比=非流水化CPI/(1+每条指令的流水线停顿周期)</p>
+<p>一种简单而重要的情景是所有指令的周期数都相同，必然等于流水级数目（也称为流水线深度）。在这种情况下，非流水化CPI等于流水线的深度，得到：</p>
+<p>加速比=流水深度/(1+每条指令的流水线停顿周期)</p>
+<p>如果没有流水线停顿，由此公式可以得到一个很直观的结果：流水化可以使性能提高的倍数等于流水线深度。</p>
+<p>或者，如果将流水化看作时钟周期时间的改善，那可以假定非流水化处理器的CPI以及流水化处理器的CPI为1。于是得到：</p>
+<p>流水化加速比=(非流水化CPI/流水化CPI)x(非流水化时钟周期/流水化时钟周期) = (1/(1+每条指令的流水线停顿周期))x(非流水化时钟周期/流水化时钟周期)</p>
+<p>当流水级达到完美平衡，而且没有开销时，流水化处理器的时钟周期小于非流水化处理器的时钟周期，缩小因子等于流水线深度：</p>
+<p>流水化时钟周期=非流水化时钟周期/流水线深度</p>
+<p>流水线深度=非流水化时钟周期/流水化时钟周期</p>
+<p>从而得到以下公式：</p>
+<p>流水化加速比=(1/(1+每条指令的流水线停顿周期))x(非流水化时钟周期/流水化时钟周期) = (1/(1+每条指令的流水线停顿周期))x流水线深度</p>
+<p>因此，如果没有停顿，则加速比等于流水级数，与我们对理想情况的直观感受一致。</p>
+<h3 id="结构冒险"><a href="#结构冒险" class="headerlink" title="结构冒险"></a>结构冒险</h3><p>当处理器以流水线方式工作时，指令的重叠执行需要实现功能单元的流水化和资源的复制，以允许在流水线中出现所有可能的指令组合。如果由于资源冲突而不能容许某些指令组合，就说该处理器存在结构冒险</p>
+<p>结构冒险最常见于某功能单元未能完全流水化的情况。这时，一系列使用该非流水化单元的指令不能以每时钟周期执行一条指令的速度前进。结构冒险另一常见出现方式是某一资源的复制不足以执行流水线中的所有指令组合。例如，处理器可能仅有一个寄存器堆写端口，但在特定情况下，流水线可能希望在一个时钟周期内执行两个写操作。这就会生成结构冒险。</p>
+<p>当指令序列遇到这种冒险时，流水线将会使这些指令中的一个停顿，直到所需单元可用为止。这种停顿会增大CPI值，不再是其通常的理想值1。一些流水化处理器为数据和指令共享单存储器流水线。结果，当指令中包含数据存储器引用时，它会与后面指令的指令引用冲突，如图C-3所示。为避免这一冒险，在发生数据存储器访问时，我们使流水线停顿一个时钟周期。停顿通常被称为流水线气泡，或就称为气泡，因为它会飘浮穿过流水线，占据空间却不执行有用工作。在讨论数据冒险时，将会看到另一种停顿类型。</p>
+<p><img src="/img/1618332352.jpg" alt=""></p>
+<p>图C-3 只要发生存储器引用，仅有一个存储器端口的处理器就会生成一次冲突. 在这个示例中，载入指令因为数据访问而使用存储器的同时，指令3希望从存储器中提取一条指令</p>
+<p>设计者经常使用仅含有流水级名称的简图来表示停顿行为，如表C-2所示。在表C-2中展示停顿时，指出那些没有执行操作的周期，只是将指令3向右移动（使其执行过程的开始与结束都推后1个周期）。当流水线气泡穿过流水线时，其效果就是占据了该指令时隙的资源。</p>
+<p><img src="/img/1618332413.jpg" alt=""></p>
+<ul>
+<li>载入指令实际强占了指令提取周期，导致流水线停顿——在4号时钟周期没有启动指令(它通常会启动指令i+3）。因为被提取的指令停顿，所以流水线中位于停顿指令之前的所有其他指令都可以正常进行。停顿周期将继续穿过流水线，所以在8号时钟周期中没有完成指令。有时在绘制这些流水线表时，让流水线占据整个水平行，指令3被移到下一行；无论采用哪种画法，效果都是一样的，因为指令i+3直到5号周期才开始执行。因为以上形式占据的空间较少，所以我们采用了这一形式。注意，本图假定指令i+1和i+2不是存储器引用。</li>
+</ul>
+<p>让我们看看载入结构冒险的成本有多高。假定数据引用占总体的40%，流水化处理器的理想CPI为1(忽略结构冒险）。假定与没有冒险的处理器相比，有结构冒险处理器的时钟频率为其1.05 倍。不考虑所有其他性能损失，有结构冒险和无结构冒险相比，哪种流水线更快?快多少?</p>
+<p>有几种方法可以求解这一问题。 最简单的一种可能就是计算两种处理器的平均指令时间：</p>
+<p>平均指令时间 = CPI x 时钟周期时间</p>
+<p>由于没有停顿，所以理想处理器的平均指令时间就是时钟周期时间理想。有结构冒险处理器的平均指令时间为：</p>
+<p>平均指令时间=CPIx时钟周期时间 = (1+0.4x1)x(时钟周期时间(理想)/1.05) = 1.3x时钟周期时间(理想)</p>
+<p>显然，没有结构冒险的处理器更快一些; 根据平均指令时间的比值，我们可以得出结论，无冒险处理器的速度快1.3倍。</p>
+<p>为避免出现这种结构冒险，设计师可以为指令提供独立的存储器访问，既可以将缓存分为独立的指令缓存和数据缓存，也可以使用一组缓冲区来保存指令，这种缓冲区通常称为指令缓冲区。</p>
+<p>如果其他因素相同，无结构冒险处理器的CPI总是更低一些。那设计师为什么还会允许结构冒险呢?其主要目的是为了降低单元成本，因为要实现所有功能单元的流水化，或者复制它们，成本都太高昂了。例如，那些在每个周期内支持指令与数据缓存访问的处理器需要有2倍的总存储器带宽，通常要求管脚处也可以承受较高的带宽。</p>
+<p>与此类似，要完全实现浮点（FP）乘法器需要耗用大量门电路。如果结构冒险很罕见，那就不值得花费这么大的代价来避免它。</p>
+<h3 id="数据冒险"><a href="#数据冒险" class="headerlink" title="数据冒险"></a>数据冒险</h3><p>流水化的主要效果是通过重叠指令的执行过程来改变它们的相对执行时间。这种重叠引入了数据与控制冒险。当流水线改变对操作数的读写访问顺序，使该顺序不同于在非流水化处理器上依次执行指令时的顺序，这时可能发生数据冒险。考虑以下指令的流水化执行：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DADD     R1, R2, R3</span><br><span class="line">DSUB     R4, R1, R5</span><br><span class="line">AND      R6, R1, R7</span><br><span class="line">OR       R8, R1, R9</span><br><span class="line">XOR      R10, R1, R11</span><br></pre></td></tr></table></figure><br>DADD之后的所有指令都用到了DADD 指令的结果。如图C-4所示，DADD 指令在WB流水级写入R1的值，但DSUB指令在其ID级中读取这个值。这一问题称为数据冒险。除非提前防范这种问题，否则DSUB指令将会读取错误值并试图使用它。事实上，DSUB 指令使用的值甚至是不确定的：我们可能假定DSUB使用的R1值总是由DADD之前的指令赋值，认为这种假定是合乎逻辑的，但事实并非总是如此。如果在DADD和DSUB指令之间发生中断，DADD 的WB级将结束，而该点的R1值将是DADD的结果。这种不可预测的行为显然是不可接受的。</p>
+<p>AND指令也会受到这种冒险的影响。从图C-4 中可以看出，在5号时钟周期之前，R1的写入操作是不会完成的。因此，在4号时钟周期读取寄存器的AND指令会得到错误结果。</p>
+<p><img src="/img/1618332523.jpg" alt=""></p>
+<p>图C-4在后面三条指令中使用DADD指令的结果时，由于要等到这些指令读取寄存器之后才会向其中写入，所以会导致冒险。</p>
+<p>XOR指令可以正确执行，因为它的寄存器读取是在6号时钟周期进行的，这时寄存器写入已经完成。OR指令的执行也不会招致冒险，因为我们在该时钟周期的后半部分执行寄存器堆读取，而写入是在前半部分执行的。</p>
+<p>下一小节将讨论一种技术，用于消除涉及DSUB和AND指令的冒险停顿。</p>
+<h4 id="利用转发技术将收据冒险停顿减至最少"><a href="#利用转发技术将收据冒险停顿减至最少" class="headerlink" title="利用转发技术将收据冒险停顿减至最少"></a>利用转发技术将收据冒险停顿减至最少</h4><p>图C-4中提出的问题可以使用一种称为转发（forwarding）的简单硬件技术来解决（这一技术也称为旁路，有时也称为短路）。转发技术的关键是认识到DSUB要等到DADD实际生成结果之后才会真正用到它。DADD 将此结果放在流水线寄存器中，如果可以把它从这里转移到DSUB需要的地方，那就可以避免出现停顿。根据这一观察结果，转发的工作方式如下所述。</p>
+<ol>
+<li>来自EX/MEM和MEMWB流水线寄存器的ALU结果总是被反馈回ALU的输入端。</li>
+<li>如果转发硬件检测到前一个ALU操作已经对当前AlU操作的源寄存器进行了写入操作，则控制逻辑选择转发结果作为ALU输入，而不是选择从寄存器堆中读取的值。</li>
+</ol>
+<p>注意，采用转发技术后，如果DSUB停顿，则DADD将会完成，不会触发旁路。当两条指令之间发生中断时，这一关系同样成立。</p>
+<p>如图C4中的示例所示，我们需要转发的结果可能不只来自前一条指令，还可能来自提前两个周期启动的指令。图C-5显示了带有旁通路径的示例，它重点突出了寄存器读取与写入的时机。这一代码序列可以无停顿执行。</p>
+<p><img src="/img/1618332600.jpg" alt=""></p>
+<p>图C-5 一组依赖DADD结果的指令使用转发路径来避免数据冒险。DSUB 和AND指令的输入是从流水线寄存器转发到第一个ALU输入。0R接收的结果是通过寄存器堆转发而来的，这一点很容易实现，只需要在周期的后半部分读取寄存器、在前半部分写入寄存器就能轻松完成，如寄存器上的虚线所示。注意，转发结果可以到达任一ALU输入；事实上，ALU输入既可以使用来自相同流水线寄存器的转发输入，也可以使用来自不同流水线寄存器的转发输入。例如，当AND指令为AND R6，R1，R4时就会发生这种情况</p>
+<p>可以将转发技术加以推广，将结果直接传送给需要它的功能单元：可以将一个功能单元输出到寄存器中的结果直接转发到另一个功能单元的输入，而不仅限于同一单元的输出与输入之间。例如以下序列：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DADD      R1, R2, R3</span><br><span class="line">LD        R4,0(R1)</span><br><span class="line">SD        R4,12(R1)</span><br></pre></td></tr></table></figure><br>为防止这一序列中出现停顿，我们需要将ALU输出值和存储器单元输出值从流水线寄存器转发到ALU和数据存储器输入。图C-6给出了这一示例的所有转发路径。</p>
+<p><img src="/img/1618332660.jpg" alt=""><br>图C-6 在MEM期间执行的存储操作需要转发操作数。载入结果由存储器输出转发到要存储的存储器输入端。此外，ALU指令被转发到ALU输入，供载入和存储指令进行地址计算（这与转发到另一个ALU操作没有区别）。如果存储操作依赖与其直接相邻的前一个ALU操作（图中未示出），则需要转发其结果，以防止出现停顿</p>
+<h4 id="需要停顿的数据冒险"><a href="#需要停顿的数据冒险" class="headerlink" title="需要停顿的数据冒险"></a>需要停顿的数据冒险</h4><p>遗憾的是，并非所有潜在数据冒险都可以通过旁路方式处理。考虑以下指令序列：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LD      R1, 0(R2)</span><br><span class="line">DSUB    R4,R1,R5</span><br><span class="line">AND     R6,R1,R7</span><br><span class="line">OR      R8,R1,R9</span><br></pre></td></tr></table></figure><br>这一示例中旁通路径的流水化数据路径如图C-7所示。这种情况不同于背靠背ALU操作的情景。LD指令在4号时钟周期（其MEM周期）结束之前不会得到数据，而DSUB指令需要在该时钟周期的开头就得到这一数据。因此，因为使用载入指令结果而产生的数据冒险无法使用简单的硬件消除。如图C-7所示，这种转发路径必须进行时间上的回退操作。我们能够立即将该结果从流水线寄存器转发给ALU，供AND操作使用，该操作是在载入操作之后两个时钟周期启动的。与此类似，OR 指令也没有问题，因为它是通过寄存器堆接收这个值的。对于DSUB指令，转发结果在时钟周期结束时才会抵达，这显然太晚了，因为这一指令需要在此时钟周期开始时启动。</p>
+<p>载入指令有一种不能单由转发来消除的延迟。而是需要增加一种称为流水线互锁，以保持正确的执行模式。一般情况下， 流水线互锁会检测冒险，并在该冒险被清除之前使流水线停顿。在这种情况下，互锁使流水线停顿，让希望使用某一数据的指令等待，直到源指令生成该数据为止。这种流水线互锁引入一次停顿或气泡，就像应对结构冒险时所做的一样。停顿指令的CPI会增加，延长数目等于停顿的长度（在本例中为1个时钟周期）。</p>
+<p><img src="/img/1618332843.jpg" alt=""></p>
+<p>图C-7 载入指令可以将其结果旁路至AND和OR指令，但不能旁路至DSUB，因为这将意味着在“负向时间”上转发结果</p>
+<p>表C-3使用流水级名称显示了停顿前后的流水线。因为停顿会导致从DSUB开始的指令在时间上向后移动1个周期，转发给AND指令的数据现在是通过寄存器堆到达的，而对于OR指令根本不需要转发。由于插入了气泡，需要增加一个周期才能完成这一序列。4号时钟周期内没有启动指令（在6号周期没有指令完成）。</p>
+<p><img src="/img/1618332883.jpg" alt=""></p>
+<h3 id="分支冒险"><a href="#分支冒险" class="headerlink" title="分支冒险"></a>分支冒险</h3><p>对于我们的MIPS流水线，控制冒险造成的性能损失可能比数据冒险还要大。在执行分支时，修改后的程序计数器的值可能等于（也可能不等于）当前值加4。回想一下，如果分支将程序计数器改为其目标地址，它就是选中分支；否则就是未选中分支。如果指令i为选中分支，通常会等到ID末尾，完成地址计算和对比之后才会改变程序计数器。表C-4表明，处理分支的最简单方法是：一旦在ID期间（此时对指令进行译码）检测到分支，就对该分支之后的指令重新取值。第一个IF周期基本上是一次停顿，因为它从来不会执行有用工作。读者可能已经注意到，如果分支未被选中，由于事实上已经正确地提取了指令，所以IF级的重复是不必要的。表C-4分支在五级流水线中导致一个周期的停顿分支指令</p>
+<p><img src="/img/1618457217.jpg" alt=""></p>
+<ul>
+<li>分支指令之后的指令已被提取，但随后被忽略，在已经知道分支目标之后，重新开始提取操作。如果分支未被选中，则分支后续指令的第二个IF就有些多余了，这一点可能比较明显。</li>
+</ul>
+<p>如果每个分支产生一个停顿周期, 将会使性能损失10%~30%，具体取决于分支频率，所以我们将研究一些用于应对这一损失的技术。</p>
+<h4 id="降低流水线分支代价"><a href="#降低流水线分支代价" class="headerlink" title="降低流水线分支代价"></a>降低流水线分支代价</h4><p>有许多方法可以处理由分支延迟导致的流水线停顿，我们在这一小节讨论4种简单的编译时机制。在这4种机制中，分支的操作是静态的，也就是说，在整个执行过程中，它们对每条分支来说都是固定的。软件可以尝试利用硬件机制和分支行为方面的知识将分支代价降至最低。</p>
+<p>处理分支的最简单机制是冻结或冲刷流水线，保留或删除分支之后的所有指令，直到知道分支目标为止。这种解决方案的吸引力主要在于其软硬件都很简单。这也是表C-4所示流水线中较早使用的解决方案。在这种情况下，分支代价是固定的，不能通过软件来缩减。一种性能更高但仅略微复杂一点的机制是将每个分支都看作未选中分支，允许硬件继续执行，就好像该分支未被执行一样。这时必须非常小心，在确切知道分支输入之前，不要改变处理器状态。这一机制的复杂性在于必须要知道处理器状态可能何时被指令改变，以及如何“撤销”这种改变。</p>
+<p>在简单的五级流水线中，这种预测未选中机制的实现方式是继续提取指令，就好像分支指令是一条正常指令一样。流水线看起来好像没有什么异常发生。但是，如果分支被选中，就需要将已提取的指令转为空操作，重新开始在目标地址位提取指令。表C-5显示了这两种情况。一种替代机制是将所有分支都看作选中分支。只要对分支指令进行了译码并计算了目标地址，我们就假定该分支将被选中，开始在目标位置提取和执行。因为在我们的五级流水线中，不可能在知道分支输出结果之前知道目标地址，所以这种方法对于这一流水线没有好处。在一些处理器中，特别是那些拥有隐性设定条件代码或者拥有更强大分支条件的处理器中，是可以在分支输出之前知道分支目标的，这时，预测选中机制可能就有意义了。</p>
+<p>无论是在预测选中还是预测未选中机制中，编译器总是可以通过代码组织方式，使最频繁的路径与硬件选择相匹配，从而提高性能。我们的第四种机制为编译器提高性能提供了更多的机会。</p>
+<p><img src="/img/1618457428.jpg" alt=""></p>
+<ul>
+<li>当分支未被选中时（在ID期间确定），我们提取未选中指令，继续进行。当在ID期间确定选中该分支时，则在分支目标处重新开始提取。这将导致该分支后面的所有指令停顿1个时钟周期。在某些处理器中使用的第四种机制称为延迟分支。这一技术在早期RISC处理器中的使用非常广泛，在五级流水线中的工作状态相当好。在延迟分支中，带有一个分支延迟的执行周期为：</li>
+</ul>
+<ul>
+<li>分支指令</li>
+<li>依序后续指令</li>
+<li>选中时的分支目标</li>
+</ul>
+<p>依序后续指令位于分支延迟时隙中。无论该分支是否被选中，这一指令都会执行。表C-6中给出具有分支延迟的五级流水线的流水线行为特性。尽管分支延迟可能长于一个1周期，但在实际中，几乎所有具有延迟分支的处理器都只有单个指令延迟；如果流水线的潜在分支代价更长，则使用其他技术。</p>
+<p><img src="/img/1618457459.jpg" alt=""></p>
+<ul>
+<li>延迟时隙中的指令（对于MIPS，只有一个延迟时隙）被执行。如果分支未被选中，则继续执行分支延迟指令之后的指令；如果分支被选中，则继续在分支目标处执行。当分支延迟时隙中的指令也是分支时，其含义有些模糊：如果该分支未被选中，延迟分支时隙中的分支应当怎么办呢?由于这一混淆，采用延迟分支的体系结构经常禁止在延迟时隙中放入分支。</li>
+</ul>
+<p>编译器的任务是让后续指令有效并可用。因此使用了多种优化方式。图C-8给出了三种可以调度分支延迟的方式。<br><img src="/img/1618457503.jpg" alt=""></p>
+<p>图C-8 分支延迟时隙的调度。每一对中的上框显示调度之前的代码；下框表示调度后的代码。在（a）中，延迟时隙内载入的是分支之前的一条不相关指令。这是最佳选择。策略（b）与（c）在策略（a）不可能实现时使用。在（b）和（c）的序列中，由于分支条件中使用了R1，所有不能将DADD指令移到分支之后（它的目的地是R1 ）。在（b）中，分支延迟时隙中填充了分支的目标指令；这时一般需要复制目标指令，因为其他路径也可能会到达这一目标指令。当分支的选中机率很高时（比如循环分支）优选策略（b）。最后，如（c）中所示，可以用未被选中的指令填充延迟时隙。为使这一优化方法能够对（b）和（c）有效，当分支进入非预测方向时，必须可以执行经过移动的指令。这里所说的“可以”是指浪费了工作量，但程序仍能正确执行。例如，当分支进入非预测方向时，R7成为一个未被用到的临时寄存器，那（c）策略就属于这一情景</p>
+<p>延迟分支调度的局限性源于: （1）对于可排在延迟时隙中的指令有限制；（2）我们在编译时预测一个分支是否可能被选中的能力有限。为了提高编译器填充分支延迟时隙的能力，大多数具有条件分支的处理器都引入了一种取消或废除分支。在取消分支中，指令包含了预测分支的方向。当分支的行为与预期一致时，分支延迟时隙中的指令就像普通的延迟分支一样执行。 当分支预测错误时，分支延迟时隙中的指令转为空操作。</p>
+<h4 id="分支机制的性能"><a href="#分支机制的性能" class="headerlink" title="分支机制的性能"></a>分支机制的性能</h4><p>这些机制的各自实际性能怎么样呢?假定理想CPI为1，考虑分支代价的实际流水线加速比为：</p>
+<p>流水线加速比 = 流水线深度 / (1+分支导致的流水线停顿周期)</p>
+<p>由于:</p>
+<p>分支导致的流水线停顿周期 = 分支频率 x 分支代价</p>
+<p>得到:</p>
+<p>流水线加速比 = 流水线深度 / (1+分支频率x分支代价)</p>
+<p>分支频率和分支代价可能都存在因为无条件分支和有条件分支导致的分量。但是，由于后者出现得更为频繁，所以它们起主导作用。</p>
+<p>对于一个更深的流水线，比如在MIPS R4000中，在知道分支目标地址之前至少需要三个流水级，在计算分支条件之前需要增加一个周期，这里假定条件比较时寄存器中没有停顿。三级延迟导致表C-7中所列三种最简单预测机制的分支代价。假定有如下频率，计算因分支使该流水线的CPI增加了多少。</p>
+<ul>
+<li>无条件分支：4%</li>
+<li>有条件分支、未选中：6%</li>
+<li>条件分支、选中：10%</li>
+</ul>
+<p>表C-7三种最简单预测机制对于一个较深流水线的分支代价</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>分支机制</th>
+<th>无条件分支代价</th>
+<th>未选中分支代价</th>
+<th>选中分支代价</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>冲刷流水线</td>
+<td>2</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr>
+<td>预测选中</td>
+<td>2</td>
+<td>3</td>
+<td>2</td>
+</tr>
+<tr>
+<td>预测未选中</td>
+<td>2</td>
+<td>0</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>将无条件、有条件未选中和有条件选中分支的相对频率乘以各自的代价，就可以求出CPI。结果如表C-8所示。<br><img src="/img/1618474243.jpg" alt=""></p>
+<p>这些机制之间的差别大体随这一较长的延迟而增大。如果基础CPI为1，分支是唯一的停顿源，则理想流水线的速度是使用停顿流水线机制的流水线的1.56倍。 预测未选中机制在相同假定条件下优于停顿流水线机制，为其1.13 倍。</p>
+<h3 id="通过预测降低分支成本"><a href="#通过预测降低分支成本" class="headerlink" title="通过预测降低分支成本"></a>通过预测降低分支成本</h3><p>当流水线变得越来越深，而且分支的潜在代价增加时，仅使用延迟分支及类似机制就不够了。这时需要寻求一种更积极的方式来预测分支。这些机制分为两类：依赖编译时可用信息的低成本静态机制；根据程序特性对分支进行动态预测的策略。下面将讨论这两种方法。</p>
+<h3 id="静态分支预测"><a href="#静态分支预测" class="headerlink" title="静态分支预测"></a>静态分支预测</h3><p>改进编译时分支预测的一种重要方式是利用先前运行过程收集的一览数据。之所以值得这样做，是因为人们观测到分支的行为特性经常是双峰分布的；也就是说，各个分支经常是严重偏向于选中或未选中两种情景之一。图C-9显示了使用这一策略成功地进行了分支预测。使用相同输入数据来运行程序，以收集一览数据；其他研究表明，如果改变输入，使不同运行的一览数据发生变化，只会使基于一览数据的预测准确度有微小变化。</p>
+<p>任意分支预测机制的有效性都同时取决于机制的精度和条件分支的频率，在SPEC中，其变化范围为3%~24%。 整数程序的错误预测率较高，此类程序的分支频率通常较高，这一事实是静态分支预测的主要限制。在下一节中，我们考虑动态分支预测器，最新的处理器都采用这种机制。<br><img src="/img/1618474328.jpg" alt=""></p>
+<p>图C-9 对于一种基于一览数据的预测器，SPEC92的错误预测率变化幅度很大，但浮点程序通常优于整型程序，前者的平均错误预测率为9%，标准偏差为4%，后者的平均错误预测率为15%，标准偏差为5%。实际性能取决于预测精度和分支频率，其变化范围为3%~24%</p>
+<h3 id="动态分支预测和分支预测缓冲区"><a href="#动态分支预测和分支预测缓冲区" class="headerlink" title="动态分支预测和分支预测缓冲区"></a>动态分支预测和分支预测缓冲区</h3><p>最简单的动态分支预测机制是分支预测缓冲区或分支历史表。分支预测缓冲区是一个小型存储器，根据分支指令地址的低位部分进行索引。这个存储器中包含一个位（bit），表明该分支最近是否曾被选中。这一机制是最简单的缓冲区形式；它没有标志，仅当分支延迟过长，超过可能目标PC计算所需要的时间时，用于缩短分支延迟。</p>
+<p>采用这样一种缓冲区时，我们事实上并不知道预测是否正确——它也可能是由另外一个具有相同低位地址的分支放入的。这个预测就是一种提示，我们假定它是正确的，并开始在预测方向上开始提取。如果这一提示最终是错误的，那将预测位反转后存回。这个缓冲区实际上就是一个缓存，对其所有访问都会命中，而且在后面可以看到，缓冲区的性能取决于两点：对所关注分支的预测频繁程度，该预测在匹配时的准确度。在分析性能之前，对分支预测机制的精度进行一点微小而重要的提升是很有用的。</p>
+<p>这种简单的1位预测机制在性能上有一处短板: 即使某个分支几乎总是被选中，在其未被选中时，我们也可能会得到两次错误预测，而不是一次， 因为错误预测会导致该预测位反转。</p>
+<p>为了弥补这一弱点，经常使用2位预测机制。在两位预测机制中，预测必须错过两次之后才会进行修改。图C-10给出了2位预测机制的有限状态处理器。</p>
+<p>分支预测缓冲可以实现为一个小的特殊“缓存”，在IF流水线中使用指令地址进行访问，或者实现为一对比特，附加到指令缓存中的每个块，并随指令一起提取。如果指令的译码结果为一个分支，并且该分支被预测为选中，则在知道PC之后立即从目标位置开始提取。否则，继续进行顺序提取和执行。如图C-10所示，如果预测结果错误，将改变预测位。<br><img src="/img/1618474360.jpg" alt=""></p>
+<p>图C-10 2位预测机制中的状态。许多分支被选中和不被选中的概率并非均等，而是严重偏向其中一种状态，对于此类分支，2位预测器的错误预测率经常低于1位预测器。在这种预测器中，使用2个数位对系统中的4种状态进行编码。这一2位机制实际上是一种更具一般性的机制的具体化，这种通用机制对于预测缓冲区中的每一项都有n位饱和计数器。对于一个n位计数器，其取值介于2至2^n-1之间：当计数器大于或等于其最大值（2^n-1）的一半时，分支被预测为选中；否则，预测其未选中。对n位预测器的研究已经证明，2位预测器的效果几乎与n位预测器相同，所以大多数系统都采用2位分支预测器，而不是更具一般性的n位预测器</p>
+<p>在实际应用程序中，如果使用每项两位的分支预测缓冲区，可以预测得到什么样的准确度?图C-11显示，对于SPEC89基准测试，一个拥有4096项的分支预测缓冲区将得到超过99%~82%的预测准确度，或者说错误预测率为1%~18%。根据2005年的标准，一个4K项的缓冲区（比如得出上述结果的缓冲区）算是很小了，较大的缓冲区可以得到更好点的结果。</p>
+<p>由于我们尝试开发更多的IP，所以分支预测的准确度变得非常关键。在图C-11中可以看出，整数程序的预测器精度低于循环密集的科学程序（前者的分支频率通常也更高一些）。我们可以采用两种方式来解决这一问题: 增大缓冲区的大小，增加每种预测机制的准确度。但如图C-12所示，一个拥有4000项的缓冲区，其性能大体与无限缓冲区相当，至少对于SPEC这样的基准测试如此。图C-12中的数据清楚地表明缓冲区的命中率并非主要限制因素。前面曾经提到，仅提高每个预测器的位数而不改变预测器结构，其影响也是微乎其微的。因此，我们需要研究一下如何提高每种预测器的精度。</p>
+<p><img src="/img/1618474388.jpg" alt=""><br>图C-11 对于SPEC89基准测试，4096 项2位预测缓冲区的预测准确度。整数基准测试（gcc、espresso、eqntott和li ）的预测错误率大体高于浮点程序，前者的均值为11%，后者为4%。忽略浮点内核（nasa7、matrix300和tomcatv）仍然会使浮点基准测试的准确度高于整数基准测试。收集这些数据及本节其余数据的分支预测研究采用IBM Power体系结构及针对该系统的优化代码执行。</p>
+<p><img src="/img/1618474414.jpg" alt=""><br>图C-12 对于SPEC89基准测试，4096项2位预测缓冲区与无限缓冲区的预测准确度对比。尽管这些数据是针对一部分 SPEC基准测试的较早版本收集的，但较新版本的结果也大体相当，只是可能需要8000项来匹配一个无限2位预测器</p>
+<h2 id="如何实现流水化"><a href="#如何实现流水化" class="headerlink" title="如何实现流水化"></a>如何实现流水化</h2><p>在开始介绍基本流水化之前，需要回顾一下MIPS非流水版本的一种简单实现。</p>
+<h3 id="MIPS的简单实现"><a href="#MIPS的简单实现" class="headerlink" title="MIPS的简单实现"></a>MIPS的简单实现</h3><p>本节将继续C.1节的风格，首先给出一种简单的非流水化实现，然后是流水化实现。但我们这一次的例子是专门针对MIPS体系结构的。<br>在这一小节，我们主要关注MIPS中一部分整数运算的流水线，其中包括载入-存储字、等于零时分支和整数ALU运算。在本附录的后半部分将整合这些基础浮点操作。尽管我们仅讨论MIPS的一个子集，但这些基本原则可以扩展到对所有指令的处理。</p>
+<p>每种MIPS指令都可以在最多5个时钟周期中实现。这5个时钟周期分述如下。</p>
+<p>（1）指令提取周期（IF）<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">IR &lt;- Mem[PC];</span><br><span class="line">NPC ← PC+4;</span><br></pre></td></tr></table></figure><br>操作——送出PC，并将指令从存储器提取到指令寄存器中（IR）；将PC递增4，以完成下一顺序指令的寻址。IR用于保存将在后续时钟周期中需要的指令；与此类似，寄存器NPC用于保存下一顺序PC。</p>
+<p>（2）指令译码/寄存器提取周期（ID ）。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A←Regs[rs];</span><br><span class="line">B←Regs[rt];</span><br><span class="line">Imm←IR的符号扩展立即数字段;</span><br></pre></td></tr></table></figure><br>操作——对该指令进行译码，并访问寄存器堆，以读取寄存器（rs和rt为寄存器识别符）。通用寄存器的输出被读入两个临时寄存器（A和B）中，供之后的时钟周期使用。IR 的低16位也进行了符号扩展，存储在临时寄存器Imm中，供下一个周期使用。</p>
+<p>指令译码与寄存器读取是并行完成的，这一点之所以成为可能，是因为在MIPS格式中，这些字段放在固定位置。因为在所有MIPS格式中，指令的立即数部分都位于同一位置，所以在这一周期还会计算符号扩展立即数，以备在下一周期使用。</p>
+<p>（3）执行/实际地址周期（EX）</p>
+<p>ALU对前一周期准备的操作数进行操作，根据MIPS指令类型执行以下4种功能之一。</p>
+<ul>
+<li>存储器引用:<ul>
+<li>ALUOutput ← A + Imm;</li>
+<li>操作——ALU将操作数相加，得到实际地址，并将结果放在寄存器ALUOutput中。</li>
+</ul>
+</li>
+<li>寄存器-寄存器ALU指令:<ul>
+<li>ALUOutput ← A func B;</li>
+<li>操作——ALU 对寄存器A和寄存器B中的取值执行由功能代码指定的操作。结果放在临时寄存器ALUOutput中。</li>
+</ul>
+</li>
+<li>寄存器立即数ALU指令:<ul>
+<li>ALUOutput ← A op Imm;</li>
+<li>操作——ALU 对寄存器A和寄存器Imm中的值执行由操作代码指定的操作。结果放在临时寄存器ALUOutput中。</li>
+</ul>
+</li>
+<li>分支:<ul>
+<li>ALUOutput ← NPC + (Imm &lt;&lt; 2）;</li>
+<li>Cond ← (A==0)</li>
+<li>操作——ALU将NPC加到Imm中的符号扩展立即数，将该立即数左移2位，得到一个字偏移量，以计算分支目标的地址。检查已经在上一周期读取的寄存器A，以确保该分支是否被选中。由于我们仅考虑分支的一种形式（BEQZ）,所以是与0进行对比。注意，BEQZ实际上是一个伪指令，它会转换为一个以R0为操作数的BEQ。为简单起见，我们这里仅考虑这一种分支形式。</li>
+</ul>
+</li>
+</ul>
+<p>MIPS的载入-存储体系结构意味着实际地址与执行周期可以合并到一个时钟周期中，因为此时没有指令需要同时计算数据地址和指令目标地址，并对数据执行操作。各种形式的跳转指令未包含在上述整数指令中，它们与分支相类似。</p>
+<p>（4）存储器访问/分支完成计算（MEM ）。</p>
+<p>对所有指令更新PC: PC←NPC;</p>
+<ul>
+<li>存储器引用:<ul>
+<li><code>LMD ← Mem[ALUOutput]</code> 或 <code>Mem[ALUQutput]←B</code>;</li>
+<li>操作——在需要时访问存储器。 如果指令为载入指令，则从存储器返回数据，将其放入LMD（载入存储器数据）寄存器中；如果是存储指令，则将来自B寄存器的数据写入存储器。无论是哪种情况，所使用的地址都是在上一周期计算得出并放在寄存器ALUOutput中的地址。</li>
+</ul>
+</li>
+<li>分支:<ul>
+<li>if (cond) PC ← ALU0utput</li>
+<li>操作——如果该指令为分支指令，则用寄存器ALUOutput中的分支目标地址代替PC。</li>
+</ul>
+</li>
+</ul>
+<p>（5）写回周期（WB ）。</p>
+<ul>
+<li>寄存器-寄存器ALU指令:<ul>
+<li><code>Regs[rd]←ALU0utput</code>;</li>
+</ul>
+</li>
+<li>寄存器立即数ALU指令:<ul>
+<li><code>Regs[rt]←ALUOutput</code>;</li>
+</ul>
+</li>
+<li>载入指令:<ul>
+<li><code>Regs[rt]←LMD</code>;</li>
+<li>操作——无论结果来自存储器系统（在LMD中），还是ALU（在ALUOutput中），都将其写到寄存器堆中，寄存器目标字段也在两个位置之一（rd或rt）之一，具体取决于实际操作码。</li>
+</ul>
+</li>
+</ul>
+<p>图C-13显示了一条指令是如何流经数据路径的。在每个时钟周期结束时,在该时钟周期计算并会在后面时钟周期用到的所有值（无论是供本条指令使用，还是供下一条指令使用）都被写入存储设备中，可能是存储器、通用寄存器、PC或临时寄存器（即，LMD、lmm、A、B、IR、NPC、ALUOutput或Cond ）。临时寄存器在一个指令的时钟周期之间保存值，而其他存储元件则是状态的可视部分，在连续指令之间保存值。</p>
+<p>尽管今天的所有处理器都是流水化的，但这种多周期实现方式合理地近似呈现了早些时候是如何实现大多数处理器的。可以使用一种简单的有限状态机来实现一种遵循上述5周期结构的控制。对于更复杂的处理器，可以使用微代码控制。在任何一种情况下，类似上述内容的指令序列决定着控制结构。</p>
+<p>在这种多周期实现中可以消除一些硬件冗余。 例如，有两个ALU: 一个用于使PC递增，一个用于实际地址和ALU计算。由于不会在同一时钟周期用到它们，所以可以通过添加多工器和共享同一ALU来合并它们。同样，由于数据和指令访问发生在不同时钟周期内，所以指令和数据可以存储在相同存储器中。</p>
+<p>我们没有优化这一简单实现方式，而是保持图C-13所示设计方式，为流水化实现提供了更好的基础。</p>
+<p><img src="/img/1618474504.jpg" alt=""></p>
+<p>图C-13 MIPS 数据路径的实现允许每条指令在4或5个时钟周期内执行。尽管PC显示在指令提取使用的数据路径部分、寄存器显示在指令译码/寄存器提取使用的数据路径部分，实际上这些功能单元都是由一条指令读取和写入的。尽管这些功能单元显示在对其进行读取的周期内，实际上，PC是在存储器访问时钟周期内写入，寄存器是在写回时钟周期内写入的。在这两种情况下，在后续流水级中的写入是由多工器输出指示（在存储器访问或写回中），它将一个取值带回PC或寄存器。流水线的大多数复杂性是由这些反向流动信号引入的，因为它们表明存在冒险的可能</p>
+<p>作为本节所讨论多周期设计的一种替代方式，我们也可以将CPU实现为每条指令占用1个长时钟周期。在这种情况下，由于一条指令之内的时钟周期之间不需要任何通信，所以将会删除临时寄存器。每条指令都在1个长时钟周期内执行，在该时钟周期结束时将结果写入数据存储器、寄存器或PC。此类处理器的CPI为1。不过，这时的时钟周期大约等于多周期处理器时钟周期的5倍，这是因为所有指令都需要遍历全部功能单元。设计人员从来不会使用这种单周期实现方式，其原因有两个。第一，单周期实现对于大多数CPU的效率极低，因为对于不同指令，它们的任务量会有合理的变动，从而时钟周期时间也会变动。第二，单周期实现需要重复功能单元，而在多周期实现中，这些功能单元是可以共享的。不过，这种单周期数据路径可以让我们说明流水化是如何从时钟周期时间的角度（而非CPI的角度）来为处理器提供改进的。</p>
+<h3 id="MIPS基本流水线"><a href="#MIPS基本流水线" class="headerlink" title="MIPS基本流水线"></a>MIPS基本流水线</h3><p>和以前一样，只需要在每个时钟周期启动一个新指令，几乎不需要什么改变就可以对图C-13的数据路径实现流水线。因为每个流水级在每个时钟周期都是活动状态，所以流水级中的所有操作都必须在1个时钟周期内完成，任何操作组合都必须能够立即发生。此外，数据路径的流水化要求必须将流水级之间传递的数值放在寄存器中。图C-14 显示的MIPS流水线中包含了每个流水级之间的适当寄存器，称为流水线寄存器或流水线锁存器。用这些寄存器相联的流水线名称对其进行标记。图C-14的绘制方式清楚地显示了各级之间通过流水线寄存器的连接。</p>
+<p>用于在一条指令的时钟周期之间保存临时值的所有寄存器都包含在这些流水线寄存器中。指令寄存器（IR）是IF/ID寄存器的一部分，当它们用于提供寄存器名称时，对其字段进行标记。这些流水线寄存器用于从一个流水级向下一个流水级传送数据和控制。在后续流水级上需要的所有值都必须放在这样一个寄存器中，并从一个流水线寄存器中复制到下一个寄存器，直到不再需要这些值为止。如果我们尝试仅在早期未流水化数据路径中使用临时寄存器，就有可能在完成所有应用之前覆盖这些值。例如，寄存器操作数的字段，用于在载入或ALU操作中执行写入操作，这一字段是从MEM/WB流水线寄存器而非IF/ID寄存器中提供的。这是因为我们希望一个载入或ALU操作写入该操作指定的寄存器，而不是该指令当前从IF传送到ID的寄存器字段!这一目标寄存器字段就是从一个流水线寄存器复制到下一个寄存器，直到在WB级用到它为止。</p>
+<p><img src="/img/1618474548.jpg" alt=""><br>图C-14 通过增加一组寄存器实现流水化的数据路径，每对流水线之间一个寄存器。寄存器用于从一个流水级向下一个流水级传送值和控制信息。我们也可以将PC看作一个流水线寄存器，它位于流水线的IF级之前，指向每个流水级的一个流水线寄存器。回想一下，PC是一个边缘触发寄存器，在时钟周期结束时对其进行写入；因此，在写入PC时不存在争用条件。PC的多工器已被移动，恰好在一个流水级（IF）中写入PC。如果我们没有移动它，那在发生分支时可能会出现冲突，因为两条指令都会尝试将不同值写到PC中。大多数数据路径是由左向右流动，即从较早时间移向较晚时间。从右向左流动的数据（携带着分支的写回信息和PC信息）增加了流水线的复杂性</p>
+<p>任何一条指令在某一时刻恰好在一个流水级中处于活动状态；任何以指令名义执行的操作都发生在一对流水线寄存器之间。因此，我们还可以通过以下方式来研究流水线的行为：查看在不同指令类型下，各流水级上必须执行什么操作。表C-9展示了这一观点。流水线寄存器的字段命名显示了数据在流水级之间的流动。注意，前两级的操作与当前指令类型无关。由于要等到ID级结束时才会对指令进行译码，所以前两级的操作必须与当前指令无关。IF行为取决于EXMEM中的指令是否为选中分支。如果是，则会在IF结束时将EXMEM中分支指令的分支目标地址写入PC中；如果不是，则写回递增后的PC。寄存器源操作数的固定位置编码对于在ID期间提取寄存器是至关重要的。</p>
+<p><img src="/img/1618474588.jpg" alt=""></p>
+<ul>
+<li>在IF中，除了提取指令和计算新PC之外，我们还将递增后的PC存储到PC和流水线寄存器（NPC）中，供以后计算分支目标地址时使用。这个结构与图C-14中的组织方式相同，在正使用两个来源之一更新PC。在D中，我们提取寄存器，对IR（立即数字段）的低16位进行符号扩展，并沿R和NPC进行传送。在EX期间执行ALU运算或地址计算，沿IR和B寄存器进行传送（如果该指令为存储指令）。如果该指令为选中分支，我们还将cond的值设置为1。在MEM阶段，我们循环使用存储器，必要时写PC，并传送在最后流水级中使用的值。最后，在WB期间用ALU输出值或载入值来更新寄存器字段。为简单起见，我们总是将整个R从一级传送到下一级，实际上，在一条指令沿流水线流动时，对IR的需要越来越少。</li>
+</ul>
+<p>为了控制这一简单流水线，我们只需要决定如何设定图C-14 数据路径中4个多工器的控制方式。ALU级的2个多工器根据指令类型设定，由ID/EX寄存器的IR字段规定。上面的ALU输入多工器根据该指令是否为分支来进行设定，下面的多工器根据该指令是寄存器-寄存器ALU操作还是任意其他类型的操作来设定。If级中的多工器选择是使用递增PC 的值，还是EX/MEM.ALUOutput（分支目标）的值来写入PC。这个多工器由EX/MEM.cond字段控制。第<br>四个多工器由WB级的指令是载入指令还是ALU指令来控制。除了这4个多工器之外，还需要另外1个多工器，虽然未在图C-14中画出，但只要看一下ALU操作的WB级就可以清楚地看出是存在该选择器的。根据指令类型（是寄存器寄存器ALU,还是ALU立即数或载入），目标寄存器字段为两个不同位置中的一个。因此，我们需要一个多工器来选择MEM/WB寄存器中IR的正确部分，以指定寄存器目标字段，假定该指令写入一个寄存器。</p>
+<h3 id="实现MIPS流水线的控制"><a href="#实现MIPS流水线的控制" class="headerlink" title="实现MIPS流水线的控制"></a>实现MIPS流水线的控制</h3><p>将一条指令从指令译码级（I）移入此流水线执行级（EX）的过程通常称为指令发射，已经执行这一步骤的指令称为已发射。对于MIPS整数流水线，所有数据冒险都可以在该流水线的ID阶段进行检查。如果存在数据冒险，该指令将在被发射之前停顿。与此类似，我们可以确定在ID期间需要哪种转发，并设定适当的控制。如果在流水线早期检查互锁，除非整个处理器停顿，否则硬件从来不需要挂起一条已经改变处理器状态的指令，从而降低了硬件的复杂性。</p>
+<p>或者，我们可以在使用操作数的一个时钟周期之始（对于此流水线来说，为EX和MEM）检查冒险或转发。为了说明这两种方法之间的区别，我们将展示如何通过在ID中进行检查来消除因为载入指令所导致的写后读（RAW）冒险互锁（称为载入互锁），并说明如何实现指向ALU输入的转发路径。表C-10列出了我们必须处理的各种环境。</p>
+<p><img src="/img/1618474640.jpg" alt=""></p>
+<ul>
+<li>这个表显示，对于跟在写指令后面的两条指令，只需要对其目标和源进行对比。在发生停顿时，一旦继续执行后，流水线相关性与第三种情况类似。当然，涉及R0的冒险是可以忽略的，这是因为寄存器中总是包含零，而且上述测试经扩展后可以完成这一任务。</li>
+</ul>
+<p>接下来实现载入互锁。如果存在一个因为载入指令导致的RAW冒险，当需要该载入数据的指令存位于ID级时，该载入数据将位于EX级。因此，我们可以用一个很小的表来描述所有可能存在的情景，可以直接将其转换为实现方式。表C-11显示了当使用载入结果的指令位于ID级时，检测到负载互锁的逻辑。</p>
+<p><img src="/img/1618474678.jpg" alt=""></p>
+<ul>
+<li>表中第1行和第2行测试载入目标寄存器是否为ID中寄存器——寄存器操作的源寄存器之一。表中第3行判断载入目标寄存器是否为载入或存储有限地址、ALU立即数或分支测试的源。请记住，IF/ID 寄存器保存着ID中指令的状态，它可能会用到载入结果，而ID/EX保存着EX中指令的状态，它是载入指令。</li>
+</ul>
+<p>一旦检测到冒险，控制单元必须插入流水线停顿，并防止IF和ID级中的指令继续前进。前面曾经看到，所以控制信息都承载于流水线寄存器中。（仅承载指令就足够了，因为所有控制都是由其派生而来的。）因此，在检测冒险时，只需要将ID/EX流水线寄存器的控制部分改为全0，它正好是一个空操作（一个不做任何事情的指令，比如<code>DADD R0, R0, R0</code>）。此外，我们只篅循环使用IF/ID 寄存器中的内容，以保存被停顿的指令。在具有更复杂冒险的流水线中，这些思想同样适用：对比一组流水线寄存器，并转换为空操作，以防止错误执行。</p>
+<p>转发逻辑的实现尽管需要考虑更多种情况，但大体类似。要实现转发逻辑，关键是要注意到流水线寄存器中既包含了要转发的数据，也包含了源、目标寄存器字段。所有转发在逻辑上都是从ALU或数据存储器的输出到ALU输入、数据存储器输入或零检测单元。因此，我们可以对比EXMEM和MEMWB级中所包含IR的目标寄存器与ID/EX和EXMEM寄存器中所包含IR的源寄存器，以此来实现转发。表C-12显示了这些对比，以及当转发结果的目的地是EX中当前指令的ALU输入时，可能执行的转发操作。</p>
+<p><img src="/img/1618474715.jpg" alt=""></p>
+<ul>
+<li>为了判断是否应当发生转发操作，一共需要10次不同比较。顶部和底部的ALU输入分别指代与第一、第二ALU源操作数相对应的输入，如图C-13及图C15中所示。请记住，EX中目标指令的流水线销存器是ID/EX，而源值来自EX/MEM或MEM/WB的ALUOutput部分，或者MEMWB的LMD部分。有一个复杂问题未能通过这一逻辑解决：处理多条向相同寄存器进行写入的指令。例如，在代码序列<code>DADD R1, R2, R3; DADDI: R1, R1, #2; DSUB R4, R3, R1</code>期间，该逻辑必须确保DSUB指令使用的是DADDI指令的教据，而不是DADD指令的结果。为了处理这一情景，可以扩展上述逻辑：仅在未对相同输入转发来自EXMEM的结果时，才检测来自MEMWB的转发。由于DADDI结果将位于EX/MEM中，所以将转发该结果，而不是MEMWB中的DADD结果。</li>
+</ul>
+<p>除了在需要启用转发路径时必须确定的比较器和组合逻辑之外，还必须扩大ALU输入端的多工器，并添加一些连接,这些连接源于转发结果所用的流水线寄存器。图C-15给出了流水化数据路径的相关段，其中添加了所需要的多工器和连接。</p>
+<p><img src="/img/1618474746.jpg" alt=""></p>
+<p>图C-15 向ALU转发结果需要在每个ALU多工器上另外增加三个输入，增加三条指向这些新输入的路径。这些路径对应于以下三者的一个旁路: （1）EX结束时的ALU输出；（2）MEM级结束时的ALU输出；（3）MEM级结束时中的存储器输出</p>
+<p>对于MIPS，冒险检测和转发硬件是相当简单的；我们将会看到，当为处理浮点数而对这一流水线进行扩展时，事情多少会变得复杂一些。在此之前，需要处理分支。</p>
+<h3 id="处理流水线中的分支"><a href="#处理流水线中的分支" class="headerlink" title="处理流水线中的分支"></a>处理流水线中的分支</h3><p>在MIPS中，分支（BEQ和BNE）需要检测一个寄存器，看其是否等于另一个寄存器（该寄存器可能为R0）。如果仅考虑BEQZ和BNEZ的情景（它们需要零检测），那有可能通过将零检测移到周期内部，在ID周期结束时完成此判断。为了充分利用尽早判断出该分支是否命中的优势，都必须尽早计算PC（无论命中还是未命中）。在ID期间计算分支目标地址需要增加一个加法器，因为前面一直用于实现此功能的主ALU在EX之前是不可用的。图C-16给出了修订后的流水化数据路径。通过增加独立的加法器，并在ID期间作出分支判断，分支仅需要停顿1个时钟周期。尽管这样将分支延迟缩减为1个周期，但这意味着如果一个 ALU指令后面跟有一个依赖该指令结果的分支，那就会招致数据冒险停顿。表C-13显示了表C-9中修订后的流水线表的分支部分。</p>
+<p>在一些处理器中，分支冒险的代价（以时钟周期为单位）比我们这里的例子中更昂贵，因为评估分支条件和计算目的地的时间可能更长一些。例如，拥有独立译码和寄存器提取级的处理器可能存在分支延迟（控制冒险的长度），其长度至少为1个时钟周期。除非经过处理，否则分支延迟会转变为分支代价。许多实现更复杂指令集的较旧CPU，其分支延迟为4个时钟周期，甚至更长一些，而大型深度流水化处理器的分支代价经常为6或7个时钟周期。一般来说，流水线越深，以时钟周期度量的分支代价就越糟。当然，较长分支代价的相对性能性能影响取决于处理器的总CPI。低CPI的处理器可以承受更昂贵的分支，这是因为分支导致处理器性能下降的百分比较低。<br><img src="/img/1618474793.jpg" alt=""></p>
+<p>图C-16 将零检测和分支目标计算移到流水线的ID级中，可以缩减因为分支冒险导致的停顿。注意，我们已经进行了两处重要改变，每个改变消除了分支指令的三周期停顿之一。第一处变化是将分支目标地址计算和分支条件判断移到ID周期。第二处变化是在IF阶段写入指令的PC，或者使用在ID阶段计算的分支目标地址，或者使用在IF期间计算的递增PC。在对比中，图C-14从EXMEM寄存器中获取分支目标地址，并在MEM时钟周期内写入结果。在图C-14中曾经提到，可以将PC看作流水线寄存器（例如，作为ID/IF的一部分），会在每个IF周期结束时向其中写入下一条指令的地址</p>
+<p><img src="/img/1618474819.jpg" alt=""></p>
+<ul>
+<li>它使用一个独立的加法器（和图C-16一样），在ID期间计算分支目标地址。新操作或发生变化的操作以黑体标出。由于分支目标地址加法是在ID期间发生的，所以针对所有指令都会经过这一步骤；分支条件（<code>Regs[IF/ID. IR6..10] op 0</code>）也对所有指令有效。是选择顺序PC还是分支目标PC，仍然是在IF期间决定的，但它现在仅使用来自ID级的取值，这些值与上一条指令设定的值相对应。这一改变使分支代价降低两个周期，一个周期是因为提前计算分支目标和条件，一个周期是因为在同一时钟周期内控制PC选择，而没有推至下一周期。由于cond的值被设置为0，所以除非ID中的指令为选中分支，则该处理器必须在ID结束之前对指令进行译码。因为该分支在ID结束时完成，所以分支指令没有用到EX、MEM和WB级。对于偏移量长于分支的跳转，还会进一步增加复杂性。我们可以增加一个加法器，将IR中低26位左移2位后的值与PC相加，以应对上述复杂性。</li>
+</ul>
+<h2 id="妨碍流水线实现的难题"><a href="#妨碍流水线实现的难题" class="headerlink" title="妨碍流水线实现的难题"></a>妨碍流水线实现的难题</h2><h3 id="处理异常"><a href="#处理异常" class="headerlink" title="处理异常"></a>处理异常</h3><p>异常情景在流水化CPU中更难处理：由于指令的重叠，更难以判断一条指令是否能安全比改变CPU的状态。在流水化CPU中，指令是一段一段地执行， 在几个时钟周期内不会完成。不幸的是，流水线中的其他指令可能会引发一些异常，强制CPU在流水线中的指令尚未完成中止执行。</p>
+<h4 id="异常的类型与需求"><a href="#异常的类型与需求" class="headerlink" title="异常的类型与需求"></a>异常的类型与需求</h4><p>对于一些改变指令正常执行顺序的异常情景，在不同CPU中会采用不同的术语来进行指述。人们会使用中断、错误和异常等词，但具体用法并不一致。我们用异常一词来涵盖包括下列内容的所有此类机制:</p>
+<ul>
+<li>I/O设备需求</li>
+<li>从用户程序调用操作系统服务</li>
+<li>跟踪指令执行</li>
+<li>断点（程序员请求的中断）</li>
+<li>整数算术溢出</li>
+<li>浮点算术异常</li>
+<li>页面错误（不在主存储器中）</li>
+<li>（在需要对齐时）存储器访问未对齐</li>
+<li>违反存储器保护规则</li>
+<li>使用未定义或未实现的指令</li>
+<li>硬件故障</li>
+<li>电源故障</li>
+</ul>
+<p>当我们希望引用这些异常中的某一具体类别时，将使用一个较长的名称，比如I/O中断、浮点异常或页面错误。表C-14显示了上述常见异常事件的各种不同名称。</p>
+<p><img src="/img/1618474865.jpg" alt=""><br><img src="/img/1618474880.jpg" alt=""></p>
+<ul>
+<li>IBM 360和80x86上的每个事件都称为中断，而680x0中的每个事件称为异常。VAX将事件划分为中断或异常。在VAX中断中使用了设备、软件和紧急等修饰词语，而VAX异常则细分为故障、陷阱和中止。</li>
+</ul>
+<p>尽管我们使用异常一词来涵盖所有这些事件，但各种事件都有自己的重要特性，决定了硬件中需要采取什么操作。关于异常的需求，可以从五个半独立的方面进行描述。</p>
+<ol>
+<li>同步与异步——如果每次以相同数据和存储器分配执行程序时，事件都在同一位置发生，那事件就是同步的。由于硬件故障等异常，可能会由CPU和存储器外部的设备导致异步事件。异步事件通常可以在完成当前指令后处理，使其处理变得更容易一些。</li>
+<li>用户请求与强制——如果用户任务直接请求某一事件，那它就是用户请求事件。在某种意义上，用户请求的异常不是真正的异常，因为它们是可预测的。但是，由于对这些用户请求事件使用了用于存储和恢复状态的相同机制，所以也将它们看作异常。因为对于触发这一异常的指令来说，其唯一功能就是引发该异常，所以用户请求异常总是可以在完成该指令之后加以处理。强制异常是由某一不受用户程序控制的硬件事件导致的。强制异常不可预测，所以更难以实现。</li>
+<li>用户可屏蔽与用户不可屏蔽——如果一个事件可以借由用户任务来屏蔽或禁用，那它就是用户可屏蔽的。这一屏蔽只是控制硬件是否对异常进行回应。</li>
+<li>指令内部与指令之间一这种分类取决于妨碍指令完成的事件是发生在执行过程中间（无论多短），还是被看作是发生在指令之间。发生在指令内部的异常通常是同步的，因为就是这条指令触发了异常。在指令内部发生的异常实现起来要难于指令之间的异常，因为该指令必须被停止、重新启动。发生在指令内部的异步异常是因为灾难性情景（例如，硬件故障）出现的，所以总会导致程序终止。</li>
+<li>恢复与终止——如果程序的执行总是在中断之后停止，那它就是终止事件。如果程序的执行在中断之后继续，那它就是恢复事件。终止执行的异常实现起来更容易一些，因为CPU不需要在处理异常之后重启同一程序。</li>
+</ol>
+<p>表C-15根据这5个类别对表C-14中的示例进行了划分。难点在于实现指令之间发生的中断，对于这种中断必须恢复指令的执行。此类异常的实现要求必须调用另一个程序，以保存所执行程序的状态、解决导致异常的原因，然后恢复程序的状态，之后才再次尝试导致该异常的指令。对正在执行的程序来说，这个过程事实上必须是不可见的。如果流水线使处理器能够在不影响程序执行的前提下处理异常、保存状态并重新启动，那就说流水线或处理器是可重新启动的。早期的超级计算机和微处理器通常缺少这一特性，但今天的几乎所有处理器都支持这一特性，至少整数流水线是这样的，因为虚拟存储器的实现需要这一特性。</p>
+<p>表C-15 用5个类别来确定表C-14所示不同异常类型所需要的操作<br><img src="/img/1618475152.jpg" alt=""></p>
+<ul>
+<li>必须允许恢复的异步被标记为恢复，尽管软件可能选择终止程序。发生在指令内部的可恢复、同步、强制异常是最难实现的。我们可能希望违反存储器保护访问的异常总是导致终止；但是，现代操作系统使用存储器保护来裣测事件，比如首次尝试使用一个页面，或者首次尝试写入一个页面。因此，CPU应当能够在此类异常之后恢复执行。</li>
+</ul>
+<h4 id="停止和恢复执行"><a href="#停止和恢复执行" class="headerlink" title="停止和恢复执行"></a>停止和恢复执行</h4><p>和在非流水化实现中一样，最困难的异步有两种特征: </p>
+<ol>
+<li>发生在指令内部（即，在指令执行过程期间发生，与EX或MEM流水级相对应）；</li>
+<li>必须可以重新启动。</li>
+</ol>
+<p>比如，在MIPS流水线中，由数据提取导致的虚拟存储器页面错误只可能发生在该指令MEM级的某一时间之后。在出现该错误时，会有其他几条指令正在执行。页面错误必须是可重新启动的，需要另一进程（比如操作系统）的干预。因此，必须能够安全关闭流水线并保存其状态，使指令能够以正确状<br>态重新启动。重启过程的实现通常是通过保存待重启指令的PC来实现的。如果被重启的指令不是分支，则继续提取依次排在后面的指令，以正常方式开始执行。如果被重启的指令为分支指令，则重新计算分支条件，根据计算结果提取目标指令或直通指令。在发生异步时，流水线控制可以采取以下步骤安全地保存流水线状态。</p>
+<ol>
+<li>在下一个IF向流水线中强制插入一个陷阱指令。</li>
+<li>在选中该陷阱指令之前，禁止错误指令的所有写入操作，禁止流水线中后续所有指令的写入操作。可以通过以下方式来实现：从生成该异常的指令开始（不包括该指令之前的指令），将流水线中所有指令的流水线锁存置零。这样可以禁止在处理异常之前对未完成指令的状态进行任何更改。</li>
+<li>在操作系统的异常处理例程接收控制权之后，它会立即保存故障指令的PC。后面从异常返回时会用到这个值。</li>
+</ol>
+<p>当我们使用延迟分支时，如上一节所述，由于流水线中的指令可能不是顺序相关的，所以仅用一个PC不再可能重建处理器的状态。因此，我们需要保存和恢复的PC数目等于分支延迟的长度加1。这一步骤是在上述第（3）步完成的。</p>
+<p>在处理异常之后，特殊指令通过重新加载PC并重启指令流（在MPS中使用指令RFE）从异常中返回处理器。如果流水线可以停止，使紧临错误指令之前的指令能够完成，使其之后的指令可以从头重新启动，那就说该流水线拥有精确异常。在理想情况下，错误指令可能还没有改变状态，要正确地处理一些异常，要求错误指令不产生任何影响。对于其他异常，比如浮点异常，某些处理器上的错误指令会首先写入其结果，然后才能处理异常。在此种情况下，即使目标位置与源操作数之一的目标位置相同，也必须准备硬件来提取源操作数。因为浮点操作可能持续许多个周期，所以其他某一指令非常可能已经写入了这些源操作数（在下一节将会看到，浮点操作经常是乱序完成的）。为了克服这一问题，最近的许多高性能CPU引入了两种操作模<br>式。一种模式有精确异常，另一种（快速或性能模式）则没有精确异常。当然，精确异常模式要慢一些，因为它允许浮点指令之间的重叠较少。在一些高性能CPU中，精确模式通常要慢得多（相差10倍以上），因此仅能用于代码调试。</p>
+<p>在许多系统中对精确异常的支持是必备功能，而在其他一些系统中，它“只是”存在一定的价值，因为它可以简化操作系统接口。至少，任何需要分页或IEEE算术陷阱处理程序的处理器都必须使其异常为精确异常，可以用硬件实现，也可以辅以一定的软件支持。对于整数流水线，创建精确异常的任务比较简单，支持虚拟内存是存储器引用支持精确异常的极大动力。</p>
+<h4 id="MIPS中的异常"><a href="#MIPS中的异常" class="headerlink" title="MIPS中的异常"></a>MIPS中的异常</h4><p>表C-16显示了MIPS流水级，以及每一级中可能发生哪些问题异常。采用流水化时，由于有多条指令同时执行，所以在同一时钟周期中可能出现多个异常。例如，考虑如下指令序列：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LD     IF     ID     EX     MEM     WB</span><br><span class="line">DADD          IF     ID     EX      MEM     WB</span><br></pre></td></tr></table></figure><br>这一对指令可能同时导致数据页面错误和算术异常，这是因为ID 处于MEM级，而DADD位于EX级。要处理这一情景，可以先处理数据页面错误然后再重启执行过程。第二个异常将再次发生（如果软件正确，第一个异常将不再发生），这样，在发生第二个异常时，就可以单独对其进行处理。</p>
+<p><img src="/img/1618475196.jpg" alt=""></p>
+<ul>
+<li>由指令或数据存储器访问产生的异常可能占到8种情景的6种。现实中的情景并不像这个简单例子中那样明了。异常可能乱序发生；也就是说，可能在一条指令先行产生异常之后，排在前面的指令才产生异常。再次考虑上述序列，LD后面跟着DADD。当LD处于IF时可能产生数据页面错误，而DADD指令位于IF时可能会产生指令页面错误。指令页面错误尽管由后一指令导致，但实际上它将会首先发生。</li>
+</ul>
+<p>由于我们正在实现精确异常，所以流水线需要首先处理由LD指令导致的异常。为了解释如何实现这一过程，我们将位于LD指令位置的指令称为i，将位于DADD 指令位置的指令称为i+1。流水线不能在发生异常时直接处理它，因为这样会导致这些异常的发生顺序不同于非流水化顺序。硬件会将一条给定指令 产生的所有异常都记录在一个与该指令相关联的状态向量中。这个异常状态向量将一直随该指令 向流水线下方移动。一且在异常状态向量中设定了异常指示，则关闭任何可能导致数据值写入（包括寄存器写入和存储器写入）的控制信号。由于存储指令可能在MEM期间导致异常，所以硬件必须准备好在存储指令产生异常时阻止其完成。</p>
+<p>当一条指令进入WB时（或者将要离开MEM时），将检查异步状态向量。如果发现存在任何异常，则按照它们在非流水化处理器中的发生顺序进行处理——首先处理与最早指令相对应的异常（通常位于该指令的最早流水级）。这样可以保证：指令i引发的所有异常将优先得到处理，早于指令i+1引发的所有异常。当然，任何在较早流水级中以指令i名义采取的操作都是无效的，但由于对寄存器堆和存储器的写入操作都被禁用，所以还没有改变任何状态。</p>
+<p>一些处理器拥有功能更强大、运行时间更长的指令，下一小节将介绍在此类处理器的流水线中实现异常时存在的问题。</p>
+<h3 id="指令集的复杂性"><a href="#指令集的复杂性" class="headerlink" title="指令集的复杂性"></a>指令集的复杂性</h3><p>所有MIPS指令的结果都不会超过1个，我们的MIPS流水线仅在指令执行结束时写入结果。在保证一条指令完成时，称为已提交。在MIPS整数流水线中，当所有指令到达MEM级的末尾（或者WB的开头），而且没有指令在该级之前更新状态，则说这些指令已提交。因此，精确异常非常简单。一些处理器的指令会在指令执行中间更改状态，更改状态时，该指令及其之前的指令可能还未完成。例如，IA-32体系结构中的自动递增寻址模式可以在一条指令的执行过程中更新寄存器。在这种情况下，如果该指令由于异常而终止，则会使处理器状态发生变化。尽管我们知道哪些指令会导致异常，但由于该指令处于半完成状态，所以在未添加硬件支持的情况下，异常是不准确的。在这样一个非精确异常之后重启指令流是有难度的。我们也可以避免在指令提交之前更新状态，但这种做法的难度很大，或者成本很高，这是因为可能会用到经过更新的状态：考虑一条VAX指令，它多次递增同一寄存器。为了保持精确异常模型，大多数拥有此类指令的处理器能够在提交指令之间回退所做的状态更改。如果发生异常，处理器将使用这一功能将处理器状态还原为开始中断指令之前的值。</p>
+<p>一些在执行期间更新存储器状态的指令也会增加难度。为中断和重启这些指令，规定这些指令使用通用寄存器作为工作寄存器。因此，部分完成指令的状态总是位于寄存器中，这些寄存器在发生异常时被保存，在异常之后恢复，使指令可以继续执行。在VAX中，有另外一个状态位记录指令何时开始更新存储器状态，从而在重启流水线时，CPU知道是从头开始重启指令，还是从指令的中间开始。IA-32字符串指令也使用寄存器作为工作存储器，这样，在保存和恢复寄存器时，也会保存和恢复这些指令的状态。</p>
+<p>奇数个状态位可能会导致另外一组不同的难题：可能另外增加流水线冒险，可能需要额外的硬件来进行保存和恢复。条件代码就是这种情况的一个好例子。许多处理器隐式设定条件码，将其作为指令的一部分。这种方法具有一定的优势，因为条件码将条件的判断与实际分支分离开来。但是，在调度条件代码设定与分支之间的流水线延迟时，由于大多数指令都会设定条件码，而且不能在条件判定与分支之间的延迟时隙中使用，所以隐式设定条件可能会增加调度难度。</p>
+<p>另外，在具有条件码的处理器中，处理器必须判断何时确定分支条件。这就需要找出分支之前最后一次设置条件代码是在什么时候。 在大多数隐式设定条件码的处理器中，其实现方式是推迟分支条件判断，直到先前的所有指令都有机会设定条件代码为止。当然，显式设定条件码的体系结构允许在条件测量与待调度分支之间插入延迟；但是，流水线控制必须跟踪最后一条设定条件码的指令，以便知道何时确定分支条件。实际上，必须将条件码当作一个操作数对待，需要进行RAW冒险检测，就像MIPS必须对寄存器进行检测一样。流水线中最后一个棘手领域是多周期操作。</p>
+<p>假定我们尝试实现下面这样一个VAX指令序列的流水化：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MOVL        R1, R2                 ;在寄存器之间移动</span><br><span class="line">ADDL3       42(R1), 56(R1)+,@(R1)  ;对存储器位置求和</span><br><span class="line">SUBL2       R2, R3                 ;减去寄存器</span><br><span class="line">MOVC3       @(R1)[R2], 74(R2), R3  ;移动字符串</span><br></pre></td></tr></table></figure></p>
+<p>这些指令所需要的时钟周期数有很大差别，低至1 个，高至数百个。它们所需要的数据存储器访问数也不一定，有的不需要访向数据存储器，有的可能需要数百次访问。数据冒险非常复杂，在指令之间和指令内部均会发生。一种简单的解决方案是让所有指令的执行周期数相同，但这种解决方案是不可接受的，因为它会引入数目庞大的冒险和旁通条件，形成-条极长的流水线。在指令级实现VAX的流水化是很困难的，但VAX 8800设计师找到了-种非常聪明的解决方案。他们实现了微指令执行的流水化。微指令就是一种简 单指令，在序列中用于实现更复杂的指令集。由于微指令都很简单（它们看起来与MIPS非常相似），所以流水线控制要容易得多。从1995年开始，所有Intel IA-32微处理器都使用这一策略将IA-32 指令转换为微操作，然后再实现微操作的流水化。</p>
+<p>作为对比，载入-存储处理器拥有一些简 单操作，完成的工作数量相似，更容易实现流水化。如果架构师认识到指令集设计与流水化之间的关系，他们就可以设计出能够高效流水化的设计体系结构。20 世纪80年代，人们认识到指令集的复杂性会增加流水化的难度、降低流水化的效率。20 世纪90年代，所有公司都转向更简单的指令集，目标在于降低积极实现的复杂性。</p>
+<h2 id="扩展MIPS流水线，以处理多周期操作"><a href="#扩展MIPS流水线，以处理多周期操作" class="headerlink" title="扩展MIPS流水线，以处理多周期操作"></a>扩展MIPS流水线，以处理多周期操作</h2><p>我们现在希望研究如何扩展MIPS流水线，以处理浮点运算。这一节的重点是介绍基本方法和各种候选设计方案，最后是对一种MIPS浮点流水线的性能测量。要求所有MTPS浮点运算都在1个时钟周期内完成是不太现实的，甚至在2个时钟周期内也有很大难度。这样做就意味着要么接受缓慢的时钟，要么在浮点单元中使用大量逻辑，或者同时接受两者。而实际情况是，浮点流水线将会允许更长的操作延迟。如果我们设想浮点指令拥有与整数指令相同的流水线，那就容易理解了，当然流水线中会有两处重要改变。第一，为了完成操作，EX周期可能要根据需要重复多次，不同操作的重复次数可能不同。第二，可能存在多个浮点功能单元。如果待发射指令会导致它所用功能单元的结构性冒险，或者导致数据冒险，将会出现停顿。</p>
+<p>针对本节，我们假定MIPS实现中有以下4个独立的功能单元。</p>
+<ol>
+<li>主整数单元，处理载入和存储、整型ALU操作，还有分支。</li>
+<li>浮点与整数乘法器。</li>
+<li>浮点加法器，处理浮点加、减和转换。</li>
+<li>浮点和整型除法器。</li>
+</ol>
+<p>如果我们还假定这些功能单元的执行级没有实现流水化，那么图C-17给出了最终的流水线结构。由于EX未被流水化，所以在前一指令离开EX之前，不会发射任何其他使用这一功能单元的指令。另外，如果一条指令不能进入EX级，该指令之后的整个流水线都会被停顿。</p>
+<p><img src="/img/1618475295.jpg" alt=""><br>图C-17 增加了三个未流水化浮点功能单元的MIPS流水线。因为每个时钟周期仅发射一条指令，所以所有指令都会经历整型运算的标准流水线。只是浮点运算在到达EX级时会循环。在它们完成EX级之后，则进入MEM和WB级，以完成执行</p>
+<p>事实上，中间结果可能不会像图C-17所建议的那样围绕EX单元循环；而是在EX流水级拥有一些大于1的时钟延迟。我们可以推广如图C-17所示的浮点流水线结构，以允许实现某些级的流水化，并允许多个操作同时进行。为了描述这样一个流水线，我们必须定义功能单元的延迟以及启动间隔（或称重复间隔）。我们采用之前的相同方式来定义延迟：生成结果的指令与使用结果的指令之间的周期数。起始间隔或重复间隔是指在发出两个给定类型的操作之间必须间隔的周期数。例如，我们将使用如表C-17所示的延迟和启动间隔。根据这一延迟定义，整型ALU运算的延迟为0，因为其结果可以在下一时钟周期使用；载入指令的延迟为1，因为这些结果可以相隔一个周期之后使用。由于大多数操作都会在EX的开头使用其操作数，所以延迟通常是指eX之后的级数（一条指令在EX生成结果），例如，ALU运算之后有0个流水级，而载入指令则有1级。一个重要的例外是存储指令，它会在一个周期之后使用被存储的值。因此，存储指令的延迟是针对被存储的值而言，而不是针对基址寄存器，所以少1个周期。流水线延迟基本上等于执行流水线深度减去1个时钟周期，而流水线深度等于从EX级到生成结果的流水级之间的级数。因此，对于上面的示例流水线，浮点加法中的级数为4，而浮点乘法的级数为7。为了获得更高的时钟频率，设计师需要降低每个流水级中的逻辑级数，而这样会增大更复杂操作所需要的流水级数。高时钟频率的代价是延长了操作的延迟。</p>
+<p><img src="/img/1618475343.jpg" alt=""><br>表C-17中的示例流水线结构允许多达4个同时执行的浮点加、7个同时执行的浮点/整数乘，和一个浮点除。图C-18说明了如何通过扩展图C-17来绘制这个流水线。在图C-18中，重复间隔是通过增加额外的流水级来实现的，它们由增加的流水线寄存器隔开。由于这些单元是相互独立的，所以我们分别对各级进行命名。需要多个时钟周期的流水级，比如除法单元，将被进一步细分，以显示这些流水级的延迟。由于它们不是完整的流水级，所以只有一个操作是活动的。这一流水线结构还可以使用本附录前面的类似图表展示，表C-18显示了一组独立的浮点运算和浮点载入、存储指令。自然，浮点运算的较长延迟增加了RAW冒险和所导致停顿的频率，在本节后面将会看到这一点。</p>
+<p><img src="/img/1618475373.jpg" alt=""><br>图C-18 一条支持同时执行多个浮点操作的流水线。浮点乘法器和加法器被完全流水化，深度分别为7级和4级。浮点除法器未被流水化，而是需要24个时钟周期才能完成。在未招致RAW停顿的情况下，从发射浮点操作到使用操作结果之间的指令延迟由执行级中消耗的周期数来决定。例如，浮点加之后的第四条指令可以使用浮点加的结果。对于整数AlU操作，执行流水线的深度总是为1，下一条指令就可以使用这些结果</p>
+<p><img src="/img/1618475393.jpg" alt=""></p>
+<ul>
+<li>用斜体表示的流水级显示了需要数据的位置，而用粗体表示的流水级显示了有结果可用的位置。指令标记符上的“.D”扩展表示双精度（64位）浮点运算。浮点载入和存储使用64位路径连向存储器，所以流水线时序与整数载入或存储一样。</li>
+</ul>
+<p>图C-18中的流水线结构需要另外引入流水线寄存器（例如，A1/A2、 A2/A3、A3/A4），并修改连向这些寄存器的连接。ID/EX 寄存器必须进行扩展，以将ID 连接到EX、DIV、M1和A1；我们可以用标记ID/EX、ID/DIV、ID/M1或ID/A1来引用与之后流水线之一相关联的寄存器部分。ID 与所有其他流水级之间的流水线寄存器可以看作逻辑分离的寄存器，事实上也确实可以实现为分离寄存器。由于在一个流水级中只能同时有一个操作，所以控制信息可以与该流水级头部的寄存器关联在一起。</p>
+<h3 id="长延迟流水线-中的冒险与转发"><a href="#长延迟流水线-中的冒险与转发" class="headerlink" title="长延迟流水线 中的冒险与转发"></a>长延迟流水线 中的冒险与转发</h3><p>对于如图C-18所示的流水线，冒险检测与转发有许多不同方面。</p>
+<ol>
+<li>因为除法单元未被完全流水化，所以可能发生结构冒险。需要对这些冒险进行检测，还将需要停顿指令发射。</li>
+<li>因为指令的运行时间不同，所以一个周期内需要的寄存器写入次数可能会大于1。</li>
+<li>由于指令不会循序到达WB，所以有可能存在写后写（WAW）冒险。注意，由于寄存器读总是在ID中发生，所以不可能存在读后写（WAR）冒险。</li>
+<li>指令的完成顺序可能不同于其发射顺序，从而导致异常问题。</li>
+<li>由于操作的延迟较长，所以RAW冒险的停顿将会变得更为频繁。</li>
+</ol>
+<p>由于操作延迟较长而导致停顿的增加，基本上与整数流水线一样。在描述这一浮点流水线中出现的新问题并探讨其解决方案之前，先让我们研究一下RAW冒险的可能影响。表C-19给出了一个典型浮点代码序列和最终的停顿。在这一节的末尾，将会研究这一浮点流水线中我们所选部分SPEC的性能。</p>
+<p><img src="/img/1618475453.jpg" alt=""></p>
+<ul>
+<li>与较浅的整数流水线相比，较长的流水线大体会增大停顿频率。这个序列中的每条指令都会依赖于先前的指令，而且只要数据可用就可以继续进行，这里假定流水线具有完全旁通和转发。S.D必须多停顿一个周期，使其MEM不会与ADD.D冲突。添加硬件可以很轻松地处理这种情况。</li>
+</ul>
+<p>现在看看因为写入导致的问题，如前面列表中第(2)项和第(3)项所述。如果我们假定浮点寄存器堆有一个写端口，那么浮点操作序列（以及浮点载入指令与浮点运算的结合）可能导致寄存器写端口的冲突。考虑表C-20所示的流水线序列。在时钟周期11中，所有3条指令将到达WB，希望写入寄存器堆。由于仅有一个寄存器堆写入端口，所以处理器必须依次完成各条指令。这个单一寄存器端口就代表着一种结构化冒险。我们可以增加端口的数目来解决这一问题，但由于所增加的写入端口可能很少用到，所以这种解决方案可能并没有什么吸引力。之所以很少用到这些端口，是因为写入端口的最大稳定状态数为1。 我们选择检测对写端口的访问，将其作为结构胃险加以实施。</p>
+<p><img src="/img/1618475484.jpg" alt=""></p>
+<ul>
+<li>这不是最坏情况，因为浮点单元中的先前除法操作也可能在同一时钟周期完成。注意，尽管在时钟周期10中，MUL.D、ADD.D和L.D都处于MEM级，但仅有L.D在实际使用该存储器，所以关于MEM不存在结构性冒险。</li>
+</ul>
+<p>共有两种不同方法来实现这一互锁。 第一种方法是跟踪ID级对写端口的使用，并在一条指令发射之前使其停顿，就像对于任何其他结构冒险一样。可以用一个移位寄存器来跟踪写端口的使用，这个移位寄存器可以指示已发射指令将会在何时使用这个寄存器堆。如果ID中的指令需要与已发射指令同时使用寄存器堆，那ID中的指令将会停顿一个周期。在每个时钟周期，保留寄存器将会移动1位。这种实现有一个好处一它能保持一个特性：所有互连检测与停顿插入都在ID流水级内进行。其成本是需要增加移位寄存器和写冲突逻辑。我们在本节始终假定采用这一机制。</p>
+<p>一种替代方案是当一个冲突指令尝试进入MEM级或WB级时，使其停顿。如果我们等到冲突指令希望进入MEM或WB级时才使其停顿，可以选择停顿任一指令。一种简单的启动式方法（尽管有时是次优方法）是为那些延迟最长的单元赋予优先级，这是因为它是最可能导致另一指令因RAW冒险而停顿的指令。这种方案的好处在于在进入容易检测冲突的MEM或WB级之前不需要检测冲突。缺点是，由于停顿现在可能会出现在两个地方，所以使流水线控制变得复杂。注意，在进入MEM之前的停顿将会导致EX、A4或M7流水级被占用，可能会强制停顿返回流水线中。同样，WB之前的停顿将会导致MEM倒退。</p>
+<p>我们的另一个问题是可能出现WAW冒险。为了看到这些冒险的存在，考虑表C-20中的示例。如果L.D指令早一个周期发射，且其目的地为F2，则会产生WAW冒险，因为它会早于ADD.D一个周期写入F2。注意，只有当ADD.D的结果被改写，而且从来没有任何指令使用这一结果时，才会发生这一冒险!如果在ADD.D和L.D之间会用到F2，那流水线将会因为RAW冒险而需要停顿，在ADD.D完成之前不会发射L.D。对于这个流水线，我们可以宣称只有在发射无用指令时才会发生WAW冒险，但仍然必须检测这些冒险，并在完成工作时确保L.D的结果出现在F2中。</p>
+<p>有两种可能方式来处理这一WAW冒险。第一种方法是延迟载入指令的发射，直到ADD.D进入MEM为止。第二种方法是废除ADD.D的结果：检测冒险并改变控制，使ADD.D不会写入其结果。之后L.D就可以立即发射。由于这种冒险非常少见，所以两种方案都很有效一可以选择任何一种易于实现的方案。在任一情况下， 都可以在发射L.D的ID期间检测冒险，使L.D停顿或者使ADD.D成为空操作都很容易。难以处理的情景是检测L.D可能在ADD.D之前完成，因为这时需要知道流水线的长度和ADD.D 的当前位置。幸运的是，这一代码序列 （两个写操作之间没有插入读操作)很少出现，所以可以使用一种简单的解决方案：如果ID中的一条指令希望和一条已经发射的指令同时写同一寄存器，就不要向EX发射指令。</p>
+<p>在检测可能出现的冒险时，必须考虑浮点指令之间的冒险，以及浮点指令与整型指令之间的冒险。除了浮点载入-存储和浮点-整数寄存器移动之外，浮点与整数寄存器是相互分离的。所有整数指令都是针对整数寄存器进行操作，而浮点操作仅对它们自己的寄存器进行操作。因此，在检测浮点与整数指令之间的冒险时，只需要考虑浮点载入-存储和浮点寄存器移动。流水线控制的这种简化是整数和浮点数据采用分离寄存器堆的另一项好处。（其主要好处是在各寄存器堆数目不变的情况下使寄存器数目加倍，还能在不增加各寄存器端口的情况下增加带宽。除了需要增加寄存器堆之外，其主要缺点是偶尔需要在两组寄存器之间进行移动所带来的微小成本。）假定流水线在ID中进行所有冒险检测，必须在执行3种检查之后才能发射一条指令。</p>
+<p>（1）检查结构冒险——一直等到所需要功能单元不再繁忙为止（在这个流水线中，只有除法操作需要），并确保在需要寄存器写端口时可用。</p>
+<p>（2）检查RAW数据冒险——一直等到源寄存器未被列为流水线寄存器中的目的地为止。（当这一指令需要结果时，这些寄存器不可用。）这里需要进行大量检查，具体取决于源指令和目标指令，前者决定结果何时可用，后者决定何时需要该取值。例如，如果ID中的指令是一个浮点运算，其源寄存器为F2，那F2在ID/A1、A1/A2或A2/A3中不能被列为目的地，它们与一些浮点加法指令相对应，当ID中的指令需要结果时，这些指令还不能完成。（ID/A1 是ID输出寄存器中被发送给A1的部分。）如果我们希望重叠执行除法的最后几个周期，由于需要将除法接近完成时的情景作为特殊情况加以处理，所以除法运算需要的技巧性更强-些。实际上，设计师可能会忽略这一优化，以简化发射测试。</p>
+<p>（3）检查WAW数据冒险——判断A1，… A4，D，M1，…，M7中是否有任何指令的目标寄存器与这一指令相同。如果确实如此，则暂停发射ID中的指令。尽管对于多周期浮点运算来说，冒险检测要更复杂一些，但其概念与MIPS整数流水线是一样的。对于转发逻辑也是如此。可通过以下方式来实现转发：检查EXMEM、A4/MEM、M7MEM、D/MEM或MEM/WB寄存器中的目标寄存器是否为浮点指令的源寄存器之一。如果确实如此，则必须启用适当的输入多工器，以选择转发数据。</p>
+<h3 id="保持精确异常处理"><a href="#保持精确异常处理" class="headerlink" title="保持精确异常处理"></a>保持精确异常处理</h3><p>用以下代码序列可以说明长时间运行指令所导致的另一个问题：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DIV.D     F0,F2, F4</span><br><span class="line">ADD.D     F10,F10,F8</span><br><span class="line">SUB.D     F12,F12,F14</span><br></pre></td></tr></table></figure><br>这一代码序列看起来非常简单;其中没有相关性。但是，由于指令的完成顺序可能不同于其发射顺序，所以会出现一个问题。在这个示例中，我们可能预期ADD.D和SUB.D先于DIV.D之前完成。这称为乱序完成，在拥有长时操作的流水线中很常见。由于冒险检测会禁止违反指令之间的任何相关性，那乱序完成为什么会成为一个问题呢?假定在ADD.D已经完成而DIV.D还未完成时，SUB.D导致了浮点算术异常，最终会出现我们应当尽力避免的不精确异常。看起来，我们似乎可以像对整数流水线那样，通过清空浮点流水线来解决这一问题。但是，异常的发生位置可能无法让我们清空流水线。例如，如果DIV.D 决定在完成加法之后获取浮点算术异常，那可能无法获得硬件级别的精确异常。事实上，由于ADD.D 破坏了它的一个操作数，所以即使在软件的帮助下，也无法恢复到DIV.D之前的状态。这一问题的出现是因为指令的完成顺序与其发射顺序不同。共有四种可能方法来处理乱序完成情况。</p>
+<p>第一种是忽略问题，容忍非精确异常。20世纪60年代和70年代早期采用这一方法。在某些超级计算机中仍在使用这种方法，在这种超级计算机中，某些特定类型的异常或者不允许出现，或者由硬件进行处理，不需要使流水线停止。在大多数现代处理器中很难使用这一方法，因为虚拟存储器等功能和IEEE 浮点标准都需要通过软件和硬件的组合来实现精确异常。前面曾经提到，最近的一些处理器已经通过引入两种执行模式解决了这一问题，一种模式速度很快，但可能是非精确的，另一种模式较慢，但却是精确的。在实现较慢的精确模式时，或者使用模式切换，或者显式插入一些指令，用于测试浮点异常。无论采用哪种实现方式，浮点流水线中所允许的重叠和重新排序数目都受到严重限制，以实现在同一时间只有一条浮点指令是活动的。</p>
+<p>第二种方法是缓冲一个操作的结果，直到先前发射的所有操作都完成为止。一些CPU实际上使用了这一方案，但是，当操作的运行时间差别很大时，由于要缓冲的结果数变得非常庞大，所以这种方法的成本就会非常高昂。此外，必须绕过来自队列的结果，以便在等待较长指令的同时继续发射指令。这就需要大量比较器和一个非常大的乘法器。</p>
+<p>这一基本方法有两种可行的变化形式。第一种形式是历史文件。历史文件跟踪寄存器的原始值。在发生异常而且必须将状态回滚到某一乱序完成的指令之前时，可以从历史文件中恢复寄存器的原始值。在诸如VAX之类的处理器上，采用一种类似技术来实现自动递增和自动递减寻址。另一种方法是未来文件，它跟踪寄存器的较新值；当所有先前指令均已完成时，则从未来文件中更新主寄存器堆。当发生异常时，主寄存器堆拥有中断状态的精确值。</p>
+<p>所使用的第三种方法是允许异常变得不十分精确，但保存足够的信息，以便陷阱处理例程可以生成精确的异常序列。这意味着要知道流水线中有哪些操作以及其PC。因此，在处理异常之后，由软件完成那些最后完成指令之前的所有指令，然后该序列就能重新启动了。考虑以下最糟代码序列:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">指令1——最终中断执行的长时运行指令。</span><br><span class="line">指令2, ...，指令m-1 ——系列未完成的指令。</span><br><span class="line">指令n——一条已完成指令。</span><br></pre></td></tr></table></figure><br>给定流水线中所有指令的PC和异常返回PC之后，软件就可以得到指令1和指令n的状态。由于指令n已经完成，所以我们希望在指令n+1 重新开始执行。在处理异常之后，软件必须模拟指令1，…，指令m-1的执行。然后，我们可以从异常中返回，并在指令m重新启动。由处理器正确执行这些指令的复杂性才是这一方案的主要挑战。</p>
+<p>对于简单的类MIPS流水线，有一个重要简化：如果指令2，…，指令n都是整数指令，那我们就知道当指令n完成时，指令2，…，指令n-1也都已完成。因此，只有浮点操作需要处理。为使这一情况易于处理，必须限制可以重叠执行的浮点指令数。例如，如果我们仅重叠两条指令，那只有中断指令需要由软件来完成。如果浮点流水线很深，或者如果存在大量浮点功能单元，那这一限制可能会限制吞吐量。SPARC 体系结构中使用了这一方法，以允许重叠浮点与整数操作。最后一种方法是一种混合方案，它仅在确保所发射指令之前的所有指令都已完成，而且没有导致异常时，才允许继续指令发射。这样就能确保在发生异常时，中断指令之后的指令都不会完成，而中断指令之前的全部指令都可以完成。这意味着有时要停顿CPU，以保持精确异常。为使这一方案有效，浮点功能单元必须在EX流水级的早期判断是否可能存在异常</p>
+<h3 id="MIPS浮点流水线的性能"><a href="#MIPS浮点流水线的性能" class="headerlink" title="MIPS浮点流水线的性能"></a>MIPS浮点流水线的性能</h3><p>图C-18中的MIPS浮点流水线既可以对除法单元生成结构性停顿，也可以对RAW冒险生成停顿（它还可能拥有WAW冒险，但在实际中很少发生）。图C-19以各实例为基础，列出了每种浮点操作的停顿周期数目（即，每个浮点基准测试的第一个长条表示每个浮点加、减或转换的浮点结果停顿数）。可以看到，每个操怍的停顿周期与浮点运算的延迟相关，介于功能单元延迟的46%~59%之间。</p>
+<p><img src="/img/1618475586.jpg" alt=""></p>
+<p>图C-19 对于SPEC89浮点基准测试，每种主要浮点运算类型的停顿。</p>
+<p>图C-20给出了5种SPECfp基准测试整数与浮点停顿的完整分类。图中共给出4类停顿：浮点结果停顿、浮点比较停顿、载入与分支延迟、浮点结构延迟。编译器尝试在调度分支延迟之前调度载入与浮点延迟。每个指令的总停顿数介于0.65~1.21之间。</p>
+<p><img src="/img/1618475619.jpg" alt=""></p>
+<p>图C-20 针对5种SPEC89浮点基准测试，MIPS浮点流水线上发生的停顿。在所有情况下，浮点结果停顿都占绝大多数，每条指令平均为0.71次停顿，也就是停顿周期的82%。比较操作生成的停顿数为每条指令平均0.1次，为第二大停顿源。除法结构性冒险的影响仅在doduc测试中比较明显一些</p>
+<h2 id="融会贯通-MIPS-R4000流水线"><a href="#融会贯通-MIPS-R4000流水线" class="headerlink" title="融会贯通: MIPS R4000流水线"></a>融会贯通: MIPS R4000流水线</h2><p>在本节，我们将研究MIPS R4000 处理器系列的流水线结构和性能，该系列包括4400。R4000实现MIPS64，但它为整数和浮点程序使用的流水线深度都超过我们使用的五级流水线设计。这一较深流水线可以将五级整数流水线分解为八级，以允许实现更高的时钟频率。由于缓存访问的时间要求很高，所以通过分解存储器访问可以获得更多的流水级。这种更深的流水线有时被称为超流水线。</p>
+<p>图C-21显示了八级流水线结构，其中使用了数据路径的抽象版本。图C-22显示了流水线中连续指令的重叠。注意，尽管指令和数据存储器占用多个周期，但它们已经完全实现流水化，所以在每个时钟 周期都可以开始一条新指令。事实上，流水线会在完成缓存命中检测之前使用数据。每一流水级的过程如下所述。</p>
+<ul>
+<li>IF——指令提取的前半部分，PC选择与指令缓存访问的初始化实际上发生在这里。</li>
+<li>IS——指令提取的后半部分，完成指令缓存访问。</li>
+<li>RF——指令译码与寄存器提取、冒险检查、指令缓存命中检测。</li>
+<li>EX——执行，包括实际地址计算、ALU操作和分支目标计算与条件判断。</li>
+<li>DF——数据提取，数据缓存访问的前半部分。</li>
+<li>DS——数据提取的后半 部分，完成数据缓存访问。</li>
+<li>TC——标记检查 ，判断数据缓存访问是否命中。</li>
+<li>WB——载入和寄存器-寄存器操作的写回过程。</li>
+</ul>
+<p><img src="/img/1618475666.jpg" alt=""><br>图C-21 R4000 的八级流水线结构使用流水化指令与数据缓存。图中对流水级进行了标记，它们的详细功能用文字描述。垂直虚线表示流水级界限以及流水线锁的位置。指令实际上在IS结束时可供使用，但标记检查是在RF完成的，与此同时提取寄存器值。因此，我们将指令存储器标记为在整个RF中运行。由于在知道缓存访问是否命中之前，不能将数据写入寄存器，所以数据存储器访问需要TC级</p>
+<p><img src="/img/1618475685.jpg" alt=""></p>
+<p>图C-22 R4000 整数流水线的结构导致了2周期载入延迟。由于数据值在DS结束时可用，而且可能被旁路，所以有可能产生2周期延迟。如果TC中的标记检查显示这是一次缺失，则流水线将回退一个周期，在此时刻有正确数据可供使用</p>
+<p>除了显著增加所需要的转发数量之外，这种较长延迟的流水线既会增加载入延迟，又会增加分支延迟。由于数据值在DS的末尾才可用，所以图C-22将载入延迟显示为2个周期。表C-21显示了在载入指令之后立即使用的简略流水线调度。它显示在3个或4个周期之后使用载入指令的结果时，就需要进行转发。</p>
+<p>图C-23显示基本分支延迟为3个周期，这是因为分支条件是在EX期间计算的。MIPS体系结构有一个延迟1周期的分支。R4000 为该分支延迟的其余2个周期使用预测未选中策略。如表C-22所示，未选中分支就是延迟1个周期的分支，而选中分支是在一个1周期延迟时隙之后跟有2个空闲周期。这一指令集提供了一种类似于分支的指令，前面已经对其进行了介绍，它可以帮助填充该延迟时隙。流水线互锁一方面要插入选中分支的2周期分支停顿代价，另一方面也造成因为使用载入结果而导致的数据冒险停顿。</p>
+<p><img src="/img/1618475711.jpg" alt=""></p>
+<ul>
+<li>通常的转发路径可在2个周期之后使用，所以DADD和DSUB通过停顿之后的转发来获取其取值。OR指令从寄存器堆中获取该值。由于载入之后的两条指令可能是独立的，因此不会停顿，所以旁路可能指向载入之后3或4个周期的指令。</li>
+</ul>
+<p><img src="/img/1618475738.jpg" alt=""><br>深度流水线除了增加载入与分支的停顿之外，还会增加ALU运算的转发级别数。在MIPS五级流水线中，两个寄存器-寄存器ALU指令之间的转发可能发生于ALUMEM或MEMWB寄存器。在R4000流水线中，ALU旁路可能有4种可能来源: EX/DF、DF/DS、DS/TC和TC/WB。表C-22如表中上半部分所示，选中分支有一个1周期延迟时隙，后面跟有一个2周期停顿，而如表中下半部分所示，未选中分支只有一个1周期延迟时隙</p>
+<p><img src="/img/1618475765.jpg" alt=""></p>
+<h3 id="浮点流水线"><a href="#浮点流水线" class="headerlink" title="浮点流水线"></a>浮点流水线</h3><p>R4000浮点单元由3个功能单元缓存：浮点除法器、浮点乘法器和浮点加法器。加法器逻辑在乘法或除法的最后一个步骤使用。双精度浮点运算可能占用2个周期（对于求相反数）到112个周期（对于求平方根）。此外，各种单元的起始速度不同。浮点功能单元可以看作拥有8个不同流水级，如表C-23中所列；以不同顺序组合这些流水级，即可执行各种浮点运算。</p>
+<p><img src="/img/1618475792.jpg" alt=""></p>
+<p>这些流水级的每个流水级都有单个副本，各种指令对一个流水级可以使用0次或多次，使用顺序也可以不同。表C-24给出了最常见双精度浮点运算所使用的延迟、初始速率和流水级。</p>
+<p><img src="/img/1618475823.jpg" alt=""></p>
+<ul>
+<li>延迟值假定目标指令是一个浮点运算。当目标指令为存储指令时，延迟会少1个周期。流水级的显示顺序就是各个运算使用它们的顺序。标记S+A表示在这个时钟周期内同时使用S和A流水级。标记D28表示D流水级在一行中使用28次。</li>
+</ul>
+<p>根据表C-24中的信息，我们可以判断一个由不同独立浮点运算组成的序列是否可以无停顿发射。如果因为该序列的时序而对于共享流水级发生冲突，则需要停顿。表C-25、表C-26、表C-27、表C-28给出了4种可能存在的常见两指令序列：乘法后面跟有加法、加法后面跟有乘法、除法后面跟有加法、加法后面跟有除法。这些表中显示了第二条指令所有感兴趣的起始位置，以及第二条指令在每个位置是发射还是停顿。当然，可能一共有三条指令是活动的，在这种情况下，发生停顿的可能性要高得多，列表也要更为复杂。</p>
+<p><img src="/img/1618475863.jpg" alt=""></p>
+<ul>
+<li>第二列指出一个特定类型的指令在n个周期之后发射时是否会停顿，其中n为时钟周期编号，在此周期内发生第二指令的U级。导致停顿的流水级用黑体表示。注意，这个表仅给出了乘法指令与时钟周期1、7之间发射的一个加法指令之间的交互。在这种情况下，如果加法指令在乘法之后4或5个周期发射，则该加法指令会停顿;否则，它会无停顿发射。注意，如果加法指令在周期4发射，由于它在下一个时钟周期仍然会与乘法指令相冲突，所以加法指令会停顿2个周期;但是，如果加法指令在周期5发射，由于这样会消除冲突，所以它仍然仅停顿1个时钟周期。</li>
+</ul>
+<p><img src="/img/1618475890.jpg" alt=""></p>
+<p><img src="/img/1618475905.jpg" alt=""></p>
+<ul>
+<li>除法在周期0处开始，在周期35处完成；表中给出除法的最后10个周期。由于除法指令大量使用了加法指令所需要的舍入硬件，因此，只要加法指令是在周期28至周期33中的任一周期中启动，该除法指令都会使其停顿。注意，在周期28处启动的加法指令将一直停顿到周期36。如果加法指令在除法指令之后立即启动，由于加法指令可能在除法指令用到共享流水级之前完成，所以不会导致冲突，如同我们在表C-26中的乘加一样。和前面的表一样，这个示例假定在时钟周期26和35之间只有一个加法指令到达U级。</li>
+</ul>
+<p><img src="/img/1618475935.jpg" alt=""></p>
+<ul>
+<li>如果除法指令晚于加法1个周期启动，则除法指令会停顿，但在此之后不存在冲突。</li>
+</ul>
+<h3 id="R4000流水线的性能"><a href="#R4000流水线的性能" class="headerlink" title="R4000流水线的性能"></a>R4000流水线的性能</h3><p>本节，我们将研究在R4000流水线结构上运行SPEC92基准测试时所发生的停顿。流水线停顿或损失的原因共有四大类。</p>
+<ol>
+<li>载入停顿——在载入之后1或2个周期再使用载入结果时导致的延迟。</li>
+<li>分支停顿——每个选中分支上发生的两周期停顿再加上未填充或已取消分支延迟时隙。</li>
+<li>浮点结果停顿——因为浮点操作数的RAW冒险所导致的停顿。</li>
+<li>浮点结构停顿——因为浮点流水线中功能单元的冲突产生发射限制，进而导致的延迟。</li>
+</ol>
+<p>图C-24给出了对于10个SPEC92基准测试，R4000 流水线的流水线CPI分类。表C-29给出了相同的数据。</p>
+<p><img src="/img/1618475974.jpg" alt=""><br>图C-24 10个SPEC92基准测试的流水线CPI，假定采用完美缓存。流水线CPI的变化范围为1.2~2.8。最左边的5个程序为整数程序，分支延迟是CPI的主要组成因素。最右边5个程序为浮点程序，浮点结果停顿是其主要因素。表C-29给出了绘制这一图形的数值</p>
+<p><img src="/img/1618476014.jpg" alt=""></p>
+<p><img src="/img/1618476032.jpg" alt=""></p>
+<ul>
+<li>主要因素为浮点结果停顿（对于分支和浮点输入均是如此）和分支停顿，载入停顿和浮点结构性停顿的影响很小。</li>
+</ul>
+<p>根据图C-24和表C-29中的数据，可以看出深度流水线的代价。与经典五级流水线相比，R4000流水线的分支延迟要长得多。较长的分支延迟会显著增加在分支上花费的周期数，特别是对于分支频率较高的整数程序。浮点程序一个值得注意的影响是: 与结构性冒险相比，浮点功能单元的延迟会导致更多的停顿，主要源于初始间隔限制和不同浮点指令对功能单元的冲突。因此，降低浮点运算的延迟应当是第一目标， 而不是实现功能单元的更多流水线或重复。当然，降低延迟可能会增加结构性停顿，这是因为许多潜在的结构性停顿被隐藏在数据冒险之后。</p>
+<h2 id="交叉问题"><a href="#交叉问题" class="headerlink" title="交叉问题"></a>交叉问题</h2><h3 id="RISC指令-集及流水线效率"><a href="#RISC指令-集及流水线效率" class="headerlink" title="RISC指令 集及流水线效率"></a>RISC指令 集及流水线效率</h3><p>我们已经讨论了指令集简化对于构建流水线的好处。简单指令集还有另外一个好处:这样可以更轻松地调度代码，以提高流水线的执行效率。为了解这一点，考虑一个简单示例：假定我们需要对存储器中的两个值相加，并将结果存回存储器。在一些高级指令集中，这一任务只需要一条指令;而在其他一些指令集中则需要两条或三条指令。一个典型的RISC 体系结构需要四条指令（两条载入指令、一条加法指令和一条存储指令）。在大多数流水线中，不可能在没有插入停顿的情况下顺序调度这些指令。对于RISC指令集，各个操作都是单独的指令，可以使用编译器进行各别调度或动态硬件调度技术进行各别调度。这些效率优势如此明显，再加上其实现非常容易，所以复杂指令集的几乎所有近期流水线实现实际上都将其复杂指令转换为类似于RISC的简单操作，然后再对这些操作进行调度和流水化。</p>
+<h3 id="动态调度流水线"><a href="#动态调度流水线" class="headerlink" title="动态调度流水线"></a>动态调度流水线</h3><p>简单流水线提取一条指令并发射它，除非流水线中的已有指令和被提取的指令之间存在数据相关性，而且不能通过旁路或转发来隐藏。转发逻辑降低了实际流水线延迟，使特定的相关性不会导致冒险。如果存在不可避免的冒险，则冒险检测硬件会使流水线停顿（从使用该结构的冒险开始)。在清除这种相关性之前，不会提取或发射新指令。为了弥补这些性能损失，编译器可以尝试调度指令来避免冒险；这种方法称为编译器调度或静态调度。几种早期处理器使用了另外一种名为动态调度的方法，硬件借此方法重新安排指令的执行过程，以减少停顿。</p>
+<p>到目前为止，本附录讨论的所有技术都使用循序指令发射，这意味着如果一条指令在流水线中停顿，将不能处理后续指令。在采用循序发射时，如果两条指令之间存在冒险，即使后面存在一些不相关的、不会停顿的指令，流水线也会停顿。在前面开发的MIPS流水线中，结构性冒险和数据冒险都是在指令译码（ID）期间进行检查的：当一条指令可以正确执行时，该指令是从ID发射出去的。为使一条指令在其操作数可用时立即开始执行，不受其先前停顿指令的影响，我们必须将发射过程分为两部分：检查结构性冒险，等待数据冒险的消失。循序对指令进行译码和发射；但是，我们希望指令在其数据操作数可用时立即开始执行。因此，流水线是乱序执行的，也就暗示是乱序完成的。为了实现乱序执行，我们必须将ID流水级分为两级。</p>
+<ol>
+<li>发射——指令译码，检查结构性冒险。</li>
+<li>读取操作数——等到没有数据冒险，随后读取操作数。</li>
+</ol>
+<p>IF级进入发射级，EX级跟在读取操作数级之后，这一点与MIPS流水线中一样。同MIPS浮点流水线一样，执行可能占用多个周期，具体取决于所执行的操作。因此，我们可能需要区分一条指令何时开始执行，何时完成执行；在这两个时刻之间，指令处于执行过程中。这样就允许多条指令同时处于执行过程中。除了对流水线结构的修改之外，我们还将改变功能单元设计：改变单元数、操作延迟和功能单元流水化，以更好地探索这些更高级的流水线技术。</p>
+<h4 id="采用记分卡的动态调度"><a href="#采用记分卡的动态调度" class="headerlink" title="采用记分卡的动态调度"></a>采用记分卡的动态调度</h4><p>在动态调度流水线中，所有指令都循序通过发射级（循序发射）；但是，它们可能在第二级（读取操作数级）停顿，或绕过其他指令，然后进行乱序执行状态。记分卡技术在有足够资源、没有数据依赖性时，允许指令乱序执行;这一功能是在CDC 6600记分卡中开发的，并因此而得名。</p>
+<p>在我们了解如何在MIPS流水线中使用记分卡之前，非常重要的一点是要观察到当指令乱序执行时可能会出现WAR冒险，这种冒险在MPS浮点或整数流水线中是不存在的。例如，考虑以下代码序列:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DIV.D         F0,F2,F4</span><br><span class="line">ADD.D         F10,F0,F8</span><br><span class="line">SUB.D         F8,F8,F14</span><br></pre></td></tr></table></figure><br>ADD. D和SUB.D之间存在一种反相关性：如果流水线在ADD.D之前执行SUB.D，它将违犯反相关性，产生错误的执行结果。与此类似，为避免违反输出相关性，也必须检查WAW冒险（例如，当SUB.D的目标寄存器为F10时将会发生此种冒险）。后面将会看到，记分卡通过停顿反相关中涉及的后续指令，避免了这两种冒险。记分卡的目标是：通过尽早执行指令，保持每时钟周期1条指令的执行速率（在没有结构性冒险时）。因此，当下一条要执行的指令停顿时，如果其他指令不依赖于任何活动指令或停顿指令，则发射和执行这些指令。记分卡全面负责指令发射与执行，包括所有冒险检测任务。要充分利用乱序执行，需要在其EX级中同时有多条指令。这一点可以通过多个功能单元、流水化功能单元或同时利用两者来实现。由于这两种功能（流水化功能单元和多个功能单元）对于流水线控制来说基本上是等价的，所以我们将假定处理器拥有多个功能单元。CDC 6600拥有16个独立的功能单元，包括4个浮点单元、5个存储器引用单元和7个整数运算单元。在采用MIPS体系结构的处理器上，记分卡主要在浮点单元上发挥作用，因为其他功能单元的延迟非常小。让我们假定一共有两个乘法器、一个加法器、一个除法单元和一个完成所有存储器引用、分支和整数运算的整数单元。图C-25给出了该处理器的基本结构。</p>
+<p><img src="/img/1618476114.jpg" alt=""><br>图C-25 带有记分卡的MIPS处理器的基本结构。记分卡的功能是控制指令执行（垂直控制线）。所有数据在寄存器堆和总线上的功能单元之间流动（水平线，在CDC6600中称为干线）。共有两个浮点乘法器、一个浮点除法器、一个浮点加法器和一个整数单元。一组总线（两个输入和一个输出）充当一组功能单元。记分卡的细节在表C-30至表C-33中给出</p>
+<p>每条指令都进入记分卡，在这里构建一条数据相关性记录；这一步与指令发射相对应，并替换MIPS流水线中的ID步骤。记分卡随后判断指令什么时候能够读取它的操作数并开始执行。如果记分卡判断该指令不能立即执行，它监控硬件中的所有变化，以判断该指令何时能够执行。记分卡还控制一条指令什么时候能将其结果写到目标寄存器中。因此，所有冒险检测与解决都集中在记分卡。我们后面将会看到记分卡的一张表格（表C-30），但首先需要理解流水线发射与执行部分的步骤。</p>
+<p>每条指令需要经历4个执行步骤。（由于我们现在主要考虑浮点运算，所以不考虑存储器访问步骤。）我们先粗略地查看一下这些步骤，然后再详细研究记分卡如何记录一些必要信息，用于判断执行过程何时由一个步骤进行到下一个步骤。这四个步骤代替了标准MIPS流水线中的ID、EX和WB步骤，如下所示。<br>（1）发射——如果指令的一个功能单元空闲，没有其他活动指令以同一寄存器为目标寄存器，则记分卡向功能单元发射指令，并更新其内部数据结构。这一步代替了MIPS流水线中ID步骤的一部分。只要确保没有其他活动功能单元希望将自己的结果写入目标寄存器，就能保证不会出现WAW冒险。如果存在结构性冒险或WAW冒险，则指令发射停顿，在清除这些冒险之前，不会再发射其他指令。当发射级停顿时，会导致指令提取与发射之间的缓冲区填满；如果缓冲区只是一项，则指令提取立即停顿。如果缓冲区是拥有多条指令的队列，则在队列填满后停顿。</p>
+<p>（2）读取操作数——记分卡监视源操作数的可用性。如果先前发射的活动指令都不再写入源操作数，而该源操作数可用。当源操作数可用时，记分卡告诉功能单元继续从寄存器读取操作数，并开始执行。记分卡在这一步动态解决 RAW冒险，可以发送指令以进行乱序执行。这一步和发射步骤一起，完成了简单MIPS流水线中ID步骤的功能。</p>
+<p>（3）执行——功能单元接收到操作数后开始执行。结果准备就绪后，它通知记分卡已经完成执行。这一步代替了MIPS流水线中的EX步骤，在MIPS浮点流水线中耗用多个周期。</p>
+<p>（4）写结果——一旦记分卡知道功能单元已经完成执行，则检查WAR冒险，并在必要时停顿正在完成的指令。</p>
+<p>如果有一个与我们先前示例相类似的代码序列，其中ADD.D和SUB.D都使用F8，则存在WAR冒险。在这个示例中，有如下代码:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DIV.D     F0,F2,F4</span><br><span class="line">ADD.D     F10,F0,F8</span><br><span class="line">SUB.D    F8,F8,F14</span><br></pre></td></tr></table></figure><br>ADD.D有一个源操作数为F8，就是SUB.D的目标寄存器。但ADD.D实际上取决于前面的一条指令。记分卡仍将SUB.D停顿于它的写结果阶段，直到ADD.D读取它的操作数为止。一般来说，在以下情况下，不能允许一条正在执行的指令写入其结果:</p>
+<ul>
+<li>在正在执行的指令前面（即按发射顺序）有一条指令还没有读取其操作数;</li>
+<li>这些操作数之一与正执行指令的结果是同一寄存器。</li>
+</ul>
+<p>如果不存在这一WAR冒险，或者已经清除，则记分卡会告诉功能单元将其结果存储到目标寄存器中。这一步骤代替了简单MIPS流水线中的WB步骤。</p>
+<p>乍看起来，记分卡在区分RAW和WAR冒险时似乎会有困难。</p>
+<p>因为只有当寄存器堆中拥有一条指令的两个操作数时，才会读取这些操作数，所以记分卡未能利用转发。只有当寄存器都可用时才会进行读取。这一代价并没有读者最初想象得那么严重。这里与我们前面的简单流水线不同，指令会在完成执行之后立即将结果写入寄存器堆（假定没有WAR冒险），而不是等待可能间隔几个周期的静态指定写入时隙。由于结果的写入和操作数的读取不能重叠，所以仍然会增加一个周期的延迟。我们需要增加缓冲，以消除这一开销。记分卡根据自已的数据结构，通过与功能单元的沟通来控制指令从一个步骤到下一个步骤的进展。但这种做法有一点点复杂。指向寄存器堆的源操作数总线和结果总线数目是有限的，所以可能会存在结构性冒险。记分卡必须确保允许进入第（2）、（4）步的功能单元数不会超过可用总线数。这里不会进行深入讨论，仅提及CDC 6600在解决这一问题时，将16个功能单元分为四组，并为每一组提供一组总线，称为数据干线。在一个时钟周期内，一个组中只有一个单元可以读取其操作数或写入其结果。</p>
+<p>现在让我们看一个拥有五个功能单元的MIPS记分卡所保持的详尽数据结构。表C-30显示了在如下这一简单指令序列执行时，记分卡中的信息。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">L.D      F6 ,34(R2)</span><br><span class="line">L.D      F2 ,45(R3)</span><br><span class="line">MUL.D    F0,F2,F4</span><br><span class="line">SUB.D    F8,F6,F2</span><br><span class="line">DIV.D    F10,F0,F6</span><br><span class="line">ADD.D    F6, F8,F2</span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/1618476194.jpg" alt=""></p>
+<ul>
+<li>每个功能单元在功能单元状态表中有一个对应项。一旦发射一条指令后，就在功能单元状态表中保留其操作数记录。最后，寄存器状态表指示哪个单元将生成每个未给出的结果；项数与寄存器数相等。指令状态表表明: （1）第一个L.D已经完成并写入其结果，（2） 第二个L.D已经完成执行，但还没有写入其结果。MUL.D、SUB.D 和DIV.D都已经发射，但正在停顿，等待其操作数。功能单元状态表明第一个乘法单元正在等待整数单元，加法单元正在等待整数单元，除法单元正在等待第一个乘法单元。ADD.D 指令因为结构性冒险而停顿，当SUB.D完成时将会清除这一冒险。如果这些记分卡中某个中的项目没有用到，则保持为空。例如，Rk字段在载入时没有用到，Mult2单元没有用到，因此它们的字段没有意义。另外，一旦读取一个操作数之后，Rj和Rk字段将被设置为“否”。表C-33表明了最后一步为什么至关重要。</li>
+</ul>
+<p>记分卡共有三个部分，如下所述。</p>
+<ul>
+<li>指令状态——指出该指令处于四个步骤中的哪一步。</li>
+<li>功能单元状态——指出功能单元（FU）的状态。共有9个字段用来表示每个功能单元的状态。<ul>
+<li>忙——指示该单元是否繁忙。</li>
+<li>Op一在此单元中执行的运算 （例如，加或减）。</li>
+<li>Fi——目标寄存器。</li>
+<li>Fj, Fk——源寄存器编号 。</li>
+<li>Qj, Qk——生成源寄存器Fj、 Fk的功能单元。</li>
+<li>Rj, Rk——指示Fj、 Fk已准备就绪但尚未读取的标记。在读取操作数后将其设置为“否”。</li>
+</ul>
+</li>
+<li>寄存器结果状态——如果一条活动指令以该寄存器为目标寄存器，则指出哪个功能单元将写入每个寄存器。只要没有向该寄存器写入的未完成指令，则将此字段设置为空。</li>
+</ul>
+<p>现在让我们看一下在表C-30中开始的代码序列如何继续执行。之后，我们就能更详细地研究记分卡用于控制执行的条件了。</p>
+<p>假定浮点功能单元的EX周期延迟如下（选择这些延迟是为了说明行为特性，并非代表性数值）：加法为2个时钟周期，乘法为10个时钟周期，除法为40个时钟周期。利用表C-30前面的代码段，并从表C-30中指令状态指示的时刻开始，说明当MUL.D和DIV.D分别准备好写入结果状态时，状态表中是什么样的。</p>
+<p>从第二个L.D到MUL.D、ADD.D和SUB.D，从MUL.D到DIV.D和从SUB.D到ADD.D，存在RAW数据冒险。在DIV.D和ADD.D以及SUB.D之间存在WAR数据冒险。最后，加法功能单元对于ADD.D和SUB.D中存在结构性冒险。当MUL.D和DIVD准备好写入其结果时，这些表分别如表C-31和表C-32所示。</p>
+<p><img src="/img/1618476271.jpg" alt=""></p>
+<p><img src="/img/1618476292.jpg" alt=""><br>现在，我们可以研究一下为使每条指令能够继续，记分卡必须做些什么，以此来详细了解记分卡是如何工作的。表C-33说明，为使每条指令能够继续执行，记分卡需要些什么，并记录在指令继续执行时需要哪些必要的操作。记分卡记录操作数标志符信息，比如寄存器编号。例如，在发射指令时，必须记录源寄存器。因为我们将寄存器的内容称为Regs[D]，其中D为寄存器名称，所以不存在模糊性。例如，<code>Fj[FU]←S1</code>会导致寄存器名称S1被放在<code>Fj[FU]</code>中，而不是寄存器S1的内容。</p>
+<p><img src="/img/1618476324.jpg" alt=""><br>记分卡的成本和收益也是人们的关注点。CDC 6600设计师测量到FORTRAN程序的性能改进因数为1.7，对于人工编码的汇编语言改进因数为2.5。但是，这些数据是在软件流水线调度、半导体主存储器和缓存（缩短了存储器访问时间）之前的那一时期测得的。CDC 6600上记分卡所拥有的逻辑数与一个功能单元相当，这是相当低的。主要成本在于存在大量总线——其数量大约是CPU循序执行（或者每个执行周期仅启动一条执行）时所需数量的四倍。人们近来对动态调度的关注有所增加，其目的就是希望在每个时钟周期内发射更多条指令（反正都要支付增加总线带来的成本），一些很自然地以动态调度为基础的思想也是提升此关注度的推动因素。记分卡利用可用ILP，在最大程度上降低因为程序真数据相关所导致的停顿数目。在消除停顿方面，记分卡受以下几个因素的影响。</p>
+<p>（1）指令间可用并行数——这一因素决定了能否找到要执行的独立指令。如果每条指令都依赖于它前面的指令，那就找不到减少停顿的动态调度方案。如果必须从同一基本模块中选择同时存在于流水线中的指令（在6600中就是如此），那这一限制是 十分严重的。</p>
+<p>（2）记分卡的项数——这一因素决定 了流水线为了查找不相关指令可以向前查找多少条指令。这组作为潜在执行对象的指令被称为窗口。记分卡的大小决定了窗口的大小。在这一节，我们假定窗口不会超过一个分支，所以窗口（及记分卡）总是包含来自单个基本模块的直行代码。第3章说明如何将窗口扩展到超出一个分支之外。</p>
+<p>（3）功能单元的数目和类型——这一因素决定 了结构性冒险的重要性，它可能会在使用动态调度时增加。</p>
+<p>（4）存在反相关和输出相关——它们会 导致WAR和WAW停顿。</p>
+<h2 id="谬论与易犯错误"><a href="#谬论与易犯错误" class="headerlink" title="谬论与易犯错误"></a>谬论与易犯错误</h2><p>乍看起来，WAW冒险似乎永远不可能在一个代码序列中出现，因为没有哪个编译器会生成对同一寄存器的两次写入操作，却在中间没有读取操作，但当序列出乎意料之外时，却可能发生WAW冒险。例如，第一次写入操作可能在-个选中分支的延迟时隙中，而调度器认为该分支未被选中。下面是可能导致这一情景的代码序列:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">        BNEZ R1 , foo</span><br><span class="line">        DIV.D F0,F2,F4 ;从未被选中移入延迟时隙</span><br><span class="line">...</span><br><span class="line">foo:    L.D   F0,qrs</span><br></pre></td></tr></table></figure><br>如果该分支被选中，则在DIV.D可以完成之前，L.D将到达WB，导致WAW冒险。硬件必须检测这一冒险，并暂停发射L.D。另外一种可能发生这种情景的方式是第二次读取操作存在于陷阱例程中。一条要写入结果的指令导致陷阱中断，当陷阱处理器中的一条指令完成对同一寄存器的写入之后，原指令继续完成，这时就会发生上述情景。硬件也必须检测并阻止这一情景。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag"># 积累</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/04/03/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84_%E9%87%8F%E5%8C%96%E7%A0%94%E7%A9%B6%E6%96%B9%E6%B3%95%20%E7%AC%94%E8%AE%B02/" rel="prev" title="计算机体系结构 量化研究方法 笔记2">
+      <i class="fa fa-chevron-left"></i> 计算机体系结构 量化研究方法 笔记2
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/05/13/UNIX%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%20%E7%AC%94%E8%AE%B0/" rel="next" title="UNIX高级编程 笔记">
+      UNIX高级编程 笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%9B%86%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">指令集基本原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">1.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%9B%86%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">1.2.</span> <span class="nav-text">指令集体系结构的分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%99%A8%E5%AF%BB%E5%9D%80"><span class="nav-number">1.3.</span> <span class="nav-text">存储器寻址</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%87%8A%E5%AD%98%E5%82%A8%E5%99%A8%E5%9C%B0%E5%9D%80"><span class="nav-number">1.3.1.</span> <span class="nav-text">解释存储器地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BB%E5%9D%80%E6%96%B9%E5%BC%8F"><span class="nav-number">1.3.2.</span> <span class="nav-text">寻址方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%8D%E7%A7%BB%E9%87%8F%E5%AF%BB%E5%9D%80%E6%96%B9%E5%BC%8F%EF%BC%8C"><span class="nav-number">1.3.3.</span> <span class="nav-text">位移量寻址方式，</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AB%8B%E5%8D%B3%E6%95%B0%E6%88%96%E7%9B%B4%E6%8E%A5%E6%93%8D%E4%BD%9C%E6%95%B0%E5%AF%BB%E5%9D%80%E6%96%B9%E5%BC%8F"><span class="nav-number">1.3.4.</span> <span class="nav-text">立即数或直接操作数寻址方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93%EF%BC%9A%E5%AD%98%E5%82%A8%E5%99%A8%E5%AF%BB%E5%9D%80"><span class="nav-number">1.3.5.</span> <span class="nav-text">小结：存储器寻址</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%95%B0%E7%9A%84%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%A4%A7%E5%B0%8F"><span class="nav-number">1.4.</span> <span class="nav-text">操作数的类型与大小.</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%9B%86%E4%B8%AD%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="nav-number">1.5.</span> <span class="nav-text">指令集中的操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E6%B5%81%E6%8C%87%E4%BB%A4"><span class="nav-number">1.6.</span> <span class="nav-text">控制流指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E6%B5%81%E6%8C%87%E4%BB%A4%E7%9A%84%E5%AF%BB%E5%9D%80%E6%96%B9%E5%BC%8F"><span class="nav-number">1.6.1.</span> <span class="nav-text">控制流指令的寻址方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%88%86%E6%94%AF%E9%80%89%E9%A1%B9"><span class="nav-number">1.6.2.</span> <span class="nav-text">条件分支选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E7%A8%8B%E8%B0%83%E7%94%A8%E9%80%89%E9%A1%B9"><span class="nav-number">1.6.3.</span> <span class="nav-text">过程调用选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93%EF%BC%9A%E6%8E%A7%E5%88%B6%E6%B5%81%E6%8C%87%E4%BB%A4"><span class="nav-number">1.6.4.</span> <span class="nav-text">小结：控制流指令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%9B%86%E7%BC%96%E7%A0%81"><span class="nav-number">1.7.</span> <span class="nav-text">指令集编码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RISC%E4%B8%AD-%E7%9A%84%E7%B2%BE%E7%AE%80%E4%BB%A3%E7%A0%81"><span class="nav-number">1.7.1.</span> <span class="nav-text">RISC中 的精简代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93%EF%BC%9A%E6%8C%87%E4%BB%A4%E9%9B%86%E7%BC%96%E7%A0%81"><span class="nav-number">1.7.2.</span> <span class="nav-text">小结：指令集编码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A4%E5%8F%89%E9%97%AE%E9%A2%98%EF%BC%9A%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E8%A7%92%E8%89%B2"><span class="nav-number">1.8.</span> <span class="nav-text">交叉问题：编译器的角色</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E5%89%8D%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">1.8.1.</span> <span class="nav-text">目前编译器的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E5%88%86%E9%85%8D"><span class="nav-number">1.8.2.</span> <span class="nav-text">寄存器分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%AF%B9%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-number">1.8.3.</span> <span class="nav-text">优化对性能的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E5%B8%88%E5%A6%82%E4%BD%95%E5%B8%AE%E5%8A%A9%E7%BC%96%E8%AF%91%E5%99%A8%E7%BC%96%E5%86%99%E4%BA%BA%E5%91%98"><span class="nav-number">1.8.4.</span> <span class="nav-text">架构师如何帮助编译器编写人员</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8%E5%AF%B9%E5%A4%9A%E5%AA%92%E4%BD%93%E6%8C%87%E4%BB%A4%E7%9A%84%E6%94%AF%E6%8C%81"><span class="nav-number">1.8.5.</span> <span class="nav-text">编译器对多媒体指令的支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93%EF%BC%9A%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E8%A7%92%E8%89%B2"><span class="nav-number">1.8.6.</span> <span class="nav-text">小结：编译器的角色</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%9E%8D%E4%BC%9A%E8%B4%AF%E9%80%9A%EF%BC%9AMIPS%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-number">1.9.</span> <span class="nav-text">融会贯通：MIPS体系结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MIPS%E7%9A%84%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">1.9.1.</span> <span class="nav-text">MIPS的寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MIPS%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.9.2.</span> <span class="nav-text">MIPS的数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MIPS%E7%9A%84%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E7%9A%84%E5%AF%BB%E5%9D%80%E6%96%B9%E5%BC%8F"><span class="nav-number">1.9.3.</span> <span class="nav-text">MIPS的数据传输的寻址方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MIPS%E6%8C%87%E4%BB%A4%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.9.4.</span> <span class="nav-text">MIPS指令格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MIPS-%E6%93%8D%E4%BD%9C"><span class="nav-number">1.9.5.</span> <span class="nav-text">MIPS 操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MIPS%E6%8E%A7%E5%88%B6%E6%B5%81%E6%8C%87%E4%BB%A4"><span class="nav-number">1.9.6.</span> <span class="nav-text">MIPS控制流指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MIPS%E6%B5%AE%E7%82%B9%E8%BF%90%E7%AE%97"><span class="nav-number">1.9.7.</span> <span class="nav-text">MIPS浮点运算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MIPS%E6%8C%87%E4%BB%A4%E9%9B%86%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.9.8.</span> <span class="nav-text">MIPS指令集的使用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84%E5%9B%9E%E9%A1%BE"><span class="nav-number">2.</span> <span class="nav-text">存储器层次结构回顾</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80-1"><span class="nav-number">2.1.</span> <span class="nav-text">引言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E6%80%A7%E8%83%BD%E5%9B%9E%E9%A1%BE"><span class="nav-number">2.1.1.</span> <span class="nav-text">缓存性能回顾</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E4%B8%AA%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84%E9%97%AE%E9%A2%98"><span class="nav-number">2.1.2.</span> <span class="nav-text">4个存储器层次结构问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BE%E4%BE%8B%EF%BC%9AOpteron%E6%95%B0%E6%8D%AE%E7%BC%93%E5%AD%98"><span class="nav-number">2.1.3.</span> <span class="nav-text">举例：Opteron数据缓存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E6%80%A7%E8%83%BD"><span class="nav-number">2.2.</span> <span class="nav-text">缓存性能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%99%A8%E5%B9%B3%E5%9D%87%E8%AE%BF%E9%97%AE%E6%97%B6%E9%97%B4%E4%B8%8E%E5%A4%84%E7%90%86%E5%99%A8%E6%80%A7%E8%83%BD"><span class="nav-number">2.2.1.</span> <span class="nav-text">存储器平均访问时间与处理器性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%BA%E5%A4%B1%E4%BB%A3%E4%BB%B7%E4%B8%8E%E4%B9%B1%E5%BA%8F%E6%89%A7%E8%A1%8C%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">2.2.2.</span> <span class="nav-text">缺失代价与乱序执行处理器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6%E7%A7%8D%E5%9F%BA%E6%9C%AC%E7%9A%84%E7%BC%93%E5%AD%98%E4%BC%98%E5%8C%96"><span class="nav-number">2.3.</span> <span class="nav-text">6种基本的缓存优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%A7%8D%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%EF%BC%9A%E5%A2%9E%E5%A4%A7%E5%9D%97%E5%A4%A7%E5%B0%8F%E4%BB%A5%E9%99%8D%E4%BD%8E%E7%BC%BA%E5%A4%B1%E7%8E%87"><span class="nav-number">2.3.1.</span> <span class="nav-text">第一种优化方法：增大块大小以降低缺失率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E7%A7%8D%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%EF%BC%9A%E5%A2%9E%E5%A4%A7%E7%BC%93%E5%AD%98%E4%BB%A5%E9%99%8D%E4%BD%8E%E7%BC%BA%E5%A4%B1%E7%8E%87"><span class="nav-number">2.3.2.</span> <span class="nav-text">第二种优化方法：增大缓存以降低缺失率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E7%A7%8D%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%EF%BC%9A%E6%8F%90%E9%AB%98%E7%9B%B8%E8%81%94%E5%BA%A6%E4%BB%A5%E9%99%8D%E4%BD%8E%E7%BC%BA%E5%A4%B1%E7%8E%87"><span class="nav-number">2.3.3.</span> <span class="nav-text">第三种优化方法：提高相联度以降低缺失率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E7%A7%8D%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%EF%BC%9A%E9%87%87%E7%94%A8%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98%E9%99%8D%E4%BD%8E%E7%BC%BA%E5%A4%B1%E4%BB%A3%E4%BB%B7"><span class="nav-number">2.3.4.</span> <span class="nav-text">第四种优化方法：采用多级缓存降低缺失代价</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E7%A7%8D%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%EF%BC%9A%E4%BD%BF%E8%AF%BB%E5%8F%96%E7%BC%BA%E5%A4%B1%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7%E9%AB%98%E4%BA%8E%E5%86%99%E5%85%A5%E7%BC%BA%E5%A4%B1%EF%BC%8C%E4%BB%A5%E9%99%8D%E4%BD%8E%E7%BC%BA%E5%A4%B1%E4%BB%A3%E4%BB%B7"><span class="nav-number">2.3.5.</span> <span class="nav-text">第五种优化方法：使读取缺失的优先级高于写入缺失，以降低缺失代价</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E7%A7%8D%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%EF%BC%9A%E9%81%BF%E5%85%8D%E5%9C%A8%E7%B4%A2%E5%BC%95%E7%BC%93%E5%AD%98%E6%9C%9F%E9%97%B4%E8%BF%9B%E8%A1%8C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2%EF%BC%8C%E4%BB%A5%E7%BC%A9%E7%9F%AD%E5%91%BD%E4%B8%AD%E6%97%B6%E9%97%B4"><span class="nav-number">2.3.6.</span> <span class="nav-text">第六种优化方法：避免在索引缓存期间进行地址转换，以缩短命中时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%BC%93%E5%AD%98%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%E5%B0%8F%E7%BB%93"><span class="nav-number">2.3.7.</span> <span class="nav-text">基本缓存优化方法小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9B%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8"><span class="nav-number">2.4.</span> <span class="nav-text">虛拟存储器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%8D%E8%B0%88%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84%E7%9A%844%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="nav-number">2.4.1.</span> <span class="nav-text">再谈存储器层次结构的4个问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%981%EF%BC%9A%E4%B8%80%E4%B8%AA%E5%9D%97%E5%8F%AF%E4%BB%A5%E6%94%BE%E5%9C%A8%E4%B8%BB%E5%AD%98%E5%82%A8%E5%99%A8%E7%9A%84%E4%BB%80%E4%B9%88%E4%BD%8D%E7%BD%AE"><span class="nav-number">2.4.1.1.</span> <span class="nav-text">问题1：一个块可以放在主存储器的什么位置?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%982%EF%BC%9A%E5%A6%82%E6%9E%9C%E4%B8%80%E4%B8%AA%E5%9D%97%E5%9C%A8%E4%B8%BB%E5%AD%98%E5%82%A8%E5%99%A8%E4%B8%AD%EF%BC%8C%E5%A6%82%E4%BD%95%E6%89%BE%E5%88%B0%E5%AE%83"><span class="nav-number">2.4.1.2.</span> <span class="nav-text">问题2：如果一个块在主存储器中，如何找到它?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%983%EF%BC%9A%E5%9C%A8%E8%99%9B%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8%E7%BC%BA%E5%A4%B1%E6%97%B6%E5%BA%94%E5%BD%93%E6%9B%BF%E6%8D%A2%E5%93%AA%E4%B8%AA%E5%9D%97"><span class="nav-number">2.4.1.3.</span> <span class="nav-text">问题3：在虛拟存储器缺失时应当替换哪个块?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%984%EF%BC%9A%E5%9C%A8%E5%86%99%E5%85%A5%E6%97%B6%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88"><span class="nav-number">2.4.1.4.</span> <span class="nav-text">问题4：在写入时发生什么?</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E5%9C%B0%E5%9D%80%E5%8F%98%E6%8D%A2%E6%8A%80%E6%9C%AF"><span class="nav-number">2.4.2.</span> <span class="nav-text">快速地址变换技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E9%A1%B5%E5%A4%A7%E5%B0%8F"><span class="nav-number">2.4.3.</span> <span class="nav-text">选择页大小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8%E5%92%8C%E7%BC%93%E5%AD%98%E5%B0%8F%E7%BB%93"><span class="nav-number">2.4.4.</span> <span class="nav-text">虚拟存储器和缓存小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8%E7%9A%84%E4%BF%9D%E6%8A%A4%E4%B8%8E%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.5.</span> <span class="nav-text">虚拟存储器的保护与示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E8%BF%9B%E7%A8%8B"><span class="nav-number">2.5.1.</span> <span class="nav-text">保护进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%AE%B5%E8%99%9B%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8%E4%B8%BE%E4%BE%8B%EF%BC%9AIntel-Pentium%E4%B8%AD%E7%9A%84%E4%BF%9D%E6%8A%A4%E6%96%B9%E5%BC%8F"><span class="nav-number">2.5.2.</span> <span class="nav-text">分段虛拟存储器举例：Intel Pentium中的保护方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E7%95%8C%E9%99%90%E6%A3%80%E6%9F%A5%E5%92%8C%E5%AD%98%E5%82%A8%E5%99%A8%E6%98%A0%E5%B0%84"><span class="nav-number">2.5.2.1.</span> <span class="nav-text">增加界限检查和存储器映射</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E5%85%B1%E4%BA%AB%E5%92%8C%E4%BF%9D%E6%8A%A4"><span class="nav-number">2.5.2.2.</span> <span class="nav-text">增加共享和保护</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E4%BB%8E%E7%94%A8%E6%88%B7%E5%88%B0%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%97%A8%E7%9A%84%E5%AE%89%E5%85%A8%E8%B0%83%E7%94%A8%EF%BC%8C%E4%B8%BA%E5%8F%82%E6%95%B0%E7%BB%A7%E6%89%BF%E4%BF%9D%E6%8A%A4%E7%BA%A7%E5%88%AB"><span class="nav-number">2.5.2.3.</span> <span class="nav-text">增加从用户到操作系统门的安全调用，为参数继承保护级别</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E9%A1%B5%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8%E4%B8%BE%E4%BE%8B%EF%BC%9A-64%E4%BD%8DOpteron%E5%AD%98%E5%82%A8%E5%99%A8%E7%AE%A1%E7%90%86"><span class="nav-number">2.5.3.</span> <span class="nav-text">分页虚拟存储器举例： 64位Opteron存储器管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93%EF%BC%9A32-%E4%BD%8DIntel-Pentium%E4%B8%8E64%E4%BD%8DAMD-Opteron%E7%9A%84%E4%BF%9D%E6%8A%A4%E5%AF%B9%E6%AF%94"><span class="nav-number">2.5.4.</span> <span class="nav-text">小结：32 位Intel Pentium与64位AMD Opteron的保护对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">2.6.</span> <span class="nav-text">结语</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%81%E6%B0%B4%E7%BA%BF%EF%BC%9A%E5%9F%BA%E7%A1%80%E4%B8%8E%E4%B8%AD%E7%BA%A7%E6%A6%82%E5%BF%B5"><span class="nav-number">3.</span> <span class="nav-text">流水线：基础与中级概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80-2"><span class="nav-number">3.1.</span> <span class="nav-text">引言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="nav-number">3.1.1.</span> <span class="nav-text">什么是流水线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RISC%E6%8C%87%E4%BB%A4%E9%9B%86%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">3.1.2.</span> <span class="nav-text">RISC指令集基础知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RISC%E6%8C%87%E4%BB%A4%E9%9B%86%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.1.3.</span> <span class="nav-text">RISC指令集的简单实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RISC%E5%A4%84%E7%90%86-%E5%99%A8%E7%9A%84%E7%BB%8F%E5%85%B8%E4%BA%94%E7%BA%A7%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="nav-number">3.1.4.</span> <span class="nav-text">RISC处理 器的经典五级流水线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E6%B0%B4%E5%8C%96%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="nav-number">3.1.5.</span> <span class="nav-text">流水化的基本性能问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E6%B0%B4%E5%8C%96%E7%9A%84%E4%B8%BB%E8%A6%81%E9%98%BB%E7%A2%8D%E2%80%94%E2%80%94%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%86%92%E9%99%A9"><span class="nav-number">3.2.</span> <span class="nav-text">流水化的主要阻碍——流水线冒险</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%A6%E6%9C%89%E5%81%9C%E9%A1%BF%E7%9A%84%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%80%A7%E8%83%BD"><span class="nav-number">3.2.1.</span> <span class="nav-text">带有停顿的流水线性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E5%86%92%E9%99%A9"><span class="nav-number">3.2.2.</span> <span class="nav-text">结构冒险</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%86%92%E9%99%A9"><span class="nav-number">3.2.3.</span> <span class="nav-text">数据冒险</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E8%BD%AC%E5%8F%91%E6%8A%80%E6%9C%AF%E5%B0%86%E6%94%B6%E6%8D%AE%E5%86%92%E9%99%A9%E5%81%9C%E9%A1%BF%E5%87%8F%E8%87%B3%E6%9C%80%E5%B0%91"><span class="nav-number">3.2.3.1.</span> <span class="nav-text">利用转发技术将收据冒险停顿减至最少</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E5%81%9C%E9%A1%BF%E7%9A%84%E6%95%B0%E6%8D%AE%E5%86%92%E9%99%A9"><span class="nav-number">3.2.3.2.</span> <span class="nav-text">需要停顿的数据冒险</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%94%AF%E5%86%92%E9%99%A9"><span class="nav-number">3.2.4.</span> <span class="nav-text">分支冒险</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%8D%E4%BD%8E%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%88%86%E6%94%AF%E4%BB%A3%E4%BB%B7"><span class="nav-number">3.2.4.1.</span> <span class="nav-text">降低流水线分支代价</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E6%94%AF%E6%9C%BA%E5%88%B6%E7%9A%84%E6%80%A7%E8%83%BD"><span class="nav-number">3.2.4.2.</span> <span class="nav-text">分支机制的性能</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E9%A2%84%E6%B5%8B%E9%99%8D%E4%BD%8E%E5%88%86%E6%94%AF%E6%88%90%E6%9C%AC"><span class="nav-number">3.2.5.</span> <span class="nav-text">通过预测降低分支成本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B"><span class="nav-number">3.2.6.</span> <span class="nav-text">静态分支预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B%E5%92%8C%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="nav-number">3.2.7.</span> <span class="nav-text">动态分支预测和分支预测缓冲区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%B5%81%E6%B0%B4%E5%8C%96"><span class="nav-number">3.3.</span> <span class="nav-text">如何实现流水化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MIPS%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.3.1.</span> <span class="nav-text">MIPS的简单实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MIPS%E5%9F%BA%E6%9C%AC%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="nav-number">3.3.2.</span> <span class="nav-text">MIPS基本流水线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0MIPS%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%9A%84%E6%8E%A7%E5%88%B6"><span class="nav-number">3.3.3.</span> <span class="nav-text">实现MIPS流水线的控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E6%B5%81%E6%B0%B4%E7%BA%BF%E4%B8%AD%E7%9A%84%E5%88%86%E6%94%AF"><span class="nav-number">3.3.4.</span> <span class="nav-text">处理流水线中的分支</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%A8%E7%A2%8D%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%AE%9E%E7%8E%B0%E7%9A%84%E9%9A%BE%E9%A2%98"><span class="nav-number">3.4.</span> <span class="nav-text">妨碍流水线实现的难题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8"><span class="nav-number">3.4.1.</span> <span class="nav-text">处理异常</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E7%9A%84%E7%B1%BB%E5%9E%8B%E4%B8%8E%E9%9C%80%E6%B1%82"><span class="nav-number">3.4.1.1.</span> <span class="nav-text">异常的类型与需求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%81%9C%E6%AD%A2%E5%92%8C%E6%81%A2%E5%A4%8D%E6%89%A7%E8%A1%8C"><span class="nav-number">3.4.1.2.</span> <span class="nav-text">停止和恢复执行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MIPS%E4%B8%AD%E7%9A%84%E5%BC%82%E5%B8%B8"><span class="nav-number">3.4.1.3.</span> <span class="nav-text">MIPS中的异常</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%9B%86%E7%9A%84%E5%A4%8D%E6%9D%82%E6%80%A7"><span class="nav-number">3.4.2.</span> <span class="nav-text">指令集的复杂性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95MIPS%E6%B5%81%E6%B0%B4%E7%BA%BF%EF%BC%8C%E4%BB%A5%E5%A4%84%E7%90%86%E5%A4%9A%E5%91%A8%E6%9C%9F%E6%93%8D%E4%BD%9C"><span class="nav-number">3.5.</span> <span class="nav-text">扩展MIPS流水线，以处理多周期操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%95%BF%E5%BB%B6%E8%BF%9F%E6%B5%81%E6%B0%B4%E7%BA%BF-%E4%B8%AD%E7%9A%84%E5%86%92%E9%99%A9%E4%B8%8E%E8%BD%AC%E5%8F%91"><span class="nav-number">3.5.1.</span> <span class="nav-text">长延迟流水线 中的冒险与转发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E6%8C%81%E7%B2%BE%E7%A1%AE%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">3.5.2.</span> <span class="nav-text">保持精确异常处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MIPS%E6%B5%AE%E7%82%B9%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%9A%84%E6%80%A7%E8%83%BD"><span class="nav-number">3.5.3.</span> <span class="nav-text">MIPS浮点流水线的性能</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%9E%8D%E4%BC%9A%E8%B4%AF%E9%80%9A-MIPS-R4000%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="nav-number">3.6.</span> <span class="nav-text">融会贯通: MIPS R4000流水线</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%AE%E7%82%B9%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="nav-number">3.6.1.</span> <span class="nav-text">浮点流水线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#R4000%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%9A%84%E6%80%A7%E8%83%BD"><span class="nav-number">3.6.2.</span> <span class="nav-text">R4000流水线的性能</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A4%E5%8F%89%E9%97%AE%E9%A2%98"><span class="nav-number">3.7.</span> <span class="nav-text">交叉问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RISC%E6%8C%87%E4%BB%A4-%E9%9B%86%E5%8F%8A%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%95%88%E7%8E%87"><span class="nav-number">3.7.1.</span> <span class="nav-text">RISC指令 集及流水线效率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%B0%83%E5%BA%A6%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="nav-number">3.7.2.</span> <span class="nav-text">动态调度流水线</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%87%E7%94%A8%E8%AE%B0%E5%88%86%E5%8D%A1%E7%9A%84%E5%8A%A8%E6%80%81%E8%B0%83%E5%BA%A6"><span class="nav-number">3.7.2.1.</span> <span class="nav-text">采用记分卡的动态调度</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%AC%E8%AE%BA%E4%B8%8E%E6%98%93%E7%8A%AF%E9%94%99%E8%AF%AF"><span class="nav-number">3.8.</span> <span class="nav-text">谬论与易犯错误</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Hao Yu</p>
+  <div class="site-description" itemprop="description">Introduce something interesting and recode learning process, some articles are written by others, the original link has been given as much as possible, thanks to the original author</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">128</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

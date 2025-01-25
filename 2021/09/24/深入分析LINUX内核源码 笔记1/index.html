@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="zn-ch">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="走进Linux走进Linux内核Linux的内核包含五大部分内容:进程调度、内存管理、进程间通信、虚拟文件系统及网络接口这五部分，我们也称为五个子系统。 Linux内核的特征Linux内核具有下列基本特征。  Linux内核的组织形式为整体式结构。也就是说整个Linux内核由很多过程组成，每个过程可以独立编译，然后用连接程序将其连接在一起成为一个单独的目标程序。 Linux的进程调度方式简单而有效">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入分析Linux内核源码笔记1">
+<meta property="og:url" content="http://yoursite.com/2021/09/24/%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90LINUX%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81%20%E7%AC%94%E8%AE%B01/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="走进Linux走进Linux内核Linux的内核包含五大部分内容:进程调度、内存管理、进程间通信、虚拟文件系统及网络接口这五部分，我们也称为五个子系统。 Linux内核的特征Linux内核具有下列基本特征。  Linux内核的组织形式为整体式结构。也就是说整个Linux内核由很多过程组成，每个过程可以独立编译，然后用连接程序将其连接在一起成为一个单独的目标程序。 Linux的进程调度方式简单而有效">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/img/20210925113231.png">
+<meta property="og:image" content="http://yoursite.com/img/20210925114210.png">
+<meta property="og:image" content="http://yoursite.com/img/1632642404.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1632642484.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1632642615.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1632642700.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1632642956.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1632645136.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1632645509.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1632645544.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633239905.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633240144.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633240247.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633241284.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633241770.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633241892.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633242940.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633242997.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633243061.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633243249.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633246025.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633248914.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633251898.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633252707.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633259620.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633260097.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633260862.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1633263464.jpg">
+<meta property="article:published_time" content="2021-09-24T14:00:00.000Z">
+<meta property="article:modified_time" content="2021-10-13T08:19:36.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/20210925113231.png">
+
+<link rel="canonical" href="http://yoursite.com/2021/09/24/%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90LINUX%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81%20%E7%AC%94%E8%AE%B01/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zn-ch'
+  };
+</script>
+
+  <title>深入分析Linux内核源码笔记1 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hao Yu's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">The program monkey was eaten by the siege lion.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zn-ch">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/09/24/%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90LINUX%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81%20%E7%AC%94%E8%AE%B01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Hao Yu">
+      <meta itemprop="description" content="Introduce something interesting and recode learning process, some articles are written by others, the original link has been given as much as possible, thanks to the original author">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入分析Linux内核源码笔记1
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-24 22:00:00" itemprop="dateCreated datePublished" datetime="2021-09-24T22:00:00+08:00">2021-09-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-10-13 16:19:36" itemprop="dateModified" datetime="2021-10-13T16:19:36+08:00">2021-10-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="走进Linux"><a href="#走进Linux" class="headerlink" title="走进Linux"></a>走进Linux</h1><h2 id="走进Linux内核"><a href="#走进Linux内核" class="headerlink" title="走进Linux内核"></a>走进Linux内核</h2><p>Linux的内核包含五大部分内容:进程调度、内存管理、进程间通信、虚拟文件系统及网络接口这五部分，我们也称为五个子系统。</p>
+<h3 id="Linux内核的特征"><a href="#Linux内核的特征" class="headerlink" title="Linux内核的特征"></a>Linux内核的特征</h3><p>Linux内核具有下列基本特征。</p>
+<ol>
+<li>Linux内核的组织形式为整体式结构。也就是说整个Linux内核由很多过程组成，每个过程可以独立编译，然后用连接程序将其连接在一起成为一个单独的目标程序。</li>
+<li>Linux的进程调度方式简单而有效。对于用户进程，Linux采用简单的动态优先级调度方式；对于内核中的例程则采用了一种独特的机制——软中断机制，这种机制保证了内核例程的高效运行。</li>
+<li>Linux支持内核线程(或称守护进程)。内核线程是在后台运行而又无终端或登录shell和它结合在一起的进程。内核线程可以说是用户进程，但和一般的用户进程又有不同，它像内核一样不被换出，因此运行效率较高。</li>
+<li>Linux支持多种平台的虚拟内存管理。为了支持不同的硬件平台而又保证虚拟存储管理技术的通用性，Linux的虚拟内存管理为不同的硬件平台提供了统一的接口。</li>
+<li>Linux内核另一个独具特色的部分是虚拟文件系统(VFS)。</li>
+<li>Linux的模块机制使得内核保持独立而又易于扩充。模块机制可以使内核很容易地增加一个新的模块(如一个新的设备驱动程序)，而无需重新编译内核</li>
+<li>增加系统调用以满足特殊的需求。Linux开放的源代码也允许你设计自己的系统调用，然后把它加入到内核。</li>
+<li>网络部分面向对象的设计思想使得Linux内核支持多种协议、多种网卡驱动程序变得容易。</li>
+</ol>
+<h2 id="Linux内核源代码"><a href="#Linux内核源代码" class="headerlink" title="Linux内核源代码"></a>Linux内核源代码</h2><h3 id="Linux内核源代码的结构"><a href="#Linux内核源代码的结构" class="headerlink" title="Linux内核源代码的结构"></a>Linux内核源代码的结构</h3><p>Linux内核源代码位于<code>/usr/src/linux</code>目录下，每一个目录或子目录可以看作一个模块，下面是对每一个目录的简单描述。</p>
+<ul>
+<li><code>include/</code>目录包含了建立内核代码时所需的大部分包含文件，这个模块利用其他模块重建内核。</li>
+<li><code>init/</code>子目录包含了内核的初始化代码，这是内核开始工作的起点。</li>
+<li><code>arch/</code>子目录包含了所有硬件结构特定的内核代码，<code>arch/</code>子目录下有i386和 alpha模块等。</li>
+<li><code>drivers/</code>目录包含了内核中所有的设备驱动程序，如块设备，scsi设备驱动程序等。 </li>
+<li><code>fs/</code>目录包含了所有文件系统的代码，如:ext2，vfat模块的代码等。</li>
+<li><code>net/</code>目录包含了内核的连网代码。</li>
+<li><code>mm/</code>目录包含了所有的内存管理代码。</li>
+<li><code>ipc/</code>目录包含了进程间通信的代码。</li>
+<li><code>kernel/</code>目录包含了主内核代码。</li>
+</ul>
+<p>图1.3显示了8 个目录，即<code>init</code>、<code>kernel</code>、<code>mm</code>、<code>ipc</code>、<code>drivers</code>、<code>fs</code>、<code>arch</code>及<code>net</code>的包含文件都在<code>include/</code>目录下。在Linux内核中包含了<code>drivers</code>、<code>fs</code>、<code>arch</code>及<code>net</code>模块，这就使得Linux内核既不是一个层次式结构，也不是一个微内核结构，而是一个“整体式” 结构。因为系统调用可以直接调用内核层，因此，该结构使得整个系统具有较高的性能，其缺点是内核修改起来比较困难，除非遵循严格的规则和编码标准。</p>
+<h1 id="Linux运行的硬件基础"><a href="#Linux运行的硬件基础" class="headerlink" title="Linux运行的硬件基础"></a>Linux运行的硬件基础</h1><h2 id="i386的寄存器"><a href="#i386的寄存器" class="headerlink" title="i386的寄存器"></a>i386的寄存器</h2><p>80386作为80X86系列中的一员，必须保证向后兼容，也就是说，既要支持16位的处理器，又要支持32位的处理器。在8086中，所有的寄存器都是16位的，下面我们来看一下780386中寄存器有何变化。</p>
+<ul>
+<li>把16位的通用寄存器、标志寄存器以及指令指针寄存器扩充为32位的寄存器</li>
+<li>段寄存器仍然为16位。</li>
+<li>增加4 个32位的控制寄存器。</li>
+<li>增加4 个系统地址寄存器。</li>
+<li>增加8 个调式寄存器。</li>
+<li>增加2 个测试寄存器。</li>
+</ul>
+<h3 id="通用寄存器"><a href="#通用寄存器" class="headerlink" title="通用寄存器"></a>通用寄存器</h3><p>8个通用寄存器是8086寄存器的超集，它们的名称和用途分别为:</p>
+<ul>
+<li>EAX:一般用作累加器。</li>
+<li>EBX:一般用作基址寄存器(Base)。</li>
+<li>ECX:一般用来计数(Count)。</li>
+<li>EDX:一般用来存放数据(Data)。</li>
+<li>EBP:一般用作堆栈指针(StackPointer)。</li>
+<li>EBP:一般用作基址指针(BasePointer)。</li>
+<li>ESI:一般用作源变址(SourceIndex)。</li>
+<li>EDI:一般用作目标变址(DestinatinIndex)。</li>
+</ul>
+<p>8个通用寄存器中通常保存32位数据，但为了进行16位的操作并与16位机保持兼容，它们的低位部分被当成8 个16位的寄存器，即AX、BX⋯⋯DI。为了支持8 位的操作，还进一步把EAX、EBX、ECX、EDX这 4个寄存器低位部分的16位，再分为8 位一组的高位字节和低位字节两部分，作为8 个8 位寄存器。这8 个寄存器分别被命名为AH、BH、CH、DH和 AL、BL、CL、DL。对8 位或16位寄存器的操作只影响相应的寄存器。例如，在做8 位加法运算时， 位7 的进位并不传给目的寄存器的位9，而是把标志寄存器中的进位标志(CF)置位。因此， 这8 个通用寄存器既可以支持1 位、8位、16位和32位数据运算，也支持16位和32位存储器寻址。</p>
+<h3 id="段寄存器"><a href="#段寄存器" class="headerlink" title="段寄存器"></a>段寄存器</h3><p>8086中有4 个16位的段寄存器:CS、DS、SS、ES，分别用于存放可执行代码的代码段、 数据段、堆栈段和其他段的基地址。在80386中，有6 个16位的段寄存器，但是，这些段寄存器中存放的不再是某个段的基地址，而是某个段的选择符(Selector)。因为16位的寄存器无法存放32位的段基地址，段基地址只好存放在一个叫做描述符表(Descriptor)的表中。 因此，在80386中，我们把段寄存器叫做选择符。下面给出6 个段寄存器的名称和用途。</p>
+<ul>
+<li>CS:代码段寄存器。</li>
+<li>DS:数据段寄存器。</li>
+<li>SS:堆栈段寄存器。</li>
+<li>ES、FS及 GS:附加数据段寄存器。</li>
+</ul>
+<h3 id="状态和控制寄存器"><a href="#状态和控制寄存器" class="headerlink" title="状态和控制寄存器"></a>状态和控制寄存器</h3><p>状态和控制寄存器是由标志寄存器(EFLAGS)、指令指针(EIP)和4 个控制寄存器组成。</p>
+<p>指令指针寄存器和标志寄存器：指令指针寄存器(EIP)中存放下一条将要执行指令的偏移量(offset)，这个偏移量是相对于目前正在运行的代码段寄存器(CS)而言的。偏移量加上当前代码段的基地址，就形成了下一条指令的地址。EIP中的低16位可以分开来进行访问，给它起名叫指令指针IP寄存器，用于16位寻址。</p>
+<p>标志寄存器(EFLAGS)存放有关处理器的控制标志，如图所示。标志寄存器中的第1、3、5、15位及18到31位都没有定义。<br><img src="/img/20210925113231.png" alt=""></p>
+<p>第8 位TF(Trap Flag)是自陷标志，当将其置1 时则可以进行单步执行。当指令执行完后，就可能产生异常1 的自陷。也就是说，在程序的执行过程中，每执行完一条指令，都要由异常1 处理程序进行检验。当将第8 位清0 后，且将断点地址装入调试寄存器DR0~DR3时，才会产生异常1 的自陷。</p>
+<p>第12、13位IOPL是输入输出特权级位，这是保护模式下要使用的两个标志位。由于输入输出特权级标志共两位，它的取值范围只可能是0、1、2和3共4 个值，恰好与输入输出特权级0~3级相对应。但Linux内核只使用了两个级别，即0 和3 级，0表示内核级，3表示用户级。在当前任务的特权级CPL(Current Privilege Level)高于或等于输入输出特权级时，就可以执行像IN、OUT、INS、OUTS、STI、CLI和 LOCK等指令而不会产生异常13(即保护异常)。在当前任务特权级CPL为 0时，POPF(从栈中弹出至标志位)指令和中断返回指令IRET可以改变IOPL字段的值。</p>
+<p>第9 位IF(Interrupt Flag)是中断标志位，是用来表示允许或者禁止外部中断。若第9位IF被置为1，则允许CPU接收外部中断请求信号；若将IF位清0，则表示禁止外部中断。在保护模式下，只有当第12、13位指出当前CPL为最高特权级时，才允许将新值置入标志寄存器(EFLAGS)以改变IF位的值。</p>
+<p>第10位DF(Direction Flag)是定向标志。DF位规定了在执行串操作的过程中，对源变址寄存器ESI或目标变址寄存器EDI是增值还是减值。如果DF为 1，则寄存器减值；若DF为 0，则寄存器值增加。</p>
+<p>第14位 NT是嵌套任务标志位。在保护模式下常使用这个标志。当80386在发生中断和执行CALL指令时就有可能引起任务切换。若是由于中断或由于执行CALL指令而出现了任务切换，则将NT置为1。若没有任务切换，则将NT位清0。</p>
+<p>第17位 VM(Virtual 8086Mode Flag)是虚拟8086方式标志，是80386新设置的一个标志位。表示80386 CPU是在虚拟8086环境中运行。如果80386 CPU是在保护模式下运行， 而VM为又被置成1，这时80386就转换成虚拟8086操作方式，使全部段操作就像是在8086 CPU上运行一样。VM位只能由两种方式中的一种方式给予设置，即或者是在保护模式下，由最高特权级(0)级代码段的中断返回指令IRET设置，或者是由任务转换进行设置。</p>
+<h3 id="控制寄存器"><a href="#控制寄存器" class="headerlink" title="控制寄存器"></a>控制寄存器</h3><p>状态和控制寄存器组除了EFLAGS、EIP，还有4 个32位的控制寄存器，它们是CR0，CR1、CR2和 CR3。<br><img src="/img/20210925114210.png" alt=""></p>
+<p>这几个寄存器中保存全局性和任务无关的机器状态。</p>
+<p>CR0中包含了6 个预定义标志，</p>
+<ul>
+<li>0位是保护允许位PE(Protedted Enable)，用于启动保护模式，如果PE位置1，则保护模式启动，如果PE=0，则在实模式下运行。</li>
+<li>1位是监控协处理位MP(Moniter Coprocessor)，它与第3 位一起决定：当TS=1时操作码WAIT是否产生一个“协处理器不能使用”的出错信号。</li>
+<li>3位是任务转换位(Task Switch)，当一个任务转换完成之后，自动将它置1。随着TS=1，就不能使用协处理器。</li>
+<li>第2位是模拟协处理器位EM (Emulate Coprocessor)，如果EM=1，则不能使用协处理器，如果EM=0，则允许使用协处理器。</li>
+<li>第4位是微处理器的扩展类型位ET(Processor Extension Type)，其内保存着处理器扩展类型的信息，如果ET=0，则标识系统使用的是287协处理器，如果ET=1，则表示系统使用的是387浮点协处理器。</li>
+<li>CR0的第31位是分页允许位(Paging Enable)， 它表示芯片上的分页部件是否允许工作。</li>
+</ul>
+<p>PG位和PE位定义的操作方式如表所示。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>PG</th>
+<th>PE</th>
+<th>方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>实模式</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>保护模式，但不允许分页</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>出错</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>允许分页的保护模式</td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li>CR1是未定义的控制寄存器，供将来的处理器使用。</li>
+<li>CR2是页故障线性地址寄存器，保存最后一次出现页故障的全32位线性地址。</li>
+<li>CR3是页目录基址寄存器，保存页目录表的物理地址。页目录表总是放在以4KB为单位的存储器边界上，因此，它的地址的低12位总为0，不起作用，即使写上内容，也不会被理会。</li>
+</ul>
+<h3 id="系统地址寄存器"><a href="#系统地址寄存器" class="headerlink" title="系统地址寄存器"></a>系统地址寄存器</h3><p>80386有 4个系统地址寄存器，如图所示，它保存操作系统要保护的信息和地址转换表信息。这4 个专用寄存器用于引用在保护模式下所需要的表和段，它们的名称和作用如下。</p>
+<ul>
+<li>全局描述符表寄存器GDTR(Global Descriptor Table Register )，是48位寄存器， 用来保存全局描述符表(GDT)的32位基地址和16位 GDT的界限。</li>
+<li>中断描述符表寄存器IDTR(Interrupt Descriptor Table Register)，是48位寄存器，用来保存中断描述符表(IDT)的32位基地址和16位 IDT的界限。</li>
+<li>局部描述符表寄存器LDTR(Global Descriptor Table Register )，是16位寄存器，保存局部描述符表LDT段的选择符。</li>
+<li>任务状态寄存器TR(TaskState Register)是16位寄存器，用于保存任务状态段TSS段的16位选择符。</li>
+</ul>
+<p><img src="/img/1632642404.jpg" alt=""></p>
+<p>用以上4 个寄存器给目前正在执行的任务(或进程)定义任务环境、地址空间和中断向量空间。</p>
+<h3 id="调试寄存器和测试寄存器"><a href="#调试寄存器和测试寄存器" class="headerlink" title="调试寄存器和测试寄存器"></a>调试寄存器和测试寄存器</h3><h4 id="调试寄存器"><a href="#调试寄存器" class="headerlink" title="调试寄存器"></a>调试寄存器</h4><p>80386为调试提供了硬件支撑。在80386芯片内有8 个32位的调试寄存器DR0~DR7，如图所示。</p>
+<p><img src="/img/1632642484.jpg" alt=""></p>
+<p>这些寄存器可以使系统程序设计人员定义4 个断点，用它们可以规定指令执行和数据读写的任何组合。DR0~DR3是线性断点地址寄存器，其中保存着4 个断点地址。DR4、DR5是两个备用的调试寄存器，目前尚未定义。DR6是断点状态寄存器，其低序位是指示符位，</p>
+<p>当允许故障调试并检查出故障而进入异常调试处理程序(<code>debug()</code>)时，由硬件把指示符位置1，调试异常处理程序在退出之前必须把这几位清0。DR7是断点控制寄存器，它的高序半个字又被分为4 个字段，用来规定断点字段的长度是1 个字节、2个字节、4个字节及规定将引起断点的访问类型。低序半个字的位字段用于“允许”断点和“允许”所选择的调试条件。</p>
+<h4 id="测试寄存器"><a href="#测试寄存器" class="headerlink" title="测试寄存器"></a>测试寄存器</h4><p>80386有两个32位的测试寄存器TR6和 TR7。这两个寄存器用于在转换旁路缓冲器 (Translation Lookaside Buffer)中测试随机存储器(RAM)和相联存储器(CAM)。TR6是测试命令寄存器，其内存放测试控制命令。TR7是数据寄存器，其内保存转换旁路缓冲器测试的数据。</p>
+<h2 id="内存地址"><a href="#内存地址" class="headerlink" title="内存地址"></a>内存地址</h2><p>在任何一台计算机上，都存在一个程序能产生的内存地址的集合。当程序执行这样一条指令时:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MOVE REG, ADDR</span><br></pre></td></tr></table></figure></p>
+<p>它把地址为<code>ADDR</code>(假设为10000)的内存单元的内容复制到<code>REG</code>中，地址<code>ADDR</code>可以通过索引、基址寄存器、段寄存器和其他方式产生。</p>
+<p>在8086的实模式下，把某一段寄存器左移4 位，然后与地址ADDR相加后被直接送到内存总线上，这个相加后的地址就是内存单元的物理地址，而程序中的这个地址就叫逻辑地址 (或叫虚地址)。在80386的保护模式下，这个逻辑地址不是被直接送到内存总线，而是被送到内存管理单元(MMU)。MMU由一个或一组芯片组成，其功能是把逻辑地址映射为物理地址， 即进行地址转换，如图所示。</p>
+<p><img src="/img/1632642615.jpg" alt=""></p>
+<p>当使用80386时，我们必须区分以下3 种不同的地址。</p>
+<ul>
+<li>逻辑地址：机器语言指令仍用这种地址指定一个操作数的地址或一条指令的地址。这种寻址方式在Intel的分段结构中表现得尤为具体，它使得MS-DOS或 Windows程序员把程序分为若干段。每个逻辑地址都由一个段和偏移量组成。</li>
+<li>线性地址：线性地址是一个32位的无符号整数，可以表达高达232(4GB)的地址。通常用16进制表示线性地址，其取值范围为0x00000000~0xffffffff。</li>
+<li>物理地址：物理地址是内存单元的实际地址，用于芯片级内存单元寻址。物理地址也由32位无符号整数表示。</li>
+</ul>
+<p>MMU是一种硬件电路，它包含两个部件，一个是分段部件，一个是分页部件，在本书中，我们把它们分别叫做分段机制和分页机制，以利于从逻辑的角度来理解硬件的实现机制。分段机制把一个逻辑地址转换为线性地址；接着，分页机制把一个线性地址转换为物理地址，如图2.8所示。<br><img src="/img/1632642700.jpg" alt=""></p>
+<h3 id="段机制和描述符"><a href="#段机制和描述符" class="headerlink" title="段机制和描述符"></a>段机制和描述符</h3><h3 id="段机制"><a href="#段机制" class="headerlink" title="段机制"></a>段机制</h3><p>在80386的段机制中，逻辑地址由两部分组成，即段部分(选择符)及偏移部分。</p>
+<p>段是形成逻辑地址到线性地址转换的基础。如果我们把段看成一个对象的话，那么对它的描述如下。</p>
+<ol>
+<li>段的基地址(Base Address)：在线性地址空间中段的起始地址。</li>
+<li>段的界限(Limit)：表示在逻辑地址中，段内可以使用的最大偏移量。</li>
+<li>段的属性(Attribute)：表示段的特性。例如，该段是否可被读出或写入，或者该段是否作为一个程序来执行，以及段的特权级等。</li>
+</ol>
+<p>段的界限定义逻辑地址空间中段的大小。段内在偏移量从0 到limit范围内的逻辑地址，对应于从Base到Base+Limit范围内的线性地址。在一个段内，偏移量大于段界限的逻辑地址将没有意义，使用这样的逻辑地址，系统将产生异常。另外，如果要对一个段进行访问，系统会根据段的属性检查访问者是否具有访问权限，如果没有，则产生异常。例如，在80386中，如果要在只读段中进行写入，80386将根据该段的属性检测到这是一种违规操作，则产生异常。</p>
+<p><img src="/img/1632642956.jpg" alt=""></p>
+<p>图表示一个段如何从逻辑地址空间，重新定位到线性地址空间。图的左侧表示逻辑地址空间，定义了A、B及 C三个段，段容量分别为LimitA、LimitB及 LimitC。图中虚线把逻辑地址空间中的段A、B及 C与线性地址空间区域连接起来表示了这种转换。</p>
+<p>段的基地址、界限及保护属性，存储在段的描述符表中，在逻辑—线性地址转换过程中要对描述符进行访问。段描述符又存储在存储器的段描述符表中，该描述符表是段描述符的一个数组。</p>
+<h3 id="描述符的概念"><a href="#描述符的概念" class="headerlink" title="描述符的概念"></a>描述符的概念</h3><p>所谓描述符(Descriptor)，就是描述段的属性的一个8 字节存储单元。在实模式下，段的属性不外乎是代码段、堆栈段、数据段、段的起始地址、段的长度等，而在保护模式下则复杂一些。80386将它们结合在一起用一个8 字节的数表示，称为描述符。80386的一个通用的段描述符的结构如图所示。从图可以看出，一个段描述符指出了段的32位基地址和20位段界限(即段长)。</p>
+<p>第6 个字节的G 位是粒度位，当G=0时，段长表示段格式的字节长度，即一个段最长可达 1M字节。当G=1时，段长表示段的以4K字节为一页的页的数目，即一个段最长可达1M×4K=4G字节。D位表示缺省操作数的大小，如果D=0，操作数为16位，如果D=1，操作数为 32位。第6 个字节的其余两位为0，这是为了与将来的处理器兼容而必须设置为0 的位。<br><img src="/img/1632645136.jpg" alt=""></p>
+<p>第5 个字节是存取权字节，它的一般格式如下所示。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">7 6 5 4 3 2 1 0</span><br><span class="line">P DPL S 类 型 A</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>第7 位P 位(Present) 是存在位，表示段描述符描述的这个段是否在内存中，如果在内存中。P=1；如果不在内存中，P=0。</li>
+<li>DPL(Descriptor Privilege Level)，就是描述符特权级，它占两位，其值为0~3， 用来确定这个段的特权级即保护等级。</li>
+<li>S位(System)表示这个段是系统段还是用户段。如果S=0，则为系统段，如果S=1，则为用户程序的代码段、数据段或堆栈段。系统段与用户段有很大的不同，后面会具体介绍。</li>
+<li>类型占3 位，第3 位为E 位，表示段是否可执行。当E=0时，为数据段描述符，这时的第 2位 ED表示扩展方向。当ED=0时，为向地址增大的方向扩展，这时存取数据段中的数据的偏移量必须小于或等于段界限，当ED=1时，表示向地址减少的方向扩展，这时偏移量必须大于界限。当表示数据段时，第1 位(W)是可写位，当W=0时，数据段不能写，W=1时，数据段可写入。在80386中，堆栈段也被看成数据段，因为它本质上就是特殊的数据段。当描述堆栈段时，ED=0，W=1，即堆栈段朝地址增大的方向扩展。 </li>
+</ul>
+<p>也就是说，当段为数据段时，存取权字节的格式如图所示。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">7 6 5 4 3 2  1 0</span><br><span class="line">P DPL 1 0 ED W A</span><br></pre></td></tr></table></figure></p>
+<p>当段为代码段时，第3 位E=1，这时第2 位为一致位(C)。当C=1时，如果当前特权级低于描述符特权级，并且当前特权级保持不变，那么代码段只能执行。所谓当前特权级 (Current Privilege Level)，就是当前正在执行的任务的特权级。第1 位为可读位R，当R=0时，代码段不能读，当R=1时可读。也就是说，当段为代码段时，存取权字节的格式如<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">7 6 5 4 3 2 1 0</span><br><span class="line">P DPL 1 1 C R A</span><br></pre></td></tr></table></figure></p>
+<p>存取权字节的第0 位A 位是访问位，用于请求分段不分页的系统中，每当该段被访问时， 将A 置1。对于分页系统，则A 被忽略未用。</p>
+<h3 id="系统段描述符"><a href="#系统段描述符" class="headerlink" title="系统段描述符"></a>系统段描述符</h3><p>以上介绍了用户段描述符。系统段描述符的一般格式如图所示。<br><img src="/img/1632645509.jpg" alt=""></p>
+<p>可以看出，系统段描述符的第5 个字节的第4 位为0，说明它是系统段描述符，类型占4 位，没有A 位。第6 个字节的第6 位为0，说明系统段的长度是字节粒度，所以，一个系统段的最大长度为1M字节。</p>
+<p>系统段的类型为16种，如图所示。<br><img src="/img/1632645544.jpg" alt=""></p>
+<p>在这16种类型中，保留类型和有关286的类型不予考虑。 门也是一种描述符，有调用门、任务门、中断门和陷阱门4 种门描述符。</p>
+<h3 id="描述符表"><a href="#描述符表" class="headerlink" title="描述符表"></a>描述符表</h3><p>各种各样的用户描述符和系统描述符，都放在对应的全局描述符表、局部描述符表和中断描述符表中。</p>
+<p>描述符表(即段表)定义了386系统的所有段的情况。所有的描述符表本身都占据一个字节为8 的倍数的存储器空间，空间大小在8 个字节(至少含一个描述符)到64K字节(至多含8K)个描述符之间。</p>
+<ol>
+<li>全局描述符表(GDT)：全局描述符表GDT(Global Descriptor Table)，除了任务门，中断门和陷阱门描述符外，包含着系统中所有任务都共用的那些段的描述符。它的第一个8 字节位置没有使用。</li>
+<li>中断描述符表(IDT)：中断描述符表IDT(Interrupt Descriptor Table)，包含256个门描述符。IDT中只能包含任务门、中断门和陷阱门描述符，虽然IDT表最长也可以为64K字节，但只能存取2K字节以内的描述符，即256个描述符，这个数字是为了和8086保持兼容。</li>
+<li>局部描述符表(LDT)：局部描述符表LDT(Local Descriptor Table)，包含了与一个给定任务有关的描述符， 每个任务各自有一个的LDT。有了LDT，就可以使给定任务的代码、数据与别的任务相隔离。</li>
+</ol>
+<p>每一个任务的局部描述符表LDT本身也用一个描述符来表示，称为LDT描述符，它包含了有关局部描述符表的信息，被放在全局描述符表GDT中。</p>
+<h3 id="选择符与描述符表寄存器"><a href="#选择符与描述符表寄存器" class="headerlink" title="选择符与描述符表寄存器"></a>选择符与描述符表寄存器</h3><p>在实模式下，段寄存器存储的是真实的段地址，在保护模式下，16位的段寄存器无法放下32位的段地址，因此，它们被称为选择符，即段寄存器的作用是用来选择描述符。选择符的结构如图所示。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">15     2  1 0</span><br><span class="line">索引   TI RPL</span><br></pre></td></tr></table></figure></p>
+<p>可以看出，选择符有3 个域：第15~3位这13位是索引域，表示的数据为0~8192，用于指向全局描述符表中相应的描述符。第2 位为选择域，如果TI=1，就从局部描述符表中选择相应的描述符，如果TI=0，就从全局描述符表中选择描述符。第1、0位是特权级，表示选择符的特权级，被称为请求者特权级RPL(Requestor Privilege Level)。只有请求者特权级 RPL高于(数字低于)或等于相应的描述符特权级DPL，描述符才能被存取，这就可以实现一定程度的保护。</p>
+<p>我们知道，实模式下是直接在段寄存器中放置段基地址，现在则是通过它来存取相应的描述符来获得段基地址和其他信息，这样以来，存取速度会不会变慢呢?为了解决这个问题， 386的每一个段选择符都有一个程序员不可见(也就是说程序员不能直接操纵)的88位宽的段描述符高速缓冲寄存器与之对应。无论什么时候改变了段寄存器的内容，只要特权级合理， 描述符表中的相应的8 字节描述符就会自动从描述符表中取出来，装入高速缓冲寄存器中(还有 24位其他内容)。一旦装入，以后对那个段的访问就都使用高速缓冲寄存器的描述符信息， 而不会再重新从表中去取，这就大大加快了执行的时间。<br><img src="/img/1633239905.jpg" alt=""></p>
+<p>由于段描述符高速缓冲寄存器的内容只有在重新设置选择符时才被重新装入，所以，当你修改了选择符所选择的描述符后，必须对相应的选择符重新装入，这样，88位描述符高速缓冲寄存器的内容才会发生变化。无论如何，当选择符的值改变时，处理器自动装载不可见部分。</p>
+<p>下面讲一下在没有分页操作时，寻址一个存储器操作数的步骤。</p>
+<ol>
+<li>在段选择符中装入16位数，同时给出32位地址偏移量(比如在ESI、EDI中等)。</li>
+<li>根据段选择符中的索引值、TI及 RPL值，再根据相应描述符表寄存器中的段地址和段界限，进行一系列合法性检查(如特权级检查、界限检查)，该段无问题，就取出相应的描述符放入段描述符高速缓冲寄存器中。</li>
+<li>将描述符中的32位段基地址和放在ESI、EDI等中的32位有效地址相加，就形成了 32位物理地址。</li>
+</ol>
+<p><img src="/img/1633240144.jpg" alt=""></p>
+<h3 id="描述符投影寄存器"><a href="#描述符投影寄存器" class="headerlink" title="描述符投影寄存器"></a>描述符投影寄存器</h3><p>为了避免在每次存储器访问时，都要访问描述符表，读出描述符并对段进行译码以得到描述符本身的各种信息，每个段寄存器都有与之相联系的描述符投影寄存器。在这些寄存器中，容纳有由段寄存器中的选择符确定的段的描述符信息。段寄存器对编程人员是可见的， 而与之相联系的容纳描述符的寄存器，则对编程人员是不可见的，故称之为投影寄存器。图2.19中所示的是6 个寄存器及其投影寄存器。用实线画出的寄存器是段寄存器，用以表示这些寄存器对编程人员可见；用虚线画出的寄存器是投影寄存器，表示对编程人员不可见。<br><img src="/img/1633240247.jpg" alt=""></p>
+<p>投影寄存器容纳有相应段寄存器寻址的段的基地址、界限及属性。每当用选择符装入段寄存器时，CPU硬件便自动地把描述符的全部内容装入对应的投影寄存器。因此，在多次访问同一段时，就可以用投影寄存器中的基地址来访问存储器。投影寄存器存储在80386的芯片上，因而可以由段基址硬件进行快速访问。因为多数指令访问的数据是在其选择符已经装入到段寄存器之后进行的，所以使用投影寄存器可以得到很好的执行性能。</p>
+<h3 id="Linux中的段"><a href="#Linux中的段" class="headerlink" title="Linux中的段"></a>Linux中的段</h3><p>Intel微处理器的段机制是从8086开始提出的， 那时引入的段机制解决了从CPU内部16位地址到20位实地址的转换。为了保持这种兼容性，386仍然使用段机制，但比以前复杂得多。因此，Linux内核的设计并没有全部采用Intel所提供的段方案，仅仅有限度地使用了一下分段机制。</p>
+<p>从2.2版开始，Linux让所有的进程(或叫任务)都使用相同的逻辑地址空间，因此就没有必要使用局部描述符表LDT。</p>
+<p>Linux在启动的过程中设置了段寄存器的值和全局描述符表GDT的内容，段的定义在<code>include/asm-i386/segment.h</code>中:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> __KERNEL_CS 0x10   <span class="comment">/* 内核代码段，index=2,TI=0,RPL=0 */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __KERNEL_DS 0x18   <span class="comment">/* 内核数据段, index=3,TI=0,RPL=0 */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __USER_CS   0x23   <span class="comment">/* 用户代码段, index=4,TI=0,RPL=3 */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __USER_DS   0x2B   <span class="comment">/* 用户数据段, index=5,TI=0,RPL=3 */</span></span></span><br></pre></td></tr></table></figure></p>
+<p>从定义看出，没有定义堆栈段，实际上，Linux内核不区分数据段和堆栈段，这也体现了 Linux内核尽量减少段的使用。因为没有使用LDT，因此，TI=0，并把这4 个段都放在GDT中，index就是某个段在GDT表中的下标。内核代码段和数据段具有最高特权，因此其RPL为 0，而用户代码段和数据段具有最低特权，因此其RPL为 3。可以看出，Linux内核再次简化了特权级的使用，使用了两个特权级而不是4 个。</p>
+<p>全局描述符表的定义在<code>arch/i386/kernel/head.S</code>中:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">ENTRY(gdt_table)</span><br><span class="line">.quad <span class="number">0x0000000000000000</span>  <span class="comment">/* NULL descriptor */</span></span><br><span class="line">.quad <span class="number">0x0000000000000000</span>  <span class="comment">/* not used */</span></span><br><span class="line">.quad <span class="number">0x00cf9a000000ffff</span>  <span class="comment">/* 0x10 kernel 4GB code at 0x00000000 */</span></span><br><span class="line">.quad <span class="number">0x00cf92000000ffff</span>  <span class="comment">/* 0x18 kernel 4GB data at 0x00000000 */</span></span><br><span class="line">.quad <span class="number">0x00cffa000000ffff</span>  <span class="comment">/* 0x23 user   4GB code at 0x00000000 */</span></span><br><span class="line">.quad <span class="number">0x00cff2000000ffff</span>  <span class="comment">/* 0x2b user   4GB data at 0x00000000 */</span></span><br><span class="line">.quad <span class="number">0x0000000000000000</span>  <span class="comment">/* notused */</span></span><br><span class="line">.quad <span class="number">0x0000000000000000</span>  <span class="comment">/* notused */</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * TheAPMsegmentshavebytegranularityandtheirbases</span></span><br><span class="line"><span class="comment"> * andlimitsaresetatruntime.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">.quad <span class="number">0x0040920000000000</span>  <span class="comment">/* 0x40 APM set up for bad BIOS&#x27;s */</span> </span><br><span class="line">.quad <span class="number">0x00409a0000000000</span>  <span class="comment">/* 0x48 APM CS code */</span></span><br><span class="line">.quad <span class="number">0x00009a0000000000</span>  <span class="comment">/* 0x50 APM CS 16 code (16bit) */</span></span><br><span class="line">.quad <span class="number">0x0040920000000000</span>  <span class="comment">/* 0x58 APM DS data */</span></span><br><span class="line">.fillNR_CPUS*<span class="number">4</span>,<span class="number">8</span>,<span class="number">0</span>   <span class="comment">/* space for TSS&#x27;s and LDT&#x27;s */</span></span><br></pre></td></tr></table></figure></p>
+<p>从代码可以看出，GDT放在数组变量<code>gdt_table</code>中。按Intel规定，GDT中的第一项为空，这是为了防止加电后段寄存器未经初始化就进入保护模式而使用GDT的。第二项也没用。 从下标2~5共 4项对应于前面的4 种段描述符值。从描述符的数值可以得出:</p>
+<ul>
+<li>段的基地址全部为0x00000000;</li>
+<li>段的上限全部为0xffff;</li>
+<li>段的粒度G 为1，即段长单位为4KB;</li>
+<li>段的D 位为1，即对这4 个段的访问都为32位指令;</li>
+<li>段的P 位为1，即4 个段都在内存。</li>
+</ul>
+<p>由此可以得出，每个段的逻辑地址空间范围为0~4GB。因为每个段的基地址为0，因此，逻辑地址到线性地址映射保持不变，也就是说，偏移量就是线性地址，我们以后所提到的逻辑地址 (或虚拟地址)和线性地址指的也就是同一地址。看来，Linux巧妙地把段机制给绕过去了，而完全利用了分页机制。</p>
+<h2 id="分页机制"><a href="#分页机制" class="headerlink" title="分页机制"></a>分页机制</h2><p>分页机制在段机制之后进行，以完成线性—物理地址的转换过程。段机制把逻辑地址转换为线性地址，分页机制进一步把该线性地址再转换为物理地址。</p>
+<p>分页机制由CR0中的PG位启用。如PG=1，启用分页机制，把线性地址转换为物理地址。如PG=0，禁用分页机制，直接把段机制产生的线性地址当作物理地址使用。分页机制管理的对象是固定大小的存储块，称之为页(page)。分页机制把整个线性地址空间及整个物理地址空间都看成由页组成，在线性地址空间中的任何一页，可以映射为物理地址空间中的任何一页(我们把物理空间中的一页叫做一个页面或页框(page frame))。</p>
+<p>80386使用4K字节大小的页。每一页都有4K字节长，并在4K字节的边界上对齐，即每一页的起始地址都能被4K整除。因此，80386把4G字节的线性地址空间，划分为1G个页面， 每页有4K字节大小。分页机制通过把线性地址空间中的页，重新定位到物理地址空间来进行管理，因为每个页面的整个4K字节作为一个单位进行映射，并且每个页面都对齐4K字节的边界，因此，线性地址的低12位经过分页机制直接地作为物理地址的低12位使用。</p>
+<p>线性—物理地址的转换，可将其意义扩展为允许将一个线性地址标记为无效，而不是实际地产生一个物理地址。有两种情况可能使页被标记为无效：其一是线性地址是操作系统不支持的地址；其二是在虚拟存储器系统中，线性地址对应的页存储在磁盘上，而不是存储在物理存储器中。在前一种情况下，程序因产生了无效地址而必须被终止。对于后一种情况，该无效的地址实际上是请求操作系统的虚拟存储管理系统，把存放在磁盘上的页传送到物理存储器中，使该页能被程序所访问。由于无效页通常是与虚拟存储系统相联系的，这样的无效页通常称为未驻留页，并且用页表属性位中叫做存在位的属性位进行标识。未驻留页是程序可访问的页，但它不在主存储器中。对这样的页进行访问，形式上是发生异常，实际上是通过异常进行缺页处理。</p>
+<h3 id="分页机构"><a href="#分页机构" class="headerlink" title="分页机构"></a>分页机构</h3><p>如前所述，分页是将程序分成若干相同大小的页，每页4K个字节。如果不允许分页(CR0的最高位置0)，那么经过段机制转化而来的32位线性地址就是物理地址。但如果允许分页(CR0的最高位置1)，就要将32位线性地址通过一个两级表格结构转化成物理地址。</p>
+<h4 id="两级页表结构"><a href="#两级页表结构" class="headerlink" title="两级页表结构"></a>两级页表结构</h4><p>在80386中页表共含1M个表项，每个表项占4 个字节。如果把所有的页表项存储在一个表中，则该表最大将占4M字节连续的物理存储空间。为避免使页表占有如此巨额的物理存储器资源，故对页表采用了两级表的结构，而且对线性地址的高20位的线性—物理地址转化也分为两部完成，每一步各使用其中的10位。</p>
+<p>两级表结构的第一级称为页目录，存储在一个4K字节的页面中。页目录表共有1K个表项，每个表项为4 个字节，并指向第二级表。线性地址的最高10位(即位31~位22)用来产生第一级的索引，由索引得到的表项中，指定并选择了1K个二级表中的一个表。</p>
+<p>两级表结构的第二级称为页表，也刚好存储在一个4K字节的页面中，包含1K个字节的表项，每个表项包含一个页的物理基地址。第二级页表由线性地址的中间10位(即位21~位12)进行索引，以获得包含页的物理地址的页表项，这个物理地址的高20位与线性地址的低12位形成了最后的物理地址，也就是页转化过程输出的物理地址，具体转化过程稍后会讲到， 如图2.21为两级页表结构。<br><img src="/img/1633241284.jpg" alt=""></p>
+<h4 id="页目录项"><a href="#页目录项" class="headerlink" title="页目录项"></a>页目录项</h4><p><img src="/img/1633241770.jpg" alt=""></p>
+<p>图2-22所示为页目录表，最多可包含1024个页目录项，每个页目录项为4 个字节，结构如图2.22所示。</p>
+<ul>
+<li>第31~12位是20位页表地址，由于页表地址的低12位总为0，所以用高20位指出32位页表地址就可以了。因此，一个页目录最多包含1024个页表地址。</li>
+<li>第0 位是存在位，如果P=1，表示页表地址指向的该页在内存中，如果P=0，表示不在内存中。</li>
+<li>第1 位是读/写位，第2 位是用户/管理员位，这两位为页目录项提供硬件保护。当特权级为3 的进程要想访问页面时，需要通过页保护检查，而特权级为0 的进程就可以绕过页保护。</li>
+<li>第3 位是PWT(PageWrite-Through)位，表示是否采用写透方式，写透方式就是既写内存(RAM)也写高速缓存,该位为1 表示采用写透方式。</li>
+<li>第4 位是PCD(PageCacheDisable)位，表示是否启用高速缓存，该位为1 表示启用高速缓存。</li>
+<li>第5 位是访问位，当对页目录项进行访问时，A位=1。</li>
+<li>第7 位是PageSize标志，只适用于页目录项。如果置为1，页目录项指的是4MB的 页面，请看后面的扩展分页。</li>
+<li>第9~11位由操作系统专用，Linux也没有做特殊之用。</li>
+</ul>
+<h4 id="页面项"><a href="#页面项" class="headerlink" title="页面项"></a>页面项</h4><p>80386的每个页目录项指向一个页表，页表最多含有1024个页面项，每项4 个字节，包含页面的起始地址和有关该页面的信息。页面的起始地址也是4K的整数倍，所以页面的低12位也留作它用，如图2.24所示。<br><img src="/img/1633241892.jpg" alt=""></p>
+<p>第31~12位是20位物理页面地址，除第6 位外第0~5位及9~11位的用途和页目录项一样，第6 位是页面项独有的，当对涉及的页面进行写操作时，D位被置1。</p>
+<p>4GB的存储器只有一个页目录，它最多有1024个页目录项，每个页目录项又含有1024个页面项，因此，存储器一共可以分成1024×1024=1M个页面。由于每个页面为4K个字节， 所以，存储器的大小正好最多为4GB。</p>
+<h4 id="线性地址到物理地址的转换"><a href="#线性地址到物理地址的转换" class="headerlink" title="线性地址到物理地址的转换"></a>线性地址到物理地址的转换</h4><p>当访问一个操作单元时，如何由分段结构确定的32位线性地址通过分页操作转化成32位物理地址呢?过程如图2.25所示。</p>
+<ul>
+<li>第一步，CR3包含着页目录的起始地址，用32位线性地址的最高10位 A31~A22作为页目录的页目录项的索引，将它乘以4，与CR3中的页目录的起始地址相加，形成相应页表的地址。</li>
+<li>第二步，从指定的地址中取出32位页目录项，它的低12位为0，这32位是页表的起始地址。用32位线性地址中的A21~A12位作为页表中的页面的索引，将它乘以4，与页表的起始地址相加，形成32位页面地址。</li>
+<li>第三步，将A11~A0作为相对于页面地址的偏移量，与32位页面地址相加，形成32位 物理地址。</li>
+</ul>
+<p><img src="/img/1633242940.jpg" alt=""></p>
+<h4 id="扩展分页"><a href="#扩展分页" class="headerlink" title="扩展分页"></a>扩展分页</h4><p>从奔腾处理器开始，Intel微处理器引进了扩展分页，它允许页的大小为4MB，如图2.26所示。<br><img src="/img/1633242997.jpg" alt=""></p>
+<p>在扩展分页的情况下，分页机制把32位线性地址分成两个域：最高10位的目录域和其余 22位的偏移量。</p>
+<h3 id="页面高速缓存"><a href="#页面高速缓存" class="headerlink" title="页面高速缓存"></a>页面高速缓存</h3><p>由于在分页情况下，每次存储器访问都要存取两级页表，这就大大降低了访问速度。 所以，为了提高速度，在386中设置一个最近存取页面的高速缓存硬件机制，它自动保持32项处理器最近使用的页面地址，因此，可以覆盖128K字节的存储器地址。当进行存储器访问时，先检查要访问的页面是否在高速缓存中，如果在，就不必经过两级访问了，如果不在，再进行两级访问。平均来说，页面高速缓存大约有98%的命中率，也就是说每次访问存储器时，只有2%的情况必须访问两级分页机构。这就大大加快了速度，页面高速缓存的作用如图2.27所示。有些书上也把页面高速缓存叫做“联想存储器”或“转换旁路缓冲器(TLB)”。<br><img src="/img/1633243061.jpg" alt=""></p>
+<h2 id="Linux中的分页机制"><a href="#Linux中的分页机制" class="headerlink" title="Linux中的分页机制"></a>Linux中的分页机制</h2><p>如前所述，Linux主要采用分页机制来实现虚拟存储器管理，原因如下。</p>
+<ul>
+<li>Linux的分段机制使得所有的进程都使用相同的段寄存器值，这就使得内存管理变得简单，也就是说，所有的进程都使用同样的线性地址空间(0~4GB)。</li>
+<li>Linux设计目标之一就是能够把自己移植到绝大多数流行的处理器平台。但是，许多RISC处理器支持的段功能非常有限。</li>
+</ul>
+<p>为了保持可移植性，Linux采用三级分页模式而不是两级，这是因为许多处理器都采用64位结构的处理器，在这种情况下，两级分页就不适合了，必须采用三级分页。如图2.28所示为三级分页模式，为此，Linux定义了3 种类型的页表。</p>
+<ul>
+<li>总目录PGD(PageGlobalDirectory)</li>
+<li>中间目录PMD(PageMiddleDerectory)</li>
+<li>页表PT(PageTable)</li>
+</ul>
+<p><img src="/img/1633243249.jpg" alt=""></p>
+<h3 id="与页相关的数据结构及宏的定义"><a href="#与页相关的数据结构及宏的定义" class="headerlink" title="与页相关的数据结构及宏的定义"></a>与页相关的数据结构及宏的定义</h3><p>Linux所定义的数据结构分布在<code>include/asm-i386/</code>目录下的<code>page.h</code>，<code>pgtable.h</code>及<code>pgtable-2level.h</code>三个文件中。</p>
+<h4 id="表项的定义"><a href="#表项的定义" class="headerlink" title="表项的定义"></a>表项的定义</h4><p>如上所述，PGD、PMD及 PT表的表项都占4 个字节，因此，把它们定义为无符号长整数，分别叫做<code>pgd_t</code>、<code>pmd_t</code>及<code>pte_t</code>(pte即Page table Entry)，在<code>page.h</code>中定义如下:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123; <span class="type">unsigned</span> <span class="type">long</span> pte_low; &#125; <span class="type">pte_t</span>;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123; <span class="type">unsigned</span> <span class="type">long</span> pmd; &#125; <span class="type">pmd_t</span>;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123; <span class="type">unsigned</span> <span class="type">long</span> pgd; &#125; <span class="type">pgd_t</span>;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123; <span class="type">unsigned</span> <span class="type">long</span> pgprot; &#125; <span class="type">pgprot_t</span>;</span><br></pre></td></tr></table></figure></p>
+<p>可以看出，Linux没有把这几个类型直接定义长整数而是定义为一个结构，这是为了让gcc在编译时进行更严格的类型检查。另外，还定义了几个宏来访问这些结构的成分，这也是一种面向对象思想的体现:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> pte_val(x) ((x).pte_low)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> pmd_val(x) ((x).pmd) </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> pgd_val(x) ((x).pgd)</span></span><br></pre></td></tr></table></figure></p>
+<p>从图2.22和图2.24可以看出，对这些表项应该定义成位段，但内核并没有这样定义，而是定义了一个页面保护结构<code>pgprot_t</code>和一些宏:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123; <span class="type">unsigned</span> <span class="type">long</span> pgprot; &#125; <span class="type">pgprot_t</span>; </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> pgprot_val(x) ((x).pgprot)</span></span><br></pre></td></tr></table></figure></p>
+<p>字段<code>pgprot</code>的值与图2.24页面项的低12位相对应，其中的9 位对应0~9位，在<code>pgtalbe.h</code>中定义了对应的宏:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> _PAGE_PRESENT 0x001</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _PAGE_RW 0x002</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _PAGE_USER 0x004</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _PAGE_PWT 0x008</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _PAGE_PCD 0x010</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _PAGE_ACCESSED 0x020</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _PAGE_DIRTY 0x040</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _PAGE_PSE 0x080 <span class="comment">/* 4MB (or2MB) page, Pentium+, ifpresent.. */</span> </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _PAGE_GLOBAL 0x100 <span class="comment">/* GlobalTLBentryPPro+ */</span></span></span><br></pre></td></tr></table></figure></p>
+<p>另外，页目录表及页表在<code>pgtable.h</code>中定义如下:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="type">pgd_t</span> swapper_pg_dir[<span class="number">1024</span>];</span><br><span class="line"><span class="keyword">extern</span> <span class="type">unsigned</span> <span class="type">long</span> pg0[<span class="number">1024</span>];</span><br></pre></td></tr></table></figure></p>
+<p><code>swapper_pg_dir</code>为页目录表，<code>pg0</code>为一临时页表，每个表最多都有1024项。</p>
+<h4 id="线性地址域的定义"><a href="#线性地址域的定义" class="headerlink" title="线性地址域的定义"></a>线性地址域的定义</h4><p>Intel线性地址的结构如下所示。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">31    22 21    12 11   0</span><br><span class="line">目录       页      偏移量</span><br></pre></td></tr></table></figure></p>
+<p>偏移量的位数<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> PAGE_SHIFT 12</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PAGE_SIZE (1UL &lt;&lt; PAGE_SHIFT) </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTRS_PER_PTE 1024</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PAGE_MASK (~(PAGE_SIZE-1))</span></span><br></pre></td></tr></table></figure></p>
+<p>其中<code>PAGE_SHIFT</code>宏定义了偏移量的位数为12，因此页大小<code>PAGE_SIZE</code>为4096字节;</p>
+<p><code>PTRS_PER_PTE</code>为页表的项数；最后<code>PAGE_MASK</code>值定义为0xfffff000，用以屏蔽掉偏移量域的所有位(12位)。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> PGDIR_SHIFT 22</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTRS_PER_PGD 1024</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PGDIR_SIZE (1UL &lt;&lt; PGDIR_SHIFT) </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PGDIR_MASK (~(PGDIR_SIZE-1))</span></span><br></pre></td></tr></table></figure></p>
+<p><code>PGDIR_SHIFT</code>是页表所能映射区域线性地址的位数，它的值为22(12位的偏移量加上10位的页表)；<code>PTRS_PER_PGD</code>为页目录目录项数；<code>PGDIR_SIZE</code>为页目录的大小，为222，即4MB；<code>PGDIR_MASK</code>为0xffc00000，用于屏蔽偏移量位与页表域的所有位。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> PMD_SHIFT  22</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTRS_PER_PMD    1</span></span><br></pre></td></tr></table></figure></p>
+<p><code>PMD_SHIFT</code>为中间目录表映射的地址位数，其值也为22，但是因为Linux在 386中只用了两级页表结构，因此，让其目录项个数为1，这就使得中间目录在指针序列中的位置被保存，以便同样的代码在32位系统和64位系统下都能使用。</p>
+<h3 id="对页目录及页表的处理"><a href="#对页目录及页表的处理" class="headerlink" title="对页目录及页表的处理"></a>对页目录及页表的处理</h3><p>在<code>page.h</code>，<code>pgtable.h</code>及<code>pgtable-2level.h</code>3个文件中还定义有大量的宏，用以对页目录、页表及表项的处理。</p>
+<h4 id="表项值的确定"><a href="#表项值的确定" class="headerlink" title="表项值的确定"></a>表项值的确定</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">int</span> <span class="title">pgd_none</span><span class="params">(<span class="type">pgd_t</span> pgd)</span> </span>&#123; <span class="keyword">return</span> <span class="number">0</span>; &#125;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">int</span> <span class="title">pgd_present</span><span class="params">(<span class="type">pgd_t</span> pgd)</span> </span>&#123; <span class="keyword">return</span> <span class="number">1</span>; &#125;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> pte_present(x) ((x).pte_low &amp; (_PAGE_PRESENT | _PAGE_PROTNONE))</span></span><br></pre></td></tr></table></figure>
+<p><code>pgd_none()</code>函数直接返回0，表示尚未为这个页目录建立映射，所以页目录项为空。<code>pgd_present()</code>函数直接返回1，表示映射虽然还没有建立，但页目录所映射的页表肯定存在于内存(即页表必须一直在内存)。</p>
+<p><code>pte_present</code>宏的值为1 或0，表示P 标志位。如果页表项不为0，但标志位为0，则表示映射已经建立，但所映射的物理页面不在内存。</p>
+<h4 id="清相应表的表项"><a href="#清相应表的表项" class="headerlink" title="清相应表的表项"></a>清相应表的表项</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> pgd_clear(xp) do &#123; &#125; while (0)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> pte_clear(xp) do &#123; set_pte(xp, __pte(0)); &#125; while (0)</span></span><br></pre></td></tr></table></figure>
+<p><code>pgd_clear</code>宏实际上什么也不做，定义它可能是为了保持编程风格的一致。<code>pte_clear</code>就是把0 写到页表表项中。</p>
+<h4 id="对页表表项标志值进行操作的宏"><a href="#对页表表项标志值进行操作的宏" class="headerlink" title="对页表表项标志值进行操作的宏"></a>对页表表项标志值进行操作的宏</h4><p>这些宏的代码在<code>pgtable.h</code>文件中，表2.1给出宏名及其功能。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>宏名</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Set_pte()</td>
+<td>把一个具体的值写入表项</td>
+</tr>
+<tr>
+<td>Pte_read()</td>
+<td>返回User/Supervisor标志值(由此可以得知是否可以在用户态下访问此页)</td>
+</tr>
+<tr>
+<td>Pte_write()</td>
+<td>如果Present标志和Read/Write标志都为1，则返回1(此页是否存在并可写)</td>
+</tr>
+<tr>
+<td>Pte_exec()</td>
+<td>返回User/Supervisor标志值</td>
+</tr>
+<tr>
+<td>Pte_dirty()</td>
+<td>返回Dirty标志的值(说明此页是否被修改过)</td>
+</tr>
+<tr>
+<td>Pte_young()</td>
+<td>返回Accessed标志的值(说明此页是否被存取过)</td>
+</tr>
+<tr>
+<td>Pte_wrprotect()</td>
+<td>清除Read/Write标志</td>
+</tr>
+<tr>
+<td>Pte_rdprotect()</td>
+<td>清除User/Supervisor标志</td>
+</tr>
+<tr>
+<td>Pte_mkwrite()</td>
+<td>设置Read/Write标志</td>
+</tr>
+<tr>
+<td>Pte_mkread()</td>
+<td>设置User/Supervisor标志</td>
+</tr>
+<tr>
+<td>Pte_mkdirty()</td>
+<td>把Dirty标志置1</td>
+</tr>
+<tr>
+<td>Pte_mkclean()</td>
+<td>把Dirty标志置0</td>
+</tr>
+<tr>
+<td>Pte_mkyoung()</td>
+<td>把Accessed标志置1</td>
+</tr>
+<tr>
+<td>Pte_mkold()</td>
+<td>把Accessed标志置0</td>
+</tr>
+<tr>
+<td>Pte_modify(p,v)</td>
+<td>把页表表项p 的所有存取权限设置为指定的值v</td>
+</tr>
+<tr>
+<td>Mk_pte()</td>
+<td>把一个线性地址和一组存取权限合并来创建一个32位的页表表项</td>
+</tr>
+<tr>
+<td>Pte_pte_phys()</td>
+<td>把一个物理地址与存取权限合并来创建一个页表表项</td>
+</tr>
+<tr>
+<td>Pte_page()</td>
+<td>从页表表项返回页的线性地址</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="中断机制"><a href="#中断机制" class="headerlink" title="中断机制"></a>中断机制</h1><h2 id="中断基本知识"><a href="#中断基本知识" class="headerlink" title="中断基本知识"></a>中断基本知识</h2><p>16 位实地址模式下的中断机制在 32 位的保护模式下依然有效。两种模式之间最本质的差别就是在保护模式引入的中断描述符表。</p>
+<h3 id="中断向量"><a href="#中断向量" class="headerlink" title="中断向量"></a>中断向量</h3><p>Intel x86 系列微机共支持 256 种向量中断，为使处理器较容易地识别每种中断源，将它们从 0～256 编号，即赋予一个中断类型码<code>n</code>，Intel 把这个 8 位的无符号整数叫做一个向量，因此，也叫中断向量。所有 256 种中断可分为两大类：异常和中断。异常又分为故障（Fault）和陷阱（Trap），它们的共同特点是既不使用中断控制器，又不能被屏蔽。中断又分为外部可屏蔽中断（INTR）和外部非屏蔽中断（NMI），所有 I/O 设备产生的中断请求（IRQ）均引起屏蔽中断，而紧急的事件（如硬件故障）引起的故障产生非屏蔽中断。非屏蔽中断的向量和异常的向量是固定的，而屏蔽中断的向量可以通过对中断控制器的编程来改变。Linux 对 256 个向量的分配如下。</p>
+<ul>
+<li>从 0~31 的向量对应于异常和非屏蔽中断。</li>
+<li>从 32~47 的向量（即由 I/O 设备引起的中断）分配给屏蔽中断。</li>
+<li>剩余的从 48~255 的向量用来标识软中断。Linux 只用了其中的一个（即 128 或 0x80向量）用来实现系统调用。当用户态下的进程执行一条<code>int 0x80</code>汇编指令时，CPU 就切换到内核态，并开始执行<code>system_call()</code>内核函数。</li>
+</ul>
+<h3 id="外设可屏蔽中断"><a href="#外设可屏蔽中断" class="headerlink" title="外设可屏蔽中断"></a>外设可屏蔽中断</h3><p>Intel x86 通过两片中断控制器 8259A 来响应 15 个外中断源，每个 8259A 可管理 8 个中断源。第 1 级（称主片）的第 2 个中断请求输入端，与第 2 级 8259A（称从片）的中断输出端 INT 相连，如图 3.1 所示。我们把与中断控制器相连的每条线叫做中断线，要使用中断线，就得进行中断线的申请，就是 IRQ（Interrupt ReQuirement ），我们也常把申请一条中断线称为申请一个 IRQ 或者是申请一个中断号。IRQ 线是从 0 开始顺序编号的，因此，第一条 IRQ线通常表示成 IRQ0。IRQn 的缺省向量是 n+32；如前所述，IRQ 和向量之间的映射可以通过中断控制器端口来修改。<br><img src="/img/1633246025.jpg" alt=""></p>
+<p>中断控制器 8259A 执行如下操作。</p>
+<ul>
+<li>监视中断线，检查产生的中断请求（IRQ）信号。</li>
+<li>如果在中断线上产生了一个中断请求信号。<ul>
+<li>把接受到的 IRQ 信号转换成一个对应的向量。</li>
+<li>把这个向量存放在中断控制器的一个 I/O 端口，从而允许 CPU 通过数据总线读此向量。 </li>
+<li>把产生的信号发送到 CPU 的 INTR 引脚——即发出一个中断。</li>
+<li>等待，直到 CPU 确认这个中断信号，然后把它写进可编程中断控制器（PIC）的一个 I/O 端口；此时，清 INTR 线。</li>
+</ul>
+</li>
+<li>返回到第一步。</li>
+</ul>
+<p>对于外部 I/O 请求的屏蔽可分为两种情况，一种是从 CPU 的角度，也就是清除 eflag 的中断标志位（IF），当 IF=0 时，禁止任何外部 I/O 的中断请求，即关中断；一种是从中断控制器的角度，因为中断控制器中有一个 8 位的中断屏蔽寄存器（IMR），每位对应 8259A 中的一条中断线，如果要禁用某条中断线，则把 IRM 相应的位置 1，要启用，则置 0。</p>
+<h3 id="异常及非屏蔽中断"><a href="#异常及非屏蔽中断" class="headerlink" title="异常及非屏蔽中断"></a>异常及非屏蔽中断</h3><p>异常就是 CPU 内部出现的中断，也就是说，在 CPU 执行特定指令时出现的非法情况。非屏蔽中断就是计算机内部硬件出错时引起的异常情况。在 CPU 执行一个异常处理程序时，就不再为其他异常或可屏蔽中断请求服务，也就是说，当某个异常被响应后，CPU 清除 eflag 的中 IF 位，禁止任何可屏蔽中断。但如果又有异常产生，则由 CPU 锁存（CPU 具有缓冲异常的能力），待这个异常处理完后，才响应被锁存的异常。</p>
+<p>Intel x86 处理器发布了大约 20 种异常（具体数字与处理器模式有关）。Linux 内核必须为每种异常提供一个专门的异常处理程序。这里特别说明的是，在某些异常处理程序开始执行之前，CPU 控制单元会产生一个硬件错误码，内核先把这个错误码压入内核栈中。在表中给出了 Pentium 模型中异常的向量、名字、类型及简单描述。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>向量</th>
+<th>异常名</th>
+<th>类别</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>除法出错</td>
+<td>故障</td>
+<td>被 0 除</td>
+</tr>
+<tr>
+<td>1</td>
+<td>调试</td>
+<td>故障、陷阱</td>
+<td>当对一个程序进行逐步调试时</td>
+</tr>
+<tr>
+<td>2</td>
+<td>非屏蔽中断（NMI）</td>
+<td>为不可屏蔽中断保留</td>
+</tr>
+<tr>
+<td>3</td>
+<td>断点</td>
+<td>陷阱</td>
+<td>由 int3（断点指令）指令引起</td>
+</tr>
+<tr>
+<td>4</td>
+<td>溢出</td>
+<td>陷阱</td>
+<td>当 into（check for overflow）指令被执行</td>
+</tr>
+<tr>
+<td>5</td>
+<td>边界检查</td>
+<td>故障</td>
+<td>当 bound 指令被执行</td>
+</tr>
+<tr>
+<td>6</td>
+<td>非法操作码</td>
+<td>故障</td>
+<td>当 CPU 检查到一个无效的操作码</td>
+</tr>
+<tr>
+<td>7</td>
+<td>设备不可用</td>
+<td>故障</td>
+<td>随着设置 cr0 的 TS 标志，ESCAPE 或 MMX 指令被执行</td>
+</tr>
+<tr>
+<td>8</td>
+<td>双重故障</td>
+<td>故障</td>
+<td>处理器不能串行处理异常而引起的</td>
+</tr>
+<tr>
+<td>9</td>
+<td>协处理器段越界</td>
+<td>故障</td>
+<td>因外部的数学协处理器引起的问题（仅用在 80386）</td>
+</tr>
+<tr>
+<td>10</td>
+<td>无效 TSS</td>
+<td>故障</td>
+<td>要切换到的进程具有无效的 TSS</td>
+</tr>
+<tr>
+<td>11</td>
+<td>段不存在</td>
+<td>故障</td>
+<td>引用一个不存在的内存段</td>
+</tr>
+<tr>
+<td>12</td>
+<td>栈段异常</td>
+<td>故障</td>
+<td>试图超过栈段界限，或由 ss 标识的段不在内存</td>
+</tr>
+<tr>
+<td>13</td>
+<td>通用保护</td>
+<td>故障</td>
+<td>违反了 Intelx86 保护模式下的一个保护规则</td>
+</tr>
+<tr>
+<td>14</td>
+<td>页异常</td>
+<td>故障</td>
+<td>寻址的页不在内存，或违反了一种分页保护机制</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Intel保留</td>
+<td>／</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>16</td>
+<td>浮点出错</td>
+<td>故障</td>
+<td>浮点单元用信号通知一个错误情形，如溢出</td>
+</tr>
+<tr>
+<td>17</td>
+<td>对齐检查</td>
+<td>故障</td>
+<td>操作数的地址没有被正确地排列</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>18～31 由 Intel 保留，为将来的扩充用。</p>
+<p>另外，如表 3.2 所示，每个异常都由专门的异常处理程序来处理，它们通常把一个 UNIX 信号发送到引起异常的进程。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>向量</th>
+<th>异常名</th>
+<th>出错码</th>
+<th>异常处理程序</th>
+<th>信号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>除法出错</td>
+<td>／</td>
+<td>divide_error()</td>
+<td>SIGFPE</td>
+</tr>
+<tr>
+<td>1</td>
+<td>调试</td>
+<td>／</td>
+<td>debug()</td>
+<td>SIGTRAP</td>
+</tr>
+<tr>
+<td>2</td>
+<td>非屏蔽中断（NMI）</td>
+<td>／</td>
+<td>nmi()</td>
+<td>None</td>
+</tr>
+<tr>
+<td>3</td>
+<td>断点</td>
+<td>／</td>
+<td>int3()</td>
+<td>SIGTRAP</td>
+</tr>
+<tr>
+<td>4</td>
+<td>溢出</td>
+<td>／</td>
+<td>overflow()</td>
+<td>SIGSEGV</td>
+</tr>
+<tr>
+<td>5</td>
+<td>边界检查</td>
+<td>／</td>
+<td>bounds()</td>
+<td>SIGSEGV</td>
+</tr>
+<tr>
+<td>6</td>
+<td>非法操作码</td>
+<td>／</td>
+<td>invalid_op()</td>
+<td>SIGILL</td>
+</tr>
+<tr>
+<td>7</td>
+<td>设备不可用</td>
+<td>／</td>
+<td>device_not_available()</td>
+<td>SIGSEGV</td>
+</tr>
+<tr>
+<td>8</td>
+<td>双重故障</td>
+<td>有</td>
+<td>double_fault()</td>
+<td>SIGSEGV</td>
+</tr>
+<tr>
+<td>9</td>
+<td>协处理器段越界</td>
+<td>／</td>
+<td>coprocessor_segment_overrun()</td>
+<td>SIGFPE</td>
+</tr>
+<tr>
+<td>10</td>
+<td>无效TSS</td>
+<td>有</td>
+<td>invalid_tss()</td>
+<td>SIGSEGV</td>
+</tr>
+<tr>
+<td>11</td>
+<td>段不存在</td>
+<td>有</td>
+<td>segment_not_present()</td>
+<td>SIGBUS</td>
+</tr>
+<tr>
+<td>12</td>
+<td>栈段异常</td>
+<td>有</td>
+<td>stack_segment()</td>
+<td>SIGBUS</td>
+</tr>
+<tr>
+<td>13</td>
+<td>通用保护</td>
+<td>有</td>
+<td>general_protection()</td>
+<td>SIGSEGV</td>
+</tr>
+<tr>
+<td>14</td>
+<td>页异常</td>
+<td>有</td>
+<td>page_fault()</td>
+<td>SIGSEGV</td>
+<td></td>
+</tr>
+<tr>
+<td>15</td>
+<td>Intel保留</td>
+<td>／</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>16</td>
+<td>浮点出错</td>
+<td>／</td>
+<td>coprocessor_error()</td>
+<td>SIGFPE</td>
+</tr>
+<tr>
+<td>17</td>
+<td>对齐检查</td>
+<td>／</td>
+<td>alignment_check()</td>
+<td>SIGSEGV</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="中断描述符表"><a href="#中断描述符表" class="headerlink" title="中断描述符表"></a>中断描述符表</h3><p>在实地址模式中，CPU 把内存中从 0 开始的 1K 字节作为一个中断向量表。表中的每个表项占 4 个字节，由两个字节的段地址和两个字节的偏移量组成，这样构成的地址便是相应中断处理程序的入口地址。但是，在实模式下，由 4 字节的表项构成的中断向量表显然满足不了要求。这是因为：</p>
+<ul>
+<li>除了两个字节的段描述符，偏移量必用 4 字节来表示；</li>
+<li>要有反映模式切换的信息。</li>
+</ul>
+<p>因此，在实模式下，中断向量表中的表项由 8 个字节组成，如图 3.2 所示，中断向量表也改叫做中断描述符表 IDT（Interrupt Descriptor Table）。其中的每个表项叫做一个门描述符（Gate Descriptor），“门”的含义是当中断发生时必须先通过这些门，然后才能进入相应的处理程序。<br><img src="/img/1633248914.jpg" alt=""></p>
+<p>其中类型占 3 位，表示门描述符的类型，这些描述符如下。</p>
+<ol>
+<li>任务门（Task gate）：其类型码为 101，门中包含了一个进程的 TSS 段选择符，但偏移量部分没有使用，因为 TSS本身是作为一个段来对待的，因此，任务门不包含某一个入口函数的地址。TSS 是 Intel 所提供<br>的任务切换机制，但是 Linux 并没有采用任务门来进行任务切换。</li>
+<li>中断门（Interrupt gate）：其类型码为 110，中断门包含了一个中断或异常处理程序所在段的选择符和段内偏移量。当控制权通过中断门进入中断处理程序时，处理器清 IF 标志，即关中断，以避免嵌套中断的发生。中断门中的 DPL（Descriptor Privilege Level）为 0，因此，用户态的进程不能访问Intel 的中断门。所有的中断处理程序都由中断门激活，并全部限制在内核态。</li>
+<li>陷阱门（Trap gate）：其类型码为 111，与中断门类似，其唯一的区别是，控制权通过陷阱门进入处理程序时维持 IF 标志位不变，也就是说，不关中断。</li>
+<li>系统门（System gate）：这是 Linux 内核特别设置的，用来让用户态的进程访问 Intel 的陷阱门，因此，门描述符的 DPL 为 3。通过系统门来激活 4 个 Linux 异常处理程序，它们的向量是 3、4、5 及 128，也就是说，在用户态下，可以使用<code>int3</code>、<code>into</code>、<code>bound</code>及<code>int 0x80</code>四条汇编指令。</li>
+</ol>
+<p>最后，在保护模式下，中断描述符表在内存的位置不再限于从地址 0 开始的地方，而是可以放在内存的任何地方。为此，CPU 中增设了一个中断描述符表寄存器 IDTR，用来存放中断描述符表在内存的起始地址。中断描述符表寄存器 IDTR 是一个 48 位的寄存器，其低 16位保存中断描述符表的大小，高 32 位保存 IDT 的基址。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">47         16 15   0</span><br><span class="line">32 位基址值   界限</span><br></pre></td></tr></table></figure></p>
+<h3 id="相关汇编指令"><a href="#相关汇编指令" class="headerlink" title="相关汇编指令"></a>相关汇编指令</h3><h4 id="调用过程指令-CALL"><a href="#调用过程指令-CALL" class="headerlink" title="调用过程指令 CALL"></a>调用过程指令 CALL</h4><p>指令格式：CALL 过程名</p>
+<p>说明：i386 在取出 CALL 指令之后及执行 CALL 指令之前，使指令指针寄存器 EIP 指向紧接 CALL 指令的下一条指令。CALL 指令先将 EIP 值压入栈内，再进行控制转移。当遇到 RET指令时，栈内信息可使控制权直接回到 CALL 的下一条指令</p>
+<h4 id="调用中断过程指令-INT"><a href="#调用中断过程指令-INT" class="headerlink" title="调用中断过程指令 INT"></a>调用中断过程指令 INT</h4><p>指令格式：INT 中断向量</p>
+<p>说明：EFLAG、CS 及 EIP 寄存器被压入栈内。控制权被转移到由中断向量指定的中断处理程序。在中断处理程序结束时，IRET 指令又把控制权送回到刚才执行被中断的地方。</p>
+<h4 id="调用溢出处理程序的指令-INTO"><a href="#调用溢出处理程序的指令-INTO" class="headerlink" title="调用溢出处理程序的指令 INTO"></a>调用溢出处理程序的指令 INTO</h4><p>指令格式：INTO</p>
+<p>说明：在溢出标志为 1 时，INTO 调用中断向量为 4 的异常处理程序。EFLAG、CS 及 EIP寄存器被压入栈内。控制权被转移到由中断向量 4 指定的异常处理程序。在中断处理程序结束时，IRET 指令又把控制权送回到刚才执行被中断的地方。 </p>
+<h4 id="中断返回指令-IRET"><a href="#中断返回指令-IRET" class="headerlink" title="中断返回指令 IRET"></a>中断返回指令 IRET</h4><p>指令格式：IRET</p>
+<p>说明：IRET 与中断调用过程相反：它将 EIP、CS 及 EFLAGS 寄存器内容从栈中弹出，并将控制权返回到发生中断的地方。IRET 用在中断处理程序的结束处。</p>
+<h4 id="加载中断描述符表的指令-LIDT"><a href="#加载中断描述符表的指令-LIDT" class="headerlink" title="加载中断描述符表的指令 LIDT"></a>加载中断描述符表的指令 LIDT</h4><p>格式：LIDT 48 位的伪描述符</p>
+<p>说明：LIDT 将指令中给定的 48 位伪描述符装入中断描述符寄存器 IDTR。伪描述符和中断描述符表寄存器的结构相同，都是由两部分组成：在低字（低 16 位）中装的是界限，在高双字（高 32 位）中装的是基址。这条指令只能出现在操作系统的代码中。</p>
+<p>中断或异常处理程序执行的最后一条指令是返回指令 IRET。这条指令将使 CPU 进行如下操作后，把控制权转交给被中断的进程。</p>
+<ul>
+<li>从中断处理程序的内核栈中恢复相应寄存器的值。如果一个硬件错码被压入堆栈，则先弹出这个值，然后，依次将 EIP、CS 及 EFLSG 从栈中弹出。</li>
+<li>检查中断或异常处理程序的 CPL 是否等于 CS 中的最低两位，如果是，这就意味着被中断的进程与中断处理程序都处于内核态，也就是没有更换堆栈，因此，IRET 终止执行，返回到被中断的进程。否则下一步。</li>
+<li>从栈中装载 SS 和 ESP 寄存器，返回到用户态堆栈。</li>
+<li>检查 DS、ES、FS 和 GS 四个段寄存器的内容，看它们包含的选择符是否是一个段选择符，并且其 DPL 是否小于 CPL。如果是，就清除其内容。这么做的原因是为了禁止用户态的程序（CPL=3）利用内核曾用过的段寄存器（DPL=0）。如果不这么做，怀有恶意的用户就可能利用这些寄存器来访问内核的地址空间。</li>
+</ul>
+<h2 id="中断描述符表的初始化"><a href="#中断描述符表的初始化" class="headerlink" title="中断描述符表的初始化"></a>中断描述符表的初始化</h2><p>Linux 内核在系统的初始化阶段要进行大量的初始化工作，其与中断相关的工作有：初始化可编程控制器 8259A；将中断向量 IDT 表的起始地址装入 IDTR 寄存器，并初始化表中的每一项。这些操作的完成将在本节进行具体描述。</p>
+<p>用户进程可以通过 INT 指令发出一个中断请求，其中断请求向量在 0～255 之间。为了防止用户使用 INT 指令模拟非法的中断和异常，必须对 IDT 表进行谨慎的初始化。其措施之一就是将中断门或陷阱门中的 DPL 域置为 0。如果用户进程确实发出了这样一个中断请求，CPU 会检查出其 CPL（3）与 DPL（0）有冲突，因此产生一个“通用保护”异常。</p>
+<p>但是，有时候必须让用户进程能够使用内核所提供的功能（比如系统调用），也就是说从用户空间进入内核空间，这可以通过把中断门或陷阱门的 DPL 域置为 3 来达到。 </p>
+<h3 id="外部中断向量的设置"><a href="#外部中断向量的设置" class="headerlink" title="外部中断向量的设置"></a>外部中断向量的设置</h3><p>前面我们已经提到，Linux 把向量 0～31 分配给异常和非屏蔽中断，而把 32～47 之间的向量分配给可屏蔽中断，可屏蔽中断的向量是通过对中断控制器的编程来设置的。</p>
+<p>8259A 通过两个端口来进行数据传送，对于单块的 8259A 或者是级连中的 8259A_1 来说，这两个端口是 0x20 和 0x21。对于 8259A_2 来说，这两个端口是 0xA0 和 0xA1。8259A 有两种编程方式，一是初始化方式，二是工作方式。在操作系统启动时，需要对 8959A 做一些初始化工作，这就是初始化方式编程。</p>
+<p>先简单介绍一下 8259A 内部的 4 个中断命令字（ICW）寄存器的功能，它们都是用来启动初始化编程的。</p>
+<ul>
+<li>ICW1：初始化命令字。</li>
+<li>ICW2：中断向量寄存器，初始化时写入高 5 位作为中断向量的高五位，然后在中断响应时由 8259 根据中断源（哪个管脚）自动填入形成完整的 8 位中断向量（或叫中断类型号）。</li>
+<li>ICW3：8259 的级连命令字，用来区分主片和从片。</li>
+<li>ICW4：指定中断嵌套方式、数据缓冲选择、中断结束方式和 CPU 类型。</li>
+</ul>
+<p>8259A 初始化的目的是写入有关命令字，8259A 内部有相应的寄存器来锁存这些命令字，以控制 8259A 工作。只具体把Linux对8259A的初始化讲解一下，代码在<code>/arch/i386/kernel/i8259.c</code>的函数<code>init_8259A()</code>中：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">outb</span>(<span class="number">0xff</span>, <span class="number">0x21</span>); <span class="comment">/* 送数据到工作寄存器 OCW1（又称中断屏蔽字），屏蔽所有外部中断, 因为此时系统尚未初始化完毕，不能接收任何外部中断请求 */</span></span><br><span class="line"><span class="built_in">outb</span>(<span class="number">0xff</span>, <span class="number">0xA1</span>); </span><br><span class="line"><span class="built_in">outb_p</span>(<span class="number">0x11</span>, <span class="number">0x20</span>); <span class="comment">/* 送 0x11 到 ICW1（通过端口 0x20），启动初始化编程。0x11 表示外部中断请求信号为上升沿有效，系统中有多片 8295A 级连，还表示要向 ICW4送数据 */</span></span><br><span class="line"><span class="built_in">outb_p</span>(<span class="number">0x20</span> + <span class="number">0</span>, <span class="number">0x21</span>); <span class="comment">/* 送 0x20 到 ICW2，写入高 5 位作为中断向量的高 5 位，低 3 位根据中断源（管脚）填入中断号 0～7，因此把 IRQ0-7 映射到向量 0x20-0x27 */</span></span><br><span class="line"><span class="built_in">outb_p</span>(<span class="number">0x04</span>, <span class="number">0x21</span>); <span class="comment">/* 送 0x04 到 ICW3，ICW3 是 8259 的级连命令字， 0x04表示 8259A-1 是主片 */</span></span><br><span class="line"><span class="built_in">outb_p</span>(<span class="number">0x11</span>, <span class="number">0xA0</span>); <span class="comment">/* 用 ICW1 初始化 8259A-2 */</span></span><br><span class="line"><span class="built_in">outb_p</span>(<span class="number">0x20</span> + <span class="number">8</span>, <span class="number">0xA1</span>); <span class="comment">/* 用 ICW2 把 8259A-2 的 IRQ0-7 映射到 0x28-0x2f */</span></span><br><span class="line"><span class="built_in">outb_p</span>(<span class="number">0x02</span>, <span class="number">0xA1</span>); <span class="comment">/* 送 0x04 到 ICW3。表示 8259A-2 是从片，并连接在 8259A_1 的 2 号管脚上*/</span></span><br><span class="line"><span class="built_in">outb_p</span>(<span class="number">0x01</span>, <span class="number">0xA1</span>); <span class="comment">/* 把 0x01 送到 ICW4 */</span></span><br></pre></td></tr></table></figure></p>
+<p>最后一句有 4 方面含义：</p>
+<ul>
+<li>中断嵌套方式为一般嵌套方式。当某个中断正在服务时，本级中断及更低级的中断都被屏蔽，只有更高级的中断才能响应。注意，这对于多片 8259A 级连的中断系统来说，当某从片中一个中断正在服务时，主片即将这个从片的所有中断屏蔽，所以此时即使本片有比正在服务的中断级别更高的中断源发出请求，也不能得到响应，即不能中断嵌套。</li>
+<li>8259A 数据线和系统总线之间不加三态缓冲器。一般来说，只有级连片数很多时才用到三态缓冲器；</li>
+<li>中断结束方式为正常方式（非自动结束方式）。即在中断服务结束时（中断服务程序末尾），要向 8259A 芯片发送结束命令字 EOI（送到工作寄存器 OCW2 中），于是中断服务寄存器 ISR 中的当前服务位被清 0</li>
+<li>CPU 类型为 x86 系列。</li>
+</ul>
+<p><code>outb_p()</code>函数就是把第一个操作数拷贝到由第二个操作数指定的 I/O 端口，并通过一个空操作来产生一个暂停。</p>
+<h3 id="中断描述符表-IDT-的预初始化"><a href="#中断描述符表-IDT-的预初始化" class="headerlink" title="中断描述符表 IDT 的预初始化"></a>中断描述符表 IDT 的预初始化</h3><p>当计算机运行在实模式时，IDT 被初始化并由 BIOS 使用。然而，一旦真正进入了 Linux 内核，IDT 就被移到内存的另一个区域，并进行进入实模式的初步初始化。</p>
+<h4 id="中断描述表寄存器-IDTR-的初始化"><a href="#中断描述表寄存器-IDTR-的初始化" class="headerlink" title="中断描述表寄存器 IDTR 的初始化"></a>中断描述表寄存器 IDTR 的初始化</h4><p>用汇编指令 LIDT 对中断向量表寄存器 IDTR 进行初始化，其代码在<code>arch/i386/boot/setup.S</code>中：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">lidt idt_48   # load idt with 0,0</span><br><span class="line">…</span><br><span class="line"> idt_48:</span><br><span class="line"> .word 0    # idt limit = 0</span><br><span class="line"> .word 0, 0 # idt base = 0L</span><br></pre></td></tr></table></figure></p>
+<h4 id="把-IDT-表的起始地址装入-IDTR"><a href="#把-IDT-表的起始地址装入-IDTR" class="headerlink" title="把 IDT 表的起始地址装入 IDTR"></a>把 IDT 表的起始地址装入 IDTR</h4><p>用汇编指令 LIDT 装入 IDT 的大小和它的地址（在<code>arch/i386/kernel/head.S</code>中）：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#define IDT_ENTRIES 256</span><br><span class="line">.globl SYMBOL_NAME(idt)</span><br><span class="line">lidt idt_descr</span><br><span class="line">…</span><br><span class="line">idt_descr:</span><br><span class="line"> .word IDT_ENTRIES*8-1 # idt contains 256 entries </span><br><span class="line">SYMBOL_NAME(idt):</span><br><span class="line"> .long SYMBOL_NAME(idt_table)</span><br></pre></td></tr></table></figure></p>
+<p>其中 idt 为一个全局变量，内核对这个变量的引用就可以获得 IDT 表的地址。表的长度为 256×8＝2048 字节。</p>
+<h4 id="用setup-idt-函数填充-idt-table-表中的-256-个表项"><a href="#用setup-idt-函数填充-idt-table-表中的-256-个表项" class="headerlink" title="用setup_idt()函数填充 idt_table 表中的 256 个表项"></a>用<code>setup_idt()</code>函数填充 idt_table 表中的 256 个表项</h4><p>我们首先要看一下<code>idt_table</code>的定义（在<code>arch/i386/kernel/traps.c</code>中）：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">desc_struct</span> <span class="title">idt_table</span>[256] __<span class="title">attribute__</span>((__<span class="title">section__</span>(&quot;.<span class="title">data</span>.<span class="title">idt</span>&quot;))) =</span> &#123; &#123;<span class="number">0</span>, <span class="number">0</span>&#125;, &#125;;</span><br></pre></td></tr></table></figure></p>
+<p><code>desc_struct</code>结构定义为：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">desc_struct</span> &#123;</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span> a, b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对<code>idt_table</code>变量还定义了其属性（<code>__attribute__</code>），<code>__section__</code>是汇编中的“节”，指定了<code>idt_table</code>的起始地址存放在数据节的<code>idt</code>变量中。</p>
+<p>在对<code>idt_table</code>表进行填充时，使用了一个空的中断处理程序<code>ignore_int()</code>。因为现在处于初始化阶段，还没有任何中断处理程序，因此用这个空的中断处理程序填充每个表项。</p>
+<p><code>ignore_int()</code>是一段汇编程序（在<code>head.S</code>中）：<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">ignore_int:</span></span><br><span class="line"> <span class="keyword">cld</span> #方向标志清 <span class="number">0</span>，表示串指令自动增长它们的索引寄存器（<span class="built_in">esi</span> 和<span class="built_in">edi</span>）</span><br><span class="line"> pushl %eax</span><br><span class="line"> pushl %ecx</span><br><span class="line"> pushl %edx</span><br><span class="line"> pushl %es</span><br><span class="line"> pushl %ds</span><br><span class="line"> movl $(__KERNEL_DS), %eax</span><br><span class="line"> movl %eax,%ds</span><br><span class="line"> movl %eax,%es</span><br><span class="line"> pushl $int_msg</span><br><span class="line"> <span class="keyword">call</span> SYMBOL_NAME(printk)</span><br><span class="line"> popl %eax</span><br><span class="line"> popl %ds</span><br><span class="line"> popl %es</span><br><span class="line"> popl %edx</span><br><span class="line"> popl %ecx</span><br><span class="line"> popl %eax</span><br><span class="line"> <span class="keyword">iret</span></span><br><span class="line"><span class="symbol">int_msg:</span></span><br><span class="line"><span class="meta"> .asciz</span> <span class="string">&quot;Unknown interrupt\n&quot;</span></span><br><span class="line"> <span class="meta">ALIGN</span></span><br></pre></td></tr></table></figure></p>
+<p>该中断处理程序模仿一般的中断处理程序，执行如下操作：</p>
+<ul>
+<li>在栈中保存一些寄存器的值；</li>
+<li>调用<code>printk()</code>函数打印“Unknown interrupt”系统信息；</li>
+<li>从栈中恢复寄存器的内容；</li>
+<li>执行 iret 指令以恢复被中断的程序。</li>
+</ul>
+<p>实际上，<code>ignore_int()</code>处理程序应该从不执行。如果在控制台或日志文件中出现了“Unknown interrupt”消息，说明要么是出现了一个硬件问题（一个 I/O 设备正在产生没有预料到的中断），要么就是出现了一个内核问题（一个中断或异常未被恰当地处理）。</p>
+<p>最后，我们来看<code>setup_idt()</code>函数如何对 IDT 表进行填充:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/*</span></span><br><span class="line"><span class="comment"> * setup_idt</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * sets up a idt with 256 entries pointing to</span></span><br><span class="line"><span class="comment"> * ignore_int, interrupt gates. It doesn&#x27;t actually load</span></span><br><span class="line"><span class="comment"> * idt - that can be done only after paging has been enabled</span></span><br><span class="line"><span class="comment"> * and the kernel moved to PAGE_OFFSET. Interrupts</span></span><br><span class="line"><span class="comment"> * are enabled elsewhere, when we can be relatively</span></span><br><span class="line"><span class="comment"> * sure everything is ok.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">setup_idt:</span><br><span class="line">    lea ignore_int,%edx <span class="comment">/*计算 ignore_int 地址的偏移量,并将其装入%edx*/</span></span><br><span class="line">    movl $(__KERNEL_CS &lt;&lt; <span class="number">16</span>), %eax <span class="comment">/* selector = 0x0010 = cs */</span></span><br><span class="line">    movw %dx,%ax</span><br><span class="line">    movw $<span class="number">0x8E00</span>,%dx <span class="comment">/* interrupt gate - dpl=0, present */</span></span><br><span class="line">    lea <span class="title function_">SYMBOL_NAME</span><span class="params">(idt_table)</span>, %edi</span><br><span class="line">    mov $256,%ecx</span><br><span class="line">rp_sidt:</span><br><span class="line"> movl %eax,<span class="params">(%edi)</span></span><br><span class="line"> movl %edx,4<span class="params">(%edi)</span></span><br><span class="line"> addl $8,%edi</span><br><span class="line"> dec %ecx</span><br><span class="line"> jne rp_sidt</span><br><span class="line"> ret</span><br></pre></td></tr></table></figure></p>
+<p>这段程序的理解要对照门描述符的格式。8 个字节的门描述符放在两个 32 位寄存器 eax和 edx 中，如图 3.4 所示，从 rp_sidt 开始的那段程序是循环填充 256 个表项。<br><img src="/img/1633251898.jpg" alt=""></p>
+<h3 id="中断向量表的最终初始化"><a href="#中断向量表的最终初始化" class="headerlink" title="中断向量表的最终初始化"></a>中断向量表的最终初始化</h3><p>在对中断描述符表进行预初始化后, 内核将在启用分页功能后对 IDT 进行第二遍初始化，也就是说，用实际的陷阱和中断处理程序替换这个空的处理程序。一旦这个过程完成，对于每个异常，IDT 都由一个专门的陷阱门或系统门，而对每个外部中断，IDT 都包含专门的中断门。</p>
+<h4 id="IDT-表项的设置"><a href="#IDT-表项的设置" class="headerlink" title="IDT 表项的设置"></a>IDT 表项的设置</h4><p>IDT 表项的设置是通过<code>_set_gate()</code>函数实现的，这与 IDT 表的预初始化比较相似。调用<code>_set_gate()</code>函数来给 IDT 插入门:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">set_intr_gate</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> n, <span class="type">void</span> *addr)</span></span><br><span class="line">&#123;</span><br><span class="line">    _set_gate(idt_table+n,<span class="number">14</span>,<span class="number">0</span>,addr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在第 n 个表项中插入一个中断门。这个门的段选择符设置成代码段的选择符（<code>__KERNEL_CS</code>），DPL 域设置成 0，14 表示 D 标志位为 1 而类型码为 110，所以<code>set_intr_gate()</code>设置的是中断门，偏移域设置成中断处理程序的地址 addr。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span> __init <span class="title function_">set_trap_gate</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> n, <span class="type">void</span> *addr)</span></span><br><span class="line">&#123;</span><br><span class="line">    _set_gate(idt_table+n,<span class="number">15</span>,<span class="number">0</span>,addr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在第 n 个表项中插入一个陷阱门。这个门的段选择符设置成代码段的选择符，DPL 域设置成 0，15 表示 D 标志位为 1 而类型码为 111，所以<code>set_trap_gate()</code>设置的是陷阱门，偏移域设置成异常处理程序的地址 <code>addr</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span> __init <span class="title function_">set_system_gate</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> n, <span class="type">void</span> *addr)</span> </span><br><span class="line">&#123;</span><br><span class="line">    _set_gate(idt_table+n,<span class="number">15</span>,<span class="number">3</span>,addr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在第 n 个表项中插入一个系统门。这个门的段选择符设置成代码段的选择符，DPL 域设置成 3，15 表示 D 标志位为 1 而类型码为 111，所以<code>set_system_gate()</code>设置的也是陷阱门，但因为 DPL 为 3，因此，系统调用在用户空间可以通过“INT0X80”顺利穿过系统门，从而进入内核空间。</p>
+<h4 id="对陷阱门和系统门的初始化"><a href="#对陷阱门和系统门的初始化" class="headerlink" title="对陷阱门和系统门的初始化"></a>对陷阱门和系统门的初始化</h4><p><code>trap_init()</code>函数就是设置中断描述符表开头的 19 个陷阱门，如前所说，这些中断向量都是 CPU 保留用于异常处理的：</p>
+<ul>
+<li><code>set_trap_gate(0, &amp;divide_error);</code></li>
+<li><code>set_trap_gate(1, &amp;debug);</code></li>
+<li><code>set_intr_gate(2, &amp;nmi);</code></li>
+<li><code>set_system_gate(3, &amp;int3); /* int3-5 can be called from all */</code></li>
+<li><code>set_system_gate(4, &amp;overflow);</code></li>
+<li><code>set_system_gate(5, &amp;bounds);</code></li>
+<li><code>set_trap_gate(6, &amp;invalid_op);</code></li>
+<li><code>set_trap_gate(7, &amp;device_not_available);</code></li>
+<li><code>set_trap_gate(8, &amp;double_fault);</code></li>
+<li><code>set_trap_gate(9, &amp;coprocessor_segment_overrun);</code></li>
+<li><code>set_trap_gate(10, &amp;invalid_TSS);</code></li>
+<li><code>set_trap_gate(11, &amp;segment_not_present);</code></li>
+<li><code>set_trap_gate(12, &amp;stack_segment);</code></li>
+<li><code>set_trap_gate(13, &amp;general_protection);</code></li>
+<li><code>set_intr_gate(14, &amp;page_fault);</code></li>
+<li><code>set_trap_gate(15, &amp;spurious_interrupt_bug);</code></li>
+<li><code>set_trap_gate(16, &amp;coprocessor_error);</code></li>
+<li><code>set_trap_gate(17, &amp;alignment_check);</code></li>
+<li><code>set_trap_gate(18, &amp;machine_check);</code></li>
+<li><code>set_trap_gate(19, &amp;simd_coprocessor_error);</code></li>
+<li><code>set_system_gate(SYSCALL_VECTOR, &amp;system_call);</code></li>
+</ul>
+<p>在对陷阱门及系统门设置以后，我们来看一下中断门的设置。</p>
+<h4 id="中断门的设置"><a href="#中断门的设置" class="headerlink" title="中断门的设置"></a>中断门的设置</h4><p>下面介绍的相关代码均在<code>arch/I386/kernel/i8259.c</code>文件中，其中中断门的设置是由<code>init_IRQ()</code>函数中的一段代码完成的：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; i&lt; NR_IRQS; i++) &#123;</span><br><span class="line">    <span class="type">int</span> <span class="built_in">vector</span> = FIRST_EXTERNAL_VECTOR + i;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">vector</span> != SYSCALL_VECTOR)</span><br><span class="line">    set_intr_gate(<span class="built_in">vector</span>, interrupt[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其含义比较明显：从<code>FIRST_EXTERNAL_VECTOR</code>开始，设置<code>NR_IRQS</code>个 IDT 表项。常数<code>FIRST_EXTERNAL_VECTOR</code>定义为 0x20，而<code>NR_IRQS</code>则为 224，即中断门的个数。注意，必须跳过用于系统调用的向量 0x80，因为这在前面已经设置好了。</p>
+<p>这里，中断处理程序的入口地址是一个数组<code>interrupt[]</code>，数组中的每个元素是指向中断处理函数的指针。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> IRQ(x,y) \</span></span><br><span class="line"><span class="meta"> IRQ##x##y##_interrupt</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IRQLIST_16(x) \</span></span><br><span class="line"><span class="meta"> IRQ(x,0), IRQ(x,1), IRQ(x,2), IRQ(x,3), \</span></span><br><span class="line"><span class="meta"> IRQ(x,4), IRQ(x,5), IRQ(x,6), IRQ(x,7), \</span></span><br><span class="line"><span class="meta"> IRQ(x,8), IRQ(x,9), IRQ(x,a), IRQ(x,b), \</span></span><br><span class="line"><span class="meta"> IRQ(x,c), IRQ(x,d), IRQ(x,e), IRQ(x,f)</span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> (*interrupt[NR_IRQS])(<span class="type">void</span>) = IRQLIST_16(<span class="number">0x0</span>)</span><br></pre></td></tr></table></figure></p>
+<p>其中，<code>##</code>的作用是把字符串连接在一起。经过 gcc 预处理，<code>IRQLIST_16(0x0)</code>被替换为<code>IRQ0x00_interrupt</code>，<code>IRQ0x01_interrupt</code>，<code>IRQ0x02_interrupt</code>……<code>IRQ0x0f_interrupt</code>。</p>
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>Linux 利用异常来达到两个截然不同的目的：</p>
+<ul>
+<li>给进程发送一个信号以通报一个反常情况；</li>
+<li>处理请求分页。</li>
+</ul>
+<p>对于第一种情况，例如，如果进程执行了一个被 0 除的操作，CPU 则会产生一个“除法错误”异常，并由相应的异常处理程序向当前进程发送一个 SIGFPE 信号。当前进程接收到这个信号后，就要采取若干必要的步骤，或者从错误中恢复，或者终止执行（如果这个信号没有相应的信号处理程序）。</p>
+<p>内核对异常处理程序的调用有一个标准的结构，它由以下 3 部分组成：</p>
+<ul>
+<li>在内核栈中保存大多数寄存器的内容（由汇编语言实现）；</li>
+<li>调用 C 编写的异常处理函数；</li>
+<li>通过<code>ret_from_exception()</code>函数从异常退出。</li>
+</ul>
+<h3 id="在内核栈中保存寄存器的值"><a href="#在内核栈中保存寄存器的值" class="headerlink" title="在内核栈中保存寄存器的值"></a>在内核栈中保存寄存器的值</h3><p>所有异常处理程序被调用的方式比较相似，因此，我们用<code>handler_name</code>来表示一个通用的异常处理程序的名字。进入异常处理程序的汇编指令在<code>arch/I386/kernel/entry.S</code>中：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">handler_name:</span><br><span class="line"> pushl $0 /* only for some exceptions */</span><br><span class="line"> pushl $do_handler_name</span><br><span class="line">jmp error_code</span><br></pre></td></tr></table></figure></p>
+<p>例如：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">overflow：</span><br><span class="line"> pushl $0 </span><br><span class="line"> pushl $ do_overflow</span><br><span class="line"> jmp error_code</span><br></pre></td></tr></table></figure></p>
+<p>当异常发生时，如果控制单元没有自动地把一个硬件错误代码插入到栈中，相应的汇编语言片段会包含一条<code>pushl $0</code>指令，在栈中垫上一个空值；如果错误码已经被压入堆栈，则没有这条指令。然后，把异常处理函数的地址压进栈中，函数的名字由异常处理程序名与<code>do_</code>前缀组成。</p>
+<p>标号为<code>error_code</code>的汇编语言片段对所有的异常处理程序都是相同的，除了“设备不可用”这一个异常。这段代码实际上是为异常处理程序的调用和返回进行相关的操作，代码如下：<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">error_code:</span></span><br><span class="line">pushl %ds</span><br><span class="line">pushl %eax</span><br><span class="line">xorl %eax,%eax</span><br><span class="line">pushl %ebp</span><br><span class="line">pushl %edi      #把 C 函数可能用到的寄存器都保存在栈中</span><br><span class="line">pushl %esi</span><br><span class="line">pushl %edx</span><br><span class="line">decl %eax       #<span class="built_in">eax</span> = -<span class="number">1</span></span><br><span class="line">pushl %ecx</span><br><span class="line">pushl %ebx</span><br><span class="line"><span class="keyword">cld</span>             # 清 eflags 的方向标志，以确保 <span class="built_in">edi</span> 和 <span class="built_in">esi</span> 寄存器的值自动增加</span><br><span class="line">movl %es,%ecx</span><br><span class="line">movl ORIG_EAX(%esp), %esi # get the error code, ORIG_EAX= <span class="number">0x24</span></span><br><span class="line">movl <span class="built_in">ES</span>(%esp), %edi       # get the function address, <span class="built_in">ES</span> = <span class="number">0x20</span></span><br><span class="line">movl %eax, ORIG_EAX(%esp) # 把栈中的这个位置置为-<span class="number">1</span></span><br><span class="line">movl %ecx, <span class="built_in">ES</span>(%esp)</span><br><span class="line">movl %esp,%edx</span><br><span class="line">pushl %esi # <span class="keyword">push</span> the error code</span><br><span class="line">pushl %edx # <span class="keyword">push</span> the pt_regs pointer</span><br><span class="line">movl $(__KERNEL_DS),%edx</span><br><span class="line">movl %edx,%ds            # 把内核数据段选择符装入 <span class="built_in">ds</span> 寄存器</span><br><span class="line">movl %edx,%es</span><br><span class="line">GET_CURRENT(%ebx)        # <span class="built_in">ebx</span> 中存放当前进程 task_struct 结构的地址</span><br><span class="line"><span class="keyword">call</span> *%edi               # 调用这个异常处理程序</span><br><span class="line">addl <span class="number">$8</span>,%esp</span><br><span class="line"><span class="keyword">jmp</span> ret_from_exception</span><br></pre></td></tr></table></figure></p>
+<p>图 3.5 给出了从用户进程进入异常处理程序时内核堆栈的变化示意图。<br><img src="/img/1633252707.jpg" alt=""></p>
+<h3 id="中断请求队列的初始化"><a href="#中断请求队列的初始化" class="headerlink" title="中断请求队列的初始化"></a>中断请求队列的初始化</h3><p>由于硬件的限制，很多外部设备不得不共享中断线，例如，一些 PC 配置可以把同一条中断线分配给网卡和图形卡。由此看来，让每个中断源都必须占用一条中断线是不现实的。所以，仅用中断描述符表并不能提供中断产生的所有信息，内核必须对中断线给出进一步的描述。在 Linux 设计中，专门为每个中断请求 IRQ 设置了一个队列，这就是我们所说的中断请求队列。</p>
+<p>注意，中断线、中断请求（IRQ）号及中断向量之间的关系为：中断线是中断请求的一种物理描述，逻辑上对应一个中断请求号（或简称中断号），第 n 个中断号（IRQn）的缺省中断向量是 n+32。</p>
+<h3 id="中断请求队列的数据结构"><a href="#中断请求队列的数据结构" class="headerlink" title="中断请求队列的数据结构"></a>中断请求队列的数据结构</h3><p>如前所述，在 256 个中断向量中，除了 32 个分配给异常外，还有 224 个作为中断向量。对于每个 IRQ，Linux 都用一个<code>irq_desc_t</code>数据结构来描述，我们把它叫做 IRQ 描述符，224个 IRQ 形成一个数组<code>irq_desc[]</code>，其定义在<code>/include/linux/irq.h</code>中：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/*</span></span><br><span class="line"><span class="comment"> * This is the &quot;IRQ descriptor&quot;, which contains various information</span></span><br><span class="line"><span class="comment"> * about the irq, including what kind of hardware handling it has,</span></span><br><span class="line"><span class="comment"> * whether it is disabled etc etc.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Pad this out to 32 bytes for cache and indexing reasons.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> status; <span class="comment">/* IRQ status */</span></span><br><span class="line">    hw_irq_controller *handler;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">irqaction</span> *<span class="title">action</span>;</span> <span class="comment">/* IRQ action list */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> depth; <span class="comment">/* nested irq disables */</span></span><br><span class="line">    <span class="type">spinlock_t</span> lock;</span><br><span class="line">&#125; ____cacheline_aligned <span class="type">irq_desc_t</span>;</span><br><span class="line"><span class="keyword">extern</span> <span class="type">irq_desc_t</span> irq_desc[NR_IRQS];</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>____cacheline_aligned</code>表示这个数据结构的存放按 32 字节（高速缓存行的大小）进行对齐，以便于将来存放在高速缓存并容易存取。</li>
+<li><code>status</code>：描述 IRQ 中断线状态的一组标志（在<code>irq.h</code>中定义）。</li>
+<li><code>handler</code>：指向<code>hw_interrupt_type</code>描述符，这个描述符是对中断控制器的描述。</li>
+<li><code>action</code>：指向一个单向链表的指针，这个链表就是对中断服务例程进行描述的<code>irqaction</code>结构。</li>
+<li><code>depth</code>：如果启用这条 IRQ 中断线，depth 则为 0，如果禁用这条 IRQ 中断线不止一次，则为一个正数。每当调用一次<code>disable_irq()</code>，该函数就对这个域的值加 1；如果 depth 等于 0，该函数就禁用这条 IRQ 中断线。相反，每当调用<code>enable_irq()</code>函数时，该函数就对这个域的值减 1；如果 depth 变为 0，该函数就启用这条 IRQ 中断线。</li>
+</ul>
+<h4 id="IRQ-描述符的初始化"><a href="#IRQ-描述符的初始化" class="headerlink" title="IRQ 描述符的初始化"></a>IRQ 描述符的初始化</h4><p>在系统初始化期间，<code>init_ISA_irqs()</code>函数对 IRQ 数据结构（或叫描述符）的域进行初始化（参见<code>i8258.c</code>）：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; NR_IRQS; i++) &#123;</span><br><span class="line">    irq_desc[i].status = IRQ_DISABLED;</span><br><span class="line">    irq_desc[i].action = <span class="number">0</span>;</span><br><span class="line">    irq_desc[i].depth = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (i &lt; <span class="number">16</span>) &#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * 16 old-style INTA-cycle interrupts:</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        irq_desc[i].handler = &amp;i8259A_irq_type;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * &#x27;high&#x27; PCI IRQs filled in on demand</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        irq_desc[i].handler = &amp;no_irq_type;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>从这段程序可以看出，初始化时，让所有的中断线都处于禁用状态；每条中断线上还没有任何中断服务例程（<code>action</code>为 0）；因为中断线被禁用，因此 depth 为 1；对中断控制器的描述分为两种情况，一种就是通常所说的 8259A，另一种是其他控制器。</p>
+<p>然后，更新中断描述符表 IDT，用最终的中断门来代替临时使用的中断门。</p>
+<h4 id="中断控制器描述符-hw-interrupt-type"><a href="#中断控制器描述符-hw-interrupt-type" class="headerlink" title="中断控制器描述符 hw_interrupt_type"></a>中断控制器描述符 hw_interrupt_type</h4><p>这个描述符包含一组指针，指向与特定中断控制器电路（PIC）打交道的低级 I/O 例程，定义如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">* Interrupt controller descriptor. This is all we need</span></span><br><span class="line"><span class="comment">* to describe about the low-level hardware.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">hw_interrupt_type</span> &#123;</span></span><br><span class="line">    <span class="type">const</span> <span class="type">char</span> * typename;</span><br><span class="line">    <span class="type">unsigned</span> <span class="title function_">int</span> <span class="params">(*startup)</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> irq)</span>;</span><br><span class="line">    <span class="type">void</span> (*shutdown)(<span class="type">unsigned</span> <span class="type">int</span> irq);</span><br><span class="line">    <span class="type">void</span> (*enable)(<span class="type">unsigned</span> <span class="type">int</span> irq);</span><br><span class="line">    <span class="type">void</span> (*disable)(<span class="type">unsigned</span> <span class="type">int</span> irq);</span><br><span class="line">    <span class="type">void</span> (*ack)(<span class="type">unsigned</span> <span class="type">int</span> irq);</span><br><span class="line">    <span class="type">void</span> (*end)(<span class="type">unsigned</span> <span class="type">int</span> irq); </span><br><span class="line">    <span class="type">void</span> (*set_affinity)(<span class="type">unsigned</span> <span class="type">int</span> irq, <span class="type">unsigned</span> <span class="type">long</span> mask);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">hw_interrupt_type</span> <span class="title">hw_irq_controller</span>;</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="中断服务例程描述符-irqaction"><a href="#中断服务例程描述符-irqaction" class="headerlink" title="中断服务例程描述符 irqaction"></a>中断服务例程描述符 irqaction</h4><p>在 IRQ 描述符中我们看到指针 action 的结构为 irqaction，它是为多个设备能共享一条中断线而设置的一个数据结构。在<code>include/linux/interrupt.h</code>中定义如下:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">irqaction</span> &#123;</span></span><br><span class="line">    <span class="type">void</span> (*handler)(<span class="type">int</span>, <span class="type">void</span> *, <span class="keyword">struct</span> pt_regs *);</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span> flags;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span> mask;</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span> *name;</span><br><span class="line">    <span class="type">void</span> *dev_id;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">irqaction</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>这个描述符包含下列域。</p>
+<ul>
+<li><code>handler</code>：指向一个具体 I/O 设备的中断服务例程。这是允许多个设备共享同一中断线的关键域。</li>
+<li><code>flags</code>：用一组标志描述中断线与 I/O 设备之间的关系。<ul>
+<li><code>SA_INTERRUPT</code>：中断处理程序必须以禁用中断来执行。</li>
+<li><code>SA_SHIRQ</code>：该设备允许其中断线与其他设备共享。</li>
+<li><code>SA_SAMPLE_RANDOM</code>：可以把这个设备看作是随机事件发生源；因此，内核可以用它做随机数产生器（用户可以从<code>/dev/random</code>和<code>/dev/urandom</code>设备文件中取得随机数而访问这种特征）。</li>
+<li><code>SA_PROBE</code>：内核在执行硬件设备探测时正在使用这条中断线。</li>
+</ul>
+</li>
+<li><code>name</code>：I/O 设备名（读取/proc/interrupts 文件，可以看到，在列出中断号时也显示设备名）。</li>
+<li><code>dev_id</code>：指定 I/O 设备的主设备号和次设备号。</li>
+<li><code>next</code>：指向 irqaction 描述符链表的下一个元素。共享同一中断线的每个硬件设备都有其对应的中断服务例程，链表中的每个元素就是对相应设备及中断服务例程的描述。</li>
+</ul>
+<h4 id="中断服务例程"><a href="#中断服务例程" class="headerlink" title="中断服务例程"></a>中断服务例程</h4><p>我们这里提到的中断服务例程（Interrupt Service Routine）与以前所提到的中断处理程序（Interrupt handler）是不同的概念。具体来说，中断处理程序相当于某个中断向量的总处理程序，例如<code>IRQ0x05_interrupt()</code>，是中断号 5（向量为 37）的总处理程序，如果这个 5 号中断由网卡和图形卡共享，则网卡和图形卡分别有其相应的中断服务例程。每个中断服务例程都有相同的参数：</p>
+<ul>
+<li><code>IRQ</code>：中断号；</li>
+<li><code>dev_id</code>：设备标识符，其类型为<code>void*</code>；</li>
+<li><code>regs</code>：指向内核堆栈区的指针，堆栈中存放的是中断发生后所保存的寄存器。</li>
+</ul>
+<h3 id="中断请求队列的初始化-1"><a href="#中断请求队列的初始化-1" class="headerlink" title="中断请求队列的初始化"></a>中断请求队列的初始化</h3><p>在设备驱动程序的初始化阶段，必须通过<code>request_irq()</code>函数将对应的中断服务例程挂入中断请求队列。<code>request_irq()</code>函数的代码在<code>/arch/i386/kernel/irq.c</code>中：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/*</span></span><br><span class="line"><span class="comment"> * request_irq - allocate an interrupt line</span></span><br><span class="line"><span class="comment"> * @irq: Interrupt line to allocate</span></span><br><span class="line"><span class="comment"> * @handler: Function to be called when the IRQ occurs</span></span><br><span class="line"><span class="comment"> * @irqflags: Interrupt type flags</span></span><br><span class="line"><span class="comment"> * @devname: An ascii name for the claiming device</span></span><br><span class="line"><span class="comment"> * @dev_id: A cookie passed back to the handler function</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * This call allocates interrupt resources and enables the</span></span><br><span class="line"><span class="comment"> * interrupt line and IRQ handling. From the point this</span></span><br><span class="line"><span class="comment"> * call is made your handler function may be invoked. Since</span></span><br><span class="line"><span class="comment"> * your handler function must clear any interrupt the board </span></span><br><span class="line"><span class="comment"> * raises, you must take care both to initialise your hardware</span></span><br><span class="line"><span class="comment"> * and to set up the interrupt handler in the right order.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Dev_id must be globally unique. Normally the address of the</span></span><br><span class="line"><span class="comment"> * device data structure is used as the cookie. Since the handler</span></span><br><span class="line"><span class="comment"> * receives this value it makes sense to use it.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * If your interrupt is shared you must pass a non NULL dev_id</span></span><br><span class="line"><span class="comment"> * as this is required when freeing the interrupt.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Flags:</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * SA_SHIRQ Interrupt is shared</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * SA_INTERRUPT Disable local interrupts while processing</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * SA_SAMPLE_RANDOM The interrupt can be used for entropy</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">request_irq</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> irq,</span></span><br><span class="line"><span class="params">        <span class="type">void</span> (*handler)(<span class="type">int</span>, <span class="type">void</span> *, <span class="keyword">struct</span> pt_regs *),</span></span><br><span class="line"><span class="params">        <span class="type">unsigned</span> <span class="type">long</span> irqflags,</span></span><br><span class="line"><span class="params">        <span class="type">const</span> <span class="type">char</span> * devname,</span></span><br><span class="line"><span class="params">        <span class="type">void</span> *dev_id)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> retval;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">irqaction</span> * <span class="title">action</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> 1</span></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * Sanity-check: shared interrupts should REALLY pass in</span></span><br><span class="line"><span class="comment">    * a real dev-ID, otherwise we&#x27;ll have trouble later trying</span></span><br><span class="line"><span class="comment">    * to figure out which interrupt is which (messes up the</span></span><br><span class="line"><span class="comment">    * interrupt freeing logic etc).</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">if</span> (irqflags &amp; SA_SHIRQ) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!dev_id)</span><br><span class="line">            printk(<span class="string">&quot;Bad boy: %s (at 0x%x) called us without a dev_id!\n&quot;</span>, devname, (&amp;irq)[<span class="number">-1</span>]);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (irq &gt;= NR_IRQS)</span><br><span class="line">        <span class="keyword">return</span> -EINVAL;</span><br><span class="line">    <span class="keyword">if</span> (!handler)</span><br><span class="line">        <span class="keyword">return</span> -EINVAL;</span><br><span class="line"></span><br><span class="line">    action = (<span class="keyword">struct</span> irqaction *)kmalloc(<span class="keyword">sizeof</span>(<span class="keyword">struct</span> irqaction), GFP_KERNEL);</span><br><span class="line">    <span class="keyword">if</span> (!action)</span><br><span class="line">        <span class="keyword">return</span> -ENOMEM; </span><br><span class="line">    action-&gt;handler = handler;</span><br><span class="line">    action-&gt;flags = irqflags;</span><br><span class="line">    action-&gt;mask = <span class="number">0</span>;</span><br><span class="line">    action-&gt;name = devname; <span class="comment">/*对 action 进行初始化*/</span></span><br><span class="line">    action-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    action-&gt;dev_id = dev_id;</span><br><span class="line"></span><br><span class="line">    retval = setup_irq(irq, action);</span><br><span class="line">    <span class="keyword">if</span> (retval)</span><br><span class="line">        kfree(action);</span><br><span class="line">    <span class="keyword">return</span> retval;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>编码作者对此函数给出了比较详细的描述。其中主要语句就是对<code>setup_irq()</code>函数的调用，该函数才是真正对中断请求队列进行初始化的函数(有所简化)：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">setup_irq</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> irq, <span class="keyword">struct</span> irqaction * new)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> shared = <span class="number">0</span>;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span> flags;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">irqaction</span> *<span class="title">old</span>, **<span class="title">p</span>;</span></span><br><span class="line">    <span class="type">irq_desc_t</span> *desc = irq_desc + irq; <span class="comment">/* 获得 irq 的描述符 */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 对中断请求队列的操作必须在临界区中进行 */</span></span><br><span class="line">    spin_lock_irqsave(&amp;desc-&gt;lock,flags); <span class="comment">/* 进入临界区 */</span></span><br><span class="line">    p = &amp;desc-&gt;action; <span class="comment">/* 让 p 指向 irq 描述符的 action 域，即 irqaction 链表的首部 */</span></span><br><span class="line">    <span class="keyword">if</span> ((old = *p) != <span class="literal">NULL</span>) &#123; <span class="comment">/*如果这个链表不为空*/</span></span><br><span class="line">        <span class="comment">/* Can&#x27;t share interrupts unless both agree to */</span></span><br><span class="line">        <span class="keyword">if</span> (!(old-&gt;flags &amp; new-&gt;flags &amp; SA_SHIRQ)) &#123;</span><br><span class="line">            spin_unlock_irqrestore(&amp;desc-&gt;lock,flags);</span><br><span class="line">            <span class="keyword">return</span> -EBUSY;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/* 把新的中断服务例程加入到 irq 中断请求队列*/</span></span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            p = &amp;old-&gt;next;</span><br><span class="line">            old = *p;</span><br><span class="line">        &#125; <span class="keyword">while</span> (old);</span><br><span class="line">        shared = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    *p = new;</span><br><span class="line">    <span class="keyword">if</span> (!shared) &#123; <span class="comment">/*如果 irq 不被共享 */</span></span><br><span class="line">        desc-&gt;depth = <span class="number">0</span>; <span class="comment">/* 启用这条 irq 线 */</span></span><br><span class="line">        desc-&gt;status &amp;= ~(IRQ_DISABLED | IRQ_AUTODETECT | IRQ_WAITING);</span><br><span class="line">        desc-&gt;handler-&gt;startup(irq); <span class="comment">/* 即调用 startup_8259A_irq()函数 */</span></span><br><span class="line">    &#125;</span><br><span class="line">    spin_unlock_irqrestore(&amp;desc-&gt;lock,flags); <span class="comment">/* 退出临界区 */</span></span><br><span class="line">    register_irq_proc(irq); <span class="comment">/* 在 proc 文件系统中显示 irq 的信息 */</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>下面我们举例说明对这两个函数的使用。</p>
+<h4 id="对-register-irq-函数的使用"><a href="#对-register-irq-函数的使用" class="headerlink" title="对 register_irq()函数的使用"></a>对 register_irq()函数的使用</h4><p>在驱动程序初始化或者在设备第一次打开时，首先要调用该函数，以申请使用该 irq。其中参数 handler 指的是要挂入到中断请求队列中的中断服务例程。假定一个程序要对<code>/dev/fd0/</code>(第一个软盘对应的设备)设备进行访问，有两种方式，一是直接访问<code>/dev/fd0/</code>，另一种是在系统上安装一个文件系统，我们这里假定采用第一种。通常将 IRQ6 分配给软盘控制器，给定这个中断号 6，软盘驱动程序就可以发出下列请求，以将其中断服务例程挂入中断请求队列：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">request_irq(<span class="number">6</span>, floppy_interrupt, SA_INTERRUPT|SA_SAMPLE_RANDOM, <span class="string">&quot;floppy&quot;</span>, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure></p>
+<p>我们可以看到，<code>floppy_interrupt()</code>中断服务例程运行时必须禁用中断（设置了<code>SA_INTERRUPT</code>标志），并且不允许共享这个 IRQ（清<code>SA_SHIRQ</code>标志）。在关闭设备时，必须通过调用<code>free_irq()</code>函数释放所申请的中断请求号。例如，当软盘操作终止时（或者终止对<code>/dev/fd0/</code>的 I/O 操作，或者卸载这个文件系统），驱动程序就放弃这个中断号：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">free_irq(<span class="number">6</span>, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure></p>
+<h4 id="对-setup-irq-函数的使用"><a href="#对-setup-irq-函数的使用" class="headerlink" title="对 setup_ irq()函数的使用"></a>对 setup_ irq()函数的使用</h4><p>在系统初始化阶段，内核为了初始化时钟中断设备 irq0 描述符，在<code>time_init()</code>函数中使用了下面的语句：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">irqaction</span> <span class="title">irq0</span> =</span> &#123;timer_interrupt, SA_INTERRUPT, <span class="number">0</span>, <span class="string">&quot;timer&quot;</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">setup_irq(<span class="number">0</span>, &amp;irq0);</span><br></pre></td></tr></table></figure></p>
+<p>首先，初始化类型为<code>irqaction</code>的<code>irq0</code>变量，把<code>handler</code>域设置成<code>timer_interrupt()</code>函数的地址，<code>flags</code>域设置成<code>SA_INTERRUPT</code>，<code>name</code>域设置成”timer”，最后一个域设置成 NULL 以表示没有用<code>dev_id</code>值。接下来，内核调用<code>setup_x86_irq()</code>，把<code>irq0</code>插入到<code>IRQ0</code>的中断请求队列。</p>
+<p>类似地，内核初始化与 IRQ2 和 IRQ13 相关的 irqaction 描述符，并把它们插入到相应的请求队列中，在<code>init_IRQ()</code>函数中有下面的语句：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">irqaction</span> <span class="title">irq2</span> =</span> &#123;no_action, <span class="number">0</span>, <span class="number">0</span>, <span class="string">&quot;cascade&quot;</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">irqaction</span> <span class="title">irq13</span> =</span> &#123;math_error_irq, <span class="number">0</span>, <span class="number">0</span>, <span class="string">&quot;fpu&quot;</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">setup_x86_irq(<span class="number">2</span>, &amp;irq2);</span><br><span class="line">setup_x86_irq(<span class="number">13</span>, &amp;irq13);</span><br></pre></td></tr></table></figure></p>
+<h2 id="中断处理"><a href="#中断处理" class="headerlink" title="中断处理"></a>中断处理</h2><p>如何执行中断处理程序正是我们本节要关心的主要内容</p>
+<h3 id="中断和异常处理的硬件处理"><a href="#中断和异常处理的硬件处理" class="headerlink" title="中断和异常处理的硬件处理"></a>中断和异常处理的硬件处理</h3><p>当 CPU 执行了当前指令之后，CS 和 EIP 这对寄存器中所包含的内容就是下一条将要执行指令的逻辑地址。在对下一条指令执行前，CPU 先要判断在执行当前指令的过程中是否发生了中断或异常。如果发生了一个中断或异常，那么 CPU 将做以下事情。</p>
+<ul>
+<li>确定所发生中断或异常的向量 i（在 0～255 之间）。</li>
+<li>通过 IDTR 寄存器找到 IDT 表，读取 IDT 表第 i 项（或叫第 i 个门）。</li>
+<li>分两步进行有效性检查：<ul>
+<li>首先是“段”级检查，将 CPU 的当前特权级 CPL（存放在 CS寄存器的最低两位）与 IDT 中第 i 项段选择符中的 DPL 相比较，如果 DPL（3）大于 CPL（0），就产生一个“通用保护”异常（中断向量 13），因为中断处理程序的特权级不能低于引起中断的程序的特权级。</li>
+<li>然后是“门”级检查，把 CPL 与 IDT 中第 i 个门的 DPL 相比较，如果 CPL 大于DPL，也就是当前特权级（3）小于这个门的特权级（0），CPU 就不能“穿过”这个门，于是产生一个“通用保护”异常，这是为了避免用户应用程序访问特殊的陷阱门或中断门。</li>
+</ul>
+</li>
+<li>检查是否发生了特权级的变化。当中断发生在用户态（特权级为 3），而中断处理程序运行在内核态（特权级为 0），特权级发生了变化，所以会引起堆栈的更换。也就是说，从用户堆栈切换到内核堆栈。而当中断发生在内核态时，即 CPU 在内核中运行时，则不会更换堆栈，如图 3.6 所示。</li>
+</ul>
+<p><img src="/img/1633259620.jpg" alt=""></p>
+<p>从图 3.5 中可以看出，当从用户态堆栈切换到内核态堆栈时，先把用户态堆栈的值压入中断程序的内核态堆栈中，同时把 EFLAGS 寄存器自动压栈，然后把被中断进程的返回地址压入堆栈。如果异常产生了一个硬件错误码，则将它也保存在堆栈中。如果特权级没有发生变化，则压入栈中的内容如图 3.6 中。</p>
+<p>SS:ESP 的值从当前进程的 TSS 中获得，也就是获得当前进程的内核栈指针，因为此时中断处理程序成为当前进程的一部分，代表当前进程在运行。CS:EIP 的值就是 IDT 表中第 i 项门描述符的段选择符和偏移量的值，此时，CPU 就跳转到了中断或异常处理程序。</p>
+<h3 id="Linux-对中断的处理"><a href="#Linux-对中断的处理" class="headerlink" title="Linux 对中断的处理"></a>Linux 对中断的处理</h3><p>把所有的操作都放进中断处理程序本身并不合适。需要时间长的、非重要的操作应该推后，因为当一个中断处理程序正在运行时，相应的 IRQ 中断线上再发出的信号就会被忽略。更重要的是，中断处理程序是代表进程执行的，它所代表的进程必须总处于<code>TASK_RUNNING</code>状态，否则，就可能出现系统僵死情形。Linux把一个中断要执行的操作分为下面的 3 类。</p>
+<ol>
+<li>紧急的（Critical）：这样的操作诸如：中断到来时中断控制器做出应答，对中断控制器或设备控制器重新编程，或者对设备和处理器同时访问的数据结构进行修改。这些操作都是紧急的，应该被很快地执行，也就是说，紧急操作应该在一个中断处理程序内立即执行，而且是在禁用中断的状态下。</li>
+<li>非紧急的（Noncritical）：这样的操作如修改那些只有处理器才会访问的数据结构。这些操作也要很快地完成，因此，它们由中断处理程序立即执行，但在启用中断的状态下。</li>
+<li>非紧急可延迟的（Noncritical deferrable）：这样的操作如，把一个缓冲区的内容拷贝到一些进程的地址空间。这些操作可能被延迟较长的时间间隔而不影响内核操作。非紧急可延迟的操作由一些被称为“下半部分”（bottom halves）的函数来执行。</li>
+</ol>
+<p>所有的中断处理程序都执行 4 个基本的操作：</p>
+<ul>
+<li>在内核栈中保存 IRQ 的值和寄存器的内容；</li>
+<li>给与 IRQ 中断线相连的中断控制器发送一个应答，这将允许在这条中断线上进一步发出中断请求；</li>
+<li>执行共享这个 IRQ 的所有设备的中断服务例程（ISR）；</li>
+<li>跳到<code>ret_from_intr()</code>的地址后终止。 </li>
+</ul>
+<h3 id="与堆栈有关的常量、数据结构及宏"><a href="#与堆栈有关的常量、数据结构及宏" class="headerlink" title="与堆栈有关的常量、数据结构及宏"></a>与堆栈有关的常量、数据结构及宏</h3><h4 id="常量定义"><a href="#常量定义" class="headerlink" title="常量定义"></a>常量定义</h4><p>下面这些常量定义了进入中断处理程序时，相关寄存器与堆栈指针（ESP）的相对位置，图 3.7 给出了在相应位置上所保存的寄存器内容。<br><img src="/img/1633260097.jpg" alt=""></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">EBX = 0x00</span><br><span class="line">ECX= 0x04</span><br><span class="line">EDX= 0x08</span><br><span class="line">ESI= 0x0C</span><br><span class="line">EDI= 0x10</span><br><span class="line">EB = 0x14</span><br><span class="line">EAX= 0x18</span><br><span class="line">DS= 0x1C</span><br><span class="line">ES = 0x20</span><br><span class="line">ORIG_EAX = 0x24</span><br><span class="line">EIP = 0x28</span><br><span class="line">CS = 0x2C</span><br><span class="line">EFLAGS = 0x30</span><br><span class="line">OLDESP= 0x34</span><br><span class="line">OLDSS = 0x38 </span><br></pre></td></tr></table></figure>
+<h4 id="存放在栈中的寄存器结构-pt-regs"><a href="#存放在栈中的寄存器结构-pt-regs" class="headerlink" title="存放在栈中的寄存器结构 pt_regs"></a>存放在栈中的寄存器结构 pt_regs</h4><p>在内核中，很多函数的参数是<code>pt_regs</code>数据结构，定义在<code>include/i386/ptrace.h</code>中：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pt_regs</span> &#123;</span></span><br><span class="line">    <span class="type">long</span> ebx;</span><br><span class="line">    <span class="type">long</span> ecx;</span><br><span class="line">    <span class="type">long</span> edx;</span><br><span class="line">    <span class="type">long</span> esi;</span><br><span class="line">    <span class="type">long</span> edi;</span><br><span class="line">    <span class="type">long</span> ebp;</span><br><span class="line">    <span class="type">long</span> eax;</span><br><span class="line">    <span class="type">int</span> xds;</span><br><span class="line">    <span class="type">int</span> xes;</span><br><span class="line">    <span class="type">long</span> orig_eax;</span><br><span class="line">    <span class="type">long</span> eip;</span><br><span class="line">    <span class="type">int</span> xcs;</span><br><span class="line">    <span class="type">long</span> eflags;</span><br><span class="line">    <span class="type">long</span> esp;</span><br><span class="line">    <span class="type">int</span> xss;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>把这个结构与内核栈的内容相比较，会发现堆栈的内容是这个数据结构的一个映像。</p>
+<h4 id="保存现场的宏-SAVE-ALL"><a href="#保存现场的宏-SAVE-ALL" class="headerlink" title="保存现场的宏 SAVE_ALL"></a>保存现场的宏 SAVE_ALL</h4><p>在中断发生前夕，要把所有相关寄存器的内容都保存在堆栈中，这是通过<code>SAVE_ALL</code>宏完成的：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> SAVE_ALL \</span></span><br><span class="line"><span class="meta"> cld; \</span></span><br><span class="line"><span class="meta"> pushl %es; \</span></span><br><span class="line"><span class="meta"> pushl %ds; \</span></span><br><span class="line"><span class="meta"> pushl %eax; \</span></span><br><span class="line"><span class="meta"> pushl %ebp; \</span></span><br><span class="line"><span class="meta"> pushl %edi; \</span></span><br><span class="line"><span class="meta"> pushl %esi; \</span></span><br><span class="line"><span class="meta"> pushl %edx; \</span></span><br><span class="line"><span class="meta"> pushl %ecx; \</span></span><br><span class="line"><span class="meta"> pushl %ebx; \</span></span><br><span class="line"><span class="meta"> movl $(__KERNEL_DS),%edx; \</span></span><br><span class="line"><span class="meta"> movl %edx,%ds; \</span></span><br><span class="line"><span class="meta"> movl %edx,%es;</span></span><br></pre></td></tr></table></figure></p>
+<p>该宏执行以后，堆栈内容如图 3.7 所示。把这个宏与图 3.6 结合起来就很容易理解图 3.7，在此对该宏再给予解释：<br>• CPU 在进入中断处理程序时自动将用户栈指针（如果更换堆栈）、EFLAGS 寄存器及返回地址一同压入堆栈。<br>• 段寄存器 DS 和 ES 原来的内容入栈，然后装入内核数据段描述符<code>__KERNEL_DS</code>（定义为 0x18），内核段的 DPL 为 0。 </p>
+<h4 id="恢复现场的宏-RESTORE-ALL"><a href="#恢复现场的宏-RESTORE-ALL" class="headerlink" title="恢复现场的宏 RESTORE_ALL"></a>恢复现场的宏 RESTORE_ALL</h4><p>当从中断返回时，恢复相关寄存器的内容，这是通过<code>RESTORE_ALL</code>宏完成的：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> RESTORE_ALL \</span></span><br><span class="line"><span class="meta"> popl %ebx; \</span></span><br><span class="line"><span class="meta"> popl %ecx; \</span></span><br><span class="line"><span class="meta"> popl %edx; \</span></span><br><span class="line"><span class="meta"> popl %esi; \</span></span><br><span class="line"><span class="meta"> popl %edi; \</span></span><br><span class="line"><span class="meta"> popl %ebp; \</span></span><br><span class="line"><span class="meta"> popl %eax; \</span></span><br><span class="line"><span class="meta"> 1: popl %ds; \</span></span><br><span class="line"><span class="meta"> 2: popl %es; \</span></span><br><span class="line"><span class="meta"> addl $4,%esp; \</span></span><br><span class="line"><span class="meta"> 3: iret;</span></span><br></pre></td></tr></table></figure></p>
+<p>可以看出，<code>RESTORE_ALL</code>与<code>SAVE_ALL</code>遥相呼应。当执行到<code>iret</code>指令时，内核栈又恢复到刚进入中断门时的状态，并使 CPU 从中断返回。</p>
+<h4 id="将当前进程的-task-struct-结构的地址放在寄存器中"><a href="#将当前进程的-task-struct-结构的地址放在寄存器中" class="headerlink" title="将当前进程的 task_struct 结构的地址放在寄存器中"></a>将当前进程的 task_struct 结构的地址放在寄存器中</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> GET_CURRENT(reg) \</span></span><br><span class="line"><span class="meta"> movl $-8192, reg; \</span></span><br><span class="line"><span class="meta"> andl %esp, reg</span></span><br></pre></td></tr></table></figure>
+<h3 id="中断处理程序的执行"><a href="#中断处理程序的执行" class="headerlink" title="中断处理程序的执行"></a>中断处理程序的执行</h3><p>CPU 从中断控制器的一个端口取得中断向量 I，然后根据 I 从中断描述符表 IDT 中找到相应的表项，也就是找到相应的中断门。因为这是外部中断，不需要进行“门级”检查，CPU就可以从这个中断门获得中断处理程序的入口地址，假定为<code>IRQ0x05_interrupt</code>。因为这里假定中断发生时 CPU 运行在用户空间（CPL＝3），而中断处理程序属于内核（DPL＝0），因此，要进行堆栈的切换。也就是说，CPU 从 TSS 中取出内核栈指针，并切换到内核栈（此时栈还为空）。当 CPU 进入<code>IRQ0x05_interrupt</code>时，内核栈中除用户栈指针、EFLAGS的内容以及返回地址外再无其他内容。另外，由于 CPU 进入的是中断门（而不是陷阱门），因此，这条中断线已被禁用，直到重新启用。 </p>
+<p>我们用<code>IRQn_interrupt</code>来表示从<code>IRQ0x01_interrupt</code>到<code>IRQ0x0f_interrupt</code>任意一个中断处理程序。这个中断处理程序实际上要调用<code>do_IRQ()</code>，而<code>do_IRQ()</code>要调用<code>handle_IRQ_event()</code>函数；最后这个函数才真正地执行中断服务例程（ISR）。<br><img src="/img/1633260862.jpg" alt=""></p>
+<h4 id="中断处理程序-IRQn-interrupt"><a href="#中断处理程序-IRQn-interrupt" class="headerlink" title="中断处理程序 IRQn_interrupt"></a>中断处理程序 IRQn_interrupt</h4><p>我们首先看一下从<code>IRQ0x01_interrupt</code>到<code>IRQ0x0f_interrupt</code>的这 16 个函数是如何定义的，在<code>i8259.c</code>中定义了如下宏：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> BI(x,y) \</span></span><br><span class="line"><span class="meta"> BUILD_IRQ(x##y)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUILD_16_IRQS(x) \</span></span><br><span class="line"><span class="meta"> BI(x,0) BI(x,1) BI(x,2) BI(x,3) \</span></span><br><span class="line"><span class="meta"> BI(x,4) BI(x,5) BI(x,6) BI(x,7) \</span></span><br><span class="line"><span class="meta"> BI(x,8) BI(x,9) BI(x,a) BI(x,b) \</span></span><br><span class="line"><span class="meta"> BI(x,c) BI(x,d) BI(x,e) BI(x,f)</span></span><br><span class="line"></span><br><span class="line">BUILD_16_IRQS(<span class="number">0x0</span>)</span><br></pre></td></tr></table></figure></p>
+<p>经过 gcc 的预处理，宏定义<code>BUILD_16_IRQS(0x0)</code>会被展开成<code>BUILD_IRQ(0x00)</code>至<code>BUILD_IRQ(0x0f)</code>。<code>BUILD_IRQ</code>宏是一段嵌入式汇编代码（在<code>/include/i386/hw_irq.h</code>中），为了有助于理解，我们把它展开成下面的汇编语言片段：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IRQn_interrupt:</span><br><span class="line"> pushl $n-256</span><br><span class="line">jmp common_interrupt</span><br></pre></td></tr></table></figure></p>
+<p>把中断号减 256 的结果保存在栈中，这就是进入中断处理程序后第一个压入堆栈的值，也就是堆栈中<code>ORIG_EAX</code>的值。这是一个负数，正数留给系统调用使用。对于每个中断处理程序，唯一不同的就是压入栈中的这个数。然后，所有的中断处理程序都跳到一段相同的代码<code>common_interrupt</code>。这段代码可以在<code>BUILD_COMMON_IRQ</code>宏中找到，同样，我们略去其嵌入式汇编源代码，而把这个宏展开成下列的汇编语言片段：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">common_interrupt:</span><br><span class="line"> SAVE_ALL </span><br><span class="line"> call do_IRQ</span><br><span class="line">jmp ret_from_intr</span><br></pre></td></tr></table></figure></p>
+<p><code>SAVE_ALL</code>宏已经在前面介绍过，它把中断处理程序会使用的所有 CPU 寄存器都保存在栈中。然后，<code>BUILD_COMMON_IRQ</code>宏调用<code>do_IRQ()</code>函数，因为通过 CALL 调用这个函数，因此，该函数的返回地址被压入栈。当执行完<code>do_IRQ()</code>，就跳转到<code>ret_from_intr()</code>地址。</p>
+<h4 id="do-IRQ-函数"><a href="#do-IRQ-函数" class="headerlink" title="do_IRQ()函数"></a>do_IRQ()函数</h4><p><code>do_IRQ()</code>这个函数处理所有外设的中断请求。当这个函数执行时，内核栈从栈顶到栈底包括：</p>
+<ul>
+<li><code>do_IRQ()</code>的返回地址；</li>
+<li>由<code>SAVE_ALL</code>推进栈中的一组寄存器的值；</li>
+<li><code>ORIG_EAX</code>（即 n-256）；</li>
+<li>CPU 自动保存的寄存器。</li>
+</ul>
+<p>该函数的实现用到中断线的状态，下面给予具体说明：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> IRQ_INPROGRESS 1 <span class="comment">/* 正在执行这个 IRQ 的一个处理程序*/</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IRQ_DISABLED 2 <span class="comment">/* 由设备驱动程序已经禁用了这条 IRQ 中断线 */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IRQ_PENDING 4 <span class="comment">/* 一个 IRQ 已经出现在中断线上，且被应答，但还没有为它提供服务 */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IRQ_REPLAY 8 <span class="comment">/* 当 Linux 重新发送一个已被删除的 IRQ 时 */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IRQ_AUTODETECT 16 <span class="comment">/* 当进行硬件设备探测时，内核使用这条 IRQ 中断线 */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IRQ_WAITING 32 <span class="comment">/*当对硬件设备进行探测时，设置这个状态以标记正在被测试的 irq */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IRQ_LEVEL 64 <span class="comment">/* IRQ level triggered */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IRQ_MASKED 128 <span class="comment">/* IRQ masked - shouldn&#x27;t be seen again */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IRQ_PER_CPU 256 <span class="comment">/* IRQ is per CPU */</span></span></span><br></pre></td></tr></table></figure></p>
+<p>这 9 个状态的前 6 个状态比较常用，因此我们给出了具体解释。另外，我们还看到每个状态的常量是 2 的幂次方。最大值为 256（2^8）, 因此可以用一个字节来表示这 9 个状态，其中每一位对应一个状态。</p>
+<p>该函数在<code>arch/i386/kernel/irq.c</code>中定义如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">asmlinkage <span class="type">unsigned</span> <span class="type">int</span> <span class="title function_">do_IRQ</span><span class="params">(<span class="keyword">struct</span> pt_regs regs)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">/* 函数返回 0 则意味着这个 irq 正在由另一个 CPU 进行处理，或这条中断线被禁用 */</span></span><br><span class="line">    <span class="type">int</span> irq = regs.orig_eax &amp; <span class="number">0xff</span>; <span class="comment">/* 还原中断号 */</span></span><br><span class="line">    <span class="type">int</span> cpu = smp_processor_id(); <span class="comment">/* 获得 CPU 号 */</span></span><br><span class="line">    <span class="type">irq_desc_t</span> *desc = irq_desc + irq;<span class="comment">/* 在 irq_desc[]数组中获得 irq 的描述符 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">irqaction</span> * <span class="title">action</span>;</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> status;</span><br><span class="line"></span><br><span class="line">    kstat.irqs[cpu][irq]++; </span><br><span class="line">    spin_lock(&amp;desc-&gt;lock); <span class="comment">/* 针对多处理机加锁 */</span></span><br><span class="line">    desc-&gt;handler-&gt;ack(irq); <span class="comment">/* CPU 对中断请求给予确认 */</span></span><br><span class="line"></span><br><span class="line">    status = desc-&gt;status &amp; ~(IRQ_REPLAY | IRQ_WAITING);</span><br><span class="line">    status |= IRQ_PENDING; <span class="comment">/* we _want_ to handle it */</span></span><br><span class="line"></span><br><span class="line">    action = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">if</span> (!(status &amp; (IRQ_DISABLED | IRQ_INPROGRESS))) &#123;</span><br><span class="line">        action = desc-&gt;action;</span><br><span class="line">        status &amp;= ~IRQ_PENDING; <span class="comment">/* we commit to handling */</span></span><br><span class="line">        status |= IRQ_INPROGRESS; <span class="comment">/* we are handling it */</span></span><br><span class="line">    &#125;</span><br><span class="line">    desc-&gt;status = status;</span><br><span class="line">    <span class="keyword">if</span> (!action)</span><br><span class="line">    <span class="keyword">goto</span> out;</span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        spin_unlock(&amp;desc-&gt;lock); <span class="comment">/*进入临界区*</span></span><br><span class="line"><span class="comment">        handle_IRQ_event(irq, &amp;regs, action);</span></span><br><span class="line"><span class="comment">        spin_lock(&amp;desc-&gt;lock); /*出临界区*/</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!(desc-&gt;status &amp; IRQ_PENDING))</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">        desc-&gt;status &amp;= ~IRQ_PENDING;</span><br><span class="line">    &#125;</span><br><span class="line">    desc-&gt;status &amp;= ~IRQ_INPROGRESS;</span><br><span class="line">out:</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">* The -&gt;end() handler has to deal with interrupts which got</span></span><br><span class="line"><span class="comment">* disabled while the handler was running.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">    desc-&gt;handler-&gt;end(irq);</span><br><span class="line">    spin_unlock(&amp;desc-&gt;lock);</span><br><span class="line">    <span class="keyword">if</span> (softirq_pending(cpu))</span><br><span class="line">        do_softirq(); <span class="comment">/* 处理软中断 */</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>下面对这个函数进行进一步的讨论。</p>
+<p>当执行到<code>for (;;)</code>这个无限循环时，就准备对中断请求队列进行处理，这是由<code>handle_IRQ_event()</code>函数完成的。因为中断请求队列为一临界资源，因此在进入这个函数前要加锁。</p>
+<p><code>handle_IRQ_event()</code>函数的主要代码片段为<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!(action-&gt;flags &amp; SA_INTERRUPT))</span><br><span class="line">    __sti(); <span class="comment">/* 关中断 */</span></span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">    status |= action-&gt;flags;</span><br><span class="line">    action-&gt;handler(irq, action-&gt;dev_id, regs);</span><br><span class="line">    action = action-&gt;next;</span><br><span class="line">&#125; <span class="keyword">while</span> (action); </span><br><span class="line">__cli(); <span class="comment">/* 开中断 */</span></span><br></pre></td></tr></table></figure></p>
+<p>这个循环依次调用请求队列中的每个中断服务例程。</p>
+<p>经验表明，应该避免在同一条中断线上的中断嵌套，内核通过<code>IRQ_PENDING</code>标志位的应用保证了这一点。当<code>do_IRQ()</code>执行到<code>for(;;)</code>循环时，<code>desc-&gt;status</code>中的<code>IRQ_PENDING</code>的标志位肯定为 0。当 CPU 执行完<code>handle_IRQ_event()</code>函数返回时，如果这个标志位仍然为 0，那么循环就此结束。如果这个标志位变为 1，那就说明这条中断线上又有中断产生（对单 CPU 而言），所以循环又执行一次。通过这种循环方式，就把可能发生在同一中断线上的嵌套循环化解为“串行”。</p>
+<p>不同的 CPU 不允许并发地进入同一中断服务例程，否则，那就要求所有的中断服务例程必须是“可重入”的纯代码。可重入代码的设计和实现就复杂多了，因此，Linux 在设计内核时巧妙地“避难就易”，以解决问题为主要目标。</p>
+<p>在循环结束后调用<code>desc-&gt;handler-&gt;end()</code>函数，具体来说，如果没有设置<code>IRQ_DISABLED</code>标志位，就调用低级函数<code>enable_8259A_irq()</code>来启用这条中断线。如果这个中断有后半部分,就调用<code>do_softirq()</code>执行后半部分。</p>
+<h3 id="从中断返回"><a href="#从中断返回" class="headerlink" title="从中断返回"></a>从中断返回</h3><p>从前面的讨论我们知道，<code>do_IRQ()</code>这个函数处理所有外设的中断请求。这个函数执行的时候，内核栈栈顶包含的就是<code>do_IRQ()</code>的返回地址，这个地址指向<code>ret_from_intr</code>。实际上，<code>ret_from_intr</code>是一段汇编语言的入口点，为了描述简单起见，我们以函数的形式提及它。</p>
+<p>虽然我们这里讨论的是中断的返回，但实际上中断、异常及系统调用的返回是放在一起实现的，因此，我们常常以函数的形式提到下面这 3 个入口点。</p>
+<ul>
+<li><code>ret_from_intr()</code>：终止中断处理程序。</li>
+<li><code>ret_from_sys_call()</code>：终止系统调用，即由 0x80 引起的异常。</li>
+<li><code>ret_from_exception()</code>：终止除了 0x80 的所有异常。</li>
+</ul>
+<p>在相关的计算机课程中，我们已经知道从中断返回时 CPU 要做的事情，下面我们来看一下 Linux 内核的具体实现代码（在<code>entry.S</code>中）：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ENTRY(ret_from_intr)</span><br><span class="line"> GET_CURRENT(%ebx)</span><br><span class="line">ret_from_exception:</span><br><span class="line"> movl <span class="title function_">EFLAGS</span><span class="params">(%esp)</span>,%eax <span class="meta"># mix EFLAGS and CS</span></span><br><span class="line"> movb <span class="title function_">CS</span><span class="params">(%esp)</span>,%al </span><br><span class="line"> testl $<span class="params">(VM_MASK | <span class="number">3</span>)</span>,%eax <span class="meta"># return to VM86 mode or non-supervisor?</span></span><br><span class="line"> jne ret_from_sys_call</span><br><span class="line"> jmp restore_all</span><br></pre></td></tr></table></figure></p>
+<p>这里的<code>GET_CURRENT(%ebx)</code>将当前进程<code>task_struct</code>结构的指针放入寄存器 EBX 中。然后两条<code>mov</code>指令是为了把中断发生前夕 EFALGS寄存器的高 16 位与代码段 CS 寄存器的内容拼揍成 32 位的长整数，其目的是要检验：</p>
+<ul>
+<li>中断前夕 CPU 是否够运行于 VM86 模式；</li>
+<li>中断前夕 CPU 是运行在用户空间还是内核空间。</li>
+</ul>
+<p>VM86 模式是为在 i386 保护模式下模拟运行 DOS 软件而设置的，EFALGS 寄存器高 16 位中有个标志位表示 CPU 是否运行在 VM86 模式，我们在此不予详细讨论。CS 的最低两位表示中断发生时 CPU 的运行级别 CPL，若这两位为 3，说明中断发生于用户空间。如果中断发生在内核空间，则控制权直接转移到<code>restore_all</code>。如果中断发生于用户空间（或 VM86 模式），则转移到<code>ret_from_sys_call</code>：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ENTRY(ret_from_sys_call)</span><br><span class="line"> cli # need_resched and signals atomic test</span><br><span class="line"> cmpl $0,need_resched(%ebx)</span><br><span class="line"> jne reschedule</span><br><span class="line"> cmpl $0,sigpending(%ebx)</span><br><span class="line"> jne signal_return</span><br><span class="line">restore_all:</span><br><span class="line"> RESTORE_ALL</span><br><span class="line"> reschedule:</span><br><span class="line"> call SYMBOL_NAME(schedule) # test</span><br><span class="line"> jmp ret_from_sys_call</span><br></pre></td></tr></table></figure></p>
+<p>进入<code>ret_from_sys_call</code>后，首先关中断，也就是说，执行这段代码时 CPU 不接受任何中断请求。然后，看调度标志是否为非 0，其中常量<code>need_resched</code>定义为 20，<code>need_resched(%ebx)</code>表示当前进程<code>task_struct</code>结构中偏移量<code>need_resched</code>处的内容，如果调度标志为非 0，说明需要进行调度，则去调用<code>schedule()</code>函数进行进程调度。</p>
+<p>同样，如果当前进程的<code>task_struct</code>结构中的<code>sigpending</code>标志为非 0，则表示该进程有信号等待处理，要先处理完这些信号后才从中断返回。处理完信号，控制权还是返回到<code>restore_all</code>。</p>
+<h2 id="中断的后半部分处理机制"><a href="#中断的后半部分处理机制" class="headerlink" title="中断的后半部分处理机制"></a>中断的后半部分处理机制</h2><h3 id="为什么把中断分为两部分来处理"><a href="#为什么把中断分为两部分来处理" class="headerlink" title="为什么把中断分为两部分来处理"></a>为什么把中断分为两部分来处理</h3><p>中断服务例程一般都是在中断请求关闭的条件下执行的，以避免嵌套而使中断控制复杂化。但是，中断是一个随机事件，它随时会到来，如果关中断的时间太长，CPU 就不能及时响应其他的中断请求，从而造成中断的丢失。因此，内核把中断处理分为两部分：前半部分（top half）和后半部分（bottom half），前半部分内核立即执行，而后半部分留着稍后处理</p>
+<p>首先，一个快速的“前半部分”来处理硬件发出的请求，它必须在一个新的中断产生之前终止。通常情况下，除了在设备和一些内存缓冲区之间移动或传送数据，确定硬件是否处于健全的状态之外，这一部分做的工作很少。</p>
+<p>然后，就让一些与中断处理相关的有限个函数作为“后半部分”来运行：</p>
+<ul>
+<li>允许一个普通的内核函数，而不仅仅是服务于中断的一个函数，能以后半部分的身份来运行；</li>
+<li>允许几个内核函数合在一起作为一个后半部分来运行。</li>
+</ul>
+<p>后半部分运行时是允许中断请求的，而前半部分运行时是关中断的，这是二者之间的主要区别。</p>
+<h3 id="实现机制"><a href="#实现机制" class="headerlink" title="实现机制"></a>实现机制</h3><p>Linux 内核为将中断服务分为两部分提供了方便，并设立了相应的机制。在以前的内核中，这个机制就叫 bottom half（简称 bh），但在 2.4 版中有了新的发展和推广，叫做软中断（softirq）机制。 </p>
+<h4 id="bh-机制"><a href="#bh-机制" class="headerlink" title="bh 机制"></a>bh 机制</h4><p>以前内核中的 bh 机制设置了一个函数指针数组<code>bh_base[]</code>，它把所有的后半部分都组织起来，其大小为 32，数组中的每一项就是一个后半部分，即一个<code>bh</code>函数。同时，又设置了两个 32 位无符号整数<code>bh_active</code>和<code>bh_mask</code>，每个无符号整数中的一位对应着<code>bh_base[]</code>中的一个元素，如图 3.10 所示。<br><img src="/img/1633263464.jpg" alt=""></p>
+<p>在 2.4 以前的内核中，每次执行完<code>do_IRQ()</code>中的中断服务例程以后，以及每次系统调用结束之前，就在一个叫<code>do_bottom_half()</code>的函数中执行相应的<code>bh</code>函数。</p>
+<p>在<code>do_bottom_half()</code>中对<code>bh</code>函数的执行是在关中断的情况下进行的，也就是说对<code>bh</code>的执行进行了严格的“串行化”，这种方式简化了<code>bh</code>的设计，这是因为对单 CPU 来说，<code>bh</code>函数的执行可以不嵌套；而对于多 CPU 来说，在同一时间内最多只允许一个 CPU 执行<code>bh</code>函数。</p>
+<p><code>bh</code>函数的串行化是针对所有 CPU 的，根本发挥不出多 CPU 的优势。</p>
+<h4 id="软中断机制"><a href="#软中断机制" class="headerlink" title="软中断机制"></a>软中断机制</h4><p>软中断机制也是推迟内核函数的执行，然而，与<code>bh</code>函数严格地串行执行相比，软中断却在任何时候都不需要串行化。同一个软中断的两个实例完全有可能在两个 CPU 上同时运行。当然，在这种情况下，软中断必须是可重入的。 </p>
+<h4 id="Tasklet-机制"><a href="#Tasklet-机制" class="headerlink" title="Tasklet 机制"></a>Tasklet 机制</h4><p>另一个类似于<code>bh</code>的机制叫做 tasklet。Tasklet 建立在软中断之上，但与软中断的区别是，同一个 tasklet 只能运行在一个 CPU 上，而不同的 tasklet 可以同时运行在不同的 CPU上。在这种情况下，tasklet 就不需要是可重入的，因此，编写 tasklet 比编写一个软中断要容易。</p>
+<h3 id="数据结构的定义"><a href="#数据结构的定义" class="headerlink" title="数据结构的定义"></a>数据结构的定义</h3><p>在具体介绍软中断处理机制之前，我们先介绍一下相关的数据结构，这些数据结构大部分都在<code>/include/linux/interrupt.h</code>中。</p>
+<h4 id="与软中断相关的数据结构"><a href="#与软中断相关的数据结构" class="headerlink" title="与软中断相关的数据结构"></a>与软中断相关的数据结构</h4><p>软中断本身是一种机制，同时也是一种基本框架。在这个框架中，既包含了bh机制，也包含了 tasklet 机制。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> &#123;</span></span><br><span class="line">    HI_SOFTIRQ=<span class="number">0</span>,</span><br><span class="line">    NET_TX_SOFTIRQ,</span><br><span class="line">    NET_RX_SOFTIRQ,</span><br><span class="line">    TASKLET_SOFTIRQ</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>内核中用枚举类型定义了 4 种类型的软中断，其中<code>NET_TX_SOFTIRQ</code>和<code>NET_RX_SOFTIRQ</code>两个软中断是专为网络操作而设计的，而<code>HI_SOFTIRQ</code>和<code>TASKLET_SOFTIRQ</code>是针对bh 和tasklet 而设计的软中断。一般情况下，不要再分配新的软中断。</p>
+<p>软中断向量<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">softirq_action</span> &#123;</span></span><br><span class="line">    <span class="type">void</span> (*action)(<span class="keyword">struct</span> softirq_action *);</span><br><span class="line">    <span class="type">void</span> *data;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">softirq_action</span> <span class="title">softirq_vec</span>[32] __<span class="title">cacheline_aligned</span>;</span></span><br></pre></td></tr></table></figure></p>
+<p>从定义可以看出，内核定义了 32 个软中断向量，每个向量指向一个函数，但实际上，内核目前只定义了上面的 4 个软中断，而我们后面主要用到的为<code>HI_SOFTIRQ</code>和<code>TASKLET_SOFTIRQ</code>两个软中断。</p>
+<p>软中断控制/状态结构：<code>softirq_vec[]</code>是个全局量，系统中每个 CPU 所看到的是同一个数组。但是，每个 CPU各有其自己的“软中断控制/状态”结构，这些数据结构形成一个以 CPU 编号为下标的数组<code>irq_stat[]</code>（定义在<code>include/i386/hardirq.h</code>中）<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> __softirq_pending;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> __local_irq_count;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> __local_bh_count;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> __syscall_count;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> * __<span class="title">ksoftirqd_task</span>;</span> <span class="comment">/* waitqueue is too large */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> __nmi_count; <span class="comment">/* arch dependent */</span></span><br><span class="line">&#125; ____cacheline_aligned <span class="type">irq_cpustat_t</span>;</span><br><span class="line"><span class="type">irq_cpustat_t</span> irq_stat[NR_CPUS];</span><br></pre></td></tr></table></figure></p>
+<p><code>irq_stat[]</code>数组也是一个全局量，但是各个 CPU 可以按其自身的编号访问相应的域。于是，内核定义了如下宏（在<code>include/linux/irq_cpustat.h</code>中）：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_SMP</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __IRQ_STAT(cpu, member) (irq_stat[cpu].member)</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __IRQ_STAT(cpu, member) ((void)(cpu), irq_stat[0].member)</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="comment">/* arch independent irq_stat fields */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> softirq_pending(cpu) __IRQ_STAT((cpu), __softirq_pending)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> local_irq_count(cpu) __IRQ_STAT((cpu), __local_irq_count)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> local_bh_count(cpu) __IRQ_STAT((cpu), __local_bh_count)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> syscall_count(cpu) __IRQ_STAT((cpu), __syscall_count)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ksoftirqd_task(cpu) __IRQ_STAT((cpu), __ksoftirqd_task)</span></span><br><span class="line"> <span class="comment">/* arch dependent irq_stat fields */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> nmi_count(cpu) __IRQ_STAT((cpu), __nmi_count) <span class="comment">/* i386, ia64</span></span></span><br><span class="line"><span class="comment"><span class="meta">*/</span></span></span><br></pre></td></tr></table></figure></p>
+<h4 id="与-tasklet-相关的数据结构"><a href="#与-tasklet-相关的数据结构" class="headerlink" title="与 tasklet 相关的数据结构"></a>与 tasklet 相关的数据结构</h4><p>与 bh 函数相比，tasklet 是“多序”的 bh 函数。内核中用<code>tasklet_task</code>来定义一个tasklet：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">tasklet_struct</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">tasklet_struct</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span> state;</span><br><span class="line">    <span class="type">atomic_t</span> count;</span><br><span class="line">    <span class="type">void</span> (*func)(<span class="type">unsigned</span> <span class="type">long</span>);</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span> data;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>从定义可以看出，<code>tasklet_struct</code>是一个链表结构，结构中的函数指针<code>func</code>指向其服务程序。内核中还定义了一个以 CPU 编号为下标的数组<code>tasklet_vec[]</code>和<code>tasklet_hi_vec[]</code>：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">tasklet_head</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">tasklet_struct</span> *<span class="title">list</span>;</span></span><br><span class="line">&#125; __attribute__ ((__aligned__(SMP_CACHE_BYTES))); </span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="class"><span class="keyword">struct</span> <span class="title">tasklet_head</span> <span class="title">tasklet_vec</span>[<span class="title">NR_CPUS</span>];</span></span><br><span class="line"><span class="keyword">extern</span> <span class="class"><span class="keyword">struct</span> <span class="title">tasklet_head</span> <span class="title">tasklet_hi_vec</span>[<span class="title">NR_CPUS</span>];</span></span><br></pre></td></tr></table></figure></p>
+<p>这两个数组都是<code>tasklet_head</code>结构数组，每个<code>tasklet_head</code>结构就是一个<code>tasklet_struct</code>结构的队列头。</p>
+<h4 id="与-bh-相关的数据结构"><a href="#与-bh-相关的数据结构" class="headerlink" title="与 bh 相关的数据结构"></a>与 bh 相关的数据结构</h4><p>前面我们提到， bh 建立在 tasklet 之上，更具体地说，对一个 bh 的描述也是<code>tasklet_struct</code>结构，只不过执行机制有所不同。因为在不同的 CPU 上可以同时执行不同的tasklet，而任何时刻，即使在多个 CPU 上，也只能有一个 bh 函数执行。</p>
+<p>bh 的类型：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> &#123;</span></span><br><span class="line">    TIMER_BH = <span class="number">0</span>, <span class="comment">/* 定时器 */</span></span><br><span class="line">    TQUEUE_BH, <span class="comment">/* 周期性任务队列 */</span></span><br><span class="line">    DIGI_BH, <span class="comment">/* DigiBoard PC/Xe */</span></span><br><span class="line">    SERIAL_BH, <span class="comment">/* 串行接口 */</span></span><br><span class="line">    RISCOM8_BH, <span class="comment">/* RISCom/8 */</span></span><br><span class="line">    SPECIALIX_BH, <span class="comment">/* Specialix IO8+ */</span></span><br><span class="line">    AURORA_BH, <span class="comment">/* Aurora 多端口卡（SPARC）*/</span></span><br><span class="line">    ESP_BH, <span class="comment">/* Hayes ESP 串行卡 */</span></span><br><span class="line">    SCSI_BH, <span class="comment">/* SCSI 接口*/</span></span><br><span class="line">    IMMEDIATE_BH, <span class="comment">/* 立即任务队列*/</span></span><br><span class="line">    CYCLADES_BH, <span class="comment">/* Cyclades Cyclom-Y 串行多端口 */</span></span><br><span class="line">    CM206_BH, <span class="comment">/* CD-ROM Philips/LMS cm206 磁盘 */</span></span><br><span class="line">    JS_BH, <span class="comment">/* 游戏杆（PC IBM）*/</span></span><br><span class="line">    MACSERIAL_BH, <span class="comment">/* Power Macintosh 的串行端口 */</span></span><br><span class="line">    ISICOM_BH <span class="comment">/* MultiTech 的 ISI 卡*/</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>bh 的组织结构：在 2.4 以前的版本中，把所有的 bh 用一个<code>bh_base[]</code>数组组织在一起，数组的每个元素指向一个<code>bh</code>函数：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="title function_">void</span> <span class="params">(*bh_base[<span class="number">32</span>])</span><span class="params">(<span class="type">void</span>)</span>;</span><br></pre></td></tr></table></figure></p>
+<p>2.4 版中保留了上面这种定义形式，但又定义了另外一种形式：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">tasklet_struct</span> <span class="title">bh_task_vec</span>[32];</span></span><br></pre></td></tr></table></figure></p>
+<p>这也是一个有 32 个元素的数组，但数组的每个元素是一个<code>tasklet_struct</code>结构，数组的下标就是上面定义的枚举类型中的序号。</p>
+<h3 id="软中断、bh-及-tasklet-的初始化"><a href="#软中断、bh-及-tasklet-的初始化" class="headerlink" title="软中断、bh 及 tasklet 的初始化"></a>软中断、bh 及 tasklet 的初始化</h3><h4 id="Tasklet-的初始化"><a href="#Tasklet-的初始化" class="headerlink" title="Tasklet 的初始化"></a>Tasklet 的初始化</h4><p>Tasklet 的初始化是由<code>tasklet_init()</code>函数完成的：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">tasklet_init</span><span class="params">(<span class="keyword">struct</span> tasklet_struct *t, <span class="type">void</span> (*func)(<span class="type">unsigned</span> <span class="type">long</span>), <span class="type">unsigned</span> <span class="type">long</span> data)</span> &#123;</span><br><span class="line">    t-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    t-&gt;state = <span class="number">0</span>;</span><br><span class="line">    <span class="type">atomic_set</span>(&amp;t-&gt;count, <span class="number">0</span>);</span><br><span class="line">    t-&gt;func = func;</span><br><span class="line">    t-&gt;data = data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中，<code>atomic_set()</code>为原子操作,它把<code>t-&gt;count</code>置为 0。</p>
+<h4 id="软中断的初始化"><a href="#软中断的初始化" class="headerlink" title="软中断的初始化"></a>软中断的初始化</h4><p>首先通过<code>open_softirq()</code>函数打开软中断：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">open_softirq</span><span class="params">(<span class="type">int</span> nr, <span class="type">void</span> (*action)(<span class="keyword">struct</span> softirq_action*), <span class="type">void</span> *data)</span> &#123;</span><br><span class="line">    softirq_vec[nr].data = data;</span><br><span class="line">    softirq_vec[nr].action = action;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后，通过<code>softirq_init()</code>函数对软中断进行初始化：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> __init <span class="title function_">softirq_init</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>; i&lt;<span class="number">32</span>; i++)</span><br><span class="line">        tasklet_init(bh_task_vec+i, bh_action, i);</span><br><span class="line">    open_softirq(TASKLET_SOFTIRQ, tasklet_action, <span class="literal">NULL</span>);</span><br><span class="line">    open_softirq(HI_SOFTIRQ, tasklet_hi_action, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对于 bh 的 32 个<code>tasklet_struct</code>，调用<code>tasklet_init</code>以后，它们的函数指针<code>func</code>全部指向<code>bh_action()</code>函数，也就是建立了 bh 的执行机制，但具体的 bh 函数还没有与之挂勾，就像具体的中断服务例程还没有挂入中断服务队列一样。同样，调用<code>open_softirq()</code>以后，软中断<code>TASKLET_SOFTIRQ</code>的服务例程为<code>tasklet_action()</code>，而软中断<code>HI_SOFTIRQ</code>的服务例程为<code>tasklet_hi_action()</code>。</p>
+<h4 id="Bh-的初始化"><a href="#Bh-的初始化" class="headerlink" title="Bh 的初始化"></a>Bh 的初始化</h4><p>bh 的初始化是由<code>init_bh()</code>完成的：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">init_bh</span><span class="params">(<span class="type">int</span> nr, <span class="type">void</span> (*routine)(<span class="type">void</span>))</span></span><br><span class="line">&#123;</span><br><span class="line">    bh_base[nr] = routine;</span><br><span class="line">    mb();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里调用的函数<code>mb()</code>与 CPU 中执行指令的流水线有关。下面看一下几个具体 bh 的初始化(在<code>kernel/sched.c</code>中)：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">init_bh(TIMER_BH,timer_bh);</span><br><span class="line">init_bh(TUEUE_BH,tqueue_bh);</span><br><span class="line">init_bh(IMMEDIATE_BH,immediate_bh); </span><br></pre></td></tr></table></figure></p>
+<p>初始化以后，<code>bh_base[TIMER_BH]</code>处理定时器队列<code>timer_bh</code>，每个时钟中断都会激活<code>TIMER_BH</code>，这意味着大约每隔 10ms 这个队列运行一次。<code>bh_base[TUEUE_BH]</code>处理周期性的任务队列<code>tqueue_bh</code>，而<code>bh_base[IMMEDIATE_BH]</code>通常被驱动程序所调用，请求某个设备服务的内核函数可以链接到<code>IMMEDIATE_BH</code>所管理的队列<code>immediate_bh</code>中，在该队列中排队等待。</p>
+<h3 id="后半部分的执行"><a href="#后半部分的执行" class="headerlink" title="后半部分的执行"></a>后半部分的执行</h3><h4 id="Bh-的处理"><a href="#Bh-的处理" class="headerlink" title="Bh 的处理"></a>Bh 的处理</h4><p>当需要执行一个特定的 bh 函数（例如<code>bh_base[TIMER_BH]()</code>）时，首先要提出请求，这是由<code>mark_bh()</code>函数完成的（在<code>Interrupt.h</code>中）：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span> <span class="title function_">mark_bh</span><span class="params">(<span class="type">int</span> nr)</span> &#123;</span><br><span class="line">    tasklet_hi_schedule(bh_task_vec+nr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>从上面的介绍我们已经知道，<code>bh_task_vec[]</code>每个元素为<code>tasklet_struct</code>结构，函数的指针<code>func</code>指向<code>bh_action()</code>。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/09/24/%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90LINUX%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81%20%E7%AC%94%E8%AE%B02/" rel="prev" title="深入分析Linux内核源码笔记2">
+      <i class="fa fa-chevron-left"></i> 深入分析Linux内核源码笔记2
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/09/30/rdma%E6%8A%80%E6%9C%AF/" rel="next" title="RDMA技术详解">
+      RDMA技术详解 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B5%B0%E8%BF%9BLinux"><span class="nav-number">1.</span> <span class="nav-text">走进Linux</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%B0%E8%BF%9BLinux%E5%86%85%E6%A0%B8"><span class="nav-number">1.1.</span> <span class="nav-text">走进Linux内核</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E5%86%85%E6%A0%B8%E7%9A%84%E7%89%B9%E5%BE%81"><span class="nav-number">1.1.1.</span> <span class="nav-text">Linux内核的特征</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E5%86%85%E6%A0%B8%E6%BA%90%E4%BB%A3%E7%A0%81"><span class="nav-number">1.2.</span> <span class="nav-text">Linux内核源代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E5%86%85%E6%A0%B8%E6%BA%90%E4%BB%A3%E7%A0%81%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.1.</span> <span class="nav-text">Linux内核源代码的结构</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E8%BF%90%E8%A1%8C%E7%9A%84%E7%A1%AC%E4%BB%B6%E5%9F%BA%E7%A1%80"><span class="nav-number">2.</span> <span class="nav-text">Linux运行的硬件基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#i386%E7%9A%84%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">2.1.</span> <span class="nav-text">i386的寄存器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">2.1.1.</span> <span class="nav-text">通用寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">2.1.2.</span> <span class="nav-text">段寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E5%92%8C%E6%8E%A7%E5%88%B6%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">2.1.3.</span> <span class="nav-text">状态和控制寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">2.1.4.</span> <span class="nav-text">控制寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%9C%B0%E5%9D%80%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">2.1.5.</span> <span class="nav-text">系统地址寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E5%AF%84%E5%AD%98%E5%99%A8%E5%92%8C%E6%B5%8B%E8%AF%95%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">2.1.6.</span> <span class="nav-text">调试寄存器和测试寄存器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">2.1.6.1.</span> <span class="nav-text">调试寄存器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">2.1.6.2.</span> <span class="nav-text">测试寄存器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%9C%B0%E5%9D%80"><span class="nav-number">2.2.</span> <span class="nav-text">内存地址</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AE%B5%E6%9C%BA%E5%88%B6%E5%92%8C%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">2.2.1.</span> <span class="nav-text">段机制和描述符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AE%B5%E6%9C%BA%E5%88%B6"><span class="nav-number">2.2.2.</span> <span class="nav-text">段机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">2.2.3.</span> <span class="nav-text">描述符的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">2.2.4.</span> <span class="nav-text">系统段描述符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8"><span class="nav-number">2.2.5.</span> <span class="nav-text">描述符表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E7%AC%A6%E4%B8%8E%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">2.2.6.</span> <span class="nav-text">选择符与描述符表寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%8F%E8%BF%B0%E7%AC%A6%E6%8A%95%E5%BD%B1%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">2.2.7.</span> <span class="nav-text">描述符投影寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E4%B8%AD%E7%9A%84%E6%AE%B5"><span class="nav-number">2.2.8.</span> <span class="nav-text">Linux中的段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E9%A1%B5%E6%9C%BA%E5%88%B6"><span class="nav-number">2.3.</span> <span class="nav-text">分页机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E9%A1%B5%E6%9C%BA%E6%9E%84"><span class="nav-number">2.3.1.</span> <span class="nav-text">分页机构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%A4%E7%BA%A7%E9%A1%B5%E8%A1%A8%E7%BB%93%E6%9E%84"><span class="nav-number">2.3.1.1.</span> <span class="nav-text">两级页表结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E7%9B%AE%E5%BD%95%E9%A1%B9"><span class="nav-number">2.3.1.2.</span> <span class="nav-text">页目录项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E9%9D%A2%E9%A1%B9"><span class="nav-number">2.3.1.3.</span> <span class="nav-text">页面项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E5%9C%B0%E5%9D%80%E5%88%B0%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="nav-number">2.3.1.4.</span> <span class="nav-text">线性地址到物理地址的转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E5%88%86%E9%A1%B5"><span class="nav-number">2.3.1.5.</span> <span class="nav-text">扩展分页</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B5%E9%9D%A2%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98"><span class="nav-number">2.3.2.</span> <span class="nav-text">页面高速缓存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E4%B8%AD%E7%9A%84%E5%88%86%E9%A1%B5%E6%9C%BA%E5%88%B6"><span class="nav-number">2.4.</span> <span class="nav-text">Linux中的分页机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E9%A1%B5%E7%9B%B8%E5%85%B3%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%8F%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">2.4.1.</span> <span class="nav-text">与页相关的数据结构及宏的定义</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A8%E9%A1%B9%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">2.4.1.1.</span> <span class="nav-text">表项的定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E5%9C%B0%E5%9D%80%E5%9F%9F%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">2.4.1.2.</span> <span class="nav-text">线性地址域的定义</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E9%A1%B5%E7%9B%AE%E5%BD%95%E5%8F%8A%E9%A1%B5%E8%A1%A8%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">2.4.2.</span> <span class="nav-text">对页目录及页表的处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A8%E9%A1%B9%E5%80%BC%E7%9A%84%E7%A1%AE%E5%AE%9A"><span class="nav-number">2.4.2.1.</span> <span class="nav-text">表项值的确定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B8%85%E7%9B%B8%E5%BA%94%E8%A1%A8%E7%9A%84%E8%A1%A8%E9%A1%B9"><span class="nav-number">2.4.2.2.</span> <span class="nav-text">清相应表的表项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E9%A1%B5%E8%A1%A8%E8%A1%A8%E9%A1%B9%E6%A0%87%E5%BF%97%E5%80%BC%E8%BF%9B%E8%A1%8C%E6%93%8D%E4%BD%9C%E7%9A%84%E5%AE%8F"><span class="nav-number">2.4.2.3.</span> <span class="nav-text">对页表表项标志值进行操作的宏</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E6%9C%BA%E5%88%B6"><span class="nav-number">3.</span> <span class="nav-text">中断机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86"><span class="nav-number">3.1.</span> <span class="nav-text">中断基本知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%90%91%E9%87%8F"><span class="nav-number">3.1.1.</span> <span class="nav-text">中断向量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%96%E8%AE%BE%E5%8F%AF%E5%B1%8F%E8%94%BD%E4%B8%AD%E6%96%AD"><span class="nav-number">3.1.2.</span> <span class="nav-text">外设可屏蔽中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E5%8F%8A%E9%9D%9E%E5%B1%8F%E8%94%BD%E4%B8%AD%E6%96%AD"><span class="nav-number">3.1.3.</span> <span class="nav-text">异常及非屏蔽中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8"><span class="nav-number">3.1.4.</span> <span class="nav-text">中断描述符表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4"><span class="nav-number">3.1.5.</span> <span class="nav-text">相关汇编指令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B%E6%8C%87%E4%BB%A4-CALL"><span class="nav-number">3.1.5.1.</span> <span class="nav-text">调用过程指令 CALL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E4%B8%AD%E6%96%AD%E8%BF%87%E7%A8%8B%E6%8C%87%E4%BB%A4-INT"><span class="nav-number">3.1.5.2.</span> <span class="nav-text">调用中断过程指令 INT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E6%BA%A2%E5%87%BA%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%8C%87%E4%BB%A4-INTO"><span class="nav-number">3.1.5.3.</span> <span class="nav-text">调用溢出处理程序的指令 INTO</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E8%BF%94%E5%9B%9E%E6%8C%87%E4%BB%A4-IRET"><span class="nav-number">3.1.5.4.</span> <span class="nav-text">中断返回指令 IRET</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E4%B8%AD%E6%96%AD%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8%E7%9A%84%E6%8C%87%E4%BB%A4-LIDT"><span class="nav-number">3.1.5.5.</span> <span class="nav-text">加载中断描述符表的指令 LIDT</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.2.</span> <span class="nav-text">中断描述符表的初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%96%E9%83%A8%E4%B8%AD%E6%96%AD%E5%90%91%E9%87%8F%E7%9A%84%E8%AE%BE%E7%BD%AE"><span class="nav-number">3.2.1.</span> <span class="nav-text">外部中断向量的设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8-IDT-%E7%9A%84%E9%A2%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.2.2.</span> <span class="nav-text">中断描述符表 IDT 的预初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E6%8F%8F%E8%BF%B0%E8%A1%A8%E5%AF%84%E5%AD%98%E5%99%A8-IDTR-%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.2.2.1.</span> <span class="nav-text">中断描述表寄存器 IDTR 的初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%8A-IDT-%E8%A1%A8%E7%9A%84%E8%B5%B7%E5%A7%8B%E5%9C%B0%E5%9D%80%E8%A3%85%E5%85%A5-IDTR"><span class="nav-number">3.2.2.2.</span> <span class="nav-text">把 IDT 表的起始地址装入 IDTR</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8setup-idt-%E5%87%BD%E6%95%B0%E5%A1%AB%E5%85%85-idt-table-%E8%A1%A8%E4%B8%AD%E7%9A%84-256-%E4%B8%AA%E8%A1%A8%E9%A1%B9"><span class="nav-number">3.2.2.3.</span> <span class="nav-text">用setup_idt()函数填充 idt_table 表中的 256 个表项</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%90%91%E9%87%8F%E8%A1%A8%E7%9A%84%E6%9C%80%E7%BB%88%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.2.3.</span> <span class="nav-text">中断向量表的最终初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IDT-%E8%A1%A8%E9%A1%B9%E7%9A%84%E8%AE%BE%E7%BD%AE"><span class="nav-number">3.2.3.1.</span> <span class="nav-text">IDT 表项的设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E9%99%B7%E9%98%B1%E9%97%A8%E5%92%8C%E7%B3%BB%E7%BB%9F%E9%97%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.2.3.2.</span> <span class="nav-text">对陷阱门和系统门的初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E9%97%A8%E7%9A%84%E8%AE%BE%E7%BD%AE"><span class="nav-number">3.2.3.3.</span> <span class="nav-text">中断门的设置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">3.3.</span> <span class="nav-text">异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E5%86%85%E6%A0%B8%E6%A0%88%E4%B8%AD%E4%BF%9D%E5%AD%98%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E5%80%BC"><span class="nav-number">3.3.1.</span> <span class="nav-text">在内核栈中保存寄存器的值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E8%AF%B7%E6%B1%82%E9%98%9F%E5%88%97%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.3.2.</span> <span class="nav-text">中断请求队列的初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E8%AF%B7%E6%B1%82%E9%98%9F%E5%88%97%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.3.3.</span> <span class="nav-text">中断请求队列的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IRQ-%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.3.3.1.</span> <span class="nav-text">IRQ 描述符的初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E6%8E%A7%E5%88%B6%E5%99%A8%E6%8F%8F%E8%BF%B0%E7%AC%A6-hw-interrupt-type"><span class="nav-number">3.3.3.2.</span> <span class="nav-text">中断控制器描述符 hw_interrupt_type</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E6%9C%8D%E5%8A%A1%E4%BE%8B%E7%A8%8B%E6%8F%8F%E8%BF%B0%E7%AC%A6-irqaction"><span class="nav-number">3.3.3.3.</span> <span class="nav-text">中断服务例程描述符 irqaction</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E6%9C%8D%E5%8A%A1%E4%BE%8B%E7%A8%8B"><span class="nav-number">3.3.3.4.</span> <span class="nav-text">中断服务例程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E8%AF%B7%E6%B1%82%E9%98%9F%E5%88%97%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96-1"><span class="nav-number">3.3.4.</span> <span class="nav-text">中断请求队列的初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9-register-irq-%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">3.3.4.1.</span> <span class="nav-text">对 register_irq()函数的使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9-setup-irq-%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">3.3.4.2.</span> <span class="nav-text">对 setup_ irq()函数的使用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86"><span class="nav-number">3.4.</span> <span class="nav-text">中断处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%92%8C%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%9A%84%E7%A1%AC%E4%BB%B6%E5%A4%84%E7%90%86"><span class="nav-number">3.4.1.</span> <span class="nav-text">中断和异常处理的硬件处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-%E5%AF%B9%E4%B8%AD%E6%96%AD%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">3.4.2.</span> <span class="nav-text">Linux 对中断的处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E5%A0%86%E6%A0%88%E6%9C%89%E5%85%B3%E7%9A%84%E5%B8%B8%E9%87%8F%E3%80%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%8F"><span class="nav-number">3.4.3.</span> <span class="nav-text">与堆栈有关的常量、数据结构及宏</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F%E5%AE%9A%E4%B9%89"><span class="nav-number">3.4.3.1.</span> <span class="nav-text">常量定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%98%E6%94%BE%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E5%AF%84%E5%AD%98%E5%99%A8%E7%BB%93%E6%9E%84-pt-regs"><span class="nav-number">3.4.3.2.</span> <span class="nav-text">存放在栈中的寄存器结构 pt_regs</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%9D%E5%AD%98%E7%8E%B0%E5%9C%BA%E7%9A%84%E5%AE%8F-SAVE-ALL"><span class="nav-number">3.4.3.3.</span> <span class="nav-text">保存现场的宏 SAVE_ALL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%81%A2%E5%A4%8D%E7%8E%B0%E5%9C%BA%E7%9A%84%E5%AE%8F-RESTORE-ALL"><span class="nav-number">3.4.3.4.</span> <span class="nav-text">恢复现场的宏 RESTORE_ALL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E5%BD%93%E5%89%8D%E8%BF%9B%E7%A8%8B%E7%9A%84-task-struct-%E7%BB%93%E6%9E%84%E7%9A%84%E5%9C%B0%E5%9D%80%E6%94%BE%E5%9C%A8%E5%AF%84%E5%AD%98%E5%99%A8%E4%B8%AD"><span class="nav-number">3.4.3.5.</span> <span class="nav-text">将当前进程的 task_struct 结构的地址放在寄存器中</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%89%A7%E8%A1%8C"><span class="nav-number">3.4.4.</span> <span class="nav-text">中断处理程序的执行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F-IRQn-interrupt"><span class="nav-number">3.4.4.1.</span> <span class="nav-text">中断处理程序 IRQn_interrupt</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#do-IRQ-%E5%87%BD%E6%95%B0"><span class="nav-number">3.4.4.2.</span> <span class="nav-text">do_IRQ()函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E4%B8%AD%E6%96%AD%E8%BF%94%E5%9B%9E"><span class="nav-number">3.4.5.</span> <span class="nav-text">从中断返回</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E7%9A%84%E5%90%8E%E5%8D%8A%E9%83%A8%E5%88%86%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6"><span class="nav-number">3.5.</span> <span class="nav-text">中断的后半部分处理机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8A%8A%E4%B8%AD%E6%96%AD%E5%88%86%E4%B8%BA%E4%B8%A4%E9%83%A8%E5%88%86%E6%9D%A5%E5%A4%84%E7%90%86"><span class="nav-number">3.5.1.</span> <span class="nav-text">为什么把中断分为两部分来处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6"><span class="nav-number">3.5.2.</span> <span class="nav-text">实现机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#bh-%E6%9C%BA%E5%88%B6"><span class="nav-number">3.5.2.1.</span> <span class="nav-text">bh 机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AF%E4%B8%AD%E6%96%AD%E6%9C%BA%E5%88%B6"><span class="nav-number">3.5.2.2.</span> <span class="nav-text">软中断机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tasklet-%E6%9C%BA%E5%88%B6"><span class="nav-number">3.5.2.3.</span> <span class="nav-text">Tasklet 机制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">3.5.3.</span> <span class="nav-text">数据结构的定义</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8E%E8%BD%AF%E4%B8%AD%E6%96%AD%E7%9B%B8%E5%85%B3%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.5.3.1.</span> <span class="nav-text">与软中断相关的数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8E-tasklet-%E7%9B%B8%E5%85%B3%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.5.3.2.</span> <span class="nav-text">与 tasklet 相关的数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8E-bh-%E7%9B%B8%E5%85%B3%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.5.3.3.</span> <span class="nav-text">与 bh 相关的数据结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AF%E4%B8%AD%E6%96%AD%E3%80%81bh-%E5%8F%8A-tasklet-%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.5.4.</span> <span class="nav-text">软中断、bh 及 tasklet 的初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Tasklet-%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.5.4.1.</span> <span class="nav-text">Tasklet 的初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AF%E4%B8%AD%E6%96%AD%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.5.4.2.</span> <span class="nav-text">软中断的初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bh-%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.5.4.3.</span> <span class="nav-text">Bh 的初始化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E5%8D%8A%E9%83%A8%E5%88%86%E7%9A%84%E6%89%A7%E8%A1%8C"><span class="nav-number">3.5.5.</span> <span class="nav-text">后半部分的执行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Bh-%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">3.5.5.1.</span> <span class="nav-text">Bh 的处理</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Hao Yu</p>
+  <div class="site-description" itemprop="description">Introduce something interesting and recode learning process, some articles are written by others, the original link has been given as much as possible, thanks to the original author</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">128</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

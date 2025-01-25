@@ -1,0 +1,2462 @@
+<!DOCTYPE html>
+<html lang="zn-ch">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="https:&#x2F;&#x2F;sites.google.com&#x2F;lbl.gov&#x2F;cs267-spr2020&#x2F; lecture 2单处理器上大部分性能被浪费，主要是因为数据迁移时间太久。 编译器管理内存和寄存器，进行寄存器分配，决定什么时候load&#x2F;store，什么时候重用。编译器通过图染色的方式决定寄存器重用。 编译器的优化：  循环展开、合并、重排 删除死代码 指令重排来实现指令流水、提高寄存器重用 代码强度">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS267 并行计算应用课程笔记">
+<meta property="og:url" content="http://yoursite.com/2021/12/17/cs267/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="https:&#x2F;&#x2F;sites.google.com&#x2F;lbl.gov&#x2F;cs267-spr2020&#x2F; lecture 2单处理器上大部分性能被浪费，主要是因为数据迁移时间太久。 编译器管理内存和寄存器，进行寄存器分配，决定什么时候load&#x2F;store，什么时候重用。编译器通过图染色的方式决定寄存器重用。 编译器的优化：  循环展开、合并、重排 删除死代码 指令重排来实现指令流水、提高寄存器重用 代码强度">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/img/1638434520.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638547987.png">
+<meta property="og:image" content="http://yoursite.com/img/1638438675.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638446298.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638451987.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20211209095300.png">
+<meta property="og:image" content="http://yoursite.com/img/1639014623.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639015001.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639015250.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639015355.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639015632.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639015715.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639015856.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639015978.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638543408.png">
+<meta property="og:image" content="http://yoursite.com/img/1638584546.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638588722.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638588598.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638590925.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638599104.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638600585.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638601045.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638601080.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638684331.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638684798.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638688009.png">
+<meta property="og:image" content="http://yoursite.com/img/1638690323.png">
+<meta property="og:image" content="http://yoursite.com/img/1638690838.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638691213.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1638692558.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639013348.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639013397.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639013422.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639013868.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639219770.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639221788.png">
+<meta property="og:image" content="http://yoursite.com/img/1639222082.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639222886.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639223695.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639223973.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639225528.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639225591.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639228714.png">
+<meta property="og:image" content="http://yoursite.com/img/1639229379.png">
+<meta property="og:image" content="http://yoursite.com/img/1639230418.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639231792.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639232077.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639232472.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639233053.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639233973.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639233630.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639234011.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639234104.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639234278.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639234427.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639234459.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639234858.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639235433.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639236577.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639237679.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639237750.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639237869.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639238007.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639286406.png">
+<meta property="og:image" content="http://yoursite.com/img/1639286495.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639288578.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639289116.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639289379.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639289907.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639290675.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639291289.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639293311.png">
+<meta property="og:image" content="http://yoursite.com/img/1639293523.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639293800.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639294006.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639294596.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639295543.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639295978.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639296036.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639296095.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639296119.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639296143.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639296165.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639296196.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639296224.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639299481.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639301040.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639302042.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639302438.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639302466.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639741958.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639749602.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639749967.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639792446.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639793683.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639794567.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639795192.jpg">
+<meta property="og:image" content="http://yoursite.com/img/1639796568.jpg">
+<meta property="article:published_time" content="2021-12-17T09:17:00.000Z">
+<meta property="article:modified_time" content="2021-12-26T08:51:57.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="积累">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/1638434520.jpg">
+
+<link rel="canonical" href="http://yoursite.com/2021/12/17/cs267/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zn-ch'
+  };
+</script>
+
+  <title>CS267 并行计算应用课程笔记 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hao Yu's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">The program monkey was eaten by the siege lion.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zn-ch">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/12/17/cs267/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Hao Yu">
+      <meta itemprop="description" content="Introduce something interesting and recode learning process, some articles are written by others, the original link has been given as much as possible, thanks to the original author">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CS267 并行计算应用课程笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-12-17 17:17:00" itemprop="dateCreated datePublished" datetime="2021-12-17T17:17:00+08:00">2021-12-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-12-26 16:51:57" itemprop="dateModified" datetime="2021-12-26T16:51:57+08:00">2021-12-26</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a href="https://sites.google.com/lbl.gov/cs267-spr2020/">https://sites.google.com/lbl.gov/cs267-spr2020/</a></p>
+<h1 id="lecture-2"><a href="#lecture-2" class="headerlink" title="lecture 2"></a>lecture 2</h1><p>单处理器上大部分性能被浪费，主要是因为数据迁移时间太久。</p>
+<p>编译器管理内存和寄存器，进行寄存器分配，决定什么时候load/store，什么时候重用。编译器通过图染色的方式决定寄存器重用。</p>
+<p>编译器的优化：</p>
+<ul>
+<li>循环展开、合并、重排</li>
+<li>删除死代码</li>
+<li>指令重排来实现指令流水、提高寄存器重用</li>
+<li>代码强度降低，比如把乘法变成移位</li>
+</ul>
+<p>多级cache：</p>
+<pre><code>- 片上cache更快，但是更小。
+- 更大的cache有延迟，硬件需要更长的时间来检查地址，更多关联度也会延长时间
+- 可以利用第四级cache作为被置换出的cache的cache
+</code></pre><p>其他的cache包括：寄存器，TLB等。</p>
+<p>处理内存延迟：</p>
+<pre><code>- 在小而快的内存中保存数据并重用
+- 将一整块数据存入内存并使用
+- 程序利用向量化实现一条指令进行多次读或写
+- 程序预取或者延迟写
+</code></pre><p>blocking或者tiling是提高cache性能的好办法，使用分治将问题分割到适合cache的大小。</p>
+<p>SSE、SSE2：适合16bytes的类型，比如4个float、2个double或者16个byte。可以并行执行加、乘。但是需要对齐，连续。</p>
+<p>矩阵是2维数组，在存储上需要根据cache的特性存储，Fortran是列优先，对cache不友好。采用分块的方法进行并行化，存在理论上的最优化分块方法。这种算法就需要在递归时适当地切割。</p>
+<p><img src="/img/1638434520.jpg" alt=""></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">func C = RMM(A, B, n)</span><br><span class="line">    if n = 1</span><br><span class="line">        C = A * B</span><br><span class="line">    else &#123;</span><br><span class="line">        C11 = RMM(A11, B11, n/2) + RMM(A12, B21, n/2);</span><br><span class="line">        C12 = RMM(A11, B12, n/2) + RMM(A12, B22, n/2);</span><br><span class="line">        C21 = RMM(A21, B11, n/2) + RMM(A22, B21, n/2);</span><br><span class="line">        C22 = RMM(A21, B12, n/2) + RMM(A22, B22, n/2);</span><br><span class="line">    &#125;</span><br><span class="line">    return</span><br></pre></td></tr></table></figure>
+<p>递归的数据分布，可以提高数据局部性，最小化内存延迟，例如画Z字的方式，或者看“cache oblivious algorithm”。好处是可以在任何cache大小下实现较好的性能，不好的是计算index很困难。</p>
+<p>删除假的依赖，比如使用局部变量，进行指令重排：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a[i] = b[i] + c;</span><br><span class="line">a[i+<span class="number">1</span>] = b[i+<span class="number">1</span>] * d;</span><br></pre></td></tr></table></figure></p>
+<p>可能会有假的数据依赖，借助局部变量改成<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> f1 = b[i];</span><br><span class="line"><span class="type">float</span> f2 = b[i+<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">a[i] = f1 + c;</span><br><span class="line">a[i+<span class="number">1</span>] = f2 * d;</span><br></pre></td></tr></table></figure></p>
+<p>或者对频繁使用的变量进行预先加载，使寄存器中保持有变量。</p>
+<p>循环展开促进指令级并行，提高流水线性能，或者向量化。</p>
+<p>再设计数据结构时注意cache局部性，比如多使用struct。</p>
+<p>strassen’s矩阵乘法，将8次乘+4次加优化到7次乘+18次加，能做到O(n^2.81)：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Let M = | m11 m12| = |a11 a12| |b11 b12|</span><br><span class="line">        | m21 m22|   |a21 a22| |b21 b22|</span><br><span class="line"></span><br><span class="line">Let p1 = (a12 - a22) * (b21 + b22)</span><br><span class="line">    p2 = (a11 + a22) * (b11 + b22)</span><br><span class="line">    p3 = (a11 - a21) * (b11 + b12)</span><br><span class="line">    p4 = (a11 + a12) * b22</span><br><span class="line">    p5 = a11 * (b12 - b22)</span><br><span class="line">    p6 = a22 * (b21 - b11)</span><br><span class="line">    p7 = (a21 + a22) * b11</span><br><span class="line"></span><br><span class="line">Then m11 = p1 + p2 - p4 + p6</span><br><span class="line">     m12 = p4 + p5</span><br><span class="line">     m21 = p6 + p7</span><br><span class="line">     m22 = p2 - p3 + p5 - p7</span><br></pre></td></tr></table></figure></p>
+<p>其他一些矩阵矩阵乘算法：</p>
+<ul>
+<li>世界纪录是O(n^2.37548)</li>
+<li>2.37548 reduced to 2.37293<ul>
+<li>Virginia Vassilevska Williams, UC Berkeley &amp; Stanford, 2011</li>
+</ul>
+</li>
+<li>2.37293 reduced to 2.37286<ul>
+<li>Francois Le Gall, 2014</li>
+</ul>
+</li>
+<li>大概能做到O(n^2+e)<ul>
+<li>Cohn, Umans, Kleinberg, 2003</li>
+</ul>
+</li>
+</ul>
+<p>CNN在计算什么？<br><img src="/img/1638547987.png" alt=""></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">for k=1:K, for h=1:H, for w=1:W, for r=1:R,</span><br><span class="line">    for s=1:S, for c=1:C, for b=1:B</span><br><span class="line">        Out(k, h, w, b) += Image(r+w, s+h, c, b) * Filter( k, r, s, c )</span><br></pre></td></tr></table></figure>
+<h1 id="lecture-3"><a href="#lecture-3" class="headerlink" title="lecture 3"></a>lecture 3</h1><p>几种并行的模型<br><img src="/img/1638438675.jpg" alt=""></p>
+<p>如何并行化下边的程序，每一个y依赖于前一个：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">y[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> i = <span class="number">1</span> : n</span><br><span class="line">    y[i] = y[i<span class="number">-1</span>] + x[i];</span><br></pre></td></tr></table></figure></p>
+<p>这个图应该是以树形计算前缀和的示意图，最上边是原始数组，中间是逐次计算两两和，最下边是最终结果。<br><img src="/img/1638446298.jpg" alt=""></p>
+<h1 id="lecture-4"><a href="#lecture-4" class="headerlink" title="lecture 4"></a>lecture 4</h1><p>SIMD：数据并行的语言非常成功，不规则的数据（稀疏矩阵乘向量）比较适配，但是不规则的计算（分治、递归等）不太行。</p>
+<p>共享内存多处理器时代，出现了一些共享内存模型，POSIX Threads、OpenMP等</p>
+<p>集群时代，出现了MPI。</p>
+<p>每个线程有一些私有变量，如本地栈。也有一些共享的变量，如通过malloc的变量，静态变量等。线程通过读写共享变量实现数据通信。</p>
+<p>pthreads是POSIX线程接口，用来创建和同步线程，但是没有对通信的显示支持，因为共享内存是隐式的。<code>pthread_join</code>意思是等待，直到线程结束。创建线程的开销是不能被忽略的，因为涉及了系统调用。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">pthread_create</span><span class="params">(<span class="type">pthread_t</span>*, <span class="type">const</span> <span class="type">pthread_attr_t</span>*, <span class="type">void</span> *(*)(<span class="type">void</span>*), <span class="type">void</span>*)</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">pthread_t</span> threads[<span class="number">16</span>];</span><br><span class="line">    <span class="type">int</span> tn;</span><br><span class="line">    <span class="keyword">for</span> (tn = <span class="number">0</span>; tn &lt; <span class="number">16</span>; tn ++)</span><br><span class="line">        pthread_create(&amp;threads[tn], <span class="literal">NULL</span>, function, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">for</span> (tn = <span class="number">0</span>; tn &lt; <span class="number">16</span>; tn ++)</span><br><span class="line">        pthread_join(threads[tn], <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>数据竞争即为各个线程竞争同一个变量。</p>
+<p>mutexes是互斥锁。当线程需要访问一个变量时，需要加锁。信号量允许k个线程同时访问资源，适用于有限个资源的时候。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">pthread_mutex_t</span> amutex = PTHREAD_MUTEX_INITIALIZER;</span><br><span class="line"><span class="comment">// or pthread_mitex_init(&amp;amutex, NULL);</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">pthread_mutex_lock</span><span class="params">(amutex)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">pthread_mutex_unlock</span><span class="params">(amutex)</span>;</span><br></pre></td></tr></table></figure></p>
+<p>POSIX线程基于OS，可以被多种语言使用，但是创建线程的开销大，数据竞争的bug也有很多。</p>
+<p>openmp有C/C++和Fortran的接口：</p>
+<ul>
+<li>预处理指令</li>
+<li>库函数</li>
+<li>环境变量</li>
+</ul>
+<p>它是一个方便的线程级内存共享编程工具，允许把程序分成穿兴趣和并行区，而不是纯线程。也不需要进行栈的管理，提供了同步命令。</p>
+<p>最经常用的OpenMP命令如下：<br><img src="/img/1638451987.jpg" alt=""></p>
+<p>OpenMP的基本语法：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">pragma</span> omp construct [clause [clause]...]</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> omp parallel private(x) </span></span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;omp.h&gt;</span></span></span><br></pre></td></tr></table></figure></p>
+<p>OpenMP使用的是fork-join模型，主线程派生一系列线程，等待子线程结束后继续执行，遇到需要多线程的代码块时再fork线程。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">double</span> A[<span class="number">1000</span>];</span><br><span class="line">omp_set_num_threads(<span class="number">4</span>);</span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> omp parallel</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> id = omp_get_thread_num();</span><br><span class="line">    pooh(id, A);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>各个线程共享A数组，但是每个线程都有一个id变量。</p>
+<p>可以通过<code>omp_get_thread_num</code>请求创建多少个线程，但不是你要创建多少线程就是多少线程，一旦请求了一个数量的线程数并创建，系统就不会减少这个数量。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">long</span> num_steps = <span class="number">100000</span>;</span><br><span class="line"><span class="type">double</span> step;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">double</span> pi, sum = <span class="number">0.0</span>;</span><br><span class="line">    step = <span class="number">1.0</span>/(<span class="type">double</span>)num_steps;</span><br><span class="line"></span><br><span class="line">    <span class="meta">#<span class="keyword">pragma</span> omp parallel</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> i, id, nthreads;</span><br><span class="line">        <span class="type">double</span> x;</span><br><span class="line">        id = omp_get_thread_num();</span><br><span class="line">        nthrds = omp_get_num_threads();</span><br><span class="line">        <span class="keyword">if</span> (id == <span class="number">0</span>)</span><br><span class="line">            nthreads = nthrds;</span><br><span class="line">        <span class="keyword">for</span> (i = id; i &lt; num_steps; i += nthrds) &#123;</span><br><span class="line">            x = (i+<span class="number">0.5</span>) / step;</span><br><span class="line">            sum[id] += <span class="number">4</span> / (<span class="number">1.0</span> + x*x);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; nthreads; i ++)</span><br><span class="line">        pi += step * sum[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>每个处理器有自己的多级cache，多处理器系统中存在cache一致性问题。内存中的一个数字被放到处理器P1的cache中，又被放到P2的cache中，如果P1修改了数字，P2是不知道的，这样就不一致了。写回策略中，数据被写回是取决于什么时候，被哪个处理器写回的。</p>
+<p>使用cache一致性协议来写回，但是在多处理器中并不具有可扩展性。</p>
+<p>内存总线是一个广播的机制，cache中保存着它们存在哪个地址，cache控制器监控着总线上的所有cache事务，一个事务是一个相关的事务，如果涉及的cache行在本地处理器的cache中。</p>
+<p>如果独立的数据元素碰巧位于同一个缓存行上，每次更新都会导致缓存行在线程之间“来回晃动”……这称为“假共享”。</p>
+<p>如果将标量提升到数组以支持创建 SPMD 程序，则数组元素在内存中是连续的，因此共享缓存行导致可扩展性较差。解决方案：填充数组，以便您使用的元素位于不同的缓存行上。</p>
+<p>同步用于施加顺序约束并保护对共享数据的访问，包括：</p>
+<ul>
+<li>互斥区</li>
+<li>barrier</li>
+</ul>
+<p>被互斥区包裹起来的部分每次只能有一个线程访问，barrier是直到所有线程都到这个barrier了才一起往下执行。</p>
+<p>for循环可以被并行化，其中的i是默认私有的，各个线程等到for循环完成后再一起执行：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">pragma</span> omp parallel</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="meta">#<span class="keyword">pragma</span> omp for</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; N; i ++) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>schedule命令决定了任务怎么映射到每个进程。有static和dynamic两种，static是静态的，在编译时决定；dynamic会动态调度或者从任务队列中分配，在执行过程中决定。</p>
+<p>reduction即规约，进行最大、最小、平均等操作。每一个列表中的变量会被复制到每个线程，并初始化，对局部变量进行操作，局部变量再规约到主线程。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">pragma</span> omp parallel for reduction (+:ave)</span></span><br></pre></td></tr></table></figure></p>
+<p>因为barrier很耗时，而for循环结束之前都会有一个默认的barrier，所以可以在for循环之前使用nowait实现不barrier。</p>
+<p>可以针对不同变量选择不同的共享策略，比如：shared、private(为变量创建一个本地拷贝，且不初始化，且原来的全局变量不变)、firstprivate。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">pragma</span> omp parallel for private(tmp)</span></span><br><span class="line"><span class="type">int</span> tmp = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; <span class="number">1000</span>; j ++)</span><br><span class="line">    tmp += j;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, tmp); <span class="comment">// tmp为0</span></span><br></pre></td></tr></table></figure></p>
+<p>default(none)强制您为出现在范围内的变量定义存储属性……如果失败，编译器会报错。可以将default子句放在parallel 和parallel + workshare 结构上。j和y没有规定存储策略，编译器会报错。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">pragma</span> omp parallel for default(none) reduction(*:x)</span></span><br><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; N; i ++)</span><br><span class="line">    <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; <span class="number">3</span>; j ++)</span><br><span class="line">        x += foobar(i, j, y);</span><br></pre></td></tr></table></figure></p>
+<p>tasks是一系列独立的work，由执行代码和计算的数据组成，线程被分配执行每个task的工作。</p>
+<p>下例中组成一个task的二叉树，直到一个task之前的所有task被完成，这个task才能被完成。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">fib</span><span class="params">(<span class="type">int</span> n)</span> &#123;</span><br><span class="line">    <span class="type">int</span> x, y;</span><br><span class="line">    <span class="keyword">if</span> (n &lt; <span class="number">2</span>) <span class="keyword">return</span> n;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> omp task shared(x);</span></span><br><span class="line">    x = fib(n<span class="number">-1</span>);</span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> omp task shared(y);</span></span><br><span class="line">    y = fib(n<span class="number">-2</span>);</span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> omp taskwait;</span></span><br><span class="line">    <span class="keyword">return</span> x+y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> NM = <span class="number">5000</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">#<span class="keyword">pragma</span> omp parallel</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="meta">#<span class="keyword">pragma</span> omp single</span></span><br><span class="line">        fib(NM);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>single表示这个代码块只能被一个线程执行，这个代码块之后有一个默认的barrier。</p>
+<p>flush操作</p>
+<ul>
+<li>定义一个序列点，在该点线程强制执行一致的内存视图。</li>
+<li>对于其他线程可见并与刷新操作（flush-set）相关联的变量<ul>
+<li>编译器不能在刷新周围进行刷新集的加载/存储：</li>
+<li>该线程之前对flush-set 的所有读/写都已完成</li>
+<li>没有发生此线程对刷新集的后续读/写</li>
+<li>刷新集中的变量从临时存储移动到共享内存。</li>
+<li>刷新后刷新集中变量的读取从共享内存加载</li>
+</ul>
+</li>
+</ul>
+<h1 id="lecture-5"><a href="#lecture-5" class="headerlink" title="lecture 5"></a>lecture 5</h1><p>使用性能模型或工具，以预测架构的性能。需要假定运行时间与需要的运算、数据移动的次数相关，其中，数据移动的次数更相关，因为需要理解cache的行为。</p>
+<p>串行机器在访问内存时会遇到延迟，而并行机器在同步、点对点通信、规约时会遇到延迟，所以可以使用算法的依赖链进行分类。</p>
+<p>数据移动复杂性</p>
+<ul>
+<li>假设运行时间与访问（或移动）的数据量相关</li>
+<li>易于计算访问的数据量……计数数组访问</li>
+<li>移动的数据更加复杂，因为它需要了解缓存行为……</li>
+</ul>
+<p>计算深度</p>
+<ul>
+<li>多核处理器甚至单核都依赖于并行性</li>
+<li>一些算法有一些固有的串行路径</li>
+<li>深度是最长的依赖链</li>
+<li>考虑在无限数量的处理器上运行而没有OMP、通信或循环开销</li>
+</ul>
+<p>在分布式内存中，通过在处理器之间发送消息来进行通信。消息传递时间可能受到几个组件的限制……</p>
+<ul>
+<li>开销（发送/接收消息的 CPU 时间）</li>
+<li>延迟（时间消息在网络中；可以隐藏）</li>
+<li>消息吞吐量（发送小消息的速率……消息/秒）</li>
+<li>带宽（可以发送大消息的速率 GBytes/s）</li>
+</ul>
+<p>我们算法的分布式内存版本可以根据 N 和 P（#processors）由这些部分不同地描述</p>
+<p>可以用多种方法建模性能，前三个是roofline模型，中间两个是LogCAche模型，后三个是LogGPa模型：</p>
+<ul>
+<li>浮点数操作：Flop/s</li>
+<li>cache数据操作：GB/s</li>
+<li>DRAM数据操作：GB/s</li>
+<li>总线数据移动：PCIe带宽</li>
+<li>Depth：OMP嵌套深度</li>
+<li>MPI数据大小：带宽</li>
+<li>MPI发送/等待比例：网络延迟</li>
+</ul>
+<p>很多模型都追踪延迟来预测性能，延迟隐藏衍生出多种方法，例如乱序执行（硬件发现并行性），硬件预取（硬件自动家在数据），大规模线程并行（独立的线程提高并行）。</p>
+<p>roofline模型是基于吞吐的模型，追踪比例而不是时间。</p>
+<p>DRAM的roofline：人们可以希望永远达到峰值性能（FLOP/s），然而，有限的局部性（重用）和带宽限制了性能。我们假定：</p>
+<ul>
+<li>理想化的处理器/缓存</li>
+<li>冷启动（DRAM 中的数据）</li>
+</ul>
+<p><img src="/img/20211209095300.png" alt=""><br>Arithmetic Intensity (AI) = Flops / Bytes (as presented to DRAM )</p>
+<p>Roofline 中最重要的概念是算术强度</p>
+<ul>
+<li>数据局部性的度量（数据重用）</li>
+<li>执行的总Flops与移动的总字节数的比率</li>
+<li>对于 DRAM Roofline…<ul>
+<li>进出 DRAM 的总字节数，包括所有缓存和预取器效果</li>
+<li>可能与总加载/存储（请求的字节数）有很大不同</li>
+<li>等于持续 GFLOP/s 与持续 GB/s 的比率</li>
+</ul>
+</li>
+</ul>
+<p>使用算术强度作为 x 轴绘制roofline边界，对数刻度使画图变得容易，根据摩尔定律推断性能等……<br><img src="/img/1639014623.jpg" alt=""></p>
+<p>一般的机器现在都是5-10flops每个字节，40-80flops每个double。对于以下计算：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">pragma</span> omp parallel for</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; i ++)</span><br><span class="line">    z[i] = x[i] + alpha*y[i];</span><br></pre></td></tr></table></figure><br>每次迭代2个flops，传送24个bytes（读x[i]，y[i]，写z[i]）AI = 0.083。<br><img src="/img/1639015001.jpg" alt=""></p>
+<p>每次循环7flops，每个点8次内存访问，除了一次读和1次写，cache都能搞定，AI=7/16=0.44<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">pragma</span> omp parallel for</span></span><br><span class="line"><span class="keyword">for</span>(k=<span class="number">1</span>;k&lt;dim<span class="number">+1</span>;k++)&#123;</span><br><span class="line">    <span class="keyword">for</span>(j=<span class="number">1</span>;j&lt;dim<span class="number">+1</span>;j++)&#123;</span><br><span class="line">        <span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;dim<span class="number">+1</span>;i++)&#123;</span><br><span class="line">            <span class="keyword">new</span>[k][j][i] = <span class="number">-6.0</span>*old[k ][j ][i ]</span><br><span class="line">                + old[k ][j ][i<span class="number">-1</span>]</span><br><span class="line">                + old[k ][j ][i<span class="number">+1</span>]</span><br><span class="line">                + old[k ][j<span class="number">-1</span>][i ]</span><br><span class="line">                + old[k ][j<span class="number">+1</span>][i ]</span><br><span class="line">                + old[k<span class="number">-1</span>][j ][i ]</span><br><span class="line">                + old[k<span class="number">+1</span>][j ][i ];</span><br><span class="line">&#125;&#125;&#125;</span><br></pre></td></tr></table></figure><br><img src="/img/1639015250.jpg" alt=""></p>
+<p>分层roofline</p>
+<ul>
+<li>处理器具有多级内存/缓存<ul>
+<li>寄存器</li>
+<li>L1、L2、L3 缓存</li>
+<li>MCDRAM/HBM（KNL/GPU 设备内存）</li>
+<li>DDR（主存储器）</li>
+<li>NVRAM（非易失性存储器）</li>
+</ul>
+</li>
+<li>应用程序在每个级别都有局部性</li>
+<li>独特的数据移动意味着独特的AI</li>
+<li>此外，每个级别都有独特的峰值和持续带宽</li>
+</ul>
+<p><img src="/img/1639015355.jpg" alt=""></p>
+<p>片内并行性：我们假设一个可以获得高flops的运算，也有高局部性。实际上，我们必须……</p>
+<ul>
+<li>向量化循环（每条指令 16 个触发器）</li>
+<li>使用特殊说明（例如 FMA）</li>
+<li>确保 FP 指令在指令组合中占主导地位</li>
+<li><p>使用所有内核和插槽</p>
+</li>
+<li><p>大多数处理器利用某种形式的 SIMD 或向量。</p>
+<ul>
+<li>KNL 使用 512b 向量 (8x64b)</li>
+<li>GPU 使用 32 线程扭曲 (32x64b)</li>
+</ul>
+</li>
+<li>实际上，应用程序是标量和向量指令的混合体。<ul>
+<li>性能是 SIMD 和无 SIMD 之间的加权平均值</li>
+<li>有一个基于这个加权平均值的隐含上限</li>
+</ul>
+</li>
+</ul>
+<p><img src="/img/1639015632.jpg" alt=""></p>
+<p>我们可以仅使用强制缓存未命中来绑定 AI</p>
+<ul>
+<li>但是，写分配缓存会降低 AI</li>
+<li>缓存容量未命中可能会造成巨大损失</li>
+<li>计算墙转换成内存墙</li>
+</ul>
+<p><img src="/img/1639015715.jpg" alt=""></p>
+<p>由于计算与内存交互影响，flops可能不能作为优化的依据，所以就可以把AI排序，将这些部分的性能与机器扩展性/容量进行比较。roofline附近的内核正在充分利用计算资源</p>
+<ul>
+<li>内核可能具有低性能 (GFLOP/s)，但可以很好地利用机器</li>
+<li>内核可以具有高性能 (GFLOP/s)，但不能很好地利用机器</li>
+</ul>
+<p><img src="/img/1639015856.jpg" alt=""></p>
+<p>AI（数据移动）因线程并发性和问题大小而异</p>
+<ul>
+<li>大问题（绿色和红色）每个线程移动更多数据，最终耗尽缓存容量</li>
+<li>由此导致的 AI 下降意味着它们迅速达到带宽上限并降级。</li>
+<li>较小的问题会减少 AI，但不要达到带宽上限</li>
+</ul>
+<p><img src="/img/1639015978.jpg" alt=""></p>
+<p>现在CPU采用多种方法来增加浮点效率。比如使用fused multiply add来使乘法和加法在同一个流水线中，使用向量指令。</p>
+<p>三种方法来提高性能：增加片上性能（比如让编译器进行向量化），增加内存带宽（NUMA），最小化数据移动。</p>
+<p>如何构建roofline？要创建 Roofline 模型，我们必须执行基准测试……</p>
+<ul>
+<li>持续的flops<ul>
+<li>双精度/单精度/半精度</li>
+<li>有和没有 FMA（例如编译器标志）</li>
+<li>有和没有 SIMD（例如编译器标志）</li>
+</ul>
+</li>
+<li>持续带宽<ul>
+<li>在每个级别的内存/缓存之间进行测量</li>
+<li>迭代各种大小的工作集并识别平台</li>
+<li>识别带宽不对称（读：写比率）</li>
+</ul>
+</li>
+<li>基准测试必须运行足够长的时间以观察</li>
+</ul>
+<p>衡量应用程序 AI 和性能</p>
+<ul>
+<li>要使用 Roofline 来描述执行的特征，我们需要……<ul>
+<li>时间</li>
+<li>flops（=&gt; flops/时间）</li>
+<li>每级内存之间的数据移动（=&gt; FLOPs / GB’s）</li>
+</ul>
+</li>
+<li>我们可以查看完整的应用程序……<ul>
+<li>粗粒度，平均 30 分钟</li>
+<li>遗漏了很多细节和瓶颈</li>
+</ul>
+</li>
+<li>或者我们可以查看单个循环嵌套……<ul>
+<li>需要逐个循环地进行自动检测</li>
+<li>此外，我们可能应该逐核区分数据移动或flops</li>
+</ul>
+</li>
+</ul>
+<p>我们如何计算 FLOP？</p>
+<ul>
+<li>手动计数<ul>
+<li>遍历每个循环嵌套并计算 FP 操作的数量</li>
+<li>最适合确定性循环边界</li>
+<li>或按迭代次数参数化（运行时记录）</li>
+<li>不可扩展</li>
+</ul>
+</li>
+<li>性能计数器<ul>
+<li>之前/之后读取计数器</li>
+<li>更准确</li>
+<li>低开销 (&lt;%) == 可以运行完整的 MPI 应用程序</li>
+<li>可以检测负载不平衡</li>
+<li>需要特权访问</li>
+<li>需要手动检测（+开销）或完整的应用程序表征</li>
+<li>差的counter得到的数据=垃圾</li>
+<li>可能无法区分 FMADD 和 FADD</li>
+<li>没有深入了解特殊流水线</li>
+</ul>
+</li>
+<li>二进制指令测试器<ul>
+<li>在运行时自动检查装配</li>
+<li>最准确</li>
+<li>可以按类别/类型统计指令</li>
+<li>可以检测负载不平衡</li>
+<li>可以包括来自非 FP 指令的效果</li>
+<li>自动应用于多个循环嵌套</li>
+<li>大于10 倍的开销</li>
+</ul>
+</li>
+</ul>
+<p>我们如何衡量数据移动？</p>
+<ul>
+<li>手动计数<ul>
+<li>遍历每个循环嵌套并估计将移动多少字节</li>
+<li>使用缓存的健壮模型</li>
+<li>最适合从 DRAM 流的简单循环</li>
+<li>对于复杂的缓存不适用</li>
+<li>不可扩展</li>
+</ul>
+</li>
+<li>性能计数器<ul>
+<li>之前/之后读取计数器</li>
+<li>适用于全层级（L2、DRAM）</li>
+<li>更准确</li>
+<li>低开销 (&lt;%) == 可以运行完整的 MPI 应用程序</li>
+<li>可以检测负载不平衡</li>
+<li>需要特权访问</li>
+<li>需要手动检测（+开销）或完整的应用程序表征</li>
+</ul>
+</li>
+<li>缓存模拟<ul>
+<li>构建一个由内存地址驱动的全缓存模拟器</li>
+<li>适用于全层级和多核</li>
+<li>可以检测负载不平衡</li>
+<li>自动应用于多个循环嵌套</li>
+<li>忽略了预取器</li>
+<li>大于 10 倍的开销</li>
+</ul>
+</li>
+</ul>
+<p>工具：Intel Advisor</p>
+<h1 id="lecture-6"><a href="#lecture-6" class="headerlink" title="lecture 6"></a>lecture 6</h1><p>并行化和数据局部性都对性能很重要，因为数据迁移是很费劲的。很多对象是独立于其他对象来操作的，更多的是依赖于与之相邻的对象，其依赖关系很简单。</p>
+<p>同时讲了一些计算域剖分的问题，减少通信的同时实现局部性。</p>
+<p>并行图计算：如果两个进程的图相连，则需要交互，他的数据结构与一般的图算法不一样，将图剖分到各个节点上，平均分布实现均衡，同时最小化节点之间边的关系减少通信。</p>
+<p>粒子系统模拟需要实现每个粒子受到的作用和对其他粒子的作用，这就需要通信，通常是对整个区域进行剖分，区域之间进行halo交换。第一个挑战就是在处理区域边界上的粒子碰撞，第二个挑战是如果粒子成簇状分布的话会不均衡，为了减少不均衡，对空间也采取不均衡划分，采用k-d树的形式对粒子进行划分。</p>
+<p>远域强迫指的是每个进程都跟其他进程的粒子进行作用，采用循环的方式进行数据通信，最中每个进程得到所有其他进程的数据。如果使用树形剖分的话，将每一簇粒子看成一个整体，降低复杂度。</p>
+<p>假定ODE是<code>x(t) = f(x) = A * x(t)</code>，A是一个稀疏矩阵，显式方法可以转化成一个近似的稀疏矩阵乘，隐式方法可以转化成一个线性方程。另外还有直接方法，做LU分解，迭代方法（Jacobi、Successive over-relaxation、Conjugate Gradient）等。</p>
+<p>稀疏矩阵向量乘：稀疏矩阵可以只保存非0元，CSR方法是最简单的方法，对稀疏矩阵m*n，一个指针数组有m个元素，每个元素代表着第i行所有元素的起始位置。val数组和ind数组保存着实际的元素。<br><img src="/img/1638543408.png" alt=""></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">for each row i</span><br><span class="line">    for k = ptr[i] to ptr[i+1]-1 do</span><br><span class="line">        y[i] = y[i] + val[k] * x[ind[k]];</span><br></pre></td></tr></table></figure>
+<p>如果要并行化，需要知道，哪个进程拥有<code>y[i]</code>、<code>x[i]</code>、<code>A[i,j]</code>，和哪个进程应该计算最终的<code>y[i] = sum(from 1 to n) A[i,j] * x[j]</code>。</p>
+<p>首先将下标1到n进行剖分，对于进程k，它存储了每一个下标i的<code>y[i]</code>、<code>x[i]</code>、<code>A[i,...]</code>，同时计算了<code>y[i] = (row i of A) * x</code>，这里需要通信了。</p>
+<p>能否将矩阵重排，使所有非零元素都在对角块上？这样所有运算都可以在本地完成。重排的目标</p>
+<ul>
+<li>平衡负载（如何测量负载？）。<ul>
+<li>大约相等数量的非零值（不一定是行）</li>
+</ul>
+</li>
+<li>平衡存储（每个处理器存储多少？）。<ul>
+<li>大约相等数量的非零值</li>
+</ul>
+</li>
+<li>尽量减少通信<ul>
+<li>最小化对角块外的非零值</li>
+<li>相关优化标准是移动对角线附近的非零值</li>
+</ul>
+</li>
+<li>改进寄存器和缓存重用<ul>
+<li>在小的垂直块中将非零值分组以便源 (x) 元素加载到缓存或寄存器中可以重用（时间局部性）</li>
+<li>在小的水平块中分组非零值，以便靠近源 (x)中的元素可以命中cache（空间局部性）</li>
+</ul>
+</li>
+<li>其他算法出于其他原因对行/列重新排序<ul>
+<li>在高斯消元后减少矩阵中的非零值</li>
+<li>提高数值稳定性</li>
+</ul>
+</li>
+</ul>
+<p>图的并行化和矩阵并行化类似。</p>
+<p>自适应网格加密：并行化基于patches。</p>
+<p>非结构网格的挑战：</p>
+<ul>
+<li>如何首先生成它们<ul>
+<li>从对象的几何描述开始</li>
+<li>三角化</li>
+<li>3D 更难！</li>
+</ul>
+</li>
+<li>如何划分它们<ul>
+<li>ParMetis，一个并行图分区器</li>
+</ul>
+</li>
+<li>如何设计迭代求解器<ul>
+<li>PETSc，一种用于科学计算的便携式可扩展工具包</li>
+<li>Prometheus，一个用于有限元问题的多重网格求解器</li>
+</ul>
+</li>
+<li>如何设计直接求解器<ul>
+<li>SuperLU，并行稀疏高斯消除</li>
+</ul>
+</li>
+</ul>
+<h1 id="lecture-7"><a href="#lecture-7" class="headerlink" title="lecture 7"></a>lecture 7</h1><p>CPU中有取指、解码、ALU、运行上下文、乱序控制逻辑、指令预测、数据预取、cache等模块。第一个优化的方法是取消让单指令流跑得更快的部分，只剩下取指、解码、ALU运行上下文模块，多个线程共享指令流。第二个方法，让多个ALU共享取指令部分，共享部分运行上下文。</p>
+<p>如果遇到了分支，那么不是所有的ALU都运行相同的分支，会遇到暂停，通过切换来隐藏延迟。</p>
+<ul>
+<li>使用许多精简的内核并行运行；</li>
+<li>核心打包大量 ALU；</li>
+<li>通过交错执行来避免延迟停滞；<ul>
+<li>当一组停滞时，切换到工作准备就绪的另一组</li>
+</ul>
+</li>
+</ul>
+<p>SIMD单指令流多数据流架构充分使用了数据并行，并行暴露于用户和编译器。SIMD的发展如下：<br><code>MMS（8*8 bit int）</code> —-&gt; <code>SSE（4*32 bit FP）</code> —-&gt; <code>SSE2（2*64 bit FP）</code> —-&gt; <code>SSE3（hroizontal ops）</code> —-&gt; <code>SSSE3</code> —-&gt; <code>SSE4.1</code> —-&gt; <code>SSE4.2</code> —-&gt; <code>AVX（8*32 bit FP）</code> —-&gt; <code>AVX+FMA（3 operand）</code> —-&gt; <code>AVX2（256 bit int ops）</code> —-&gt; <code>AVX-512（512 bit）</code></p>
+<p>GPU使用的是单指令流多线程（SIMT），每个线程有自己的寄存器组，且可能执行不同的流程，单指令流可以在多个地址上执行。</p>
+<ul>
+<li>低占用率会大大降低性能。</li>
+<li>控制流分散会大大降低性能。</li>
+<li>同步选项非常有限</li>
+</ul>
+<p>CUDA是用于SIMT的模型，具有可扩展性。</p>
+<p>block有id，每个块内共享内存，可以是1、2、3维；block内有thread，thread有自己的寄存器和私有内存，可以是1、2、3维。2/3维只是组织方式，通过一维手段同样可以达到2/3维的效果。<br><img src="/img/1638584546.jpg" alt=""></p>
+<p>CUDA的线程是独立运行的，有他自己的程序计数器（PC）、变量寄存器、处理器状态位等，不会内定如何调度。线程可能会被映射到GPU上，成为物理线程；也可能在多核CPU下，1 block=1个物理线程，成为虚拟线程。</p>
+<p><img src="/img/1638588722.jpg" alt=""></p>
+<p>CUDA支持：</p>
+<ul>
+<li>线程并行<ul>
+<li>每线程都是独立运行的</li>
+</ul>
+</li>
+<li>数据并行</li>
+<li>任务并行<ul>
+<li>不同block是独立的</li>
+<li>独立的核运行不同的流</li>
+</ul>
+</li>
+</ul>
+<p>线程被分到不同的block中，同一个block中的线程可以合作，不同block的线程不能合作。不同的block之间可以协调但是不能同步，容易死锁；可以进行多种交互。</p>
+<ol>
+<li>在GPU上为数据分配空间</li>
+<li>创建CPU上的数据</li>
+<li>数据复制到GPU上</li>
+<li>调用kernel程序来运行GPU</li>
+<li>结果数据从GPU拷贝到CPU</li>
+<li>释放GPU的空间</li>
+<li>释放CPU的空间</li>
+</ol>
+<p>三种不同的函数：</p>
+<ul>
+<li><code>__device__ float DFunc()</code>运行在Device上，只能从Device上调用</li>
+<li><code>__global__ void kernel()</code>运行在Device上，只能从host上调用，只能返回void</li>
+<li><code>__host__ float HFunc()</code>运行在host上，只能从host上调用</li>
+</ul>
+<p>简单的调用：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// CUDA Kernel function to add the elements</span></span><br><span class="line"><span class="comment">// of two arrays on the GPU</span></span><br><span class="line">__global__</span><br><span class="line"><span class="type">void</span> <span class="title function_">add</span><span class="params">(<span class="type">float</span> *a, <span class="type">float</span> *b, <span class="type">float</span> *c)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> i = blockId.x * blockDim.x + threadId.x;</span><br><span class="line">    c[i] = a[i] + b[i];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Run N/256 blocks of 256 threads each</span></span><br><span class="line">    vecAdd&lt;&lt;&lt;N/<span class="number">256</span>, <span class="number">256</span>&gt;&gt;&gt;(d_a, d_b, d_c);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>数据管理：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> N 256*1024</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">float</span> *h_a = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="type">float</span>) * N);</span><br><span class="line">    <span class="type">float</span> *h_b = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="type">float</span>) * N);</span><br><span class="line">    <span class="type">float</span> *h_c = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="type">float</span>) * N);</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> *d_a, *d_b, *d_c;</span><br><span class="line">    cudaMalloc(&amp;d_a, <span class="keyword">sizeof</span>(<span class="type">float</span>) * N);</span><br><span class="line">    cudaMalloc(&amp;d_b, <span class="keyword">sizeof</span>(<span class="type">float</span>) * N);</span><br><span class="line">    cudaMalloc(&amp;d_c, <span class="keyword">sizeof</span>(<span class="type">float</span>) * N);</span><br><span class="line"></span><br><span class="line">    cudaMemcpy(d_a, h_a, <span class="keyword">sizeof</span>(<span class="type">float</span>) * N);</span><br><span class="line">    cudaMemcpy(d_b, h_b, <span class="keyword">sizeof</span>(<span class="type">float</span>) * N);</span><br><span class="line"></span><br><span class="line">    vecAdd&lt;&lt;&lt;cell(N/<span class="number">256</span>), <span class="number">256</span>&gt;&gt;&gt;(d_a, d_b, d_c);</span><br><span class="line">    cudaMemcpy(h_c, d_c, <span class="keyword">sizeof</span>(<span class="type">float</span>) * N, cudaMemcpyDeviceToHost);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>CUDA程序一般都要求具有大量并行性，同时局部性也很重要，因为GPU没有能够隐藏延迟的硬件。</p>
+<p>每个线程和block都有自己专属的私有内存，而各个kernel之间有共享的全局内存。</p>
+<p>同步：</p>
+<ul>
+<li>一个block中的线程可能会互相同步</li>
+<li>block可以通过原子内存操作来协调运行<ul>
+<li>例如通过一个共享的自增队列指针</li>
+</ul>
+</li>
+<li>互相依赖的kernel可能有隐式的barrier</li>
+</ul>
+<p>访问同一个内存地址会造成冲突，变成顺序的访问。连续的32位字被分配给连续的地址。对全局内存也会有这种问题，从Fermi架构开始，全局内存地址会被hash，从而全局地址冲突不会再发生。</p>
+<p>每一个load指令都会带来一系列对齐且连续的内存，称为页。硬件自动将从一个warp的不同线程发出的请求合并到同一个page。</p>
+<p>以下代码启动256个线程计算数组和。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;math.h&gt;</span></span></span><br><span class="line"><span class="comment">// GPU function to add the elements of two arrays</span></span><br><span class="line">__global__</span><br><span class="line"><span class="type">void</span> <span class="title function_">add</span><span class="params">(<span class="type">int</span> n, <span class="type">float</span> *x, <span class="type">float</span> *y)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> index = threadIdx.x;</span><br><span class="line">    <span class="type">int</span> stride = blockDim.x;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = index; i &lt; n; i += stride)</span><br><span class="line">        y[i] = x[i] + y[i];</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> N = <span class="number">1</span>&lt;&lt;<span class="number">20</span>; <span class="comment">// 1M elements</span></span><br><span class="line">    <span class="type">float</span> *x, *y;</span><br><span class="line">    cudaMallocManaged(&amp;x, N*<span class="keyword">sizeof</span>(<span class="type">float</span>));</span><br><span class="line">    cudaMallocManaged(&amp;y, N*<span class="keyword">sizeof</span>(<span class="type">float</span>));</span><br><span class="line">    <span class="comment">// initialize x and y arrays on the host</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; i++) &#123;</span><br><span class="line">        x[i] = <span class="number">1.0f</span>;</span><br><span class="line">        y[i] = <span class="number">2.0f</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Run kernel on 1M elements on the GPU</span></span><br><span class="line">    add&lt;&lt;&lt;<span class="number">1</span>, <span class="number">256</span>&gt;&gt;&gt;(N, x, y);</span><br><span class="line">    cudaDeviceSynchronize();</span><br><span class="line">    <span class="comment">// … for space, remove error checking/free</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果想用更多的线程的话：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">__global__</span><br><span class="line"><span class="type">void</span> <span class="title function_">add</span><span class="params">(<span class="type">int</span> n, <span class="type">float</span> *x, <span class="type">float</span> *y)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> index = blockIdx.x * blockDim.x + threadIdx.x;</span><br><span class="line">    <span class="type">int</span> stride = blockDim.x * gridDim.x;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = index; i &lt; n; i += stride)</span><br><span class="line">        y[i] = x[i] + y[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>更多指的是<code>numBlocks * blockSize</code>：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> blockSize = <span class="number">256</span>;</span><br><span class="line"><span class="type">int</span> numBlocks = (N + blockSize - <span class="number">1</span>) / blockSize;</span><br><span class="line">add&lt;&lt;&lt;numBlocks, blockSize&gt;&gt;&gt;(N, x, y);</span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/1638588598.jpg" alt=""></p>
+<h1 id="lecture-9"><a href="#lecture-9" class="headerlink" title="lecture 9"></a>lecture 9</h1><p>互联网络的特性：</p>
+<ul>
+<li>直径：给定一对节点之间最短路径的最大值（在所有节点对上）。</li>
+<li>延迟：多久能到达一个节点，即发送和接收时间之间的延迟<ul>
+<li>不同体系结构的延迟往往差异很大</li>
+<li>供应商经常报告硬件延迟（连线时间）</li>
+<li>应用程序程序员关心软件延迟（用户程序到用户程序）</li>
+<li>观察结果：<ul>
+<li>网络设计的延迟相差1-2个数量级</li>
+<li>源/目标成本下的软件/硬件开销占主导地位（1s-10s usecs）</li>
+<li>硬件延迟随距离变化（每跳10s-100s纳秒），但与开销相比较小</li>
+<li>延迟是包含许多小消息的程序的关键</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>带宽：单位时间内能传输多少数据<ul>
+<li>对大消息的传输很重要</li>
+</ul>
+</li>
+<li>对分带宽：将网络分成相同两部分的最小切割上的带宽<ul>
+<li>对所有进程都需要和其他进程通信的算法很重要</li>
+</ul>
+</li>
+</ul>
+<p>设计网络的参数：</p>
+<ul>
+<li>拓扑结构<ul>
+<li>crossbar、ring、2-D、3-D、超立方、树形、</li>
+<li>butterfly<ul>
+<li>真正的超立方体展开版本。</li>
+<li>d维蝶形具有（d+1）2d“交换节点”（不要与处理器混淆，即n=2d）</li>
+<li>发明蝴蝶是因为超立方体需要随着网络变大而增加交换机基数；当时禁止</li>
+<li>直径=log n。等分带宽=n</li>
+<li>无路径多样性：对抗性流量不好</li>
+</ul>
+</li>
+<li>参见高等计算机体系结构课程</li>
+</ul>
+</li>
+<li>路由算法<ul>
+<li>all east-west then all north-south</li>
+</ul>
+</li>
+<li>发送策略<ul>
+<li>circuit：对整个信息使用全部链路</li>
+<li>packet：信息拆分成单独的消息发送</li>
+</ul>
+</li>
+<li>流量控制<ul>
+<li>消息暂时存储在buffer中、数据重新路由等</li>
+</ul>
+</li>
+</ul>
+<p>dragonflies：</p>
+<ul>
+<li>利用光互连（在机房机柜之间）和电气网络（机柜内部）之间的成本和性能差距<ul>
+<li>光纤（光纤）更昂贵，但较长时带宽更高</li>
+<li>电力（铜）网络更便宜，短路时更快</li>
+</ul>
+</li>
+<li>在层次结构中组合：<ul>
+<li>使用全对全链路将多个组连接在一起，即每个组至少有一个直接连接到其他组的链路。</li>
+<li>每个组内的拓扑可以是任何拓扑。</li>
+</ul>
+</li>
+<li>使用随机路由算法</li>
+<li>结果：程序员可以（通常）忽略拓扑，获得良好的性能</li>
+<li>在虚拟化动态环境中非常重要</li>
+<li>缺点：性能可变</li>
+</ul>
+<p><img src="/img/1638590925.jpg" alt=""></p>
+<p>在负载平衡的情况下，最小路由工作得很好，在大量的流量模式中可能会造成灾难性的后果。</p>
+<p>随机化思想：对于路由器Rs上的每个数据包，并发送至另一组Rd中的路由器，首先将其路由到中间组。</p>
+<p>发送消息的时间大概是：<code>T = latency+n*cost_per_word = latency + n / bandwidth</code>，也叫做<code>Time = α + n * β</code>。通常α远大于β。一个长消息比多个短消息更划算，同时需要较大的计算-通信比。</p>
+<p>MPI：进程可以被分组，每个消息必须以一个上下文发送/接收。一个分组+上下文共同组成一个通信域。</p>
+<p>MPI消息数据可以用一个（地址，数量，类型）三元组描述，有如下类型：</p>
+<ul>
+<li>预先定义的语言相关类型</li>
+<li>某类型的连续数组</li>
+<li>一个数据块</li>
+<li>一些块数据</li>
+<li>随机类型的数据</li>
+</ul>
+<p>MPI消息发送时会跟上一个用户定义的tag，来协助识别消息。</p>
+<p>只有mpi_send时等待完成，或者mpi_send后返回，recv时在某个时间段等待，才能避免创建buffer。</p>
+<p>MPI非阻塞操作返回request<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">MPI_Request request;</span><br><span class="line">MPI_Status status;</span><br><span class="line"></span><br><span class="line">MPI_Isend(start, count, datatype, dest, tag, comm, &amp;request);</span><br><span class="line">MPI_Irecv(start, count, datatype, dest, tag, comm, &amp;request);</span><br><span class="line">MPI_Wait(&amp;request, &amp;status);</span><br></pre></td></tr></table></figure></p>
+<p>可以通过测试来等待：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MPI_Test(&amp;request, &amp;flag, &amp;status);</span><br></pre></td></tr></table></figure></p>
+<p>在未完成通信时访问缓冲区是未定义的</p>
+<p>可以同时等待多个：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MPI_Waitall(count, array_of_requests,array_of_statuses)</span><br><span class="line">MPI_Waitany(count, array_of_requests, &amp;index, &amp;status)</span><br><span class="line">MPI_Waitsome(count, array_of_requests, array_of indices, array_of_statuses)</span><br></pre></td></tr></table></figure></p>
+<p>MPI提供多种发送消息的模式：</p>
+<ul>
+<li>同步模式（MPI_Ssend）：在匹配的接收开始之前，发送不会完成。（不安全程序死锁。）</li>
+<li>缓冲模式（MPI_Bsend）：用户向系统提供一个缓冲区供其使用。用户分配足够的内存使不安全的程序安全。</li>
+<li>就绪模式（MPI_Rsend）：用户保证已发布匹配的接收。<ul>
+<li>允许访问快速协议</li>
+<li>如果匹配接收未发布，则未定义行为</li>
+</ul>
+</li>
+</ul>
+<p>集合操作：包括broadcast、gather/scatter，allgather、alltoall、reduce、scan。</p>
+<p>MXX是一个MPI的库，基于MPI在交换不规则数据的时候以下的几种复杂操作：</p>
+<ul>
+<li>交换不规则数据时麻烦<ul>
+<li>交换数量</li>
+<li>拷贝数据</li>
+<li>分配空间</li>
+<li>交换实际数据</li>
+</ul>
+</li>
+<li>创建派生的非PDO类型</li>
+<li>将用户定义函数映射给MPI</li>
+</ul>
+<p>而MXX只要如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// lets take some pairs and find the one with the max second element</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">pair</span>&lt;<span class="type">int</span>, <span class="type">double</span>&gt; v = ...;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">pair</span>&lt;<span class="type">int</span>, <span class="type">double</span>&gt; min_pair = mxx::allreduce(v, [](<span class="type">const</span> <span class="built_in">std</span>::<span class="built_in">pair</span>&lt;<span class="type">int</span>, <span class="type">double</span>&gt;&amp; x, <span class="type">const</span> <span class="built_in">std</span>::<span class="built_in">pair</span>&lt;<span class="type">int</span>, <span class="type">double</span>&gt;&amp; y) &#123;</span><br><span class="line">    <span class="keyword">return</span> x.second &gt; y.second ? x : y;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>SUMMA：可扩展矩阵乘法<br><img src="/img/1638599104.jpg" alt=""></p>
+<p>C(I, J) = C(I, J) + ∑k(A(I, k) * B(k, J))，其中I，J代表一个进程所有的行列，k是单独的一行或列，或者一块。</p>
+<p>对于每个k（0和n-1之间），</p>
+<ul>
+<li>部分K行的所有者沿其进程列广播该行</li>
+<li>部分K列的所有者沿其进程行广播该列</li>
+</ul>
+<p>完整算法：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">在每个进程P(i, j)：</span><br><span class="line">    对于k=0…n-1</span><br><span class="line">        在第i行中广播A（A_i）的第k列</span><br><span class="line">        在第j列中广播B（B_j）的第k行</span><br><span class="line">        C += 外积（a_i，b_j）</span><br></pre></td></tr></table></figure></p>
+<p>如果是<code>P^(1/2)</code>*<code>P^(1/2)</code>剖分：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">For k=0 to n/b-1</span><br><span class="line">    for all i = 1 to P^(1/2)</span><br><span class="line">        owner of A[i,k] broadcasts it to whole processor row (using binary tree)</span><br><span class="line">    for all j = 1 to P^(1/2)</span><br><span class="line">        owner of B[k,j] broadcasts it to whole processor column (using bin. tree)</span><br><span class="line">    Receive A[i,k] into Acol</span><br><span class="line">    Receive B[k,j] into Brow</span><br><span class="line">    C_myproc = C_myproc + Acol * Brow</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">SUMMA</span><span class="params">(<span class="type">double</span> *mA, <span class="type">double</span> *mB, <span class="type">double</span> *mc, <span class="type">int</span> p_c)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> row_color = rank / p_c; <span class="comment">// p_c = sqrt(p) for simplicity</span></span><br><span class="line">    MPI_Comm row_comm;</span><br><span class="line">    MPI_Comm_split(MPI_COMM_WORLD, row_color, rank, &amp;row_comm);</span><br><span class="line">    <span class="type">int</span> col_color = rank % p_c;</span><br><span class="line">    MPI_Comm col_comm;</span><br><span class="line">    MPI_Comm_split(MPI_COMM_WORLD, col_color, rank, &amp;col_comm);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> k = <span class="number">0</span>; k &lt; p_c; ++k) &#123;</span><br><span class="line">        <span class="keyword">if</span> (col_color == k) <span class="built_in">memcpy</span>(Atemp, mA, size);</span><br><span class="line">        <span class="keyword">if</span> (row_color == k) <span class="built_in">memcpy</span>(Btemp, mB, size);</span><br><span class="line">        MPI_Bcast(Atemp, size, MPI_DOUBLE, k, row_comm);</span><br><span class="line">        MPI_Bcast(Btemp, size, MPI_DOUBLE, k, col_comm);</span><br><span class="line">        SimpleDGEMM(Atemp, Btemp, mc, N/p, N/p, N/p);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>int MPI_Comm_split(MPI_Comm Comm, int color, int key, MPI_Comm* newcomm)</code>中MPI的内部算法：</p>
+<ol>
+<li>使用<code>MPI_Allgather</code>从每个进程获取颜色和键</li>
+<li>统计相同颜色的进程数；创建一个具有这么多进程的通信器。如果此进程将<code>MPI_UNDEFINED</code>为颜色，请创建一个具有单个成员的进程。</li>
+<li>使用键对列组进行排序</li>
+</ol>
+<ul>
+<li>颜色：控制newcomm的分配</li>
+<li>键：控制newcomm内的rank分配</li>
+</ul>
+<p>MPI内建的集合操作：</p>
+<ul>
+<li><code>MPI_MAX</code>：Maximum</li>
+<li><code>MPI_MIN</code>：Minimum</li>
+<li><code>MPI_PROD</code>：Product</li>
+<li><code>MPI_SUM</code>：Sum</li>
+<li><code>MPI_LAND</code>：Logical and</li>
+<li><code>MPI_LOR</code>：Logical or</li>
+<li><code>MPI_LXOR</code>：Logical exclusive or</li>
+<li><code>MPI_BAND</code>：Binary and</li>
+<li><code>MPI_BOR</code>：Binary or</li>
+<li><code>MPI_BXOR</code>：Binary exclusive or</li>
+<li><code>MPI_MAXLOC</code>：Maximum and location</li>
+<li><code>MPI_MINLOC</code>：Minimum and location</li>
+</ul>
+<p>集合操作实现的示例：MPI_AllReduce</p>
+<ol>
+<li>所有进程必须接收相同的结果向量；</li>
+<li>必须按照规范顺序m0 + m1 + … + mp-1进行归约（如果操作不是可交换的）；</li>
+<li>对于结果向量的所有元素，不严格要求使用相同的规约顺序和括号，但应努力做到这一点。</li>
+</ol>
+<p>复杂度下界：<br><img src="/img/1638600585.jpg" alt=""></p>
+<p>MPI_AllGather有几种实现：</p>
+<ol>
+<li>环算法：在0时刻，发送你自己的数据；在t时刻，把你在t-1时刻收到的数据发给你右边，从你左边接收新的数据；利用了带宽，但是有很高的延迟。在数据很大的时候使用，反而比下边的算法快很多，减少数据拷贝，降低通信次数，且只跟邻居通信。</li>
+<li>递归算法：在t时刻，进程i与进程<code>i+2^t</code>交换现有的所有数据，形成通信树结构。</li>
+<li>bruck算法；在t时刻，进程i从<code>i+2^t</code>接受所有的数据，发送它自己所有的数据给<code>i+2^t</code>。该过程在lg(p)次后结束，在最后一次，仅收发最上边（p-2^(lg(p))）个数据。同时需要租后进行顺序调整。</li>
+</ol>
+<p><img src="/img/1638601045.jpg" alt=""><br><img src="/img/1638601080.jpg" alt=""></p>
+<p>SUMMA in MPI<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">SUMMA</span><span class="params">(<span class="type">double</span> *mA, <span class="type">double</span> *mB, <span class="type">double</span> *mc, <span class="type">int</span> p_c)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> row_color = rank / p_c; <span class="comment">// p_c = sqrt(p) for simplicity</span></span><br><span class="line">    MPI_Comm row_comm;</span><br><span class="line">    MPI_Comm_split(MPI_COMM_WORLD, row_color, rank, &amp;row_comm);</span><br><span class="line">    <span class="type">int</span> col_color = rank % p_c;</span><br><span class="line">    MPI_Comm col_comm;</span><br><span class="line">    MPI_Comm_split(MPI_COMM_WORLD, col_color, rank, &amp;col_comm);</span><br><span class="line">    <span class="type">double</span> *mA1, *mA2, *mB1, *mB2;</span><br><span class="line">    colsplit(mA, mA1, mA2); <span class="comment">// split mA by the middle column</span></span><br><span class="line">    rowsplit(mB, mB1, mB2); <span class="comment">// split mA by the middle row</span></span><br><span class="line">    <span class="keyword">if</span> (col_color == <span class="number">0</span>) <span class="built_in">memcpy</span>(Atemp1, mA1, size)</span><br><span class="line">    <span class="keyword">if</span> (row_color == <span class="number">0</span>) <span class="built_in">memcpy</span>(Btemp1, mB1, size);</span><br><span class="line">    MPI_Request reqs1[<span class="number">2</span>];</span><br><span class="line">    MPI_Request reqs2[<span class="number">2</span>];</span><br><span class="line">    MPI_Ibcast(Atemp1, size, MPI_DOUBLE, k, row_comm, &amp;reqs1[<span class="number">0</span>]);</span><br><span class="line">    MPI_Ibcast(Btemp1, size, MPI_DOUBLE, k, col_comm, &amp;reqs1[<span class="number">1</span>]);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> k = <span class="number">0</span>; k &lt; p_c<span class="number">-1</span>; ++ k) &#123;</span><br><span class="line">        <span class="keyword">if</span> (col_color == k) <span class="built_in">memcpy</span>(Atemp2, mA2, size);</span><br><span class="line">        <span class="keyword">if</span> (row_color == k) <span class="built_in">memcpy</span>(Btemp2, mB2, size);</span><br><span class="line">        MPI_Ibcast(Atemp2,size,MPI_DOUBLE,k,row_comm,&amp;reqs2[<span class="number">0</span>]);</span><br><span class="line">        MPI_Ibcast(Btemp2,size,MPI_DOUBLE,k,col_comm,&amp;reqs2[<span class="number">1</span>]);</span><br><span class="line">        MPI_Waitall(reqs1, MPI_STATUS_IGNORE);</span><br><span class="line">        SimpleDGEMM (Atemp1, Btemp1, mC, N/p, N/p, N/p);</span><br><span class="line">        <span class="keyword">if</span> (col_color == k) <span class="built_in">memcpy</span>(Atemp1, mA1, size);</span><br><span class="line">        <span class="keyword">if</span> (row_color == k) <span class="built_in">memcpy</span>(Btemp1, mB1, size);</span><br><span class="line">        MPI_Ibcast(Atemp1,size,MPI_DOUBLE,k,row_comm,&amp;reqs1[<span class="number">0</span>]);</span><br><span class="line">        MPI_Ibcast(Btemp1,size,MPI_DOUBLE,k,col_comm,&amp;reqs1[<span class="number">1</span>]);</span><br><span class="line">        MPI_Waitall(reqs2, MPI_STATUS_IGNORE);</span><br><span class="line">        SimpleDGEMM (Atemp2, Btemp2, mC, N/p, N/p, N/p);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (col_color == p<span class="number">-1</span>) <span class="built_in">memcpy</span>(Atemp2, mA2, size);</span><br><span class="line">    <span class="keyword">if</span> (row_color == p<span class="number">-1</span>) <span class="built_in">memcpy</span>(Btemp2, mB2, size);</span><br><span class="line">    MPI_Ibcast(Atemp2,size,MPI_DOUBLE,k,row_comm,&amp;reqs2[<span class="number">0</span>]);</span><br><span class="line">    MPI_Ibcast(Btemp2,size,MPI_DOUBLE,k,col_comm,&amp;reqs2[<span class="number">1</span>]);</span><br><span class="line">    MPI_Waitall(reqs1, MPI_STATUS_IGNORE);</span><br><span class="line">    SimpleDGEMM (Atemp1, Btemp1, mC, N/p, N/p, N/p);</span><br><span class="line">    MPI_Waitall(reqs2, MPI_STATUS_IGNORE);</span><br><span class="line">    SimpleDGEMM (Atemp2, Btemp2, mC, N/p, N/p, N/p);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>MPI描述进程之间的并行性（使用单独的地址空间）Thread并行性在进程内提供共享内存模型</p>
+<ul>
+<li>OpenMP和pthread是常见的模型</li>
+<li>OpenMP为循环级并行提供了方便的功能。线程由编译器根据用户指令创建和管理。</li>
+<li>pthread提供了更复杂、更动态的方法。Thread由用户显式创建和管理。</li>
+</ul>
+<p>在仅MPI编程中，每个MPI进程都有一个程序计数器。在MPI+线程混合编程中，可以同时执行多个线程。所有线程共享所有MPI对象（通讯器、请求）。MPI实施可能需要采取措施确保MPI堆栈的状态一致。</p>
+<p>MPI的四个线程安全级别：MPI定义了四个线程安全级别</p>
+<ul>
+<li><code>MPI_THREAD_SINGLE</code>：应用程序中只存在一个线程</li>
+<li><code>MPI_THREAD_FUNNELED</code>：多线程，但只有主线程进行MPI调用（调用<code>MPI_Init_thread</code>的调用）</li>
+<li><code>MPI_THREAD_SERIALIZED</code>：多线程，但一次只能有一个线程进行MPI调用</li>
+<li><code>MPI_THREAD_MULTIPLE</code>：多线程，任何线程都可以在任何时候（有一些限制以避免竞争）</li>
+</ul>
+<p>MPI定义了<code>MPI_Init</code>的替代方案：<code>MPI_Init_thread(requested, provided)</code></p>
+<pre><code>- 应用程序给出了它所需要的级别；MPI实现提供了它所支持的级别
+</code></pre><p><code>MPI_THREAD_SINGLE</code>时没有线程<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> ** argv)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> buf[<span class="number">100</span>];</span><br><span class="line">    MPI_Init(&amp;argc, &amp;argv);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++)</span><br><span class="line">        compute(buf[i]);</span><br><span class="line">    <span class="comment">/* Do MPI stuff */</span></span><br><span class="line">    MPI_Finalize();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>MPI_THREAD_FUNNELED</code>时所有MPI调用都是主线程在调用，在OpenMP并行区域外。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> ** argv)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> buf[<span class="number">100</span>], provided;</span><br><span class="line">    MPI_Init_thread(&amp;argc, &amp;argv, MPI_THREAD_FUNNELED, &amp;provided);</span><br><span class="line">    <span class="keyword">if</span> (provided &lt; MPI_THREAD_FUNNELED)</span><br><span class="line">        MPI_Abort(MPI_COMM_WORLD, <span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="meta">#<span class="keyword">pragma</span> omp parallel for</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++)</span><br><span class="line">        compute(buf[i]);</span><br><span class="line">    <span class="comment">/* Do MPI stuff */</span></span><br><span class="line">    MPI_Finalize();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>MPI_THREAD_SERIALIZED</code>一次只能有一个线程调用MPI函数，这被critical regions保证。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> ** argv)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> buf[<span class="number">100</span>], provided;</span><br><span class="line">    MPI_Init_thread(&amp;argc, &amp;argv, MPI_THREAD_SERIALIZED, &amp;provided);</span><br><span class="line">    <span class="keyword">if</span> (provided &lt; MPI_THREAD_SERIALIZED)</span><br><span class="line">        MPI_Abort(MPI_COMM_WORLD, <span class="number">1</span>);</span><br><span class="line">    <span class="meta">#<span class="keyword">pragma</span> omp parallel for</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">        compute(buf[i]);</span><br><span class="line">        <span class="meta">#<span class="keyword">pragma</span> omp critical</span></span><br><span class="line">        <span class="comment">/* Do MPI stuff */</span></span><br><span class="line">    &#125;</span><br><span class="line">    MPI_Finalize();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>MPI_THREAD_MULTIPLE</code>任何线程都可以随时进行MPI调用（不受限制）<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> ** argv)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> buf[<span class="number">100</span>], provided;</span><br><span class="line">    MPI_Init_thread(&amp;argc, &amp;argv, MPI_THREAD_MULTIPLE, &amp;provided);</span><br><span class="line">    <span class="keyword">if</span> (provided &lt; MPI_THREAD_MULTIPLE)</span><br><span class="line">        MPI_Abort(MPI_COMM_WORLD, <span class="number">1</span>);</span><br><span class="line">    <span class="meta">#<span class="keyword">pragma</span> omp parallel for</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">        compute(buf[i]);</span><br><span class="line">        <span class="comment">/* Do MPI stuff */</span></span><br><span class="line">    &#125;</span><br><span class="line">    MPI_Finalize();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>实现不需要支持高于<code>MPI_THREAD_SINGLE</code>的级别；也就是说，实现不需要是线程安全的。</p>
+<p>调用<code>MPI_Init</code>（而不是<code>MPI_Init_thread</code>）的程序应假定只支持<code>MPI_THREAD_SINGLE</code>。不调用<code>MPI_Init_thread</code>的线程化MPI程序是不正确的程序。</p>
+<p><code>MPI_THREAD_MULTIPLE</code>的约定</p>
+<ul>
+<li>排序：当多个线程同时进行MPI调用时，结果将是，调用在某些情况下按某些顺序执行</li>
+<li>在每个线程内维护顺序</li>
+<li>用户必须确保在同一个comm上进行集体操作，窗口或文件句柄在线程之间的顺序正确<ul>
+<li>例如，不能在一个线程上调用广播，在另一个线程上调用reduce</li>
+</ul>
+</li>
+<li>当线程处于同一位置时，用户有责任防止冲突MPI调用<ul>
+<li>例如，从一个线程访问信息对象并将其从另一线程释放。</li>
+</ul>
+</li>
+<li>阻塞：阻塞MPI调用将只阻塞调用线程，不会阻止其他线程运行或执行MPI</li>
+</ul>
+<p>一个正确的例子：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">              Proc 0            Proc 1</span><br><span class="line">Thread1   MPI_Recv(src=1)   MPI_Recv(src=0)</span><br><span class="line">Thread2   MPI_Send(dst=1)   MPI_Send(dst=0)</span><br></pre></td></tr></table></figure></p>
+<p>一个不正确的例子：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">              Proc 0            Proc 1</span><br><span class="line">Thread1  MPI_Bcast(comm)   MPI_Bcast(comm)</span><br><span class="line">Thread2  MPI_Barrier(comm)   MPI_Barrier(comm)</span><br></pre></td></tr></table></figure></p>
+<p>P0和P1可以有不同的Bcast和Barrier顺序</p>
+<p>在这里，用户必须使用某种类型的同步，以确保线程1或线程2在两个进程上都首先得到调度，否则Bcast可能与同一comm上的Barrier匹配，这在MPI中是不允许的。</p>
+<p>单边通信模型的基本思想是将数据移动与进程同步解耦</p>
+<ul>
+<li>应能够在不要求远程进程同步的情况下移动数据</li>
+<li>每个进程向其他进程公开其内存的一部分</li>
+<li><p>其他进程可以直接读取或写入该内存</p>
+</li>
+<li><p>创建公共内存</p>
+<ul>
+<li>默认情况下，进程使用的任何内存都是只有本地可访问</li>
+<li>分配内存后，用户必须进行显式MPI调用，以将内存区域声明为可远程访问<ul>
+<li>远程可访问内存的MPI术语是一个“窗口”</li>
+<li>一组进程共同创建一个“窗口”</li>
+</ul>
+</li>
+<li>一旦内存区域被声明为可远程访问，窗口中的所有进程都可以向该内存读/写数据，而无需与目标进程显式同步</li>
+</ul>
+</li>
+<li><p>窗口创建存在四种模式</p>
+<ul>
+<li><code>MPI_WIN_CREATE</code>：您已经有一个分配的缓冲区，您希望远程访问该缓冲区</li>
+<li><code>MPI_WIN_ALLOCATE</code>：您希望创建一个缓冲区并直接使其可远程访问</li>
+<li><code>MPI_WIN_CREATE_DYNAMIC</code>：您还没有缓冲区，但将来会有缓冲区，且您可能希望在窗口中动态添加/删除缓冲区</li>
+<li><code>MPI_WIN_ALLOCATE_SHARED</code>：您希望同一节点上的多个进程共享一个缓冲区</li>
+</ul>
+</li>
+</ul>
+<p><code>MPI_WIN_ALLOCATE</code>：在RMA窗口中创建一个远端可访问的内存区域<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">MPI_Win_allocate</span><span class="params">(MPI_Aint size, <span class="type">int</span> disp_unit,</span></span><br><span class="line"><span class="params">    MPI_Info info, MPI_Comm comm, <span class="type">void</span> *baseptr,</span></span><br><span class="line"><span class="params">    MPI_Win *win)</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> ** argv)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> *a; MPI_Win win;</span><br><span class="line">    MPI_Init(&amp;argc, &amp;argv);</span><br><span class="line">    <span class="comment">/* collectively create remote accessible memory in a window */</span></span><br><span class="line">    MPI_Win_allocate(<span class="number">1000</span>*<span class="keyword">sizeof</span>(<span class="type">int</span>), <span class="keyword">sizeof</span>(<span class="type">int</span>), MPI_INFO_NULL, MPI_COMM_WORLD, &amp;a, &amp;win);</span><br><span class="line">    <span class="comment">/* Array ‘a’ is now accessible from all processes in MPI_COMM_WORLD */</span></span><br><span class="line">    MPI_Win_free(&amp;win);</span><br><span class="line">    MPI_Finalize(); </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>MPI提供了在远程可访问内存区域中读取、写入和原子修改数据的能力：</p>
+<ul>
+<li><code>MPI_PUT</code></li>
+<li><code>MPI_GET</code></li>
+<li><code>MPI_ACCUMULATE</code></li>
+<li><code>MPI_GET_ACCUMULATE</code></li>
+<li><code>MPI_COMPARE_AND_SWAP</code></li>
+<li><code>MPI_FETCH_AND_OP</code></li>
+</ul>
+<p>RMA同步模型</p>
+<ul>
+<li>RMA数据访问模型<ul>
+<li>何时允许进程读取/写入远程可访问内存？</li>
+<li>进程X写入的数据何时可供进程Y读取？</li>
+<li>RMA同步模型定义了这些语义</li>
+</ul>
+</li>
+<li>MPI提供的三种同步模型：<ul>
+<li>Fence（主动目标）</li>
+<li>启动后完全等待（通用活动目标）</li>
+<li>锁定/解锁（被动目标）</li>
+</ul>
+</li>
+<li>数据访问发生在“epochs”内<ul>
+<li>访问时间：包含一组由源进程发出的操作</li>
+<li>曝光时间：允许远程进程更新目标窗口</li>
+<li>epochs定义了顺序和完成语义</li>
+<li>同步模型提供了建立epochs的机制</li>
+</ul>
+</li>
+</ul>
+<p>被动目标同步</p>
+<ul>
+<li>开始/结束被动模式<ul>
+<li>目标进程不进行相应的MPI调用</li>
+<li>可以启动多个被动目标事件到不同的进程</li>
+<li>不允许同一进程的并发（影响线程）</li>
+</ul>
+</li>
+<li>锁<ul>
+<li>共享：其他使用共享的进程可以同时访问</li>
+<li>独占：没有其他进程可以同时访问</li>
+</ul>
+</li>
+</ul>
+<p>共享内存和消息传递各有优缺点，共享内存更容易并行，容易竞争，且更容易陷入假共享之类的；消息传递需要做更多的工作，但是不容易死锁，具有很高的扩展性。</p>
+<p>全局地址空间中，线程可以直接读写远端数据，给通信实现提供了方便。因此需要一种方式来命名全局空间。（以下使用UPC方式）<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">shared int *p = upc_malloc(4);</span><br><span class="line">shared int a[12];</span><br></pre></td></tr></table></figure></p>
+<p>如果需要单边通信：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a[i] = ...; *p = ...; upc_mem_put(...);</span><br><span class="line">... = a[i]; ... = *p; upc_mem_get(...);</span><br></pre></td></tr></table></figure></p>
+<h1 id="lecture-11"><a href="#lecture-11" class="headerlink" title="lecture 11"></a>lecture 11</h1><p>PGAS编程的目标</p>
+<ul>
+<li>应用：不规则代码的方便编程<ul>
+<li>图</li>
+<li>哈希表</li>
+<li>稀疏矩阵</li>
+<li>自适应（分层）网格</li>
+</ul>
+</li>
+<li>机器：在计算机上显示最佳可用性能<ul>
+<li>小消息的低延迟</li>
+<li>即使对于中等大小的消息，带宽也很高</li>
+<li>高注入速率（消息数/秒）</li>
+<li>最小化软件开销并匹配硬件</li>
+</ul>
+</li>
+</ul>
+<p>UPC++与MPI类似，也是SPMD程序，使用GASNet库通信。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;upcxx/upcxx.hpp&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line">using namespace <span class="built_in">std</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    upcxx::init();</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Hello from &quot;</span> &lt;&lt; upcxx::rank_me() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    upcxx::finalize();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>用UPC++计算π如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> &#123;</span><br><span class="line">    upcxx::init();</span><br><span class="line">    <span class="type">int</span> hits, trials = <span class="number">0</span>;</span><br><span class="line">    <span class="type">double</span> pi;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) trials = <span class="number">1000000</span>;</span><br><span class="line">    <span class="keyword">else</span> trials = atoi(argv[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">    generator.seed(upcxx::rank_me()*<span class="number">17</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i &lt; trials; i++) hits += hit();</span><br><span class="line">    pi = <span class="number">4.0</span>*hits/trials;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;PI estimated to &quot;</span> &lt;&lt; pi &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    upcxx::finalize();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>一般的C++变量和对象在每个线程的私有内存空间分配。共享空间的变量需要用<code>new_</code>显式分配，用<code>delete_</code>释放，共享内存可以被远端进程访问：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">global_ptr&lt;<span class="type">int</span>&gt; gptr = new_&lt;<span class="type">int</span>&gt;(rank_me());</span><br></pre></td></tr></table></figure></p>
+<p>如果需要广播：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">global_ptr&lt;<span class="type">int</span>&gt; gptr =</span><br><span class="line">    broadcast(new_&lt;<span class="type">int</span>&gt;(<span class="number">24</span>),<span class="number">0</span>).wait();</span><br></pre></td></tr></table></figure></p>
+<p>future类型的变量有一个状态位，标志是否准备好，等待future类型就绪使用户可以实现异步操作。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">future</span>&lt;T&gt; f1 = rget(gptr1); <span class="comment">// asynchronous op</span></span><br><span class="line"><span class="built_in">future</span>&lt;T&gt; f2 = rget(gptr2);</span><br><span class="line"><span class="type">bool</span> ready = f1.ready(); <span class="comment">// non-blocking poll</span></span><br><span class="line"><span class="keyword">if</span> !ready … <span class="comment">// unrelated work...</span></span><br><span class="line">T t = f1.wait(); <span class="comment">// waits if not ready</span></span><br></pre></td></tr></table></figure></p>
+<p>单边通信如下，同时支持不连续内存数据：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">future</span>&lt;T&gt; <span class="title function_">rget</span><span class="params">(global_ptr&lt;T&gt; src)</span>;</span><br><span class="line"><span class="built_in">future</span>&lt;&gt; rput(T val, global_ptr&lt;T&gt; dst);</span><br></pre></td></tr></table></figure></p>
+<p>同步操作：</p>
+<ul>
+<li>Barrier: block until all other threads arrive<br>barrier();</li>
+<li>Asynchronous barriers</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">future</span>&lt;&gt; f =</span><br><span class="line">    barrier_async(); <span class="comment">// this thread is ready for barrier</span></span><br><span class="line"><span class="comment">// do computation unrelated to barrier</span></span><br><span class="line">wait(f); <span class="comment">// wait for others to be ready</span></span><br></pre></td></tr></table></figure>
+<p>UPC++有一部分集合操作，都是异步的<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">template &lt;typename T&gt; <span class="built_in">future</span> &lt;T&gt;</span><br><span class="line">broadcast (T &amp;&amp; value , <span class="type">intrank_t</span> root);</span><br><span class="line"></span><br><span class="line">template &lt;typename T&gt; <span class="built_in">future</span> &lt;T&gt;</span><br><span class="line">broadcast (T * buffer, <span class="built_in">std</span>::<span class="type">size_t</span> count,</span><br><span class="line"><span class="type">intrank_t</span> sender);</span><br><span class="line"></span><br><span class="line">template &lt;typename T, typename BinaryOp&gt;</span><br><span class="line"><span class="built_in">future</span> &lt;T&gt; reduce_all (T &amp;&amp; value, BinaryOp &amp;&amp;op);</span><br></pre></td></tr></table></figure></p>
+<p>远端过程调用：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">future</span>&lt;R&gt; <span class="title function_">rpc</span><span class="params">(<span class="type">intrank_t</span> r,</span></span><br><span class="line"><span class="params">F func, Args&amp;&amp;... args)</span>;</span><br></pre></td></tr></table></figure></p>
+<p>在进程r执行<code>func(args...)</code>并返回结果，R是返回类型。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> hits = <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> &#123;</span><br><span class="line">    init();</span><br><span class="line">    <span class="type">int</span> trials = atoi(argv[<span class="number">1</span>]);</span><br><span class="line">    <span class="type">int</span> my_trials = (trials+rank_me())/rank_n();</span><br><span class="line">    generator.seed(rank_me()*<span class="number">17</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i &lt; my_trials; i++) &#123;</span><br><span class="line">        rpc(<span class="number">0</span>, [](<span class="type">int</span> hit) &#123; hits += hit; &#125;, hit()).wait();</span><br><span class="line">    &#125;</span><br><span class="line">    barrier();</span><br><span class="line">    <span class="keyword">if</span> (rank_me() == <span class="number">0</span>)</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;PI estimated to &quot;</span> &lt;&lt; <span class="number">4.0</span>*hits/trials;</span><br><span class="line">    finalize();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="lecture-12"><a href="#lecture-12" class="headerlink" title="lecture 12"></a>lecture 12</h1><p>mapreduce模型：</p>
+<ul>
+<li>每条记录是一个（key, value）</li>
+<li>map：<code>(K[in], V[in]) --&gt; list(K[inter], V[inter])</code></li>
+<li>reduce：<code>(K[inter], list(V[inter])) --&gt; list(K[out], V[out])</code></li>
+</ul>
+<p>MapReduce着眼于更高级的数据并行，自动进行数据通信等，关注容错。</p>
+<h1 id="lecture-13"><a href="#lecture-13" class="headerlink" title="lecture 13"></a>lecture 13</h1><p>BLAS(1)：对于向量的15个操作，对O(1)的数据做O(1)的操作。对于<code>y = a * x + y</code>这种需要2n的计算和3n的读写的操作，计算强度为2/3，读写更多，且不能向量化，所以出现了BLAS(2)，主要针对矩阵-向量对进行25种操作，对O(2)的数据做O(2)的操作。BLAS(3)，主要针对矩阵-矩阵对进行9种操作，对O(2)的数据做O(3)的操作，计算强度为(2n^3)/(4n^2)=n/2。LAPACK在BLAS是并行的时候才并行。</p>
+<p>为什么要避免通信：</p>
+<ul>
+<li>在DRAM间移动数据很费时；</li>
+<li>算法运行时间由:<ul>
+<li>flops * time_per_flop</li>
+<li>words moved / bandwidth</li>
+<li>messages * latency</li>
+<li>组成，后两项是通信时间</li>
+<li>latency是最久的</li>
+</ul>
+</li>
+<li>需要将线性代数组织起来以免通信</li>
+</ul>
+<p>blocked matrix multiply：<code>C = A*B</code>。将A、B和C切分成<code>b*b</code>，再分到每个进程，当b=1时退化成原始的矩阵乘。总共需要<code>(n/b)^3 * 4b^2 = 4 * n^3 / b</code>次读写，当(3*b^2)=cache时最小化。</p>
+<p>对于矩阵乘的n^3算法，</p>
+<ul>
+<li>串行算法， 且缓存为M<ul>
+<li>数据从主存中移动的下界为W (n^3 / M^(1/2) )</li>
+<li>假定使用分块或者cache敏感的算法</li>
+</ul>
+</li>
+<li>P个进程的并行算法<ul>
+<li>M是每个进程的内存</li>
+<li>数据从主存中移动的下界为W((n^3/p) / M^(1/2) )</li>
+<li>如果M = 3n^2/p (每个矩阵的一份拷贝之和)，下界为W (n^2 /p^(1/2) )</li>
+</ul>
+</li>
+</ul>
+<p>算法的目标：</p>
+<ul>
+<li>尽量减少移动的数据</li>
+<li>尽量减少发送的信息<ul>
+<li>需要新的数据结构</li>
+</ul>
+</li>
+<li>多个内存层次结构中最小化用量</li>
+<li>当矩阵适合最快的内存时，运算/通信最少</li>
+</ul>
+<p>多种不同的矩阵剖分方法：</p>
+<ul>
+<li>1D剖分</li>
+<li>1D循环剖分</li>
+<li>1D列块循环</li>
+<li>对应1D的行剖分</li>
+<li>2D剖分</li>
+<li>2D循环剖分</li>
+</ul>
+<p><img src="/img/1638684331.jpg" alt=""></p>
+<p>并行矩阵-向量乘：计算<code>y = y + A * x</code>，使用1D行剖分，A(i)是n/p个进程i拥有的行，x(i)和y(i)类似，也是进程i拥有的数据。</p>
+<p>对于每个进程：广播x(i)，计算y(i)=A(i)<em>x。整个算法使用了`y(i) = y(i) + A(i) </em> x = y(i) + ∑(j) A(i,j)*x(j)`。</p>
+<p>如果使用列剖分，减少了x的广播，但是增加了一步规约操作。2D块剖分使用了广播和规约，但都是对一个进程子集，通信开销会小一些。<br><img src="/img/1638684798.jpg" alt=""></p>
+<p>并行矩阵乘法：使用1D剖分且没有广播：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">C(myproc) = C(myproc) + A(myproc)*B(myproc,myproc)</span><br><span class="line">for i = 0 to p-1</span><br><span class="line">    for j = 0 to p-1 except i</span><br><span class="line">        if (myproc == i) send A(i) to processor j</span><br><span class="line">        if (myproc == j)</span><br><span class="line">            receive A(i) from processor i</span><br><span class="line">            C(myproc) = C(myproc) + A(i)*B(i,myproc)</span><br><span class="line">        barrier</span><br></pre></td></tr></table></figure></p>
+<p>Cost of inner loop:</p>
+<ul>
+<li>computation: <code>2*n*(n/p)^2 = 2*n^3/p^2</code></li>
+<li>communication: <code>a + b*n^2 /p</code></li>
+</ul>
+<p>Running time = <code>(p*(p-1) + 1)*computation + p*(p-1)*communication</code> = <code>2*n^3 + p^2*a + p*n^2*b</code></p>
+<p>缺点是每次迭代只有一对进程是活跃的，只有i进程在计算。</p>
+<p>改进：相邻的进程对可以同时通信：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Copy A(myproc) into Tmp</span><br><span class="line">C(myproc) = C(myproc) + Tmp*B(myproc , myproc)</span><br><span class="line">for j = 1 to p-1</span><br><span class="line">Send Tmp to processor myproc+1 mod p</span><br><span class="line">Receive Tmp from processor myproc-1 mod p</span><br><span class="line">C(myproc) = C(myproc) + Tmp*B( myproc-j mod p , myproc)</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>可能需要双倍的buffer</li>
+<li>代码中没有考虑可能的死锁</li>
+<li>Time of inner loop = <code>2*(a + b*n^2/p) + 2*n*(n/p)^2</code></li>
+<li>Total Time = <code>2*n* (n/p)^2 + (p-1) * Time of inner loop</code> = <code>2*n^3/p + 2*p*a + 2*b*n^2</code></li>
+</ul>
+<p><code>A(myproc)</code>必须得发给每一个进程，最少开销<code>(p-1)*cost of sending n*(n/p) words</code></p>
+<p>并行效率 = <code>2*n^3 / (p * Total Time)</code> = <code>1/(1 + a * p^2/(2*n^3) + b * p/(2*n) )</code> = <code>1/ (1 + O(p/n))</code>，当n/p增加时负责度降低。</p>
+<p>如果是2.5D矩阵乘：各个进程拥有<code>cn^2 / P</code>数据，总共数据组织成<code>(P/c)^(1/2) * (P/c)^(1/2) * c</code>网格。最开始进程P(i,j,0)拥有A(i,j)和B(i,j)，每一个数组大小为<code>n(c/P)^(1/2)*n(c/P)^(1/2)</code>。</p>
+<ul>
+<li>进程P(i,j,0)广播A(i,j)和B(i,j)给P(i,j,k)</li>
+<li>k阶的进程执行SUMMA</li>
+<li>在k方向上对结果<code>∑(m) A(i,m)*B(m,j)</code>规约，所以P(i,j,0)拥有了C(i,j)。</li>
+</ul>
+<p>为了求解Ax=b，进行高斯消去。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">… for each column i</span><br><span class="line">… zero it out below the diagonal by adding multiples of row i to later rows</span><br><span class="line">for i = 1 to n-1</span><br><span class="line">    … for each row j below row i</span><br><span class="line">    A(j,i) = A(j,i) / A(i,i);</span><br><span class="line">    for j = i+1 to n</span><br><span class="line">        for k = i+1 to n</span><br><span class="line">            A(j,k) = A(j,k) - A(j,i) * A(i,k)</span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/1638688009.png" alt=""></p>
+<p>高斯消去实际上也是求了一个LU分解，<code>A=L*U</code>，在求解方程<code>A*x=b</code>时</p>
+<ul>
+<li>使用高斯消去分解A=L*U</li>
+<li>求解L*y=b</li>
+<li>求解U*x=y</li>
+<li>因此<code>A*x = (L*U)*x = L*(U*x) = L*y = b</code></li>
+</ul>
+<p>当矩阵A比较小或者有0时，可能会得到错误的结果。因此需要交换把A(i,i)变成一列里最大的，GEPP（Gaussian Elimination with Partial Pivoting）。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">for i = 1 to n-1</span><br><span class="line">    find and record k where |A(k,i)| = max&#123;i ≤ j ≤ n&#125; |A(j,i)|</span><br><span class="line">    … i.e. largest entry in rest of column i</span><br><span class="line">    if |A(k,i)| = 0</span><br><span class="line">        exit with a warning that A is singular, or nearly so</span><br><span class="line">    elseif k ≠ i</span><br><span class="line">        swap rows i and k of A</span><br><span class="line">    end if</span><br><span class="line">    A(i+1:n,i) = A(i+1:n,i) / A(i,i) … each |quotient| ≤ 1</span><br><span class="line">    A(i+1:n,i+1:n) = A(i+1:n , i+1:n ) - A(i+1:n , i) * A(i , i+1:n)</span><br></pre></td></tr></table></figure></p>
+<p>以上算法计算<code>A=P*L*U</code>，这是数值上很稳定的。</p>
+<p>分块用于计算矩阵乘法，但是在这里由于数据依赖更多很难分块。使用“delayed updates”，将多个连续矩阵的更新保存到跟踪矩阵，之后在一个BLAS3（matmul）操作中同时应用多个更新。</p>
+<p>首先要选择一个适当的“b”，这个b应该足够小，使包含b列的子矩阵能够满足cache的大小需要，同时应该足够大以使算法更快。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">for ib = 1 to n-1 step b … Process matrix b columns at a time</span><br><span class="line">    end = ib + b-1 … Point to end of block of b columns</span><br><span class="line">    apply BLAS2 version of GEPP to get A(ib:n , ib:end) = P&#x27; * L&#x27; * U&#x27;</span><br><span class="line">    … let LL denote the strict lower triangular part of A(ib:end , ib:end) + I</span><br><span class="line">    A(ib:end , end+1:n) = LL^(-1) * A(ib:end , end+1:n) … update next b rows of U</span><br><span class="line">    A(end+1:n , end+1:n ) = A(end+1:n , end+1:n ) - A(end+1:n , ib:end) * A(ib:end , end+1:n)</span><br><span class="line">        … apply delayed updates with single matrix-multiply</span><br><span class="line">        … with inner dimension b</span><br></pre></td></tr></table></figure>
+<p><img src="/img/1638690323.png" alt=""></p>
+<p>白色部分已经完成，只对中间部分处理。中间的小矩形为LL。贴上代码：<br><figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br></pre></td><td class="code"><pre><span class="line">      <span class="function"><span class="keyword">SUBROUTINE</span></span> SGETRF( M, N, A, LDA, IPIV, INFO )</span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!     .. Scalar Arguments ..</span></span><br><span class="line"><span class="comment">!     INTEGER            INFO, LDA, M, N</span></span><br><span class="line"><span class="comment">!     ..</span></span><br><span class="line"><span class="comment">!     .. Array Arguments ..</span></span><br><span class="line"><span class="comment">!     INTEGER            IPIV( * )</span></span><br><span class="line"><span class="comment">!     REAL               A( LDA, * )</span></span><br><span class="line"><span class="comment">!     ..</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!  Purpose</span></span><br><span class="line"><span class="comment">!  =======</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!  SGETRF computes an LU factorization of a general M-by-N matrix A</span></span><br><span class="line"><span class="comment">!  using partial pivoting with row interchanges.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!  The factorization has the form</span></span><br><span class="line"><span class="comment">!     A = P * L * U</span></span><br><span class="line"><span class="comment">!  where P is a permutation matrix, L is lower triangular with unit</span></span><br><span class="line"><span class="comment">!  diagonal elements (lower trapezoidal if m &gt; n), and U is upper</span></span><br><span class="line"><span class="comment">!  triangular (upper trapezoidal if m &lt; n).</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!  This is the right-looking Level 3 BLAS version of the algorithm.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!  Arguments</span></span><br><span class="line"><span class="comment">!  =========</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!  M       (input) INTEGER</span></span><br><span class="line"><span class="comment">!          The number of rows of the matrix A.  M &gt;= 0.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!  N       (input) INTEGER</span></span><br><span class="line"><span class="comment">!          The number of columns of the matrix A.  N &gt;= 0.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!  A       (input/output) REAL array, dimension (LDA,N)</span></span><br><span class="line"><span class="comment">!          On entry, the M-by-N matrix to be factored.</span></span><br><span class="line"><span class="comment">!          On exit, the factors L and U from the factorization</span></span><br><span class="line"><span class="comment">!          A = P*L*U; the unit diagonal elements of L are not stored.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!  LDA     (input) INTEGER</span></span><br><span class="line"><span class="comment">!          The leading dimension of the array A.  LDA &gt;= max(1,M).</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!  IPIV    (output) INTEGER array, dimension (min(M,N))</span></span><br><span class="line"><span class="comment">!          The pivot indices; for 1 &lt;= i &lt;= min(M,N), row i of the</span></span><br><span class="line"><span class="comment">!          matrix was interchanged with row IPIV(i).</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!  INFO    (output) INTEGER</span></span><br><span class="line"><span class="comment">!          = 0:  successful exit</span></span><br><span class="line"><span class="comment">!          &lt; 0:  if INFO = -i, the i-th argument had an illegal value</span></span><br><span class="line"><span class="comment">!          &gt; 0:  if INFO = i, U(i,i) is exactly zero. The factorization</span></span><br><span class="line"><span class="comment">!                has been completed, but the factor U is exactly</span></span><br><span class="line"><span class="comment">!                singular, and division by zero will occur if it is used</span></span><br><span class="line"><span class="comment">!                to solve a system of equations.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!  =====================================================================</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!     .. Parameters ..</span></span><br><span class="line"><span class="comment">!     REAL               ONE</span></span><br><span class="line"><span class="comment">!     PARAMETER          ( ONE = 1.0E+0 )</span></span><br><span class="line"><span class="comment">!     ..</span></span><br><span class="line"><span class="comment">!     .. Local Scalars ..</span></span><br><span class="line"><span class="comment">!     INTEGER            I, IINFO, J, JB, NB</span></span><br><span class="line"><span class="comment">!     ..</span></span><br><span class="line"><span class="comment">!     .. External Subroutines ..</span></span><br><span class="line"><span class="comment">!     EXTERNAL           SGEMM, SGETF2, SLASWP, STRSM, XERBLA</span></span><br><span class="line"><span class="comment">!     ..</span></span><br><span class="line"><span class="comment">!     .. External Functions ..</span></span><br><span class="line"><span class="comment">!     INTEGER            ILAENV</span></span><br><span class="line"><span class="comment">!     EXTERNAL           ILAENV</span></span><br><span class="line"><span class="comment">!     ..</span></span><br><span class="line"><span class="comment">!     .. Intrinsic Functions ..</span></span><br><span class="line"><span class="comment">!     INTRINSIC          MAX, MIN</span></span><br><span class="line"><span class="comment">!     ..</span></span><br><span class="line"><span class="comment">!     .. Executable Statements ..</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!     Test the input parameters.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line">      INFO = <span class="number">0</span></span><br><span class="line">      <span class="keyword">IF</span>( M.LT<span class="number">.0</span> ) <span class="keyword">THEN</span></span><br><span class="line">         INFO = -<span class="number">1</span></span><br><span class="line">      <span class="keyword">ELSE</span> <span class="keyword">IF</span>( N.LT<span class="number">.0</span> ) <span class="keyword">THEN</span></span><br><span class="line">         INFO = -<span class="number">2</span></span><br><span class="line">      <span class="keyword">ELSE</span> <span class="keyword">IF</span>( LDA<span class="keyword">.LT.</span><span class="built_in">MAX</span>( <span class="number">1</span>, M ) ) <span class="keyword">THEN</span></span><br><span class="line">         INFO = -<span class="number">4</span></span><br><span class="line">      <span class="keyword">END</span> <span class="keyword">IF</span></span><br><span class="line">      <span class="keyword">IF</span>( INFO.NE<span class="number">.0</span> ) <span class="keyword">THEN</span></span><br><span class="line">         <span class="keyword">CALL</span> XERBLA( <span class="string">&#x27;SGETRF&#x27;</span>, -INFO )</span><br><span class="line">         <span class="keyword">RETURN</span></span><br><span class="line">      <span class="keyword">END</span> <span class="keyword">IF</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!     Quick return if possible</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line">      <span class="keyword">IF</span>( M.EQ<span class="number">.0</span> <span class="keyword">.OR.</span> N.EQ<span class="number">.0</span> )</span><br><span class="line">     $   <span class="keyword">RETURN</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!     Determine the block size for this environment.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line">      NB = ILAENV( <span class="number">1</span>, <span class="string">&#x27;SGETRF&#x27;</span>, <span class="string">&#x27; &#x27;</span>, M, N, -<span class="number">1</span>, -<span class="number">1</span> )</span><br><span class="line">      <span class="keyword">IF</span>( NB.LE<span class="number">.1</span> <span class="keyword">.OR.</span> NB<span class="keyword">.GE.</span><span class="built_in">MIN</span>( M, N ) ) <span class="keyword">THEN</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!        Use unblocked code.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line">         <span class="keyword">CALL</span> SGETF2( M, N, A, LDA, IPIV, INFO )</span><br><span class="line">      <span class="keyword">ELSE</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!        Use blocked code.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line">         <span class="keyword">DO</span> <span class="number">20</span> J = <span class="number">1</span>, <span class="built_in">MIN</span>( M, N ), NB</span><br><span class="line">            JB = <span class="built_in">MIN</span>( <span class="built_in">MIN</span>( M, N )-J+<span class="number">1</span>, NB )</span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!           Factor diagonal and subdiagonal blocks and test for exact</span></span><br><span class="line"><span class="comment">!           singularity.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line">            <span class="keyword">CALL</span> SGETF2( M-J+<span class="number">1</span>, JB, A( J, J ), LDA, IPIV( J ), IINFO )</span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!           Adjust INFO and the pivot indices.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line">            <span class="keyword">IF</span>( INFO.EQ<span class="number">.0</span> <span class="keyword">.AND.</span> IINFO.GT<span class="number">.0</span> )</span><br><span class="line">     $         INFO = IINFO + J - <span class="number">1</span></span><br><span class="line">            <span class="keyword">DO</span> <span class="number">10</span> I = J, <span class="built_in">MIN</span>( M, J+JB-<span class="number">1</span> )</span><br><span class="line">               IPIV( I ) = J - <span class="number">1</span> + IPIV( I )</span><br><span class="line">   <span class="number">10</span>       <span class="keyword">CONTINUE</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!           Apply interchanges to columns 1:J-1.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line">            <span class="keyword">CALL</span> SLASWP( J-<span class="number">1</span>, A, LDA, J, J+JB-<span class="number">1</span>, IPIV, <span class="number">1</span> )</span><br><span class="line"><span class="comment">!</span></span><br><span class="line">            <span class="keyword">IF</span>( J+JB<span class="keyword">.LE.</span>N ) <span class="keyword">THEN</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!              Apply interchanges to columns J+JB:N.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line">               <span class="keyword">CALL</span> SLASWP( N-J-JB+<span class="number">1</span>, A( <span class="number">1</span>, J+JB ), LDA, J, J+JB-<span class="number">1</span>,</span><br><span class="line">     $                      IPIV, <span class="number">1</span> )</span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!              Compute block row of U.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line">               <span class="keyword">CALL</span> STRSM( <span class="string">&#x27;Left&#x27;</span>, <span class="string">&#x27;Lower&#x27;</span>, <span class="string">&#x27;No transpose&#x27;</span>, <span class="string">&#x27;Unit&#x27;</span>, JB,</span><br><span class="line">     $                     N-J-JB+<span class="number">1</span>, ONE, A( J, J ), LDA, A( J, J+JB ),</span><br><span class="line">     $                     LDA )</span><br><span class="line">               <span class="keyword">IF</span>( J+JB<span class="keyword">.LE.</span>M ) <span class="keyword">THEN</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!                 Update trailing submatrix.</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line">                  <span class="keyword">CALL</span> SGEMM( <span class="string">&#x27;No transpose&#x27;</span>, <span class="string">&#x27;No transpose&#x27;</span>, M-J-JB+<span class="number">1</span>,</span><br><span class="line">     $                        N-J-JB+<span class="number">1</span>, JB, -ONE, A( J+JB, J ), LDA,</span><br><span class="line">     $                        A( J, J+JB ), LDA, ONE, A( J+JB, J+JB ),</span><br><span class="line">     $                        LDA )</span><br><span class="line">               <span class="keyword">END</span> <span class="keyword">IF</span></span><br><span class="line">            <span class="keyword">END</span> <span class="keyword">IF</span></span><br><span class="line">   <span class="number">20</span>    <span class="keyword">CONTINUE</span></span><br><span class="line">      <span class="keyword">END</span> <span class="keyword">IF</span></span><br><span class="line">      <span class="keyword">RETURN</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line"><span class="comment">!     End of SGETRF</span></span><br><span class="line"><span class="comment">!</span></span><br><span class="line">      <span class="keyword">END</span></span><br></pre></td></tr></table></figure></p>
+<p>在二维剖分中进行高斯消去：<br><img src="/img/1638690838.jpg" alt=""><br><img src="/img/1638691213.jpg" alt=""></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">for ib = 1 to n-1 step b</span><br><span class="line">    end = min(ib + b -1, n)</span><br><span class="line">    for i = ib to end</span><br><span class="line">        (1) find pivot row k, column broadcast</span><br><span class="line">        (2) swap rows k and i in block column, broadcast row k</span><br><span class="line">        (3) A(i+1:n, i) = A(i+1:n, i) / A(i,i)</span><br><span class="line">        (4) A(i+1:n, i+1:end) -= A(i+1:n, i)*A(i,1+1:end)</span><br><span class="line">    end for</span><br><span class="line">    (5) broadcast all swap information right and left</span><br><span class="line">    (6) apply all rows swap to other column</span><br><span class="line">    (7) broadcast LL right</span><br><span class="line">    (8) A(ib:end, end+1:n) = LL / A(ib:end, end+1:n)</span><br><span class="line">    (9) broadcast A(ib:end, end+1:n) down</span><br><span class="line">    (10) broadcast A(end+1:n, ib:end) right</span><br><span class="line">    (11) eliminate A(end+1:n, end+1:n)</span><br><span class="line">    // matrix multiply of green = green - blue * pink</span><br></pre></td></tr></table></figure>
+<h1 id="lecture-15"><a href="#lecture-15" class="headerlink" title="lecture 15"></a>lecture 15</h1><p>compressed sparse row (CSR)存储：</p>
+<ul>
+<li>大小为<code>nnz=非零值个数</code>（val）数组</li>
+<li>大小为<code>nnz</code>的每个非零值的列索引数组</li>
+<li>大小为<code>n=行数</code>的行起始指针数组</li>
+</ul>
+<p>其他常用格式（加分块）</p>
+<ul>
+<li>压缩稀疏列（CSC）</li>
+<li>坐标（COO）：每个非零元素的行+列索引（易于构建）</li>
+</ul>
+<p><img src="/img/1638692558.jpg" alt=""></p>
+<p>SpMV with CSR算法对y的重用很多，但是对x的重用不足。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">for each row i:</span><br><span class="line">    for k = ptr[i] to ptr[i+1] - 1 do</span><br><span class="line">        y[i] = y[i] + val[k] * x[ind[k]]</span><br></pre></td></tr></table></figure></p>
+<p>可能的优化：</p>
+<ul>
+<li>把k循环展开，需要知道这一行有多少非零元素</li>
+<li>把y[i]挪出for循环</li>
+<li>压缩ind[i]，需要知道非零元素出现的规律</li>
+<li>重用x，需要很好的非零元素出现规律</li>
+<li>cache：需要知道非零元在附近的行</li>
+<li>register：需要知道这些非零元存在哪里</li>
+</ul>
+<p>SpMV可以利用分块，不需要使用index存储每一个非零元，而是使用1个列序号存储非零r-c块？</p>
+<p>Optimizations for SpMV</p>
+<ul>
+<li>Register blocking (RB): up to 4x over CSR</li>
+<li>Variable block splitting: 2.1x over CSR, 1.8x over RB</li>
+<li>Diagonals: 2x over CSR</li>
+<li>Reordering to create dense structure + splitting: 2x over CSR</li>
+<li>Symmetry: 2.8x over CSR, 2.6x over RB</li>
+<li>Cache blocking: 2.8x over CSR</li>
+<li>Multiple vectors (SpMM): 7x over CSR</li>
+<li>And combinations…</li>
+</ul>
+<p>Sparse triangular solve</p>
+<ul>
+<li>Hybrid sparse/dense data structure: 1.8x over CSR</li>
+</ul>
+<p>SpMV的行并行：对x的访问是随机的，而且没有线程之间的依赖关系，所以没有竞争/锁。剖分的话就根据非零元素的个数进行分割。与列并行相比，都是对y的随机读写，列并行需要同步操作。将行与列结合起来有更多并行性。</p>
+<p>优化总结：</p>
+<ul>
+<li>NUMA-非统一内存访问<ul>
+<li>将子矩阵固定到分配给它们的核心附近的内存中</li>
+</ul>
+</li>
+<li>预取-值、索引和/或向量<ul>
+<li>对预取距离进行彻底搜索</li>
+</ul>
+</li>
+<li>矩阵压缩-不仅仅是寄存器分块（BCSR）<ul>
+<li>32或16位索引，子矩阵的块坐标格式</li>
+</ul>
+</li>
+<li>缓存阻塞<ul>
+<li>矩阵的2D分区，因此所需的x、y部分适合缓存</li>
+</ul>
+</li>
+</ul>
+<p>分布式SpMV的并行性：</p>
+<ul>
+<li>y=A*x，其中A是稀疏矩阵</li>
+<li>行并行性（y和A）<ul>
+<li>跨处理器复制x</li>
+<li>或者只交换必要的元素</li>
+<li>非零是否聚集在一起，例如，接近对角线？</li>
+</ul>
+</li>
+<li>列并行性（x和A）<ul>
+<li>在所有处理器上设置临时y=[0, …]；</li>
+<li>更新该信息；并跨处理器添加reduce</li>
+</ul>
+</li>
+<li>p很大和非零一致时的二维并行性<ul>
+<li>将处理器划分为p1 x p2（例如，方形网格）</li>
+<li>使用混合行和列并行性</li>
+<li>非零元素聚集时的负载平衡不良</li>
+</ul>
+</li>
+</ul>
+<h1 id="lecture-17"><a href="#lecture-17" class="headerlink" title="lecture 17"></a>lecture 17</h1><p>一些机器学习算法与矩阵向量乘相关。隐式的并行是保持整体算法结构（操作序列）完整，并行化各个操作，如将BLAS操作并行化，通常可以获得完全相同的精度（例如，DNN训练中的模型并行性），如果算法的关键路径较长，则可扩展性可能会受到限制。</p>
+<p>显式并行化：修改算法以获得更多的并行性，例如算法在单个模块上执行，这些模块的结果稍后可以合并。示例：DNNs中的CA-SVM和数据并行，可以实现显著更好的可扩展性。<br>训练即更新神经网络的权重。</p>
+<p>梯度下降：为了最小化一个函数，以α速率的梯度方向朝相反方向移动，α是步长（也称为学习速率）。用作许多其他机器的优学习方法（示例：NMF）</p>
+<p>随机梯度下降SGD，SGD因其“嘈杂”的梯度而避开尖锐的局部极小值。</p>
+<p>并行化机会</p>
+<ul>
+<li>数据并行性：分发输入（图像、文本、音频等）<ul>
+<li>批处理并行性：将每个完整样本分发到不同的处理器。当人们在文献中提到数据并行时，这就是他们99%的意思</li>
+</ul>
+</li>
+<li>域并行性<ul>
+<li>细分样本并将各部分分发给处理器。一种以前未经探索的并行方法。</li>
+</ul>
+</li>
+<li>模型并行性：分配神经网络（即其权重）</li>
+</ul>
+<p>参数服务器中梯度的获取和更新可以同步或异步完成。<br>两者都有利弊。在异步不可再现的情况下，过度同步会影响性能，并可能会影响收敛</p>
+<p><img src="/img/1639013348.jpg" alt=""></p>
+<p>Dean, Jeffrey, et al. “Large scale distributed deep networks.” Advances in neural information processing systems. 2012.</p>
+<p>为了避免参数服务器带来的瓶颈，两种方法：全局allreduce参数，或者进程之间两两互相交换参数。</p>
+<p><img src="/img/1639013397.jpg" alt=""></p>
+<p>Peter Jin, Forrest Iandola, Kurt Keutzer, “How to scale distributed deep learning?” NIPS ML Sys 201</p>
+<p>模型并行性的例子。图中显示了一个五层深度的神经网络，该网络具有独立性，被划分为四台机器（蓝色矩形）。只有跨越分区边界（粗线）的那些才需要它们的状态传输。即使在节点有多条边穿过分区边界的情况下，也会发送到该边界另一侧的计算机一次。</p>
+<p><img src="/img/1639013422.jpg" alt=""></p>
+<ul>
+<li>解释1：将神经网络划分到处理器</li>
+<li>解释2：并行执行矩阵运算</li>
+</ul>
+<p>在每个分区内，各个节点将跨所有可用的CPU核进行并行化。</p>
+<p>在反向传播中，误差从最后一层传播到第一层，并且任何两个连续层之间都存在数据依赖性。相比之下，不同层的梯度是相互独立的。激活在前级从左到右传播； 错误在反向传播阶段从右向左传播。 梯度是使用激活和误差计算的。 每个箭头表示数据依赖性。<br><img src="/img/1639013868.jpg" alt=""></p>
+<p>神经网络的SGD训练：如果看成是矩阵乘的话：权重矩阵（N✖M）乘以本层输入（M✖B）=本层输出（N✖B）。</p>
+<p>其中权重W会被复制到每个处理器，所以是不会变的。输入和输出会由于数据并行而变得更小，例如，把输入矩阵切分到b=B/p大小</p>
+<p>域并行（domain parallel）：总体思路与用于在 HPC 中并行化模板代码的halo区域或ghost区域相同，在卷积之前，交换局部对应halo数据。</p>
+<p>在向前和向后传递期间用于光环交换的附加通信</p>
+<ul>
+<li>对于激活大小较大的早期层（即卷积层），成本可以忽略不计</li>
+</ul>
+<p><img src="/img/1639219770.jpg" alt=""></p>
+<p>分布式深度学习总结</p>
+<ul>
+<li>大batch训练经常导致次优学习</li>
+<li>集成并行使用避免通信的算法来扩展可扩展性，而不是增大batch大小</li>
+<li>集成并行性将模型和数据（batch和domain）并行性最佳结合起来，并且通常比每个极端都表现得更好。</li>
+<li>对全连接层（大参数）使用模型并行，对卷积层（大激活）使用数据并行通常更好</li>
+</ul>
+<p>支持向量机：只有支持向量上的分类约束是活动的</p>
+<ul>
+<li>导致巨大的二次约束优化 (QP) 问题</li>
+<li>特殊算法，例如顺序最小优化 (SMO)，将这个巨大的 QP 分解为更小的（实际上是最小的）QP 子问题。</li>
+</ul>
+<p>在特征空间中的计算是耗时的，因为特征空间一般都是高维的。核方法解决这个问题。核方法用任意核函数替换线性模型的点积相似度，该函数计算 x 和 y 之间的相似度：<code>K(x, y): X ✖ X ➡ R</code>。</p>
+<p>内核必须是对称的和半正定的。高斯核（即径向基函数）是ML中的事实上的核。<code>K(x, x&#39;) = exp(-γ || x - x&#39; ||^2)</code>。我们可以预先计算核（Gram）矩阵，但这太耗时了。</p>
+<p>下图中，2D (a) 中的圆形分类边界使用以下变换变为 3D (b) 中的线性边界：φ(x1, x2) = (x1^2, x2^2, 根下2 <em> x1 </em>x2)。<br><img src="/img/1639221788.png" alt=""></p>
+<p>输入数据集是一个n✖d的矩阵，X1、X2、…、Xn都有一个d长度的特征向量。生成一个n✖n的核矩阵，<code>K[i][j] = exp(-r||Xi - Xj||^2)</code>，r是一个正数。计算复杂度O(d*n^2)，内存复杂度O(n^2)，很小的输入会产生很大的核矩阵。357MB的输入(52K✖90) = 2000GB核矩阵。使用SMO（顺序最小优化）</p>
+<ul>
+<li>采用迭代法，避免核矩阵</li>
+<li>每次迭代使用两行核矩阵</li>
+<li>稀疏输入的关键核：稀疏矩阵乘以稀疏向量</li>
+</ul>
+<p><img src="/img/1639222082.jpg" alt=""></p>
+<p>最小可能的优化问题一次涉及“两个”拉格朗日乘子，因为仅仅改变乘数会违反等式约束。</p>
+<p>重复直到收敛：</p>
+<ol>
+<li>选择一些对 αi 和 αj 进行下一步更新（使用试探法尝试选择这两个，这将使我们能够朝着全局最大值取得最大进展）。</li>
+<li>相对于 αi 和 αj 重新优化 W(α)，同时保持所有其他 αk 的固定。</li>
+</ol>
+<p>Cascade SVM：数据被分割<em>均匀</em>并由多个SVM处理。逐层去除非支持向量</p>
+<ul>
+<li>数据是前一层的支持向量（SV）</li>
+<li>将 SV 的参数 αi 传递到下一层以获得更好的启动（热启动）</li>
+</ul>
+<p><img src="/img/1639222886.jpg" alt=""></p>
+<p>Divide-and-Conquer SVM：全部数据在层与层之间传递；使用内核k-mean实现数据集的分割。<br><img src="/img/1639223695.jpg" alt=""></p>
+<ul>
+<li>定理1：子问题的支持向量集接近于整个问题的支持向量集</li>
+<li>定理2：内核 kmeans 最小化子问题的解与整个问题的解之间的差异</li>
+</ul>
+<p>CP-SVM：</p>
+<ul>
+<li>divide：K-means将数据划分为P个部分</li>
+<li>conquer：欧氏距离选择最佳模型</li>
+</ul>
+<p><img src="/img/1639223973.jpg" alt=""></p>
+<ul>
+<li>当<code>||Xi - Xj||^2</code>很大时，<code>exp(-r||Xi - Xj||^2)</code>是0。</li>
+<li>K-means最大化了数据集之间的欧氏距离</li>
+<li>这两个矩阵具有相似的 F 范数</li>
+<li>分析假设高斯核：对于给定的样本，只有接近它的支持向量才能对分类产生影响</li>
+</ul>
+<p>communication-avoid SVM：设计了一个均衡的聚簇来取代k-means，仍然尽可能近似kmeans的距离分离特性。</p>
+<p>非负矩阵分解 (NMF)：<code>min&#123;W≥0, H≥0&#125; f(W, H) = 1/2 || A - WH ||^2</code>。</p>
+<p>m✖n矩阵A = m✖k矩阵W * k✖n矩阵H</p>
+<ul>
+<li>具有非负约束的降维</li>
+<li>“分解”这个名字用词不当。 NMF 只是一个低秩近似，因为精确分解是 NP 难的</li>
+<li>NMF 是一系列方法，而不仅仅是一种算法</li>
+</ul>
+<p>聚类</p>
+<ul>
+<li>基于质心（k 均值、k 中值和变体）</li>
+<li>基于流（马尔可夫聚类）</li>
+<li>谱方法</li>
+<li>基于密度（DBSCAN、OPTICS）</li>
+<li>凝聚方法（单链聚类）</li>
+</ul>
+<p>通常，正确的方法取决于输入特征并需要一些领域知识。我们将讨论两种并行算法：谱聚类和马尔可夫聚类 (MCL)。</p>
+<p>谱聚类</p>
+<ul>
+<li>输入：数据点之间的相似性</li>
+<li>计算相似度的许多方法，有些是特定领域的：余弦、Jaccard 指数、Pearson 相关性、Spearman’s rho、Bhattacharyya 距离、LOD 分数……</li>
+<li>我们可以用图表示数据点之间的关系，通过点之间的相似性对边进行加权</li>
+</ul>
+<p>图定义</p>
+<ul>
+<li>ε-邻域图<ul>
+<li>确定阈值 ε，如果两点之间的亲和力大于 ε，则加入这条边。</li>
+</ul>
+</li>
+<li>k-最近邻<br>  – 在节点与其 k 个最近邻居之间插入边。<br>  – 每个节点将连接到（至少）k 个节点。</li>
+<li>全连接<br>  – 在每对节点之间插入一条边。</li>
+</ul>
+<p>谱聚类</p>
+<ul>
+<li>图形的最小割确定了数据的最佳分区。</li>
+<li>谱聚类：递归分割数据集<ul>
+<li>确定最小割</li>
+<li>去除边</li>
+<li>重复直到识别出 k 个集群</li>
+</ul>
+</li>
+<li>问题：识别最小割是NP 难的。</li>
+<li>存在使用线性代数的有效近似值，基于拉普拉斯矩阵或图拉普拉斯算子</li>
+</ul>
+<p>图拉普拉斯算子</p>
+<ul>
+<li>非标准化图拉普拉斯算子：L = D - W</li>
+<li>标准化图拉普拉斯算子：<ul>
+<li>L(sym) = D^(-1/2) <em> L </em> D^(-1/2) = I - D^(-1/2) <em> W </em> D^(-1/2)</li>
+<li>L(rw) = D^(-1) <em> L = I - D^(-1) </em> W</li>
+</ul>
+</li>
+</ul>
+<p><img src="/img/1639225528.jpg" alt=""></p>
+<ul>
+<li>特征值 0 的多重性给出了集群的数量（在这种理想情况下：连接的分量的数量）。</li>
+<li>假设真实情况是这种情况的近似。</li>
+</ul>
+<p><img src="/img/1639225591.jpg" alt=""></p>
+<p>如何计算那些最小的特征向量？</p>
+<ul>
+<li>通过 Lanczos 算法实现<ul>
+<li>workhorse是稀疏矩阵向量 (SpMV) 乘法</li>
+<li>SpMV 没有/最小化的数据重用，受通信限制</li>
+<li>为了优化稀疏矩阵向量乘法并最小化其通信，我们绘制分区图（下一讲）</li>
+</ul>
+</li>
+<li>替代算法是可能的<ul>
+<li>幂迭代（power iteration）更廉价但数值不稳定</li>
+<li>LOBPCG（局部优化块预处理共轭梯度，Locally-Optimized Block Preconditioned Conjugate Gradient）使用稀疏矩阵乘以多个向量，由于可能的数据重用，因此具有更有利的性能。</li>
+</ul>
+</li>
+<li>最后，您可能只想调用现有的东西。<ul>
+<li>ARPACK 实现反向通信特征求解器：您实现 SpMV，它实现数字外部逻辑</li>
+<li>PARPACK 是它的并行版本，以下代码使用它：<a href="https://github.com/openbigdatagroup/pspectraclustering">https://github.com/openbigdatagroup/pspectraclustering</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="lecture-18"><a href="#lecture-18" class="headerlink" title="lecture 18"></a>lecture 18</h1><p>图分区的定义</p>
+<ul>
+<li>给定一个图 G = (N, E, WN, WE)<ul>
+<li>N = 节点（或顶点），</li>
+<li>WN = 节点权重</li>
+<li>E = 边</li>
+<li>WE = 边权重</li>
+</ul>
+</li>
+<li>例如：N = {tasks}，WN = {task cost}，E 中的边 (j,k) 表示任务 j 将 WE(j,k) 字节发送到任务 k</li>
+<li>选择一个分区 N = N1 U N2 U … U NP 使得<ul>
+<li>每个 Nj 中节点权重的总和大致相同</li>
+<li>最小化连接所有不同对 Nj 和 Nk 的边的所有边权重之和</li>
+</ul>
+</li>
+<li>例如：平衡工作负载，同时尽量减少通信<ul>
+<li>N = N1 U N2 的特例：图二分</li>
+</ul>
+</li>
+</ul>
+<p>稀疏矩阵向量乘法<code>y = y +A*x</code>分割稀疏对称矩阵<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">… declare A_local, A_remote(1:num_procs), x_local, x_remote, y_local</span><br><span class="line">y_local = y_local + A_local * x_local</span><br><span class="line">for all procs P that need part of x_local</span><br><span class="line">    send(needed part of x_local, P)</span><br><span class="line">for all procs P owning needed part of x_remote</span><br><span class="line">    receive(x_remote, P)</span><br><span class="line">    y_local = y_local + A_remote(P)*x_remote</span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/1639228714.png" alt=""></p>
+<p>选择最优分区是 NP 完全的</p>
+<ul>
+<li>(NP-complete = 我们可以证明它是非确定多项式时间类中其他众所周知的难题)</li>
+<li>只有已知的精确算法具有成本 = 指数(n)</li>
+<li>我们需要好的启发式方法</li>
+</ul>
+<p>第一个启发式：重复图二分法</p>
+<ul>
+<li>将 N 分成 2^k 个部分</li>
+<li>递归地平分图 k 次<br>今后主要讨论图二分法</li>
+</ul>
+<p>边分隔符与顶点分隔符</p>
+<ul>
+<li>边分隔符：如果从 E 中删除 Es，留下 N 的两个大小相等、不相连的分量：N1 和 N2，则 Es（E 的子集）分隔 G</li>
+<li>顶点分隔符：如果移除 Ns 和所有的相关边，留下两个大小相等、不连贯的N的组成部分：N1和N2，就说Ns（N 的子集）分割G</li>
+</ul>
+<p><img src="/img/1639229379.png" alt=""></p>
+<ul>
+<li>从 Es 生成 Ns：选择 Es 中每条边的一个端点<ul>
+<li>|Ns| ≤ |Es|</li>
+</ul>
+</li>
+<li>从一个 Ns 生成一个 Es：选取所有在 Ns 上的边<ul>
+<li>|Es| ≤ d * |Ns|，其中 d 是图的最大度数</li>
+</ul>
+</li>
+<li>我们会找到边缘或顶点分隔符，因为它们很方便</li>
+</ul>
+<p>使用节点坐标（Nodal Coordinates）进行分区</p>
+<ul>
+<li>每个节点都有 x,y,z 坐标 ➡ 分区空间<br>不使用节点坐标（Nodal Coordinates）进行分区</li>
+<li>网络文档的稀疏矩阵</li>
+</ul>
+<p>节点坐标：惯性分区</p>
+<ul>
+<li>对于二维上的图，选择一条分割图的线<ul>
+<li>在 3D 中，选择一个平面，但为了简单起见考虑 2D</li>
+</ul>
+</li>
+<li>选择一条线 L，然后选择一条垂直于它的线 LT，两边各有一半节点</li>
+</ul>
+<ol>
+<li>选择一条直线 L 通过这些点。L 由<code>a*(x-xbar)+b*(y-ybar)=0</code>给出，其中<code>a^2+b^2=1</code>；(a,b) 是单位向量垂直于L</li>
+<li>将每个点投影到线上。对于每个<code>nj = (xj,yj)</code>，计算沿 L 的坐标<code>Sj = -b*(xj-xbar) + a*(yj-ybar)</code></li>
+<li>计算中位数。让 Sbar = median(S1, …, Sn)</li>
+<li>使用中值划分节点。让 Sj &lt; Sbar 的节点在 N1 中，剩余的在 N2 中</li>
+</ol>
+<p><img src="/img/1639230418.jpg" alt=""></p>
+<p>节点坐标：摘要</p>
+<ul>
+<li>这些算法的其他变体</li>
+<li>算法高效</li>
+<li>依赖于节点（主要）连接到空间中最近邻的图<ul>
+<li>算法不依赖于实际边的位置！</li>
+</ul>
+</li>
+<li>当图来自物理模型时很常见</li>
+<li>忽略边，但可以用作后续检查边的分区的良好起始</li>
+<li>如果图连通性不是空间的，则效果不佳：</li>
+</ul>
+<p>图分块的无须坐标系的方法：Kernighan/Lin</p>
+<ul>
+<li>取一个初始分区并迭代改进它<ul>
+<li>Kernighan/Lin (1970)，开销 = O(|N|^3)</li>
+<li>Fiduccia/Mattheyses (1982)，开销 = O(|E|)，更好，但更复杂</li>
+</ul>
+</li>
+<li>给定 G = (N, E, WE) 和分区 N = A U B，其中 |A| = |B|<ul>
+<li>T = cost(A,B) = ∑ {W(e) 其中 e 连接 A 和 B 中的节点}</li>
+<li>使用|X| = |Y|，查找A的子集X和B的Y</li>
+<li>如果可以降低成本，请考虑交换 X 和 Y：<ul>
+<li>newA = (A – X) U Y 和 newB = (B – Y) U X</li>
+<li>newT = cost(newA, newB) &lt; T = cost(A,B)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>需要为许多可能的 X 和 Y 有效地计算 newT，选择最小（最佳）</li>
+</ul>
+<p>Kernighan/Lin：初步定义</p>
+<ul>
+<li>T = cost(A, B), newT = cost(newA, newB)</li>
+<li>需要一个有效的newT公式； 将使用<ul>
+<li>E(a) = A 中 a 的外部开销 = ∑ {W(a,b) for B in b}</li>
+<li>I(a) = A 中 a 的内部成本 = S {W(a,a) for other a’ in A}</li>
+<li>D(a) = A 中 a 的成本 = E(a) - I(a)</li>
+<li>E(b)、I(b) 和 D(b) 对于 B 中的 b 定义类似</li>
+</ul>
+</li>
+<li>考虑交换 X = {a} 和 Y = {b}<ul>
+<li>newA = (A - {a}) U {b}</li>
+<li>newB = (B - {b}) U {a}</li>
+</ul>
+</li>
+<li>newT = T - ( D(a) + D(b) - 2*w(a,b) ) ≡ T - gain(a,b)<ul>
+<li>gain(a,b) 衡量通过交换 a 和 b 获得的改进</li>
+</ul>
+</li>
+<li>更新公式<ul>
+<li><code>newD(a&#39;) = D(a&#39;) + 2*w(a&#39;,a) - 2*w(a&#39;,b)</code>对于 A 中的 a’，a’ ≠ a</li>
+<li><code>newD(b&#39;) = D(b&#39;) + 2*w(b&#39;,b) - 2*w(b&#39;,a)</code>对于 B 中的 b’，b’ ≠ b</li>
+</ul>
+</li>
+</ul>
+<p><img src="/img/1639231792.jpg" alt=""></p>
+<p>红色是第一部分，黑色是第二部分，最开始的切分是随机的，none (8);<br><img src="/img/1639232077.jpg" alt=""></p>
+<p>第一部分中最大的gain的是g，把g挪到第二部分，同时计算g的邻居的gain。暂时移动的节点是空心圆。暂时移动节点的gain无关紧要。none (8); g,<br><img src="/img/1639232472.jpg" alt=""></p>
+<p>第二部分的gain最大的是d，暂时移动到第一部分，重新计算d的邻居的gain，在这之后，图的切是4。none (8); g, d (4);<br><img src="/img/1639233053.jpg" alt=""></p>
+<p>第一部分中没有移动过的最大的gain的是f。暂时移动到第二部分，重新计算它邻居的gain。none (8); g, d (4); f,<br><img src="/img/1639233973.jpg" alt=""></p>
+<p>第二部分中没有移动过的最大的gain的是c，暂时移动到第一部分，重新计算c的邻居的gain，这次交换后，这个图的切是5。none (8); g, d (4); f, c (5);<br><img src="/img/1639233630.jpg" alt=""></p>
+<p>第一部分中没有移动过的最大的gain的是b，暂时移动到第二部分，重新计算b的邻居的gain。none (8); g, d (4); f, c (5); b<br><img src="/img/1639234011.jpg" alt=""></p>
+<p>第 2 部分中两个未移动节点之间的最大gain存在联系。我们选择一个（比如e）并暂时将其移至 Part1。 它没有未移动的邻居，因此不会重新计算gain。这次交换后，这个图的切是7。none (8); g, d (4); f, c (5); b, e (7);<br><img src="/img/1639234104.jpg" alt=""></p>
+<p>第一部分中没有移动过的最大的gain的是a，暂时移动到第二部分，它没有未移动的邻居，因此不会重新计算gain。none (8); g, d (4); f, c (5); b, e (7); a<br><img src="/img/1639234278.jpg" alt=""></p>
+<p>第二部分中没有移动过的最大的gain的是a，暂时移动到第一部分，它没有未移动的邻居，因此不会重新计算gain。最终临时交换后的切大小为 8，和任何动作之前一样。<br><img src="/img/1639234427.jpg" alt=""></p>
+<p>在每个节点都被暂时移动后，我们看到交换 g 和 d 后，最小的切割是 4。 我们使该交换永久化并撤消所有后来的临时交换。这是第一个改进步骤的结束。<br><img src="/img/1639234459.jpg" alt=""></p>
+<p>现在我们重新计算gain并从新的最小切4开始进行另一个改进步骤。 细节没有显示。 第二个改进步骤不改变切大小，所以算法以切为4结束。 一般来说，只要切不断变小，我们就会继续进行改进步骤。</p>
+<p>Kernighan/Lin 算法</p>
+<ul>
+<li>最耗时的线以红色显示，O(n3)</li>
+<li>某些gain(k)可能为负，但如果后来的gain很大，则最终gain可能为正<ul>
+<li>可以避免局部最小值，其中切换没有任何帮助</li>
+</ul>
+</li>
+<li>我们重复多少次？<ul>
+<li>K/L 在非常小的图 (|N|&lt;=360) 上测试并在 2-4 次扫描后收敛</li>
+<li>对于（具有理论意义的）随机图，一步收敛的概率似乎下降为 2^(-|N|/30)</li>
+</ul>
+</li>
+</ul>
+<p>多级分区简介</p>
+<ul>
+<li>如果我们想对 G(N,E) 进行划分，但它太大而无法有效地进行，我们该怎么办？<ul>
+<li>1) 将 G(N,E) 替换为粗近似 Gc(Nc,Ec)，并划分 Gc</li>
+<li>2) 使用Gc的分区得到G的粗略分区，然后迭代改进</li>
+</ul>
+</li>
+<li>如果 Gc 仍然太大怎么办？<ul>
+<li>递归应用相同的想法</li>
+</ul>
+</li>
+</ul>
+<p><img src="/img/1639234858.jpg" alt=""></p>
+<p>最大匹配</p>
+<ul>
+<li>定义：图 G(N,E) 的匹配是 E 的子集 Em，使得 Em 中没有两条边共享端点</li>
+<li>定义：图 G(N,E) 的最大匹配是一个匹配Em，不能添加更多边并保持匹配</li>
+<li>一个简单的贪心算法计算最大匹配：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">let Em be empty</span><br><span class="line">mark all nodes in N as unmatched</span><br><span class="line">for i = 1 to |N| … visit the nodes in any order</span><br><span class="line">    if i has not been matched</span><br><span class="line">        mark i as matched</span><br><span class="line">        if there is an edge e=(i,j) where j is also unmatched,</span><br><span class="line">            add e to Em</span><br><span class="line">            mark j as matched</span><br><span class="line">        endif</span><br><span class="line">    endif</span><br><span class="line">endfor</span><br></pre></td></tr></table></figure>
+<p><img src="/img/1639235433.jpg" alt=""></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">1) 构建G(N, E)的最大匹配Em</span><br><span class="line">for all edges e = (j,k) in Em  2)将匹配的节点折叠成一个节点</span><br><span class="line">    Put node n(e) in Nc </span><br><span class="line">    W(n(e)) = W(j) + W(k) … gray statements update node/edge weights</span><br><span class="line">for all nodes n in N not incident on an edge in Em 3) 添加不匹配的节点</span><br><span class="line">    Put n in Nc … do not change W(n)</span><br><span class="line">现在 N 中的每个节点 r 都在 Nc 中的唯一节点 n(r) 内</span><br><span class="line"></span><br><span class="line">4) 如果两个节点内部的节点在 E 中连接，则在 Nc 中连接两个节点</span><br><span class="line">for all edges e=(j,k) in Em</span><br><span class="line">    for each other edge e&#x27;=(j,r) or (k,r) in E</span><br><span class="line">        Put edge ee = (n(e),n(r)) in Ec</span><br><span class="line">        W(ee) = W(e&#x27;)</span><br><span class="line"></span><br><span class="line">如果在 Nc 中有多个边连接两个节点，将它们折叠起来，</span><br><span class="line">    添加边权重</span><br></pre></td></tr></table></figure>
+<p>通过稀疏矩阵-矩阵乘进行简化<br><img src="/img/1639236577.jpg" alt=""></p>
+<p>Parallel sparse matrix-matrix multiplication and indexing:<br>Implementation and experiments. SIAM Journal of Scientific Computing (SISC), 2012</p>
+<p>一些实现</p>
+<ul>
+<li>Multilevel Kernighan/Lin<ul>
+<li>METIS and ParMETIS (glaros.dtc.umn.edu/gkhome/views/metis)</li>
+<li>SCOTCH and PT-SCOTCH (www.labri.fr/perso/pelegrin/scotch/)</li>
+</ul>
+</li>
+<li>Matlab toolbox for geometric and spectral partitioning by Gilbert, Tang, and Li: <a href="https://github.com/YingzhouLi/meshpart">https://github.com/YingzhouLi/meshpart</a></li>
+<li>Multilevel Spectral Bisection<ul>
+<li>S. Barnard and H. Simon, - A fast multilevel implementation of recursive spectral bisection …, 1993</li>
+<li>Chaco (SC’14 Test of Time Award)</li>
+</ul>
+</li>
+<li>Hybrids possible<ul>
+<li>Ex: Use Kernighan/Lin to improve a partition from spectral bisection</li>
+</ul>
+</li>
+<li>Recent packages with collection of techniques<ul>
+<li>Zoltan (www.cs.sandia.gov/Zoltan)</li>
+<li>KaHIP (<a href="http://algo2.iti.kit.edu/kahip/">http://algo2.iti.kit.edu/kahip/</a>)</li>
+</ul>
+</li>
+</ul>
+<p>超越简单的图划分：将稀疏矩阵表示为超图<br><img src="/img/1639237679.jpg" alt=""></p>
+<p>edge (vi, vj) ∈ E ➡ y(i) ⬅ y(i) + A(i,j) x(j) and y(j) ⬅ y(j) + A(j,i) x(i)</p>
+<p>P1 performs: y(4) ⬅ y(4) + A(4,7) x(7) and y(5) ⬅ y(5) + A(5,7) x(7)</p>
+<p>x(7) only needs to be communicated once !</p>
+<p><img src="/img/1639237750.jpg" alt=""></p>
+<ul>
+<li>块-行分布的列-网模型</li>
+<li>行是顶点，列是网络（超边）</li>
+</ul>
+<p><img src="/img/1639237869.jpg" alt=""></p>
+<p>两种不同的2D网格分块方法<br><img src="/img/1639238007.jpg" alt=""></p>
+<p>分区质量最重要</p>
+<ul>
+<li>当结构在模拟过程中动态变化时，需要动态分区<ul>
+<li>速度可能比质量更重要</li>
+<li>分区器必须并行快速运行<ul>
+<li>这里还有一个先有鸡还是先有蛋的问题</li>
+</ul>
+</li>
+<li>分区应该是增量的<ul>
+<li>相对于之前的变化最小</li>
+</ul>
+</li>
+<li>不得使用过多内存</li>
+</ul>
+</li>
+<li>最近关于流分区的研究：<ul>
+<li>Stanton, I. and Kliot, G., “Streaming graph partitioning for large distributed graphs”. KDD, 2012</li>
+</ul>
+</li>
+</ul>
+<h1 id="lecture-19"><a href="#lecture-19" class="headerlink" title="lecture 19"></a>lecture 19</h1><p>这一节中定义了<code>i = sqrt(-1)</code>。</p>
+<p>一个有m个元素的向量v的离散傅里叶变换(DFT)为<code>F*v</code>，其中<code>F</code>是一个<code>m*m</code>的矩阵，<code>F(j,k)=ω^(j*k), 0 ≤ j,k ≤ m-1</code>，其中<code>ω=e^(2πi/m)=cos(2π/m)+i*sin(2π/m)</code>，<code>ω</code>是一个复数，它的m次方<code>ω^m=1</code>。例如<code>m=4</code>，则<code>ω=i, ω^2=-1, ω^3=-i, ω^4=1</code>。<code>m*m</code>二维矩阵<code>V</code>的DFT为<code>F*V*F</code>。</p>
+<p>快速傅里叶变换主要用在图像处理、信号处理，求解泊松方程<br><img src="/img/1639286406.png" alt=""></p>
+<p>分别在一维二维条件下求解泊松方程：<br><img src="/img/1639286495.jpg" alt=""></p>
+<p>因为<code>L1=F·D·FT</code>，是特征值/特征向量分解，<code>F</code>与FFT很相似，<code>F(j,k)=(2/(n+1))^(1/2) · sin(j k π /(n+1))</code>，D是特征值的对角矩阵，<code>D(j,j)=2(1-cos(j π/(n+1)))</code>。</p>
+<p>二维泊松与<code>L1 · X + X · L1 = B</code>类似，</p>
+<p>FFT的串行算法：计算m个元素的向量<code>v</code>的<code>FFT(F*v)</code>，<code>(F*v)[j] = ∑(k=0,m-1)(F(j,k)*v(k)) = ∑(k=0,m-1)(ω^(j*k)*v(k)) = ∑(k=0,m-1)((ω^j)^k*v(k)) = V((ω^j))</code>，<code>V</code>是多项式<code>V(x)=∑(k=0,m-1)(x^k * v(k))</code>。</p>
+<p>FFT类似在m个点上评估一个m-1阶多项式<code>V(x)</code>。</p>
+<p>V可以用分治来计算：<code>V(x)=∑(k=0,m-1)(x^k * v(k))=v[0] + x^2 * v[2] + x^4 * v[4] + ... + x*(v[1] + x^2 * v[3] + x^4 * v[5] + ...) = Veven(x^2) = Vodd(x^2)</code>。</p>
+<p>V的阶为m-1，所以Veven和Vodd是<code>m/2-1</code>阶的多项式。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">FFT(v, ω, m) … assume m is a power of 2</span><br><span class="line">if m = 1 return v[0]</span><br><span class="line">else</span><br><span class="line">    veven = FFT(v[0:2:m-2], ω^2, m/2)</span><br><span class="line">    vodd = FFT(v[1:2:m-1], ω^2, m/2)</span><br><span class="line">    ω-vec = [ω^0, ω^1, … ω^(m/2-1) ]</span><br><span class="line">    return [Veven + (ω-vec .* Vodd),</span><br><span class="line">            Veven - (ω-vec .* Vodd) ]</span><br></pre></td></tr></table></figure>
+<p>Cost: <code>T(m) = 2T(m/2)+O(m) = O(m log m)</code> operations.</p>
+<p>FFT的分治算法画图是一个完全二叉树：<br><img src="/img/1639288578.jpg" alt=""></p>
+<p>消息发送延迟的来源<br><img src="/img/1639289116.jpg" alt=""></p>
+<p>一般地，重叠意味着同时计算和通信，（或与其他通信对象通信，又名流水线）</p>
+<p>重叠的潜力是gap和开销之间的差异</p>
+<ul>
+<li>如果在整个消息发送过程中 CPU 被占用，则没有潜力<ul>
+<li>例如，没有发送端 DMA</li>
+</ul>
+</li>
+<li>具有 DMA 的机器的潜力随着消息大小的增长而增长（每字节成本由网络处理，即 NIC）</li>
+<li>潜力随着网络拥塞量的增加而增长<ul>
+<li>因为差距随着网络变得饱和而增长</li>
+</ul>
+</li>
+</ul>
+<p>对于具有 RDMA 的机器，远程开销为 0，需要良好的软件支持才能利用这一点。</p>
+<p>GASNet 提供 put/get 通信，是在网络硬件之上的一层。</p>
+<ul>
+<li>一方面：API 中不需要远程 CPU 参与（与 MPI 的主要区别）<ul>
+<li>消息包含远程地址</li>
+<li>无需与接收匹配</li>
+<li>无需隐式排序</li>
+</ul>
+</li>
+</ul>
+<p>下图是GASNet和MPI在通信上的差异<br><img src="/img/1639289379.jpg" alt=""></p>
+<h1 id="lecture-20"><a href="#lecture-20" class="headerlink" title="lecture 20"></a>lecture 20</h1><p>PRAM模型：</p>
+<ul>
+<li>理想化的并行共享内存系统模型</li>
+<li>无限数量的同步处理器； 无同步、通信成本； 没有并行开销</li>
+<li>EREW（独占读独写）、CREW（并发读独占写）</li>
+<li>衡量性能：空间和时间复杂度； 操作总数（工作）</li>
+<li>优点<ul>
+<li>简单而干净的语义。</li>
+<li>大多数理论并行算法是使用 PRAM 模型设计的。</li>
+<li>独立于通信网络拓扑。</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>不现实，太强大的通信模型。</li>
+<li>通信成本被忽略。</li>
+<li>需要同步处理器。</li>
+<li>没有本地内存。</li>
+<li>大 O 符号通常具有误导性。</li>
+</ul>
+</li>
+</ul>
+<p>图的表示：压缩稀疏行：缓存高效的邻接表<br><img src="/img/1639289907.jpg" alt=""></p>
+<p>分布式网格表示：</p>
+<ul>
+<li>每个处理器存储整个图（“完全复制”）</li>
+<li>每个处理器存储 n/p 个顶点以及这些顶点之外的所有邻接（“一维分区”）</li>
+<li>如何创建这些“p”顶点分区？<ul>
+<li>图分区算法：递归优化电导（边缘切割/较小分区的大小）</li>
+<li>随机打乱顶点标识符确保边数/处理器大致相同</li>
+</ul>
+</li>
+</ul>
+<p>二维棋盘表示：</p>
+<ul>
+<li>考虑一个逻辑 2D 处理器网格 (pr * pc = p) 和图的矩阵表示</li>
+<li>为每个处理器分配一个子矩阵（即子矩阵内的边）</li>
+</ul>
+<p>应该是把图的矩阵表示进行分割<br><img src="/img/1639290675.jpg" alt=""></p>
+<p>DFS：并行化DFS的复杂度很高，难以并行<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">procedure DFS(vertex v)</span><br><span class="line">    v.visited = true</span><br><span class="line">    previsit(v)</span><br><span class="line">    for all v s.t. (v, w) ∈ E</span><br><span class="line">        if(!w.visited) DFS(w)</span><br><span class="line">    postvisit(v)</span><br></pre></td></tr></table></figure></p>
+<p>BFS的内存要求：</p>
+<ul>
+<li>稀疏图表示：m+n</li>
+<li>访问顶点堆栈：n</li>
+<li>距离阵列：n</li>
+</ul>
+<p>广度优先搜索是其他并行图算法的一个非常重要的构建块，例如（二部）匹配、最大流、（强）连接分量等。</p>
+<p>并行化BFS：</p>
+<ul>
+<li>扩展当前边界（水平同步方法，适用于小直径图）<ul>
+<li>并行访问当前边界中所有顶点的邻接</li>
+</ul>
+</li>
+<li>拼接多个并发遍历（Ullman-Yannakakis方法，适用于大直径图）</li>
+</ul>
+<p><img src="/img/1639291289.jpg" alt=""></p>
+<p>图的矩阵表示A转置为AT。最开始把开始的1点放到parents中，1点的parents是0点。<br><img src="/img/1639293311.png" alt=""></p>
+<p>AT乘parents向量得到ATX，得到1的邻接点是2和4，修改parents向量。<br><img src="/img/1639293523.jpg" alt=""></p>
+<p>X是上一步求出来的ATX，AT*X得到这一步的邻接点，加入到parent向量中。<br><img src="/img/1639293800.jpg" alt=""></p>
+<p><img src="/img/1639294006.jpg" alt=""></p>
+<p>1D Parallel BFS algorithm</p>
+<ol>
+<li>查找当前边界邻接的所有者。(计算)</li>
+<li>通过all to all交换邻接。(通讯)</li>
+<li>更新未访问顶点的distance/parents。(计算)</li>
+</ol>
+<p>2D Parallel BFS algorithm</p>
+<ol>
+<li>在处理器列中收集顶点(通信)</li>
+<li>查找当前边界邻接的所有者(计算)</li>
+<li>交换处理器行中的邻接(通信)</li>
+<li>更新未访问顶点的distance/parents。(计算)</li>
+</ol>
+<p><img src="/img/1639294596.jpg" alt=""></p>
+<p>并行单源最短路径（Parallel Single-source Shortest Paths，SSSP）算法</p>
+<ul>
+<li>著名的串行算法：<ul>
+<li>Bellman-Ford：标签校正-适用于任何图形</li>
+<li>Dijkstra：标签设置–需要非负边权重</li>
+</ul>
+</li>
+<li>没有已知的PRAM算法在次线性时间和O(m+nlogn)下运行</li>
+<li>Ullman Yannakakis随机方法</li>
+<li>meyer and Sanders，∆ - stepping算法</li>
+<li>Chakaravarthy等人，巧妙地结合了∆-stepping和超级计算机规模图上的方向优化（BFS）。</li>
+</ul>
+<p>U. Meyer and P.Sanders, ∆ - stepping: a parallelizable shortest path algorithm. Journal of Algorithms 49 (2003)</p>
+<p>V. T. Chakaravarthy, F. Checconi, F. Petrini, Y. Sabharwal “Scalable Single Source Shortest Path Algorithms for Massively Parallel Systems ”, IPDPS’14</p>
+<p>∆ - stepping算法</p>
+<ul>
+<li>标签校正算法：可以从未设置的顶点松弛边</li>
+<li>“Dijkstra的近似实现”</li>
+<li>对于随机边权重[0,1]，在L=从源到任何节点的最大距离处运行，复杂度O(n + m + D·L)</li>
+<li>顶点使用宽度∆的桶进行排序</li>
+<li>每个桶可以并行处理</li>
+<li><p>基本操作：Relax(e(u, v))</p>
+<ul>
+<li>d(v)=min{d(v)，d(u)+w(u,v)}</li>
+</ul>
+</li>
+<li><p>∆ &lt; min w(e)：退化为Dijkstra</p>
+</li>
+<li>∆ &gt; max w(e)：退化为Bellman-Ford</li>
+</ul>
+<p>算法说明：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">One parallel phase</span><br><span class="line">while (bucket is non-empty)</span><br><span class="line">    i) Inspect light (w &lt; ∆) edges</span><br><span class="line">    ii) Construct a set of “requests” (R)</span><br><span class="line">    iii) Clear the current bucket</span><br><span class="line">    iv) Remember deleted vertices (S)</span><br><span class="line">    v) Relax request pairs in R</span><br><span class="line">Relax heavy request pairs (from S)</span><br><span class="line">Go on to the next bucket</span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/1639295543.jpg" alt=""></p>
+<p>Initialization:</p>
+<ul>
+<li>Insert s into bucket, d(s) = 0</li>
+</ul>
+<p><img src="/img/1639295978.jpg" alt=""></p>
+<p><img src="/img/1639296036.jpg" alt=""></p>
+<p><img src="/img/1639296095.jpg" alt=""></p>
+<p><img src="/img/1639296119.jpg" alt=""></p>
+<p><img src="/img/1639296143.jpg" alt=""></p>
+<p><img src="/img/1639296165.jpg" alt=""></p>
+<p><img src="/img/1639296196.jpg" alt=""></p>
+<p><img src="/img/1639296224.jpg" alt=""></p>
+<p>最大独立集</p>
+<ul>
+<li>顶点V={1,2，…，n}的图</li>
+<li>如果S中没有两个顶点是相邻的，则S组顶点是independent的。</li>
+<li>如果无法添加另一个顶点并保持独立，则独立集S是maximal的</li>
+<li>如果没有其他独立集具有更多顶点，则独立集Smaximum</li>
+<li>难以找到最大独立集（NP难）</li>
+<li>至少在一个处理器上，找到最大独立集很容易。</li>
+</ul>
+<p>红色顶点集S={4，5}是独立的，是maximal的，但不是maximum<br><img src="/img/1639299481.jpg" alt=""></p>
+<p>串行的最大独立集算法：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">S = empty set;</span><br><span class="line">for vertex v = 1 to n</span><br><span class="line">    if (v has no neighbor in S)</span><br><span class="line">        add v to S</span><br></pre></td></tr></table></figure></p>
+<p>并行随机的最大独立集算法<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">S = empty set; C = V;</span><br><span class="line">while C is not empty &#123;</span><br><span class="line">    label each v in C with a random r(v);</span><br><span class="line">    for all v in C in parallel &#123;</span><br><span class="line">        if r(v) &lt; min( r(neighbors of v) ) &#123;</span><br><span class="line">            move v from C to S;</span><br><span class="line">            remove neighbors of v from C;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>M. Luby. “A Simple Parallel Algorithm for the Maximal Independent Set Problem”</p>
+<p>Strongly connected components(SCC)<br><img src="/img/1639301040.jpg" alt=""></p>
+<p>块三角形式的对称置换，通过深度优先搜索在线性时间内找到P。</p>
+<p>线性方法：使用DFS，DFS似乎具有内在的顺序性。并行：分而治之和BFS(Fleischer et al.)，最坏情况O(n)，但实际情况良好。</p>
+<ul>
+<li>把给定的图分成三个邻接的图，每一个可以递归独立处理。</li>
+<li>使用并行BFS</li>
+</ul>
+<p>二分图匹配：</p>
+<ul>
+<li>匹配：没有公共端点的边的子集M。</li>
+<li>| M |=匹配M的基数</li>
+</ul>
+<p><img src="/img/1639302042.jpg" alt=""></p>
+<p>最大基数匹配的单源算法<br><img src="/img/1639302438.jpg" alt=""></p>
+<p>最大基数匹配的多源算法<br><img src="/img/1639302466.jpg" alt=""></p>
+<h1 id="lecture-21"><a href="#lecture-21" class="headerlink" title="lecture 21"></a>lecture 21</h1><p>大爆炸宇宙学什么的，没用</p>
+<h1 id="lecture-22"><a href="#lecture-22" class="headerlink" title="lecture 22"></a>lecture 22</h1><p>云计算和大数据处理</p>
+<p>数据编程模型：“数据”并行模型（松散耦合）</p>
+<ul>
+<li>限制编程接口</li>
+<li>自动处理故障、位置等。</li>
+</ul>
+<p>Map-Reduce就是基于这样的模型，每个数据类型都是(key, value)键值对，输入被分到一些节点上，然后结果被reduce到一些节点上</p>
+<ul>
+<li>Map：(Kin, Vin) ➡ list(Kinter, Vinter)</li>
+<li>Reduce：(Kinter, list(Vinter)) ➡ list(Kout, Vout)</li>
+</ul>
+<p><img src="/img/1639741958.jpg" alt=""></p>
+<p>如果一个节点上的作业挂了？</p>
+<ul>
+<li>在其他节点上重试这个作业</li>
+<li>如果这个作业还是挂掉，结束这个作业</li>
+</ul>
+<p>如果节点挂了？在其他节点上重新启动现在的任务</p>
+<p>相比于MPI是并行模型，更加细粒度，MapReduce是更高级别的数据级并行，自动进行数据传递。</p>
+<p>如果是多步的任务，需要更多的mapper和reducer，比如有21个MR steps的话，就要有21个mapper和21个reducer。因此提出了spark。</p>
+<p>spark提供了更简单的API，比MR少5-10倍的代码，内存计算速度更快，也有算子之间的优化。</p>
+<h1 id="lecture-23"><a href="#lecture-23" class="headerlink" title="lecture 23"></a>lecture 23</h1><p>为什么会有很垃圾的扩展性？</p>
+<ul>
+<li>通信开销大</li>
+<li>同步开销大</li>
+<li>很多进程空闲着（负载不平衡、缺乏并行性等）</li>
+</ul>
+<p>如何测试负载不平衡？</p>
+<ul>
+<li>很难将负载不平衡与高同步开销分开</li>
+<li>基本测量：barrier周围的计时器<ul>
+<li>程序缺乏并行性是固有的负载不平衡——无法通过更好的负载平衡来解决</li>
+<li>不要性能数据的平均！需要查看所有值或画出直方图</li>
+<li>特别微妙，如果不是批量同步的话</li>
+<li>自旋锁可以使同步看起来像是有用的工作</li>
+<li>不平衡可能由硬件（缓存、动态时钟等）引起</li>
+</ul>
+</li>
+</ul>
+<p>矩阵向量乘：很简单的是稠密乘；比较难的稀疏乘，每一行都有不同的开销，如果提前知道稀疏矩阵的布局，将行按照相同的非零元数分割更好。</p>
+<p>任务开销可变性（来自应用程序）</p>
+<ul>
+<li>简单：开销相等，数量固定：规则网格、密集矩阵、直接 n 体</li>
+<li>困难：任务有不同但可估计的时间，固定数量：自适应和非结构化网格、稀疏矩阵、基于树的 n 体、粒子网格方法</li>
+<li>最难：直到执行中期才知道时间或计数：搜索（UTS）、不规则边界、子网格物理、不可预测的机器</li>
+</ul>
+<p>请注意，良好的负载平衡无法解决并行性不足的问题。</p>
+<p>作业之间的依赖关系：</p>
+<ul>
+<li>简单：一组准备好的任务<ul>
+<li>矩阵乘法，域分解（空间循环）</li>
+</ul>
+</li>
+<li>中：任务有已知关系（任务图）<ul>
+<li>chain：随着时间的推移循环； 迭代方法（外循环）</li>
+<li>tree：分而治之的算法</li>
+<li>graph：直接求解器（密集和稀疏），即 LU、Cholesky…</li>
+</ul>
+</li>
+<li>困难：直到运行时才知道任务结构<ul>
+<li>tree：搜索</li>
+<li>graph：离散事件</li>
+</ul>
+</li>
+</ul>
+<p>DFS  vs  BFS </p>
+<ul>
+<li>带有显式堆栈的 DFS——几乎没有并行性<ul>
+<li>将根节点放入栈</li>
+<li>当栈不为空<ul>
+<li>将栈顶元素弹出</li>
+<li>如果找到了目标就返回</li>
+<li>否则将子节点放入栈中</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>带有显式堆栈的BFS——并行性强<ul>
+<li>将根放入队列（FIFO）<ul>
+<li>当队列不为空时</li>
+<li>移除队列前端</li>
+<li>如果找到目标？返回成功</li>
+<li>否则将子节点排入队列末尾</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>分布式任务队列</p>
+<ul>
+<li>任务队列对分布式内存的明显扩展是：<ul>
+<li>分布式任务队列（或包），即每个处理器一个</li>
+<li>空闲处理器可以拉动工作，或者忙碌的处理器推工作</li>
+</ul>
+</li>
+<li>什么时候“分布式”队列是个好主意？<ul>
+<li>分布式内存多处理器</li>
+<li>通常在共享内存上以避免同步争用</li>
+<li>任务之间的位置不是（非常）重要</li>
+<li>事先不知道任务和/或数量的开销</li>
+</ul>
+</li>
+<li>术语旁注：<ul>
+<li>队列：先进先出 (FIFO)</li>
+<li>堆栈：后进先出 (LIFO)</li>
+<li>包：任意出局</li>
+</ul>
+</li>
+</ul>
+<p>如何选择发送/接收处理器</p>
+<ul>
+<li>基本技术：<ul>
+<li>独立循环（常见bug：都开始看p0）<ul>
+<li>每个处理器k，保持一个变量targetk</li>
+<li>当处理器用完工作时，从 targetk 请求工作</li>
+<li>设置 targetk = (targetk +1) mod procs</li>
+</ul>
+</li>
+<li>全局循环<ul>
+<li>Proc 0 保持单个可变target变量</li>
+<li>当处理器需要工作时，获取target，从target请求工作</li>
+<li>Proc 0 设置目标 = (target + 1) mod procs</li>
+</ul>
+</li>
+<li>随机获取<ul>
+<li>当处理器需要工作时，随机选择一个处理器并向它请求工作</li>
+</ul>
+</li>
+<li>随机推送<ul>
+<li>当处理器有太多工作（至少两个任务）时，推送任务到随机处理器</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>终止检测非常重要</li>
+</ul>
+<p>随机负载均衡</p>
+<ul>
+<li>想要避免共享队列的瓶颈</li>
+<li>特别是在分布式内存中（但即使在共享内存中）</li>
+<li>所以自调度、Chunked SS、GSS 都不好</li>
+<li>使用分布式队列进行共享</li>
+<li>如何选择处理器？<ul>
+<li>异步或全局循环</li>
+<li>随机推送：快速平衡，可能会失去空间局部性</li>
+<li>随机拉取：缓慢平衡，尽可能保留局部性</li>
+</ul>
+</li>
+</ul>
+<p>Cilk：内建负载均衡的语言</p>
+<p>基于扩散的负载均衡</p>
+<ul>
+<li>在随机化方案中，机器被处理为全连接。 [Cybenko，1989]</li>
+<li>基于扩散的负载平衡将拓扑考虑在内<ul>
+<li>向附近的几个处理器发送一些额外的工作<ul>
+<li>与附近邻居的平均工作量</li>
+<li>与扩散的类比（Jacobi 用于求解泊松方程）</li>
+</ul>
+</li>
+<li>局部性优于选择随机处理器</li>
+<li>负载平衡比随机化慢</li>
+<li>在创建时必须知道任务的开销</li>
+<li>任务之间没有依赖关系</li>
+</ul>
+</li>
+<li>参见 Ghosh et al，SPAA96 了解二阶扩散负载平衡算法<ul>
+<li>考虑上次发送的工作量</li>
+<li>避免一阶方案的一些振荡</li>
+</ul>
+</li>
+</ul>
+<p>DAG调度软件</p>
+<ul>
+<li>DAGuE<ul>
+<li>开发库以支持（最初）稠密线性代数</li>
+</ul>
+</li>
+<li>SMPss<ul>
+<li>基于编译器； 通过编译指示表达的数据使用； 提议在 OpenMP 中； 最近添加的 GPU 支持</li>
+</ul>
+</li>
+<li>StarPU (INRIA)<ul>
+<li>基于库； GPU支持； 分布式数据管理； Codelets=tasks（映射 CPU、GPU 版本）</li>
+</ul>
+</li>
+<li>OpenMP4.0 / GCC 4.9<ul>
+<li>参见 openmp.org</li>
+</ul>
+</li>
+<li>其他工具（例如，仅限 fork-join 图）<ul>
+<li>Cilk、英特尔线程构建块 (TBB)、Microsoft CCR、SuperGlue 和 DuctTEiP</li>
+</ul>
+</li>
+</ul>
+<p>任务通信</p>
+<ul>
+<li>静态：常规（或无）<ul>
+<li>网格上的最近邻、密集矩阵、规则网格、FFT、直接 n 体（all-to-all）集合（难以扩展；易于调度）</li>
+</ul>
+</li>
+<li>半静态：可以预先计算通信模式<ul>
+<li>可以预先安排发送/接收对</li>
+<li>稀疏直接线性代数求解器，例如 LU、Cholesky、AMR、树结构 n 体</li>
+</ul>
+</li>
+<li>动态：随机访问 - 模式事先未知且不会重复<ul>
+<li>搜索、离散事件、稀疏更新、直方图、哈希表</li>
+</ul>
+</li>
+</ul>
+<p>解决方案的范围：一个关键问题是何时知道有关负载平衡问题的某些信息。</p>
+<ul>
+<li>静态调度。 所有信息都可用于调度算法，该算法在任何实际计算开始之前运行。<ul>
+<li>离线算法，例如图分区、DAG 调度</li>
+<li>如果信息太多，仍可能使用动态方法</li>
+</ul>
+</li>
+<li>半静态调度。 信息可能在程序启动时、每个时间步的开始或其他明确定义的点上是已知的。 即使问题是动态的，也可以使用离线算法。<ul>
+<li>例如 Kernighan-Lin，如 Zoltan</li>
+</ul>
+</li>
+<li>动态调度。 直到执行中期才知道信息。<ul>
+<li>在线算法——今天的主要话题 </li>
+</ul>
+</li>
+</ul>
+<p>动态负载均衡</p>
+<p>负载均衡因任务属性而异</p>
+<ul>
+<li>任务成本<ul>
+<li>所有任务的成本是否相等？</li>
+<li>如果没有，成本什么时候知道？<ul>
+<li>开始前、任务创建时或仅任务结束时</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>任务依赖<ul>
+<li>所有任务能否以任何顺序运行（包括并行）？</li>
+<li>如果没有，何时知道相关性？<ul>
+<li>开始前、任务创建时或仅任务结束时</li>
+<li>一项任务可能会提前结束另一项任务（例如搜索）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>位置（可能会与负载平衡进行权衡）<ul>
+<li>将某些任务安排在同一处理器（或附近）是否重要？以降低通信成本？</li>
+<li>什么时候知道有关通信的信息？</li>
+</ul>
+</li>
+<li>如果仅在任务结束时才知道属性<ul>
+<li>统计数据是固定的、缓慢变化的还是突然变化的？</li>
+</ul>
+</li>
+</ul>
+<p>混合并行：作为另一种变体，考虑具有 2 个并行性级别的问题</p>
+<ul>
+<li>粗粒度的任务并行性<ul>
+<li>任务多时好，任务少时差</li>
+</ul>
+</li>
+<li>细粒度的数据并行性<ul>
+<li>任务中的并行度高时好，少时差</li>
+</ul>
+</li>
+<li>出现在：<ul>
+<li>自适应网格细化</li>
+<li>离散事件模拟，例如电路模拟</li>
+<li>数据库查询处理</li>
+<li>稀疏矩阵直接求解器</li>
+</ul>
+</li>
+<li>我们如何很好地调度这两种并行？</li>
+</ul>
+<h1 id="lecture-24"><a href="#lecture-24" class="headerlink" title="lecture 24"></a>lecture 24</h1><p>四叉树</p>
+<ul>
+<li>细分平面的数据结构<ul>
+<li>节点可以包含框中心坐标、边长</li>
+<li>最后还有 CM、总质量等的坐标。</li>
+</ul>
+</li>
+<li>在完整的四叉树中，每个非叶节点有 4 个孩子</li>
+</ul>
+<p><img src="/img/1639749602.jpg" alt=""></p>
+<p>使用四叉树和八叉树</p>
+<ul>
+<li>我们所有的算法都从构建一棵树来容纳所有粒子开始</li>
+<li>在完整的树中，大多数节点都是空的，浪费空间和时间</li>
+<li>Adaptive Quad (Oct) Tree 仅细分粒子所在的空间</li>
+</ul>
+<p><img src="/img/1639749967.jpg" alt=""></p>
+<p>自适应四叉树的开销：</p>
+<ul>
+<li>Cost ≤ N * maximum cost of Quad_Tree_Insert<ul>
+<li>= O( N * maximum depth of Quad_Tree)</li>
+</ul>
+</li>
+<li>粒子分布平均<ul>
+<li>Depth of Quad_Tree = O( log N )</li>
+<li>Cost ≤ O( N * log N )</li>
+</ul>
+</li>
+<li>粒子分布随机<ul>
+<li>Depth of Quad_Tree = O( # bits in particle coords ) = O( b )</li>
+<li>Cost ≤ O( b N )</li>
+</ul>
+</li>
+</ul>
+<p>Barnes-Hut Algorithm</p>
+<ul>
+<li><p>N-Body 问题的 O(N log N) 近似算法</p>
+</li>
+<li><p>使用 QuadTreeBuild 构建四叉树</p>
+<ul>
+<li>已经描述过，成本 = O( N log N) 或 O(b N)</li>
+</ul>
+</li>
+<li>对于 QuadTree 中的每个节点，计算其包含的所有粒子的 CM 和总质量 (TM)<ul>
+<li>四叉树的后序遍历，成本 = O(N log N) 或 O(b N)</li>
+</ul>
+</li>
+<li>对于每个粒子，遍历四叉树来计算它所受的力，使用距离子平方的CM和TM<ul>
+<li>算法核心</li>
+<li>开销取决于所需的准确度，但仍为 O(N log N) 或 O(bN)</li>
+</ul>
+</li>
+</ul>
+<p>Step 3 of BH: 计算每个粒子上的力</p>
+<ul>
+<li>对于每个节点，可以通过使用节点CM和TM来近似由于节点内部的粒子而对节点外部的粒子施加的力</li>
+<li>如果节点离粒子足够远，这将足够准确</li>
+<li>对于每个粒子，使用尽可能少的节点来计算力，受精度约束</li>
+<li>需要判断一个节点是否离粒子足够远的标准<ul>
+<li>D = side length of node</li>
+<li>r = distance from particle to CM of node</li>
+<li>q = user supplied error tolerance &lt; 1</li>
+<li>Use CM and TM to approximate force of node on box if D/r &lt; q</li>
+</ul>
+</li>
+</ul>
+<p>Details of Step 3 of BH</p>
+<ul>
+<li>对于每个粒子，遍历四叉树以计算其上的力</li>
+<li>for k = 1 to N<ul>
+<li>f(k) = TreeForce( k, root )</li>
+<li>计算由根内所有粒子引起的粒子 k 上的力（k 除外）</li>
+</ul>
+</li>
+<li>function f = TreeForce( k, n )<ul>
+<li>对于节点 n 内的所有粒子（k 除外），计算粒子 k 上的力</li>
+<li>f = 0</li>
+<li>如果 n 包含一个粒子（不是 k）……直接求值<ul>
+<li>f = 使用直接公式计算的力</li>
+</ul>
+</li>
+<li>否则<ul>
+<li>r = 从粒子 k 到粒子在 n 中的 CM 的距离</li>
+<li>D = size of n</li>
+<li>if D/r &lt; q … 可以通过 CM 和 TM 来近似<ul>
+<li>使用 CM 和 TM 近似计算 f</li>
+</ul>
+</li>
+<li>else ..需要查看内部节点<ul>
+<li>for all children c of n</li>
+<li>f = f + TreeForce ( k, c )</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="lecture-25"><a href="#lecture-25" class="headerlink" title="lecture 25"></a>lecture 25</h1><p>元素选择问题：在N个数据中找到第k小个元素，是一些算法的基础部分。快速选择(Hoare方法)类似快排，但是只在一个方向上递归。平均时间O（N），最坏情况O（N2）。</p>
+<p>中位数查找 (Blum, Floyd, Pratt, Rivest, Tarjan)：基于quickselect，但保证最坏情况下的线性时间。与并行算法紧密结合。</p>
+<p>快速排序的思想，是找出一个中轴（pivot），之后进行左右递归进行排序，关于递归快速排序，C程序算法如下。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">quick_sort</span><span class="params">(<span class="type">int</span> *arr,<span class="type">int</span> left,<span class="type">int</span> right)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(left&gt;right) <span class="keyword">return</span>;</span><br><span class="line">    <span class="type">int</span> pivot=getPivot();</span><br><span class="line">    quick_sort(arr,left,pivot<span class="number">-1</span>);</span><br><span class="line">    quick_sort(arr,pivot+<span class="number">1</span>,right);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>关于划分，不同的划分决定快排的效率，下面以lomuto划分和hoare划分来进行讲述思路</p>
+<p>lomuto划分思想：lomuto划分主要进行一重循环的遍历，如果比left侧小，则进行交换。然后继续进行寻找中轴。最后交换偏移的数和最左侧数，C程序代码如下。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**lomuto划分*/</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">lomuto_partition</span><span class="params">(<span class="type">int</span> *arr,<span class="type">int</span> l,<span class="type">int</span> r)</span>&#123;</span><br><span class="line">    <span class="type">int</span> p=arr[l];</span><br><span class="line">    <span class="type">int</span> s=l;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=l+<span class="number">1</span>;i&lt;=r;i++)</span><br><span class="line">        <span class="keyword">if</span>(arr[i]&lt;p) &#123;</span><br><span class="line">            s++;</span><br><span class="line">            <span class="type">int</span> tmp=arr[i];</span><br><span class="line">            arr[i]=arr[s];</span><br><span class="line">            arr[s]=tmp;</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="type">int</span> tmp=arr[l];</span><br><span class="line">    arr[l]=arr[s];</span><br><span class="line">    arr[s]=tmp;</span><br><span class="line">    <span class="keyword">return</span> s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>hoare划分思想是先从右侧向左进行寻找，再从左向右进行寻找，如果左边比右边大，则左右进行交换。外侧还有一个嵌套循环，循环终止标志是一重遍历，这种寻找的好处就是，在一次遍历后能基本有序，减少递归的时候产生的比较次数。这也是经典快排中所使用的方法<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**hoare划分*/</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">hoare_partition</span><span class="params">(<span class="type">int</span> *a,<span class="type">int</span> l, <span class="type">int</span> r)</span> &#123;</span><br><span class="line">    <span class="type">int</span> p = a[l];</span><br><span class="line">    <span class="type">int</span> i = l<span class="number">-1</span>;</span><br><span class="line">    <span class="type">int</span> j = r+<span class="number">1</span> ;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            j--;</span><br><span class="line">        &#125;<span class="keyword">while</span>(a[j]&gt;p);</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            i++;</span><br><span class="line">        &#125;<span class="keyword">while</span>(a[i] &lt; p);</span><br><span class="line">        <span class="keyword">if</span> (i &lt; j) &#123;</span><br><span class="line">            <span class="type">int</span> temp = a[i];</span><br><span class="line">            a[i] = a[j];</span><br><span class="line">            a[j] = temp;</span><br><span class="line">        &#125;<span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> j;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>经典快排实际对hoare划分进行了少许改进，这个temp变量不需要每次找到左右不相等就立即交换，而是，暂时存放，先右边向左找，将左边放在右边，再左边向右找，把右边放左边，最后把初始temp变量放在左值。这样比hoare划分减少少许移动变量次数。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**经典快排*/</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">classic_quick_sort</span><span class="params">(<span class="type">int</span> *arr,<span class="type">int</span> left,<span class="type">int</span> right)</span>&#123;</span><br><span class="line">    <span class="type">int</span> tmp=arr[left];</span><br><span class="line">    <span class="keyword">while</span>(left&lt;right)&#123;</span><br><span class="line">        <span class="keyword">while</span>(left&lt;right&amp;&amp;arr[right]&gt;=tmp) right--;</span><br><span class="line">        arr[left]=arr[right];</span><br><span class="line">        <span class="keyword">while</span>(left&lt;right&amp;&amp;arr[left]&lt;=tmp) left++;</span><br><span class="line">        arr[right]=arr[left];</span><br><span class="line">    &#125;</span><br><span class="line">    arr[left]=tmp;</span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>选择中位数的方法：</p>
+<ul>
+<li>将整个列表分成最少N/5个子列表，每个子列表最少5个元素；</li>
+<li>对每个子列表排序并找到中位数</li>
+<li>对这些子列表中的每个中位数，组织成一个列表M</li>
+<li>对M继续上述行为。</li>
+</ul>
+<p>最好情况下，递归操作找到中位数，各个元素之间的关系如下，A’中的元素都小于中位数，C’中的元素都大于中位数。<br><img src="/img/1639792446.jpg" alt=""></p>
+<p>将整个列表划分为三个区域集：A、B、C</p>
+<ul>
+<li>A=小于mm的元素集（A’是A的子集）</li>
+<li>B=等于mm的元素集</li>
+<li>C=大于mm的元素集（C’是C的子集）</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">SELECT(S, k) // find kth smallest in S</span><br><span class="line">&#123;</span><br><span class="line">    M = DIVIDEANDSORT(S,5); // O(N), M: list of medians</span><br><span class="line">    mm = SELECT(M,|M|/2); // recurse on O(N/5)</span><br><span class="line">    [A,B,C] = PARTITION(S,mm); // O(N)</span><br><span class="line">    if (|A| &lt; k &lt;= |A| + |B|)</span><br><span class="line">        return x;</span><br><span class="line">    else if (k &lt;= |A|), // recurse on O(7N/10)</span><br><span class="line">        return SELECT(A, k)</span><br><span class="line">    else if (if k &gt; |A| + |B|) // recurse on O(7N/10)</span><br><span class="line">        return SELECT(C, k -|A|-|B|)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>复杂度：T(n) &lt;= T(n/5) + T(7n/10) + O(n)，A不包括C’的成员（C不包括A’的成员）。因为<code>T(n) &lt;= T(9n/10)+O(n)</code>，且<code>nlog109 &lt;= O(n)</code>，所以<code>T(n) = O(n)</code>。</p>
+<p>有没有一种并行的算法实现查找中位数？</p>
+<ul>
+<li>加权中值的中位数</li>
+</ul>
+<p>给定p个元素m1, m2 , … , mp 每个元素有正的权重w1 , w2 , … , wp，<code>Σ1&lt;=i&lt;=p wi = 1</code>，加权中值是满足以下条件的元素M，<code>Σi,mi&lt;M wi &lt;= 1/2 and Σi,mi&gt;M wi &lt;= 1/2</code>，就是说找到一个i，使得i前边的元素的权值加起来和i后边的元素的权值加起来都小于等于1/2。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">PARALLELSELECT(S, k) // find kth smallest in S</span><br><span class="line">&#123;</span><br><span class="line">    lm = SELECT(S,|S|/2); // find local median</span><br><span class="line">    LMS = MPI_Allgather(lm,0); // exchange medians</span><br><span class="line">    wmm = WeightedMedian(LMS); // redundant computation</span><br><span class="line">    [A,B,C] = PARTITION(S,wmm); // same as in serial</span><br><span class="line">    MPI_Allreduce(size(A), &amp;ls, MPI_SUM); // less than</span><br><span class="line">    MPI_Allreduce(size(B), &amp;eq, MPI_SUM); // equal to</span><br><span class="line">    if (ls &lt; k &lt;= ls + eq) // solution found</span><br><span class="line">        return wmm;</span><br><span class="line">    else if (k &lt;= ls) // recurse on O(3N/4)</span><br><span class="line">        return PARALLELSELECT(A,k)</span><br><span class="line">    else if (if k &gt; ls + eq) // recurse on O(3N/4)</span><br><span class="line">        return PARALLELSELECT( C, k-|A|-|B|)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为<code>Σi,mi&lt;M wi &lt;= 1/2</code>，<code>Σi,mi&gt;M wi &lt;= 1/2</code>，用每个处理器中的元素数替换权重：<code>Σi,mi&lt;M ni &lt;= N/2</code>，<code>Σi,mi&gt;M ni &lt;= N/2</code>。</p>
+<p>在处理器i处，小于等于mi的元素至少为ni/2（根据中值定义）。这些元素中有一半也小于M。</p>
+<ol>
+<li>因此，小于或等于M的总#元素（在所有处理器中）为N/4</li>
+<li>“大于或等于”的大小写是对称的</li>
+</ol>
+<p><img src="/img/1639793683.jpg" alt=""></p>
+<p>合并排序</p>
+<ul>
+<li>Mergesort是递归排序算法的一个示例。</li>
+<li>它基于分而治之的范式</li>
+<li>它使用合并操作作为其基本操作（接收两个排序序列并生成单个排序序列）</li>
+<li>mergesort的缺点：不是in-place的（使用额外的临时阵列）</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">template &lt;typename T&gt;</span><br><span class="line">void Merge(T *C, T *A, T *B, int na, int nb) &#123;</span><br><span class="line">    while (na&gt;0 &amp;&amp; nb&gt;0) &#123;</span><br><span class="line">        if (*A &lt;= *B) &#123;</span><br><span class="line">            *C++ = *A++; na--;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            *C++ = *B++; nb--;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    while (na&gt;0) &#123;</span><br><span class="line">        *C++ = *A++; na--;</span><br><span class="line">    &#125;</span><br><span class="line">    while (nb&gt;0) &#123;</span><br><span class="line">        *C++ = *B++; nb--;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">template &lt;typename T&gt;</span><br><span class="line">void MergeSort(T *B, T *A, int n) &#123;</span><br><span class="line">    if (n==1) &#123; B[0] = A[0];&#125;</span><br><span class="line">    else &#123;</span><br><span class="line">        T* C = new T[n];</span><br><span class="line">#pragma omp parallel &#123;</span><br><span class="line">    #pragma omp single &#123;</span><br><span class="line">        #pragma omp task</span><br><span class="line">            MergeSort(C, A, n/2);</span><br><span class="line">        #pragma omp task</span><br><span class="line">            MergeSort(C+n/2, A+n/2, n-n/2);</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line">        Merge(B, C, C+n/2, n/2, n-n/2);</span><br><span class="line">        delete[] C;</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果两个数组中要合并的元素总数为n=na+nb，则两个递归合并中较大的一个数组中的元素总数最多为(3/4)n。</p>
+<p><img src="/img/1639794567.jpg" alt=""></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">template &lt;typename T&gt;</span><br><span class="line">void P_Merge(T *C, T *A, T *B, int na, int nb) &#123;</span><br><span class="line">    if (na &lt; nb) &#123; P_Merge(C, B, A, nb, na);&#125;</span><br><span class="line">    else if (na==0) &#123; return; &#125;</span><br><span class="line">    else &#123;</span><br><span class="line">        int ma = na/2;</span><br><span class="line">        int mb = BinarySearch(A[ma], B, nb);</span><br><span class="line">        C[ma+mb] = A[ma];</span><br><span class="line">#pragma omp parallel &#123;</span><br><span class="line">    #pragma omp single &#123;</span><br><span class="line">        #pragma omp task</span><br><span class="line">            P_Merge(C, A, B, ma, mb);</span><br><span class="line">        #pragma omp task</span><br><span class="line">            P_Merge(C+ma+mb+1,A+ma+1,B+mb,na-ma-1,nb-mb);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; // implicit taskwait</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在桶排序中，输入数字的范围[a，b]被划分为m个大小相等的间隔，称为桶。</p>
+<ul>
+<li>每个元素都放置在其相应的桶中。</li>
+<li>如果数量在范围内均匀划分，则预计bucket的元素数量大致相同。</li>
+<li>桶中的元素在本地分类。</li>
+<li>该算法的运行时间为Θ(nlog(n/m))。</li>
+</ul>
+<p>并行bucket排序</p>
+<ul>
+<li>并行桶排序相对简单。我们可以选择m=p。</li>
+<li>在这种情况下，每个处理器都有其负责的一系列值。</li>
+<li>每个处理器运行其本地array，并将其每个元素分配给相应的处理器。</li>
+<li>使用单个all-to-all个性化通信将元素发送到目标处理器。</li>
+<li>每个处理器对其接收的所有元素进行排序。</li>
+<li>负载不平衡：假设输入元件均匀分布在间隔[a，b]上是不现实的。</li>
+</ul>
+<p>并行采样排序</p>
+<ul>
+<li>快速排序的泛化：从1支点到p支点。这是通过选择合适的拆分来实现的。</li>
+<li>拆分选择方法将n个元素划分为m个块，每个块的大小为n/m，并使用快速排序对每个块进行排序。</li>
+<li>从每个排序块中选择m-1个均匀间隔的样本。</li>
+<li>从所有区块中选择的m（m-1）元素代表用于确定铲斗的样本。</li>
+<li>该方案保证每个桶中结束的元素数量小于2n/m</li>
+</ul>
+<p><img src="/img/1639795192.jpg" alt=""></p>
+<p>并行样本排序：复杂性分析</p>
+<ul>
+<li>n/p元素的内部排序需要时间Θ((n/p)log(n/p))，而p–1样本元素的选择需要时间Θ(p)。</li>
+<li>all-to-all广播的时间为Θ(p^2)，对p(p–1)样本元素进行内部排序的时间为Θ(p^2log p)，选择p–1等距分离器需要时间Θ(p)。</li>
+<li>每个进程可以通过在时间Θ(plog(n/p))中执行p-1二进制搜索，将这些p-1拆分器插入其大小为n/p的本地排序块中。</li>
+<li>元素重排时间为O(n/p)</li>
+</ul>
+<p><img src="/img/1639796568.jpg" alt=""></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag"># 积累</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/12/14/Intel_MPI%E6%89%8B%E5%86%8C/" rel="prev" title="Intel MPI library developer reference for Linux">
+      <i class="fa fa-chevron-left"></i> Intel MPI library developer reference for Linux
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/12/18/cmu15-418/" rel="next" title="CMU 15-418 笔记">
+      CMU 15-418 笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-2"><span class="nav-number">1.</span> <span class="nav-text">lecture 2</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-3"><span class="nav-number">2.</span> <span class="nav-text">lecture 3</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-4"><span class="nav-number">3.</span> <span class="nav-text">lecture 4</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-5"><span class="nav-number">4.</span> <span class="nav-text">lecture 5</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-6"><span class="nav-number">5.</span> <span class="nav-text">lecture 6</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-7"><span class="nav-number">6.</span> <span class="nav-text">lecture 7</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-9"><span class="nav-number">7.</span> <span class="nav-text">lecture 9</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-11"><span class="nav-number">8.</span> <span class="nav-text">lecture 11</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-12"><span class="nav-number">9.</span> <span class="nav-text">lecture 12</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-13"><span class="nav-number">10.</span> <span class="nav-text">lecture 13</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-15"><span class="nav-number">11.</span> <span class="nav-text">lecture 15</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-17"><span class="nav-number">12.</span> <span class="nav-text">lecture 17</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-18"><span class="nav-number">13.</span> <span class="nav-text">lecture 18</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-19"><span class="nav-number">14.</span> <span class="nav-text">lecture 19</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-20"><span class="nav-number">15.</span> <span class="nav-text">lecture 20</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-21"><span class="nav-number">16.</span> <span class="nav-text">lecture 21</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-22"><span class="nav-number">17.</span> <span class="nav-text">lecture 22</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-23"><span class="nav-number">18.</span> <span class="nav-text">lecture 23</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-24"><span class="nav-number">19.</span> <span class="nav-text">lecture 24</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lecture-25"><span class="nav-number">20.</span> <span class="nav-text">lecture 25</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Hao Yu</p>
+  <div class="site-description" itemprop="description">Introduce something interesting and recode learning process, some articles are written by others, the original link has been given as much as possible, thanks to the original author</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">128</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

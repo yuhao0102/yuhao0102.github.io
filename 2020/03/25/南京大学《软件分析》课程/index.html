@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zn-ch">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="IntroductionProgramming Languages三个部分：  理论Theory：怎么设计语言Language design、类型系统Type system、形式语言semantics and logics 环境Environment：编译器、运行时 应用Application：程序分析（静态程序分析）、程序验证、程序合成  过去十多年，语言的核心部分变化得很小，语言主要三类：命令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="南京大学《软件分析》课程">
+<meta property="og:url" content="http://yoursite.com/2020/03/25/%E5%8D%97%E4%BA%AC%E5%A4%A7%E5%AD%A6%E3%80%8A%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90%E3%80%8B%E8%AF%BE%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Hao Yu&#39;s blog">
+<meta property="og:description" content="IntroductionProgramming Languages三个部分：  理论Theory：怎么设计语言Language design、类型系统Type system、形式语言semantics and logics 环境Environment：编译器、运行时 应用Application：程序分析（静态程序分析）、程序验证、程序合成  过去十多年，语言的核心部分变化得很小，语言主要三类：命令">
+<meta property="og:locale" content="zn_CH">
+<meta property="og:image" content="http://yoursite.com/img/20200325114800.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200325123100.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200325153300.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200325162700.png">
+<meta property="og:image" content="http://yoursite.com/img/20200325163000.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200325163900.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200325175100.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200325181400.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200325182100.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200325184500.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200325213600.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200325232200.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200326001200.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200326101300.png">
+<meta property="og:image" content="http://yoursite.com/img/20200326105800.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200326110600.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200326111000.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200326111800.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200326121400.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200326181900.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200326210700.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200326211100.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200328112400.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200328114700.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200328120500.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200328171700.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200402205000.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200402210800.png">
+<meta property="og:image" content="http://yoursite.com/img/20200402211800.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200402212300.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200402213100.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200402215900.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200402234400.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200402234300.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200402234600.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200403000300.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200403124200.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200416011400.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200416011700.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200416012000.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200416012300.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200416012400.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200416012700.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200416013400.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200416014100.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200416014500.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200416015000.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200416094400.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200416100400.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200416101300.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200416101400.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200416101800.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200422160300.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200422160800.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200422162800.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200422163900.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200422164500.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200422164800.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200422171100.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200422171500.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200422174100.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200422174900.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200422175700.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200422180500.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200422181500.jpg">
+<meta property="og:image" content="http://yoursite.com/img/20200422181600.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570008.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570013.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570017.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570023.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570037.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570045.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570049.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570052.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570054.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570057.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570065.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570091.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570105.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570114.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570115.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570118.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570123.jpg">
+<meta property="og:image" content="http://yoursite.com/img/2020051114570151.jpg">
+<meta property="article:published_time" content="2020-03-25T02:27:00.000Z">
+<meta property="article:modified_time" content="2022-01-02T03:21:46.000Z">
+<meta property="article:author" content="Hao Yu">
+<meta property="article:tag" content="积累">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/20200325114800.jpg">
+
+<link rel="canonical" href="http://yoursite.com/2020/03/25/%E5%8D%97%E4%BA%AC%E5%A4%A7%E5%AD%A6%E3%80%8A%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90%E3%80%8B%E8%AF%BE%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zn-ch'
+  };
+</script>
+
+  <title>南京大学《软件分析》课程 | Hao Yu's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hao Yu's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">The program monkey was eaten by the siege lion.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zn-ch">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/25/%E5%8D%97%E4%BA%AC%E5%A4%A7%E5%AD%A6%E3%80%8A%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90%E3%80%8B%E8%AF%BE%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Hao Yu">
+      <meta itemprop="description" content="Introduce something interesting and recode learning process, some articles are written by others, the original link has been given as much as possible, thanks to the original author">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hao Yu's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          南京大学《软件分析》课程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-03-25 10:27:00" itemprop="dateCreated datePublished" datetime="2020-03-25T10:27:00+08:00">2020-03-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-02 11:21:46" itemprop="dateModified" datetime="2022-01-02T11:21:46+08:00">2022-01-02</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>Programming Languages三个部分：</p>
+<ul>
+<li>理论Theory：怎么设计语言Language design、类型系统Type system、形式语言semantics and logics</li>
+<li>环境Environment：编译器、运行时</li>
+<li>应用Application：程序分析（静态程序分析）、程序验证、程序合成</li>
+</ul>
+<p>过去十多年，语言的核心部分变化得很小，语言主要三类：<strong>命令式语言</strong>、<strong>函数式语言</strong>、<strong>逻辑式语言</strong>；但是程序变得很复杂，如何确保程序可靠性、安全性和性能。</p>
+<p>静态分析作用：</p>
+<ul>
+<li>对提高程序可靠性很有必要：空指针异常、内存泄漏等，静态分析减少这些bug；</li>
+<li>程序安全性：私有信息泄露、注入攻击等；</li>
+<li>编译优化：死代码删除；</li>
+<li>理解程序。</li>
+</ul>
+<p>静态分析：在<strong>运行一个程序P之前</strong>，就要分析它的行为和聊起是否满足某些特性。</p>
+<ul>
+<li>P是否有一些信息泄露问题</li>
+<li>P是否有一些空指针</li>
+<li>所有类型转换都是安全的么</li>
+<li>两个指针指向同一块地址么</li>
+<li>一些assert是可能fail的么</li>
+</ul>
+<p>莱斯定理：并不存在准确判断程序的方法。一个递归可枚举（recursively enumerable）的语言的所有不那么简单（non-trivial）的性质都是不可预测（undecidable）的。正常的语言的一些比较感兴趣的性质都不能给一个准确的答案。noon-trivial的性质约等于一些有趣（interesting）的性质。总之，一个完美的静态分析是不存在的。</p>
+<blockquote>
+<p>将任意程序看作一个Partial Function，它描述了程序的行为，关于程序行为的任何非平凡属性，都不存在可以检查该属性的通用算法，即不可判定 。</p>
+<p>这里平凡属性是指对所有程序都为真或者都为假的属性，非平凡就是对有些为真有些为假。特别注意莱斯定理的适用条件是关于程序行为而不是结构，并且不适用莱斯定理的也未必可判定。例如程序使用了多少个变量，就是涉及程序结构的问题，所以像[确定程序使用的变量是否多于50个]这样的问题无法用莱斯定义来说明它是不是不可判定的。</p>
+</blockquote>
+<p>完美的静态分析满足<strong>sound</strong>和<strong>complete</strong>的。Sound &gt; Truth &gt; Complete，Truth是说所有可能的行为，Sound说的是包含Truth且有其他的，Complete只有Truth中所有可能行为的一部分，Complete中爆出来的一定是Truth中的，而Sound中爆出来的不一定是Truth中的。</p>
+<p>不存在既Sound又Complete的，只需要Useful的就好了，Useful包括：</p>
+<ul>
+<li>Compromise Soundness：漏报</li>
+<li>Compromise Completeness：误报</li>
+</ul>
+<p>在静态分析中绝大多数都是Sound且不是那么准确的。但是Sound是很重要的，对其中一类的分析（编译优化）是很重要的。Sound可以翻译为<strong>全面</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">if (...) &#123;</span><br><span class="line">    B b = new B();</span><br><span class="line">    a.fld = b;</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    C c = new C();</span><br><span class="line">    a.fld = c;</span><br><span class="line">&#125;</span><br><span class="line">B b&#x27; = (B) a.fld;</span><br></pre></td></tr></table></figure>
+<p>上述程序是not safe的，这个结论需要通过分析两条指令得到，所以是Sound的，如果只分析了一个if段，则可能得到safe的结论，这个结论就是Unsound的。</p>
+<p>越Sound越好，就越能检测出潜在的问题，力争保证Sound再提高精度。</p>
+<p>对下面一段程序：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">if(input)</span><br><span class="line">    x = 1;</span><br><span class="line">else</span><br><span class="line">    x = 0;</span><br></pre></td></tr></table></figure><br>两个分析结果：</p>
+<ul>
+<li>input是true的时候，x = 1；否则x = 0。Sound、precise、expensive，通过上下文确定分析结果</li>
+<li>x = 1 or x = 0。Sound、imprecise、cheap，</li>
+</ul>
+<p>两个结果都是对的，只要结果包含了x = 1 或 x = 0，结论就是Sound的。在分析的时候<strong>确保Sound</strong>，同时也要做好分析的精度和速度的权衡。</p>
+<p>抽象：用一些符号来归纳近似程序中的行为。一个例子：判断所有变量的正负（+、-、0），检查是否会除0，或者数组下标是否非法。<code>v=e?1:-1</code>是未知的，<code>v=w/0</code>是非法的，用两个符号表示。<br><img src="/img/20200325114800.jpg" alt=""></p>
+<p>近似（over-approximation）：针对程序中每一个语句，给这些抽象值，定义转换规则。根据分析目标和程序中每一个语句的语义，在抽象值的基础上设计转换函数。</p>
+<p>假设程序中有这些抽象语句，<code>正数+正数</code>、<code>负数+负数</code>、等等类似的，通过分析就可以得到下边的表，而且能找到程序中的一些错误：<br><img src="/img/20200325123100.jpg" alt=""></p>
+<p>但是上边的分析可能会造成误报，报出来的错误比真正的错误多了。</p>
+<p>对控制流也可进行分析，但由于输入很多种，产生控制流爆炸问题，需要对控制流进行merge。</p>
+<h1 id="Intermediate-Representation"><a href="#Intermediate-Representation" class="headerlink" title="Intermediate Representation"></a>Intermediate Representation</h1><p>静态分析器需要一种程序表示格式（IR）。</p>
+<p>编译器和静态分析器都是分析一个程序。编译器是将高级代码转换成机器能理解的机器码，类似一个翻译器，同时可以在翻译过程中报错。首先，通过Scanner做词法分析；通过Parser做语法分析，语法规则通过上下文无关文法描述，形成抽象语法树；用Type checker做语义分析；通过转换器转换为三地址码的中间表示形式（IR）；最后生成机器码进行执行。通过前端将源码转换成IR中间表现形式之后才能进行静态分析。<br><img src="/img/20200325153300.jpg" alt=""></p>
+<p>对于：<code>do i = i + 1; while(a[i]&lt;v);</code>它的AST为：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">     do-while</span><br><span class="line">  /           \</span><br><span class="line">body            &lt;</span><br><span class="line">  |            /  \</span><br><span class="line">assign        []   v</span><br><span class="line"> /  \         /\</span><br><span class="line">i    +       a  i</span><br><span class="line">     /\</span><br><span class="line">    i  1 </span><br></pre></td></tr></table></figure><br>树型结构转化为三地址码IR为：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1: i = i + 1</span><br><span class="line">2: t1 = a[ i ]</span><br><span class="line">3: if t1 &lt; v goto 1</span><br></pre></td></tr></table></figure><br>AST是高级语言结构，与语法结构很相似；基本是基于语言的，对于快速类型检查很有利，缺乏控制流信息；而IR是低级语言，与低级机器码很相似，<strong>一般是独立于语言的</strong>，<strong>包含了控制流信息</strong>，但是没有冗余信息，基本被认为是静态分析的基础。</p>
+<h2 id="中间表示Intermediate-Representation-IR"><a href="#中间表示Intermediate-Representation-IR" class="headerlink" title="中间表示Intermediate Representation(IR)"></a>中间表示Intermediate Representation(IR)</h2><p>3-Address Code(3AC)：在表达式的右边最多只有一个操作符。如：<br><code>a + b + 3 ---&gt; t1 = a + b; t2 = t1 + 3</code>。</p>
+<p>地址可以是以下几种：变量名（a、b）、常量值（3）、编译器生成的临时变量（t1、t2），不仅仅指的是内存地址。</p>
+<p>每种指令都有特定的三地址码形式，也有一些特定形式的3AC：</p>
+<ul>
+<li>x = y bop z：bop指的是二元操作符或者逻辑操作符</li>
+<li>x = uop y：uop是一元操作符</li>
+<li>x = y：赋值语句</li>
+<li>goto L：跳转语句</li>
+<li>if x goto L：有条件判断跳转语句</li>
+<li>if x rop y goto L：有关系判断跳转语句</li>
+</ul>
+<p>针对一个for循环：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class ForLoop3AC &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        int x = 0; </span><br><span class="line">        for( int i = 0; i &lt; 10; i ++) &#123;</span><br><span class="line">            x = x + 1;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>三地址码如下：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public static void main(java.lang.String[] args) &#123;</span><br><span class="line">    java.lang.String[] r0;</span><br><span class="line">    int i1;</span><br><span class="line">    r0 := @parameter0: java.lang.String[]; // 这是一种标记，r0是那个传进来的参数，这种赋值符号不是真实的赋值，作为特殊的赋值标记出来。</span><br><span class="line"></span><br><span class="line">    i1 = 0;</span><br><span class="line"></span><br><span class="line">label:</span><br><span class="line">    if i1 &gt;= 10 goto label2;</span><br><span class="line">    i1 = i1 + 1;</span><br><span class="line">    goto label1;</span><br><span class="line">    // 三地址码中有一些label作为程序的标记</span><br><span class="line">    // i和x做了优化，被合并了</span><br><span class="line">label2:</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>然后是do-while loop：<br><img src="/img/20200325162700.png" alt=""><br><code>$i0</code>是生成的临时变量，访问的数组元素被赋值给临时变量。</p>
+<p>调用函数：<br><img src="/img/20200325163000.jpg" alt=""><br><img src="/img/20200325163900.jpg" alt=""></p>
+<h2 id="Static-Single-Asssignment-SSA"><a href="#Static-Single-Asssignment-SSA" class="headerlink" title="Static Single Asssignment(SSA)"></a>Static Single Asssignment(SSA)</h2><p>静态单赋值(static single assignment, SSA)使得3地址码(3-address code, 3AC)中的变量只有唯一一个定义，即每条语句中的变量都用不同的名字表示。在有分支控制流的情况，可以使用一个特殊的合并函数（Φ，phi-function），在控制流通过不同代码块时会有相应的取值。当考虑分支操作时，SSA引入Phi函数。比如x0=0和x1=1汇聚，引入x2=phi(x0,x1)，再进行之后的操作，确保单赋值。<br><img src="/img/20200325175100.jpg" alt=""></p>
+<p>为什么用SSA：把流控制信息通过独特的变量名引入到程序执行中，这可能帮助设计一些分析。<code>定义-使用</code>组更加地明显，当要使用一些特殊的优化算法时更方便，也引入了更有效的数据存储整合。</p>
+<p>为什么不用SSA：可能会引入很多的Φ函数。</p>
+<h2 id="Control-Flow-Analysis"><a href="#Control-Flow-Analysis" class="headerlink" title="Control Flow Analysis"></a>Control Flow Analysis</h2><p>通常是说构建Control Flow Graph。如下图所示：<br><img src="/img/20200325181400.jpg" alt=""><br>这个图是之后的静态分析的基础，CFG的节点是一个独立的三地址码命令，或者是一个代码块（Basic Block）。基本块是<strong>最大连续</strong>的三地址码指令，满足：</p>
+<ul>
+<li>只能在第一条指令进入</li>
+<li>只能在最后一条指令出去</li>
+</ul>
+<p>对下图的代码段，1，2满足代码块的定义，但是加上3之后可能会从从其他地方跳到3，所以1，2是一个代码块。所以如果一句代码如果作为jump的目标，则作为代码块的开始。3，4组成的代码段如果再加上5的话，就有两个出口了，所以3，4组成一个代码段。一个语句有goto的话，作为代码段的出口。<br><img src="/img/20200325182100.jpg" alt=""></p>
+<p>算法：</p>
+<ul>
+<li>INPUT: A sequence of three-address instructions of P</li>
+<li>OUTPUT: A list of basic blocks of P</li>
+<li>METHOD: <ul>
+<li>(1) Determine the leaders in P<ul>
+<li>The first instruction in P is a leader</li>
+<li>Any target instruction of a conditional or unconditional jump is a leader</li>
+<li>Any instruction that immediately follows a conditional or unconditional jump is a leader</li>
+</ul>
+</li>
+<li>(2) Build BBs for P<ul>
+<li>A BB consists of a leader and all its subsequent instructions until the next leader</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>对上文中的三地址码序列，首先找出每个BB的leader，第一句是一个入口，所有jump的目标是leader，3，7，12都是leader，jump指令后边的指令是一个leader，5，11，12是leader。一个leader及其后续的直到下一个leader的所有指令是一个BB。</p>
+<p>leader有：1，3，5，7，11，12。所以代码块有：</p>
+<ul>
+<li>B1 {1, 2}</li>
+<li>B2 {3, 4}</li>
+<li>B3 {5, 6}</li>
+<li>B4 {7, 8, 9, 10}</li>
+<li>B5 {11}</li>
+<li>B6 {12}</li>
+</ul>
+<p>接下来添边，进一步构建CFG。如果从A到B有一个条件或无条件跳转，两个块AB之间有一条边。如果A紧接着就是B块，而且A最后一条指令不是无条件跳转的话，也需要添一条边。</p>
+<p>通常再添加两个节点，Entry和Exit。与IR无关，从Entry到第一个BB的边包含第一条IR指令，从BB到Exit的边包含可能的最后一条指令。<br><img src="/img/20200325184500.jpg" alt=""></p>
+<h1 id="Data-Flow-Analysis"><a href="#Data-Flow-Analysis" class="headerlink" title="Data Flow Analysis"></a>Data Flow Analysis</h1><p>数据是如何在CFG中流动的？</p>
+<p>何种data在CFG中流动？（应用程序特定数据）首先对data做抽象（对一些operator抽象），之后做近似（对表达式抽象），数据近似在代码块、CFG中运行。</p>
+<ul>
+<li>may analysis：最常见的静态分析，输出可能正确的信息（over-approximation，最安全，可以被称为safe-approximation）；</li>
+<li>must analysis：输出一定正确的信息（under-approximation）</li>
+<li>二者都是为了分析的正确性。</li>
+</ul>
+<p>不同的数据流分析应用有不同的数据抽象和不同的近似策略（flow safe-approximation strategies），也有不同的转换函数和不同的控制流处理方法。</p>
+<h2 id="Input-and-Output-states"><a href="#Input-and-Output-states" class="headerlink" title="Input and Output states"></a>Input and Output states</h2><p>每个IR指令s1的将一个input state（IN[s1]）转换成一个output state（OUT[s1]），每一个input(output) state与程序的一个点（program point）关联。s2的input就是s1的output，如果有分支的话，那<code>OUT[s1]=IN[s2]=IN[s3]</code>。如果有汇聚，那么<code>IN[s2]=OUT[s1] ^ OUT[s3]</code><br><img src="/img/20200325213600.jpg" alt=""></p>
+<p>在每个数据流分析应用中，将每一个程序点（program point）关联一个数据流的值（data-flow value），这个值代表了，在这个点上所有能观察到的程序状态（program states）的一个抽象（abstraction）。</p>
+<p>换句话说，数据流分析就是对程序中所有语句的IN和OUT，通过解析一系列safe-approximation约束规则（transfer function和控制流信息），找到一个方法，给它关联一个data-flow value。</p>
+<p>data-flow value存在一个值域，这个值域就是之前说的“正、负、零、未定义、非法”等。</p>
+<p>transfer function：正常的分析是按照程序执行的顺序分析。语句s对应的transfer function用fs来表示，则<code>OUT[s] = fs(IN[s])</code>，这句话是说，输入是执行s之前的value=IN[s]，转化为s执行完之后状态OUT[s]。另一种是反向分析，逆向程序执行的顺序，则<code>IN[s] = fs(OUT[s])</code>。</p>
+<p>控制流的约束（control flow’s constraints）：一共是n条语句，在一个代码块中的控制流，<code>IN[s(s+1)] = OUT[s(i)], for all i = 1, 2, ..., n-1</code>，每一个语句的IN都是上一个语句的OUT。代码块的关系：<code>IN[B]=IN[s1] OUT[B]=OUT[sn]</code>。</p>
+<p>一个基本块的transfer function，是其中所有语句的transfer function，即<code>OUT[B]=fb(IN[B]), fb=fsn*...*fs2*fs1</code>，<code>IN[B]=∩ (P: a predecessor of B) OUT[P]</code><br><img src="/img/20200325232200.jpg" alt=""></p>
+<h2 id="Reaching-Definitions-Analysis定义可达性"><a href="#Reaching-Definitions-Analysis定义可达性" class="headerlink" title="Reaching Definitions Analysis定义可达性"></a>Reaching Definitions Analysis定义可达性</h2><p>所有data-flow都基于CFG内部过程，不涉及函数调用；不涉及别名，变量都没有别名。</p>
+<p>程序点p中的一个<strong>定义</strong>d，如果有一条路径能够从p到达点q，且在路径上d没有被“killed”。</p>
+<p>变量的定义definition：是对变量复制的语句。上一句可以变为，程序点p中定义v的地方称为definition d，如果能从p走到q，且v不能被重新定义，否则走到q的v就不是d定义的v了。可以用于检测可能的未定义/未初始化。</p>
+<blockquote>
+<p>如果存在一条路径使得程序点p上的定义d能够不被阻塞/不被重定义地到达q，则称定义d可达(reaches)q。</p>
+</blockquote>
+<p><code>D: v = x op y</code>这个语句生成v的一个definition，然后‘kills’其他所有对v的定义，但是保留了对其他变量的定义。transfer function为<code>OUT[B]=(gen B)∪(IN[B]-kill(B))</code>，去掉其他所有定义这个变量的语句。<br><img src="/img/20200326001200.jpg" alt=""></p>
+<p>control flow：<code>IN[B]=∪ (P: a predecessor of B) OUT[P]</code>，就是B所有的前驱P的OUT的并，一条结果都不放过，都考虑成B的IN。</p>
+<p>定义可达性分析算法：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">INPUT: CFG（kill(B) and gen(B) computed for each basic block B）</span><br><span class="line">OUTPUT: IN[B] and OUT[B] for each basic block B</span><br><span class="line">METHOD: </span><br><span class="line">    OUT[entry] = Φ</span><br><span class="line">    for (each basic block B\entry)</span><br><span class="line">        OUT[B] = Φ</span><br><span class="line">    while(changes to any OUT occur)</span><br><span class="line">        for(each basic block B\entry) &#123;</span><br><span class="line">            IN[B] = ∪ (P: a predecessor of B) OUT[P]</span><br><span class="line">            OUT[B] = gen(B) ∪ (IN[B] - kill(B))</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure><br>算法的输入是控制流图，输出每一个基本块B的IN和OUT。算法的第一步是把所有的OUT变为空，入口的OUT也为空。但是在for里为什么排除entry呢？因为需要对一些特殊情况适用，考虑一些边界情况。如果所有的BB中有一个BB的OUT变化了，就要执行这个while，给每一个BB执行这个约束。</p>
+<p><img src="/img/20200326101300.png" alt=""><br>有8个definition，定义不同的变量颜色不同。8个定义每个定义用一个bit表示，0表示在这一某点这个definition不可以reach到，1表示在某一点这个definition可以reach到它，一开始当然每个BB上的8个bit都是0，没有一个definition可以reach到。</p>
+<p>B1的IN是0000 0000，根据transfer function生成B1的OUTPUT，gen(B)是对D1和D2，所以00变成11，执行完BB1之后，这个OUTPUT变成1100 0000，B2的IN是所有B2的前驱的UNION（B1和B4），所以就是（11000000）∪（00000000），所以是1100 0000作为B2的IN，输出是kill掉所有定义y的地方，所以是10110000，第一次迭代执行完结果如下：<br><img src="/img/20200326105800.jpg" alt=""></p>
+<p>第二次迭代执行完之后：<br><img src="/img/20200326110600.jpg" alt=""></p>
+<p>因为第二次遍历之后还有变化，所以还需要第三次遍历，继续迭代，第三次迭代之后就不变了，这个OUT的结果就是final result，在一个基本块的OUT，哪一位为1则哪一个definition能够到哪个基本块。<br><img src="/img/20200326111000.jpg" alt=""></p>
+<p>不停地使用transfer function，直到算法停止，找到一个solution。transfer function中的gen(s)和kill(s)都是不变的，这里当一些facts加入到OUT中，就不会离开了，即0只会变成1，1也只会变成1而不会变成0。因为所有的facts是有限的，所以OUT的增长是有限的，直到没有facts可以加入到OUT为止。<br><img src="/img/20200326111800.jpg" alt=""></p>
+<p>算法最后到达了一个fixed point，也与单调性相关。如果OUT不变，IN不会变；如果IN不变，OUT也不会变，二者相互制衡。</p>
+<h2 id="live-variables-analysis"><a href="#live-variables-analysis" class="headerlink" title="live variables analysis"></a>live variables analysis</h2><p>活变量分析指明了在程序点p上的变量值v，是否可以在以p为起点的CFG路径中被使用，如果是的话，说v在p上是活的，否则是死的。如果从p到q，v被使用到了但是没有被重新定义redefined（比如一开始等于0然后在某个点等于3了），这样v就是活的。</p>
+<p>活变量的信息可以用于寄存器分配，如果所有寄存器都满了，就要选择一个变量进行替换，这时可以通过静态分析选择一个死变量进行替换。</p>
+<p>data应该怎么抽象：把所有的数据用bit vector记录，第i个bit表示第i个变量，如果是0表示这个变量是死的，如果是1表示这个变量是活的。</p>
+<p>通过forward来检测这个变量v是否是存活的：如果从p点开始向下走，经过很多statement，直到走到最后才知道这个变量v是否被使用了；如果使用backward，则更方便。</p>
+<p><img src="/img/20200326121400.jpg" alt=""><br>对于上图，B有两个后继，如果采用backward方法进行分析，则<code>OUT[B]=∪ (S a successor of B) IN[B]</code>，B的OUT是B的所有后继的IN的并集。v在S1中使用了。</p>
+<p>假设在一些寄存器R中的变量v是活的，或者是否需要删掉值为3的变量v，是的话IN[B]={v}，不是的话IN[B]={}。</p>
+<p>在图中，如果<code>k=n</code>则IN[B]={v}，如果<code>k=v</code>则IN[B]={v}，如果<code>v=2</code>则IN[B]={}，如果<code>v=v-1</code>则IN[B]={v}，如果<code>v=2;k=v</code>则IN[B]={}，如果<code>k=v;v=2</code>则IN[B]={v}。</p>
+<p>由上，可以得到<code>IN[B]=use(B) ∪ (OUT[B]-def(B))</code>，前边已经知道OUT[B]了。如果变量被redefined了，就不应该在IN[B]里，如果在define之前就被use了，那就直接加进来。</p>
+<p>定义活变量分析算法：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">INPUT: CFG（def(B) and use(B) computed for each basic block B）</span><br><span class="line">OUTPUT: IN[B] and OUT[B] for each basic block B</span><br><span class="line">METHOD: </span><br><span class="line">    IN[exit] = Φ</span><br><span class="line">    for (each basic block B\entry)</span><br><span class="line">        IN[B] = Φ</span><br><span class="line">    while(changes to any IN occur)</span><br><span class="line">        for(each basic block B\exit) &#123;</span><br><span class="line">            OUT[B] = ∪ (P: a successor of B) IN[P]</span><br><span class="line">            IN[B] = use(B) ∪ (OUT[B] - def(B))</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure><br>对一个程序进行分析，跟上边的分析类似，只是是从下向上的分析。<br><img src="/img/20200326181900.jpg" alt=""></p>
+<h2 id="Available-Expressions-Analysis可用表达式分析"><a href="#Available-Expressions-Analysis可用表达式分析" class="headerlink" title="Available Expressions Analysis可用表达式分析"></a>Available Expressions Analysis可用表达式分析</h2><p>一个表达式<code>x op y</code>，如果所有路径<strong>从入口到p</strong>都一定要计算表达式<code>x op y</code>，且在计算<code>x op y</code>之后<strong>没有x和y的重定义</strong>，则称表达式<code>x op y</code>在点p是活的。</p>
+<ul>
+<li>这个定义也说明了在程序p中，可以用<code>x op y</code>的结果替换掉这个表达式。</li>
+<li>这个可以用于检测全局的通用表达式</li>
+</ul>
+<p>抽象：表达式可以用bit vector来表示。</p>
+<p>对于<code>a = x op y</code>，使用forward分析方法，它的IN={a+b}，它的OUT中应该加上<code>x op y</code>，因为<code>x op y</code>是刚执行的，被看成是gen；然后从IN中删掉所有涉及a的语句，这被看成是kill。所以，<strong><code>OUT[B]=gen(B)∪(IN[B]-kill(B))</code></strong>，<strong><code>IN[B]=∩(P a predecessor of B)OUT[P]</code></strong>。这里使用了交集，因为所有从入口到p点的路径都需要通过<code>x op y</code>这个函数。</p>
+<p>因为表达式是否可重用涉及到程序的正确性，因此需要under-approximation，报少，但一定要对，确保safe。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">INPUT: CFG（kill(B) and gen(B) computed for each basic block B）</span><br><span class="line">OUTPUT: IN[B] and OUT[B] for each basic block B</span><br><span class="line">METHOD: </span><br><span class="line">    OUT[entry] = Φ</span><br><span class="line">    for (each basic block B\entry)</span><br><span class="line">        OUT[B] = Φ</span><br><span class="line">    while(changes to any OUT occur)</span><br><span class="line">        for(each basic block B\entry) &#123;</span><br><span class="line">            IN[B] = ∩ (P: a predecessor of B) OUT[P]</span><br><span class="line">            OUT[B] = gen(B) ∪ (IN[B] - kill(B))</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>一个例子：<br><img src="/img/20200326210700.jpg" alt=""></p>
+<p>本节课的总结表：<br><img src="/img/20200326211100.jpg" alt=""></p>
+<h2 id="foundation"><a href="#foundation" class="headerlink" title="foundation"></a>foundation</h2><p>假设一个有k个节点的CFG（一个程序的执行流），且这里的一个节点是一个statement，算法在每次迭代时都会更新每个节点的OUT信息。假设数据流分析中domain（所有程序里的definition作为数据流分析的值域）的值为V，可以定义一个k元组，每个node的OUT值作为这个k元组的值，(OUT[n1],OUT[n2],OUT[n3],…OUT[nk])，作为一个集合（V1×V2×…Vk）中的元素，这个集合定义为V^k，代表的是每次迭代遍历之后的分析值。<strong>所以说V^k存的是每次迭代之后每个节点分析的临时结果</strong>。每次迭代都可以作为使用函数<code>F:V^k -&gt; V^k</code>，通过转换函数和控制流处理建立V^k之间的映射关系。算法输出一系列的k元组，直到两次输出的k元组相同。这是从另一个角度观察之前的算法。</p>
+<p>每一个OUT初始化为空，之后开始遍历，第一次遍历结束之后产生一个OUT集，上标1表示第一次迭代，下标表示每个节点。一直迭代直到两次相同。每个k元组用Xi表示，每次遍历都可以表示成一个函数，比如X0作为F的输入，输出第一次迭代的结果X1，Xi=F[x(i-1)]，X(i)=X(i+1)=F(xi)，所以X(i)=F(xi)。<br><img src="/img/20200328112400.jpg" alt=""></p>
+<p>这里的Xi就是函数F的<strong>fixed point不动点</strong>，X=F(X)，迭代算法达到了一个不动点Xi。</p>
+<p>迭代算法生成了数据流分析的方案，那：</p>
+<ul>
+<li>算法保证能停止或者能到达一个不动点么？或者总是能找到一个解么？</li>
+<li>如果上述成立，那算法只能找到一个不动点么？我们找到的不动点是最好的么？</li>
+<li>何时能找到不动点？</li>
+</ul>
+<p>偏序partial order：我们定义一个偏序集(poset)为(P,⊑)，其中⊑在P上定义了一个二元偏序关系，满足：</p>
+<ul>
+<li>自反性(reflexivity)：<code>∀x∈P,x⊑x</code></li>
+<li>反对称性(antisymmetry)：<code>∀x,y∈P,x⊑y∧y⊑x ⟹ x=y</code></li>
+<li>传递性(transitivity)：<code>∀x,y,z∈P,x⊑y∧y⊑z ⟹ x⊑z</code></li>
+</ul>
+<p>偏序意味着有些在P内的有些元素对是没有办法比较的。</p>
+<p>S是整数集合，⊑是小于等于关系，S满足偏序关系：</p>
+<ul>
+<li>1 ≤ 1，2 ≤ 2，所以满足自反性</li>
+<li>x ≤ y ∩ y  ≤ x，则x = y，所以满足反对称性</li>
+<li>1 ≤ 2 ∩ 2  ≤ 3，则1 ≤ 3，所以满足传递性</li>
+</ul>
+<p>上下界：给定(P,⊑)和子集S⊂P，若u∈P是S的上界，则∀x∈S,x⊑u；类似地，若l∈P是S的下界，则∀x∈S,l⊑x，如下。<br><img src="/img/20200328114700.jpg" alt=""></p>
+<p>最小上界/上确界(lub/join)、最大下界/下确界(glb/meet)：所有S上界中最小的一个称为S的上确界，记为⊔S；所有S下界中最大的一个称为S的下确界，记为⊓S。通常，如果S只含两个元素a,b，那么上确界可被写成a⊔b(join)，下确界可被写成a⊓b(meet)<br><img src="/img/20200328120500.jpg" alt=""></p>
+<p>一些性质:</p>
+<ul>
+<li>并不是所有偏序集都有上确界或下确界；</li>
+<li>如果有的话一定唯一（反证法）；</li>
+<li>界不一定在子集S中。</li>
+</ul>
+<p>格(lattice)：如果偏序集是格，则<strong>任两个元素对</strong>都有lub和glb。</p>
+<p>半格(semilattice)：如果任两个元素对只有一侧的确界，则称其为join/meet半格。</p>
+<p>完全格(complete lattice)：对于格的任意子集都有上下确界，那么该格称为完全格。完全格中的最大元素⊤=⊔P称为top，最小元素⊥=⊓P称为bottom。幂集依然是个完全格。结论：有限的格都是完全格。</p>
+<p>乘积格(product lattice)：如果对于格L1=(P1,⊑1),L2=(P2,⊑2),…Ln=(Pn,⊑n)，如果对于所有的i，Li=(Pi,⊑i)有上下确界，那么定义乘积格<code>L^n=(P,⊑)</code>：</p>
+<ul>
+<li>P = P1 × P2 × … × Pn</li>
+<li>(x1, …, xn) ⊑ (y1, …, yn)，(x1⊑y1)∩…∩(xn⊑yn)</li>
+<li>(x1, …, xn) ⊔ (y1, …, yn)，(x1⊔y1, …. xn⊔yn)</li>
+<li>(x1, …, xn) ⊓ (y1, …, yn)，(x1⊓y1, …, xn⊓yn)</li>
+</ul>
+<p>数据流分析框架(D, L, F)：</p>
+<ul>
+<li>D：数据流的方向，正向或反向</li>
+<li>L：一个格，包括V的值域和上下界操作符</li>
+<li>F：从V到V的一个transfer function族</li>
+</ul>
+<p><img src="/img/20200328171700.jpg" alt=""></p>
+<p>左右两边建立关联，OUT[s1]={a}和OUT[s3]={b}并之后作为s2的IN={a, b}，实际上就是在这个格上，数据流进行流动，OUT[s2]={a, b, c}。数据流分析可以被认为是在一个格的值域上迭代执行转换函数和meet/join操作。</p>
+<p>对之前的三个问题：</p>
+<ul>
+<li>算法保证能停止或者能到达一个不动点么？或者总是能找到一个解么？这是<strong>格函数的单调性问题</strong>。</li>
+<li>如果上述成立，那算法只能找到一个不动点么？我们找到的不动点是最好的么？函数可能会有多个不动点，我们这个迭代过程是不是最精确的？</li>
+<li>何时能找到不动点？</li>
+</ul>
+<p><strong>单调性</strong>(monotonicity)：定义在格上的函数f:L↦L是单调的，若∀x,y∈L,x⊑y⟹f(x)⊑f(y)。</p>
+<p>不动点定理(fixed-point theorem)：给定完全格(L,⊑)，若满足：(a) f:L↦L是单调的，(b) L是有限的(finite)，则<strong>最小不动点</strong>可以通过迭代f(⊥), f(f(⊥)), …, fk(⊥)迭代得到，最大不动点可通过f(⊤), f(f(⊤)), …, fk(⊤)迭代得到，直到到达一个不动点。</p>
+<p>证明：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">根据f:L↦L和⊥，有⊥⊑f(⊥)。</span><br><span class="line">因为f是单调的，所以：f(⊥)⊑f(f(⊥))=f^2(⊥)</span><br><span class="line">同样的，不停使用这个性质，⊥⊑f(⊥)⊑f^2(⊥)⊑...⊑f^i(⊥)</span><br><span class="line">因为L是有限的，对于一个特定的k，我们有：f^fix = f^k(⊥) = f^(k+1)(⊥)</span><br><span class="line">因此不动点存在。</span><br><span class="line"></span><br><span class="line">假定有另一个不动点x，x=f(x)</span><br><span class="line">因为⊥的定义，⊥⊑x</span><br><span class="line"></span><br><span class="line">因为f是单调的，f(⊥)⊑f(x)</span><br><span class="line">假定f^i(⊥)⊑f^i(x)</span><br><span class="line">因为f是单调的，我们有f^(i+1)(⊥)⊑f^(i+1)(x)</span><br><span class="line">通过归纳，f^i(⊥)⊑f^i(x)</span><br><span class="line">因此^i(⊥)⊑f^i(x)=x，f^fix=f^k(⊥)⊑x</span><br><span class="line">因此不动点是最小的。</span><br></pre></td></tr></table></figure></p>
+<p>需要把迭代算法跟不动点定理相关联，一旦关联上就可以解释上述三个问题。把整个数据流分析算法看成CFG中节点OUT的更新，直到两次迭代的OUT都一样。</p>
+<p>每一个迭代中，定义一个函数F，给每一个节点执行这个节点上的转换函数，然后沿着CFG应用meet/join。F包括：</p>
+<ul>
+<li>转换函数 fi: L↦L</li>
+<li>meet/join函数：⊓/⊔: L × L ↦ L</li>
+</ul>
+<p>证明函数F是单调的（monotonic）。transfer function一般都是monotonic的。对于meet/join函数，只要证二元关系是单调的就行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Proof:</span><br><span class="line">    在L上取三个元素x，y，z，x⊑y，我们希望证明 x ⊔ z ⊑ y ⊔ z，那这样的话这个关系就是单调的。y ⊑ y ⊔ z</span><br><span class="line">    通过⊑的传递性，x ⊑ y ⊔ z</span><br><span class="line">    因此y ⊔ z是x的上界，也是z的上界</span><br><span class="line">    x ⊔ z是x和z的最小上界，因此x ⊔ z ⊑ y ⊔ z</span><br></pre></td></tr></table></figure>
+<p>以上说明⊔关系是单调的。</p>
+<p>格的高度h是从顶到底的最长的路径，这个格的高度h=3。<br><img src="/img/20200402205000.jpg" alt=""></p>
+<p>假设每一次迭代，只能在格上走一步（即一个node里的一位0变成1），假定一共有k个node，格的高度是h，计算最坏情况下迭代次数是<code>i=h*k</code>。这也是能找到不动点的最坏次数。</p>
+<h2 id="May-and-Must-Analyses-a-Lattice-View"><a href="#May-and-Must-Analyses-a-Lattice-View" class="headerlink" title="May and Must Analyses, a Lattice View"></a>May and Must Analyses, a Lattice View</h2><p>图中的上下界确定，假定这个格是一个乘积格<br><img src="/img/20200402210800.png" alt=""></p>
+<p>May Analyses是一个bottom，代表一个不安全的结果，算是一个下界；另外有一个上界，是安全但是不完全/没用的结果。这里中间有一个Truth，将safe和unsafe隔开。如何知道分析一定是safe的？这是由单调性决定的。May Analyses从底部一直向上走，我们向上走先接触到的是最小不动点。从最底部走到最顶部，是从精度最高走到精度最低的。所以May Analyses一般都首先初始化为空。<br><img src="/img/20200402211800.jpg" alt=""><br><img src="/img/20200402212300.jpg" alt=""></p>
+<p>Must从上向下走。代表最安全的结果，也有一个Truth代表安全和不安全的分界。上边的那些存在一些不安全的结果，越向下是越安全的。同样也有一些不动点，我们求解的结果一定是最好的不动点。<br><img src="/img/20200402213100.jpg" alt=""></p>
+<p>已经证明过不动点原理，一定达到最小/大不动点，may为什么是最小不动点呢？每一次走一步就按照transfer function向上走，达到一个least bound，每次迭代都是一个min step，最终达到最小上界。<br><img src="/img/20200402215900.jpg" alt=""></p>
+<h2 id="How-Precise-is-our-solution"><a href="#How-Precise-is-our-solution" class="headerlink" title="How Precise is our solution"></a>How Precise is our solution</h2><p>Meet-Over-All-Paths Solution(MOP)：用着一个meet把meet/join合并，所有的path合并到一点的时候，用meet/join合并。一个Path是从entry到Si的路径，P=Entry-&gt;S1-&gt;S2-&gt;…-&gt;Si。路径P的的transfer function记作FP，是这个路径上所有节点的transfer function的组合。</p>
+<p>MOP就是枚举从Entry到Si所有的Path，然后把三条路径的FP结果join/meet起来，公式是：<code>MOP[Si] = ⊔/⊓ FP(OUT[Entry]), A path P from Entry to Si</code>，所有path应用transfer function之后进行meet/join，找到确界。有一些path是不可能走到的，所以这是不精确的。</p>
+<p>我们的迭代算法和MOP：对于这样一个CFG：<br><img src="/img/20200402234400.jpg" alt=""><br>使用迭代算法：<br><img src="/img/20200402234300.jpg" alt=""><br>内部的join是S3的输入。如果用MOP的话，不是每个节点算完之后取join，而是一条path算完之后取一个join，是两个S3的OUT进行join：<br><img src="/img/20200402234600.jpg" alt=""></p>
+<p>如果用x和y进行替代，则<code>Ours=F(x⊔y), MOP=F(x)⊔F(y)</code>，这两个function之间有什么关系：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">因为x ⊑ x ⊔ y 且 y ⊑ x ⊔ y</span><br><span class="line">且transfer function是单调的，有：</span><br><span class="line">F(x) ⊑ F(x⊔y)且F(y) ⊑ F(x⊔y)</span><br><span class="line">这就意味着F(x⊔y)是一个F(x)和F(y)的上界</span><br><span class="line"></span><br><span class="line">因为F(x) ⊔ F(y)是F(x)和F(y)的上确界(lub)，我们有：</span><br><span class="line">F(x) ⊔ F(y) ⊑ F(x⊔y)</span><br><span class="line">MOP ⊑ Ours</span><br></pre></td></tr></table></figure><br>满足一个偏序关系，所以MOP更准，Ours比MOP更不准。</p>
+<p>当F是可分配的（distributive），F(x) ⊔ F(y) = F(x⊔y)，则两个相同。位向量（bit-vector）或者Gen/kill问题都是distributive的。</p>
+<h2 id="Constant-Propagation"><a href="#Constant-Propagation" class="headerlink" title="Constant Propagation"></a>Constant Propagation</h2><p>在程序某点p，给定变量x，判断x在p点是不是保证指向一个常量。</p>
+<p>在CFG中每个节点的OUT是一组pair(x, v)，x是一个变量，v是在这个节点之后x所拥有的值。这个分析是一个forward形式的。他的格：值V的定义域很简单：<br><img src="/img/20200403000300.jpg" alt=""><br>越往下走越都不是常量，越安全但是越不精确。它的meet操作符（NAC表示not a constant）：</p>
+<ul>
+<li>NAC ⊓ v = NAC</li>
+<li>UNDEF ⊓ v = v</li>
+<li>c(常量) ⊓ v(任意一个值)<ul>
+<li>c ⊓ c = c</li>
+<li>c1 ⊓ c2 = NAC</li>
+</ul>
+</li>
+</ul>
+<p>transfer function：给定一个语句<code>s: x=...</code>，定义transfer function F为：<code>F: OUT[s] = gen ∪ (IN[s] - &#123;(x, _)&#125;)</code>，其中<br>_是通配符，x无论值是什么，都有一个新的值，就把原来的值干掉。我们使用<code>val(x)</code>代表变量x指向的值。</p>
+<ul>
+<li>s: x = c; // c is a constant gen = {(x, c)}</li>
+<li>s: x = y;                    gen = {(x, val(y))}</li>
+<li>s: x = y op z;               gen = {(x, f(y, z))}</li>
+</ul>
+<p>如果y和z的值都是常量的话，x就是<code>val(y) op val(z)</code>，如果val(y)或val(z)有一个是NAC，则x是NAC，其他情况下都是UNDEF。</p>
+<p>但是它不是distributivity的，比如：<br><img src="/img/20200403124200.jpg" alt=""></p>
+<p>通过constant propagation求c，因为F(x) ⊓ F(y) = {(a, NAC), (b, NAC), (c, 10)}，这里c已经通过path算出来了，但是F(x⊓y) = {(a, NAC), (b, NAC), (c, NAC)}，所以是不一样的，F(x⊓y) ⊑ F(x) ⊓ F(y)。</p>
+<h2 id="worklist-algorithm"><a href="#worklist-algorithm" class="headerlink" title="worklist algorithm"></a>worklist algorithm</h2><p>是对迭代算法的优化。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">INPUT: CFG（kill(B) and gen(B) computed for each basic block B）</span><br><span class="line">OUTPUT: IN[B] and OUT[B] for each basic block B</span><br><span class="line">METHOD: </span><br><span class="line">    OUT[entry] = Φ</span><br><span class="line">    for (each basic block B\entry)</span><br><span class="line">        OUT[B] = Φ</span><br><span class="line">    Worklist &lt;- all basic blocks</span><br><span class="line">    while(worklist is not empty)</span><br><span class="line">        Pick a basic block B from Worklist</span><br><span class="line">        old_OUT = OUT[B]</span><br><span class="line">        IN[B] = ∪ (P: a predecessor of B) OUT[P]</span><br><span class="line">        OUT[B] = gen(B) ∪ (IN[B] - kill(B))</span><br><span class="line">        if (old_OUT ≠ OUT[B])</span><br><span class="line">            Add all successors of B to Worklist</span><br></pre></td></tr></table></figure><br>如果B的OUT变了，那么所有的后继的输入IN就变了，那么只把IN变了的basic block加进worklist中。这样避免了大量的重复计算。</p>
+<h1 id="Inter-procedural-Analysis"><a href="#Inter-procedural-Analysis" class="headerlink" title="Inter-procedural Analysis"></a>Inter-procedural Analysis</h1><p>目前的分析都是过程内的分析，不处理函数调用。过程间分析会顺着call graph传递数据流，避免过于保守的假设造成的损失。做过程间分析需要的必要的是call graph。如何构造程序调用图？调用图是调用关系的表示，每个调用边从调用点指向调用的函数。对程序的优化、理解都有作用。<br><img src="/img/20200416011400.jpg" alt=""></p>
+<p>四个比较有代表性的算法，越往下就精度越高，越往上速度越快：</p>
+<ul>
+<li>class hierarchy analysis(CHA)</li>
+<li>rapid type analysis</li>
+<li>variable type analysis</li>
+<li>pointer analysis(k-CFA)</li>
+</ul>
+<p><img src="/img/20200416011700.jpg" alt=""><br>上图是Java的函数调用的种类，只有virtual call比较特殊，在执行的时候才知道调用的具体位置。virtual call中有个method dispatch，在执行使，一个virtual call取决于：</p>
+<ul>
+<li>方法的签名signature，通过签名可以唯一的确定一个标识符。</li>
+<li>调用者的类型。</li>
+</ul>
+<p><img src="/img/20200416012000.jpg" alt=""></p>
+<p>定义一个函数dispatch(c, m)，来模拟这个调用过程，如果c包含了一个<strong>非抽象</strong>方法m’，且与m有相同的签名和名字，则返回m’，否则的话，返回的是<code>dispatch(c&#39;, m)</code>，这里c’是c的父类。<br><img src="/img/20200416012300.jpg" alt=""></p>
+<p>下图中dispatch的结果是<code>Dispatch(B, A.foo()) = A.foo()</code>，<code>Dispatch(C, A.foo()) = C.foo()</code>。<br><img src="/img/20200416012400.jpg" alt=""></p>
+<h2 id="class-hierarchy-analysis-CHA"><a href="#class-hierarchy-analysis-CHA" class="headerlink" title="class hierarchy analysis(CHA)"></a>class hierarchy analysis(CHA)</h2><p>需要整个程序的类的继承信息，根据类型求解目标方法。假定变量a可以指向所有的类A及其所有子类。</p>
+<p>定义函数Resolve(cs)，其中cs表示call site，来求解所有可能的目标方法。如果是static call，就是写在调用中的方法。如果是special call，则需要处理构造函数、私有方法、父类方法三种情况，构造函数和私有方法两种情况就是写在调用中的方法，但是为了兼容父类方法这种情况，所以统一使用dispatch函数。如果是virtual call，首先取出变量c的声明类型C，对<code>C和C继承树上所有的子类</code>都调用dispatch，把它加入到目标方法中。<br><img src="/img/20200416012700.jpg" alt=""></p>
+<p>取出C和C所有的子类，这里对B及其子类C、D做dispatch，而且B没有foo方法，所以要去A中找foo方法，所以就是<code>A.foo(), C.foo(), D.foo()</code>。根据声明类型去找子类。<br><img src="/img/20200416013400.jpg" alt=""></p>
+<p>CHA很快，只考虑了声明类型及其继承关系，忽略了数据流和控制流信息。它的不足是很不精确。在IDE中很常用。</p>
+<p>用CHA构造call graph，对每个可到达的方法m，解所有的可调用方法。直到没有方法可达。生成调用图之后有的方法可能是不可达的。<br><img src="/img/20200416014100.jpg" alt=""></p>
+<p>第一行算法做了初始化，WL是worklist，存了需要被处理的方法，CG是调用边，RM是可达方法的集合，进入RM之后就不需要被处理了。整个算法是一个大的while循环，循环内部从WL去一个方法，如果在RM中就不处理；否则对于这个方法m，执行Resolve方法，把每个方法加入到CG中，把新发现的方法加入到WL中，后边把新发现的方法继续处理，最后返回CG。<br><img src="/img/20200416014500.jpg" alt=""></p>
+<p>下图是个例子：<br><img src="/img/20200416015000.jpg" alt=""></p>
+<h2 id="interprocedural-control-flow-graph"><a href="#interprocedural-control-flow-graph" class="headerlink" title="interprocedural control-flow graph"></a>interprocedural control-flow graph</h2><p>ICFG表示整个程序的结构，可以做过程间的分析，由每个方法的CFG和两种额外的边组成：</p>
+<ul>
+<li>call edges: 从call sites到被调用者的入口</li>
+<li>return edges: 从被调用者的返回语句指回向call sites</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">void foo() &#123;</span><br><span class="line">    bar(...); // call site</span><br><span class="line">    int n = 3; // return site</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ICFG的例子，整个程序的控制流图，<strong>需要保留call edge和return edge之间的边</strong>：<br><img src="/img/20200416094400.jpg" alt=""></p>
+<p>我们需要edge transfer，进行数据流的转换，这个转换是顺着边的。call edge transfer传参数，return edge transfer传返回值。node transfer要处理等式运算。对于一个调用节点中的式子的左边的值，要把它kill掉，因为它的值回通过return edge流到下边的返回点。<br><img src="/img/20200416100400.jpg" alt=""></p>
+<p>对于调用，要把左值去掉，否则会与函数返回值冲突，因此b不在流中；接下来处理call edge，处理传参，参数传过来之后，<code>x=6, y=7</code>，最后return edge传输的是<code>b=val(y)</code>。</p>
+<p>图中可以发现，call site到return site的边叫做<code>call-to-return edge</code>，使得可以传播本地数据流（函数内部的数据流，在这里<code>a=6</code>是可以通过这个边传递的，如果没有的话，就不能传播了）。如果删掉了，则要把调用者自己的数据再传输到被调用函数中，如第二张图<br><img src="/img/20200416101300.jpg" alt=""><br><img src="/img/20200416101400.jpg" alt=""><br><img src="/img/20200416101800.jpg" alt=""></p>
+<h1 id="Pointer-Analysis"><a href="#Pointer-Analysis" class="headerlink" title="Pointer Analysis"></a>Pointer Analysis</h1><h2 id="motivation"><a href="#motivation" class="headerlink" title="motivation"></a>motivation</h2><p>CHA建立call graph，foo中调用了get方法，以下三个类实现了接口Number中的get方法。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">void foo() &#123;</span><br><span class="line">    Number n = new One();</span><br><span class="line">    int x = n.get();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">interface Number &#123;</span><br><span class="line">    int get();</span><br><span class="line">&#125;</span><br><span class="line">class Zero implements Number &#123;</span><br><span class="line">    public int get() &#123;return 0;&#125;</span><br><span class="line">&#125;</span><br><span class="line">class One implements Number &#123;</span><br><span class="line">    public int get() &#123;return 1;&#125;</span><br><span class="line">&#125;</span><br><span class="line">class Two implements Number &#123;</span><br><span class="line">    public int get() &#123;return 2;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>如果用CHA解n的get方法的话，有3个目标函数，根据变量的类型，有三个子类。如果做constant propagation的话，有三个函数会返回给x，x就会被赋值为NAC，但是实际上根据类型，n只会指向One类型的变量，只有一个可能。</p>
+<p>指针分析会根据变量指向的对象建图，只会对One类型做dispatch，得到的调用图是更准确的，解决了CHA引入更多可能的问题。</p>
+<h2 id="introduction"><a href="#introduction" class="headerlink" title="introduction"></a>introduction</h2><p>指针分析解决了程序中的指针可以指向哪个变量地址的问题，一个指针指向程序中的哪些对象，计算出来的结果会比实际上指向的对象更多。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">void foo() &#123;</span><br><span class="line">    A a = new A();</span><br><span class="line">    B x = new B();</span><br><span class="line">    a.setB(x);</span><br><span class="line">    B y = a.getB();</span><br><span class="line">&#125;</span><br><span class="line">class A &#123;</span><br><span class="line">    B b;</span><br><span class="line">    void setB(B b) &#123; this.b = b; &#125;</span><br><span class="line">    B getB() &#123; return this.b; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>创建了两个对象，调用了set方法和get方法，对其进行指针分析，得到<strong>指向关系</strong>。<code>setB</code>方法中的this是A类型，b是B类型。getB方法左边的y指向B类型。<br><img src="/img/20200422160300.jpg" alt=""></p>
+<p>别名分析与指针分析关系紧密但是有区别，指针分析回答了程序中的指针可以指向哪个对象；而别名分析指明了两个指针是否可以指向同一个对象。两个指针指向了同一个对象，则是别名：q和p是别名，x和y不是别名。别名可以通过指针分析得到，对于优化、调bug的基础。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">p = new C();</span><br><span class="line">q = p;</span><br><span class="line">x = new X();</span><br><span class="line">y = new Y();</span><br></pre></td></tr></table></figure></p>
+<h2 id="key-factors-of-pointer-analysis"><a href="#key-factors-of-pointer-analysis" class="headerlink" title="key factors of pointer analysis"></a>key factors of pointer analysis</h2><p>指针分析的要素：</p>
+<ul>
+<li>是一个复杂系统</li>
+<li>许多要素会影响精度和效率，下图是最关键的四个要素<ul>
+<li>堆内存、上下文、控制流等</li>
+</ul>
+</li>
+</ul>
+<p><img src="/img/20200422160800.jpg" alt=""></p>
+<h3 id="堆抽象"><a href="#堆抽象" class="headerlink" title="堆抽象"></a>堆抽象</h3><p>执行时堆内存的数量理论上是无限的，把程序动态分配出来的无穷无尽的堆对象抽象成为有限的<strong>抽象对象</strong>，这样使指针分析能够结束，限制静态分析处理对象的个数，下图中把左图中堆内存中分配的多个对象或有某些共性的对象合并成一个对象。<br><img src="/img/20200422162800.jpg" alt=""></p>
+<p>堆分析有很多内容，有两大流派，一个是store based model，一个是store less model。<br><img src="/img/20200422163900.jpg" alt=""></p>
+<p>只学习allocation-site abstraction，这种技术在分配点进行给动态对象建模的方式，用抽象的对象表示所有在这个创建点创建的对象。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">for (i = 0; i &lt; 3; i ++) &#123;</span><br><span class="line">    a = new A();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>这里的程序在第二行有一个创建点，动态创建三个对象，o2表示创建点，在这个创建点创建了三个对象，使用这个方法创建的话，只会创建一个抽象的对象来表示这三个具体的对象。有几个new就会创建几个抽象点。<br><img src="/img/20200422164500.jpg" alt=""></p>
+<h3 id="上下文敏感"><a href="#上下文敏感" class="headerlink" title="上下文敏感"></a>上下文敏感</h3><p>它回答了指针分析中如何对上下文进行建模，通常有<strong>上下文敏感</strong>，<strong>上下文不敏感</strong>两种方式。每次调用都会产生不同的上下文，相应的形参也会不一样，是否将两次不同上下文的调用分开，上下不敏感会把不同的调用混合到一处，会降低精度。因此以上下文敏感为主。<br><img src="/img/20200422164800.jpg" alt=""></p>
+<h3 id="流敏感"><a href="#流敏感" class="headerlink" title="流敏感"></a>流敏感</h3><p>如何对程序的控制流进行建模，有两大类做法：敏感or不敏感。目前学到的所有分析方法都是敏感的。对一段程序做流敏感/不敏感的指针分析。</p>
+<p>敏感的分析在程序的每一点都维护指向关系映射，都会检查指针指向的变化。不敏感的分析只维护一个指向映射，会保存所有的可能结果，为了保证结果的正确性，必须把所有可能的结果都保存下来，下图中右侧的s结果说明了这一点，它把x和y都放到了结果中，因为不知道c.f可能会指向什么。<br><img src="/img/20200422171100.jpg" alt=""></p>
+<h3 id="analysis-scope"><a href="#analysis-scope" class="headerlink" title="analysis scope"></a>analysis scope</h3><p>回答了指针分析过程中需要分析哪些部分，<strong>全程序分析</strong>或者<strong>需求驱动的分析</strong>。全程序分析计算了所有指针指向的所有信息，如果感兴趣的只是第五行，那么可能只需要分析z就好了，这时需求驱动的分析更好。<br><img src="/img/20200422171500.jpg" alt=""></p>
+<h2 id="concerned-statements"><a href="#concerned-statements" class="headerlink" title="concerned statements"></a>concerned statements</h2><p>只关注直接影响指针指向的语句，有一些类型的指针。</p>
+<ul>
+<li>局部变量指针</li>
+<li>static field：类、class的指针，可以是global variable</li>
+<li>instance field：建模为一个x指向的object；</li>
+<li>array element：忽略数组的下标，看作一个对象；</li>
+</ul>
+<p>pointer-affecting statements：能够影响指针的语句</p>
+<ul>
+<li>New: x = new T();</li>
+<li>assign: x = y;</li>
+<li>store: x.f = y;</li>
+<li>load: y = x.f;</li>
+<li>call: r = x.k(a, …);</li>
+</ul>
+<p>额外的：</p>
+<ul>
+<li>如果有复杂的调用，如a.b.c.d，可以分解为三地址码</li>
+<li>指针分析中virtual call是最复杂的，首先关注这个</li>
+</ul>
+<h2 id="pointer-analysis-Rules"><a href="#pointer-analysis-Rules" class="headerlink" title="pointer analysis Rules"></a>pointer analysis Rules</h2><p>指针分析中的域及其记法：<br><img src="/img/20200422174100.jpg" alt=""></p>
+<p>instance fields用O和F的乘积表示。pointer-to关系是一个映射，吧指针映射到指针集（O的幂集，原集合中所有的子集），就是方框中表示的。<br><img src="/img/20200422174900.jpg" alt=""></p>
+<p>对于new语句，创建一个对象，用oi表示创建出来的对象，让x指向oi。只要碰到这个语句，就把oi加入到pt(x)中。<br><img src="/img/20200422175700.jpg" alt=""></p>
+<p>assign的话，如果oi属于pt(y)的话，也让它属于pt(x)。<br><img src="/img/20200422180500.jpg" alt=""></p>
+<p>store：如果x指向一个语句oi，y指向另一个语句oj：<br><img src="/img/20200422181500.jpg" alt=""></p>
+<p>load：x.f指向oi了，oi的f域指向oj了，则让y指向oj<br><img src="/img/20200422181600.jpg" alt=""></p>
+<p>下图可以看到，对每一条Rule，横线上边的是前提，横线下边的是结论，下下图是汇总：<br><img src="/img/2020051114570008.jpg" alt=""><br><img src="/img/2020051114570013.jpg" alt=""></p>
+<h2 id="how-to-implement-pointer-analysis"><a href="#how-to-implement-pointer-analysis" class="headerlink" title="how to implement pointer analysis"></a>how to implement pointer analysis</h2><p>指针分析用来生成指针的指向信息。类似下图中红线箭头的指向性信息，而且当指针变了的时候，指向性信息也会跟着变化。我们使用图将相关的指针联系起来，当pt(x)改变了的时候，将改变的部分同x的后继联系起来，将变化传播到x的后继。<br><img src="/img/2020051114570017.jpg" alt=""></p>
+<h2 id="pointer-analysis-algorithms"><a href="#pointer-analysis-algorithms" class="headerlink" title="pointer analysis algorithms"></a>pointer analysis algorithms</h2><p>Pointer Flow Graph(PFG)是一个有向图，指明了对象间的指针指向关系。节点n代表了一个抽象对象或者变量，边e:<code>x -&gt; y</code>表示指针x指向的对象可能会流向指针y（也由指针y指向），如下表所示，如果把y的值赋值给了x，那么就有一条边是从y指向x的。<br><img src="/img/2020051114570023.jpg" alt=""></p>
+<p>下图便是一个画PFG的图，根据上边的定义，应该很好懂。通过PFG可以计算一个传递闭包，从而进行指针分析，比如e可以通过b到达，即e指向的对象也可以通过b指向。顺便加上了对b的初始化，这样更容易看出，<code>pt(b)=&#123;oj&#125;=pt(e)</code>。<br><img src="/img/2020051114570037.jpg" alt=""></p>
+<p>实现指针分析算法有两个步骤：</p>
+<ul>
+<li>构建PFG</li>
+<li>将指针指向信息整合进PFG</li>
+</ul>
+<p>下图是算法，可以看到也使用了worklist算法。worklist中包含了需要被处理的指针指向信息，<code>WL∈&lt;Pointer, P(0)&gt;</code>，每个worklist入口<code>&lt;n, pts&gt;</code>，是“指针，指向集”对。<br><img src="/img/2020051114570045.jpg" alt=""></p>
+<p>下图将分析整个算法：<br><img src="/img/2020051114570049.jpg" alt=""><br><img src="/img/2020051114570052.jpg" alt=""><br><img src="/img/2020051114570054.jpg" alt=""><br><img src="/img/2020051114570057.jpg" alt=""></p>
+<p>这里使用了一个差分的方法，解决了冗余的存在。<br><img src="/img/2020051114570065.jpg" alt=""></p>
+<p>对于下面的程序：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1: b = new C();</span><br><span class="line">2: a = b;</span><br><span class="line">3: c = new C();</span><br><span class="line">4: c.f = a;</span><br><span class="line">5: d = c;</span><br><span class="line">6: c.f = d;</span><br><span class="line">7: e = d.f;</span><br></pre></td></tr></table></figure><br>第一步对于其中所有的<code>x = new T()</code>，把<code>[&lt;b, &#123;o1&#125;&gt;, &lt;c, &#123;o3&#125;&gt;]</code>加入到WL中，然后对于所有的<code>x = y</code>形式的语句，构造边，加入PFG。</p>
+<p>对于WL中的所有元素，首先把其中一个元素从WL中移除，第一个处理的是<code>&lt;b, &#123;o1&#125;&gt;</code>，调用Propagate函数，对b，pt(b)加入pts中的元素，再在WL中加上<code>&lt;a, &#123;o1&#125;&gt;</code>。对于c也是如此。</p>
+<p>之后再处理c.f相关的边，直接加上。生成的PFG如下：<br><img src="/img/2020051114570091.jpg" alt=""></p>
+<h2 id="pointer-analysis-with-methods-calls"><a href="#pointer-analysis-with-methods-calls" class="headerlink" title="pointer analysis with methods calls"></a>pointer analysis with methods calls</h2><p>过程间分析需要call graph，对于函数调用的Rule：<br><img src="/img/2020051114570105.jpg" alt=""><br><img src="/img/2020051114570114.jpg" alt=""></p>
+<p>调用图call graph构成了一个“reachable world”，从一开始入口函数就是可达的，其他的可达方法在分析的时候被逐步发现，只有可达的方法会被分析。总体算法：<br><img src="/img/2020051114570115.jpg" alt=""></p>
+<p>addReachable方法扩展了reachable world。<br><img src="/img/2020051114570118.jpg" alt=""></p>
+<p>ProcessCall的调用：<br><img src="/img/2020051114570123.jpg" alt=""></p>
+<p>例子：对以下程序：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">class A &#123;</span><br><span class="line">    static void main() &#123;</span><br><span class="line">        A a = new A();</span><br><span class="line">        A b = new B();</span><br><span class="line">        A c = b.foo(a);</span><br><span class="line">    &#125;</span><br><span class="line">    A foo(A x) &#123; ... &#125;</span><br><span class="line">&#125;</span><br><span class="line">class B extends A &#123;</span><br><span class="line">    A foo(A y) &#123;</span><br><span class="line">        A r = new A();</span><br><span class="line">        return r;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>一开始的时候WL为空，RM为空，CG为空。首先调用AddReachable函数把入口函数加入到可达图中，此时RM为{A.main()}，在AddReachable仍需把main函数中的<code>x = new T()</code>形式的语句加入到WL中，WL中变为<code>[&lt;a, &#123;o3&#125;&gt;, &lt;b, &#123;o4&#125;&gt;]</code>，再根据上边的指针分析算法进行分析。<br><img src="/img/2020051114570151.jpg" alt=""></p>
+<h1 id="CFL-Reachability-and-IFDS"><a href="#CFL-Reachability-and-IFDS" class="headerlink" title="CFL-Reachability and IFDS"></a>CFL-Reachability and IFDS</h1><h1 id="Soundness-and-Soundines"><a href="#Soundness-and-Soundines" class="headerlink" title="Soundness and Soundines"></a>Soundness and Soundines</h1><h1 id="Modern-Pointer-Analysis"><a href="#Modern-Pointer-Analysis" class="headerlink" title="Modern Pointer Analysis"></a>Modern Pointer Analysis</h1><h1 id="Static-Analysis-for-Security"><a href="#Static-Analysis-for-Security" class="headerlink" title="Static Analysis for Security"></a>Static Analysis for Security</h1><h1 id="Datalog-Based-Analysis"><a href="#Datalog-Based-Analysis" class="headerlink" title="Datalog-Based Analysis"></a>Datalog-Based Analysis</h1><h1 id="Abstract-Interpretation"><a href="#Abstract-Interpretation" class="headerlink" title="Abstract Interpretation"></a>Abstract Interpretation</h1>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag"># 积累</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/03/14/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/" rel="prev" title="redis设计与实现笔记">
+      <i class="fa fa-chevron-left"></i> redis设计与实现笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/03/28/%E4%B8%80%E8%87%B4%E6%80%A7%E7%AE%97%E6%B3%95Paxos_Raft_ZAB/" rel="next" title="一致性算法（Paxos、Raft、ZAB）">
+      一致性算法（Paxos、Raft、ZAB） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Intermediate-Representation"><span class="nav-number">2.</span> <span class="nav-text">Intermediate Representation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BAIntermediate-Representation-IR"><span class="nav-number">2.1.</span> <span class="nav-text">中间表示Intermediate Representation(IR)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Static-Single-Asssignment-SSA"><span class="nav-number">2.2.</span> <span class="nav-text">Static Single Asssignment(SSA)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Control-Flow-Analysis"><span class="nav-number">2.3.</span> <span class="nav-text">Control Flow Analysis</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Data-Flow-Analysis"><span class="nav-number">3.</span> <span class="nav-text">Data Flow Analysis</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Input-and-Output-states"><span class="nav-number">3.1.</span> <span class="nav-text">Input and Output states</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reaching-Definitions-Analysis%E5%AE%9A%E4%B9%89%E5%8F%AF%E8%BE%BE%E6%80%A7"><span class="nav-number">3.2.</span> <span class="nav-text">Reaching Definitions Analysis定义可达性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#live-variables-analysis"><span class="nav-number">3.3.</span> <span class="nav-text">live variables analysis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Available-Expressions-Analysis%E5%8F%AF%E7%94%A8%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%88%86%E6%9E%90"><span class="nav-number">3.4.</span> <span class="nav-text">Available Expressions Analysis可用表达式分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#foundation"><span class="nav-number">3.5.</span> <span class="nav-text">foundation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#May-and-Must-Analyses-a-Lattice-View"><span class="nav-number">3.6.</span> <span class="nav-text">May and Must Analyses, a Lattice View</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-Precise-is-our-solution"><span class="nav-number">3.7.</span> <span class="nav-text">How Precise is our solution</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Constant-Propagation"><span class="nav-number">3.8.</span> <span class="nav-text">Constant Propagation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#worklist-algorithm"><span class="nav-number">3.9.</span> <span class="nav-text">worklist algorithm</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Inter-procedural-Analysis"><span class="nav-number">4.</span> <span class="nav-text">Inter-procedural Analysis</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#class-hierarchy-analysis-CHA"><span class="nav-number">4.1.</span> <span class="nav-text">class hierarchy analysis(CHA)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#interprocedural-control-flow-graph"><span class="nav-number">4.2.</span> <span class="nav-text">interprocedural control-flow graph</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Pointer-Analysis"><span class="nav-number">5.</span> <span class="nav-text">Pointer Analysis</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#motivation"><span class="nav-number">5.1.</span> <span class="nav-text">motivation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">5.2.</span> <span class="nav-text">introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#key-factors-of-pointer-analysis"><span class="nav-number">5.3.</span> <span class="nav-text">key factors of pointer analysis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A0%86%E6%8A%BD%E8%B1%A1"><span class="nav-number">5.3.1.</span> <span class="nav-text">堆抽象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E6%95%8F%E6%84%9F"><span class="nav-number">5.3.2.</span> <span class="nav-text">上下文敏感</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E6%95%8F%E6%84%9F"><span class="nav-number">5.3.3.</span> <span class="nav-text">流敏感</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#analysis-scope"><span class="nav-number">5.3.4.</span> <span class="nav-text">analysis scope</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#concerned-statements"><span class="nav-number">5.4.</span> <span class="nav-text">concerned statements</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pointer-analysis-Rules"><span class="nav-number">5.5.</span> <span class="nav-text">pointer analysis Rules</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#how-to-implement-pointer-analysis"><span class="nav-number">5.6.</span> <span class="nav-text">how to implement pointer analysis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pointer-analysis-algorithms"><span class="nav-number">5.7.</span> <span class="nav-text">pointer analysis algorithms</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pointer-analysis-with-methods-calls"><span class="nav-number">5.8.</span> <span class="nav-text">pointer analysis with methods calls</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CFL-Reachability-and-IFDS"><span class="nav-number">6.</span> <span class="nav-text">CFL-Reachability and IFDS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Soundness-and-Soundines"><span class="nav-number">7.</span> <span class="nav-text">Soundness and Soundines</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Modern-Pointer-Analysis"><span class="nav-number">8.</span> <span class="nav-text">Modern Pointer Analysis</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Static-Analysis-for-Security"><span class="nav-number">9.</span> <span class="nav-text">Static Analysis for Security</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Datalog-Based-Analysis"><span class="nav-number">10.</span> <span class="nav-text">Datalog-Based Analysis</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Abstract-Interpretation"><span class="nav-number">11.</span> <span class="nav-text">Abstract Interpretation</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Hao Yu</p>
+  <div class="site-description" itemprop="description">Introduce something interesting and recode learning process, some articles are written by others, the original link has been given as much as possible, thanks to the original author</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">128</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao Yu</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

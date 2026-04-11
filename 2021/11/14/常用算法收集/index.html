@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>常用算法收集 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="求二进制数中1的个数问题描述任意给定一个32位无符号整数n，求n的二进制表示中1的个数，比如n &#x3D; 5（0101）时，返回2，n &#x3D; 15（1111）时，返回4 这也是一道比较经典的题目了，相信不少人面试的时候可能遇到过这道题吧，下面介绍了几种方法来实现这道题。 普通法移位+计数，这种方法的运算次数与输入n最高位1的位置有关，最多循环32次。 1234567891011int">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="求二进制数中1的个数问题描述任意给定一个32位无符号整数n，求n的二进制表示中1的个数，比如n &#x3D; 5（0101）时，返回2，n &#x3D; 15（1111）时，返回4 这也是一道比较经典的题目了，相信不少人面试的时候可能遇到过这道题吧，下面介绍了几种方法来实现这道题。 普通法移位+计数，这种方法的运算次数与输入n最高位1的位置有关，最多循环32次。 1234567891011int">
 <meta property="og:type" content="article">
 <meta property="og:title" content="常用算法收集">
 <meta property="og:url" content="http://example.com/2021/11/14/%E5%B8%B8%E7%94%A8%E7%AE%97%E6%B3%95%E6%94%B6%E9%9B%86/index.html">
@@ -171,85 +185,191 @@
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/img/20211114005300.jpg">
+
+
+<link rel="canonical" href="http://example.com/2021/11/14/%E5%B8%B8%E7%94%A8%E7%AE%97%E6%B3%95%E6%94%B6%E9%9B%86/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2021/11/14/%E5%B8%B8%E7%94%A8%E7%AE%97%E6%B3%95%E6%94%B6%E9%9B%86/","path":"2021/11/14/常用算法收集/","title":"常用算法收集"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>常用算法收集 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B1%82%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%95%B0%E4%B8%AD1%E7%9A%84%E4%B8%AA%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">求二进制数中1的个数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">普通法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E6%B3%95"><span class="nav-number">1.3.</span> <span class="nav-text">快速法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%A1%A8%E6%B3%95"><span class="nav-number">1.4.</span> <span class="nav-text">查表法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%BB%BA%E8%A1%A8"><span class="nav-number">1.4.1.</span> <span class="nav-text">动态建表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E8%A1%A8-4bit"><span class="nav-number">1.4.2.</span> <span class="nav-text">静态表-4bit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E8%A1%A8-8bit"><span class="nav-number">1.4.3.</span> <span class="nav-text">静态表-8bit</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B3%E8%A1%8C%E7%AE%97%E6%B3%95"><span class="nav-number">1.5.</span> <span class="nav-text">平行算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%8D%E6%A0%87%E5%BF%97%E6%B3%95"><span class="nav-number">1.6.</span> <span class="nav-text">位标志法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E6%B3%95"><span class="nav-number">1.7.</span> <span class="nav-text">指令法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E5%B9%82%E3%80%81%E5%BF%AB%E9%80%9F%E5%B9%82%E5%8F%96%E6%A8%A1"><span class="nav-number">2.</span> <span class="nav-text">快速幂、快速幂取模</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E6%95%B0%E6%A8%A1%E5%B9%82%E8%BF%90%E7%AE%97%E7%9A%84%E7%BC%BA%E9%99%B7"><span class="nav-number">2.1.</span> <span class="nav-text">大数模幂运算的缺陷</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E5%B9%82%E7%9A%84%E5%BC%95%E5%85%A5"><span class="nav-number">2.2.</span> <span class="nav-text">快速幂的引入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OJ%E4%BE%8B%E9%A2%98"><span class="nav-number">2.3.</span> <span class="nav-text">OJ例题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">3.</span> <span class="nav-text">二叉树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%91%E8%BD%AC%E6%8D%A2%E4%B8%BA%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">3.1.</span> <span class="nav-text">树转换为二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%AE%E6%9E%97%E8%BD%AC%E6%8D%A2%E4%B8%BA%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">3.2.</span> <span class="nav-text">森林转换为二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%A0%91"><span class="nav-number">3.3.</span> <span class="nav-text">二叉树转换为树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%A3%AE%E6%9E%97"><span class="nav-number">3.4.</span> <span class="nav-text">二叉树转换为森林</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-3-%E6%A0%91"><span class="nav-number">4.</span> <span class="nav-text">2-3 树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E6%A0%91%E6%80%A7%E8%B4%A8"><span class="nav-number">4.1.</span> <span class="nav-text">2-3 树性质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3%E6%A0%91%E6%9F%A5%E6%89%BE"><span class="nav-number">4.2.</span> <span class="nav-text">2-3树查找</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3%E6%A0%91%E6%8F%92%E5%85%A5"><span class="nav-number">4.3.</span> <span class="nav-text">2-3树插入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3%E6%A0%91%E5%88%A0%E9%99%A4"><span class="nav-number">4.4.</span> <span class="nav-text">2-3树删除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E9%9D%9E%E5%8F%B6%E5%AD%90%E8%8A%82%E7%82%B9"><span class="nav-number">4.4.1.</span> <span class="nav-text">删除非叶子节点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-4%E6%A0%91"><span class="nav-number">4.5.</span> <span class="nav-text">2-3-4树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.6.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#B-%E6%A0%91"><span class="nav-number">5.</span> <span class="nav-text">B-树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%92%E5%85%A5"><span class="nav-number">5.1.</span> <span class="nav-text">插入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4"><span class="nav-number">5.2.</span> <span class="nav-text">删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%93%8D%E4%BD%9C"><span class="nav-number">5.3.</span> <span class="nav-text">删除操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#B-%E6%A0%91-1"><span class="nav-number">6.</span> <span class="nav-text">B+树</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#B-%E6%A0%91-2"><span class="nav-number">7.</span> <span class="nav-text">B*树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">7.1.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#B%E6%A0%91%E7%BB%93%E6%9E%84"><span class="nav-number">7.1.1.</span> <span class="nav-text">B树结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B%E6%A0%91%E7%9A%84%E6%9F%A5%E6%89%BE"><span class="nav-number">7.1.2.</span> <span class="nav-text">B树的查找</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B%E6%A0%91%E7%9A%84%E6%8F%92%E5%85%A5"><span class="nav-number">7.1.3.</span> <span class="nav-text">B树的插入</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%88%86%E6%9E%90LSM%E6%A0%91"><span class="nav-number">8.</span> <span class="nav-text">深入浅出分析LSM树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#LSM%E6%A0%91%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%AE%9A%E4%B9%89"><span class="nav-number">8.1.</span> <span class="nav-text">LSM树数据结构定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E6%93%8D%E4%BD%9C"><span class="nav-number">8.2.</span> <span class="nav-text">插入操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%93%8D%E4%BD%9C-1"><span class="nav-number">8.3.</span> <span class="nav-text">删除操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%85%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%EF%BC%9A"><span class="nav-number">8.3.1.</span> <span class="nav-text">待删除数据在内存中：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%85%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE%E5%9C%A8%E7%A3%81%E7%9B%98%E4%B8%AD"><span class="nav-number">8.3.2.</span> <span class="nav-text">待删除数据在磁盘中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%85%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE%E6%A0%B9%E6%9C%AC%E4%B8%8D%E5%AD%98%E5%9C%A8%EF%BC%9A"><span class="nav-number">8.3.3.</span> <span class="nav-text">待删除数据根本不存在：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E6%93%8D%E4%BD%9C"><span class="nav-number">8.4.</span> <span class="nav-text">修改操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%85%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%EF%BC%9A"><span class="nav-number">8.4.1.</span> <span class="nav-text">待修改数据在内存中：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%85%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E5%9C%A8%E7%A3%81%E7%9B%98%E4%B8%AD%EF%BC%9A"><span class="nav-number">8.4.2.</span> <span class="nav-text">待修改数据在磁盘中：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%A5%E6%95%B0%E6%8D%AE%E6%A0%B9%E6%9C%AC%E4%B8%8D%E5%AD%98%E5%9C%A8%EF%BC%9A"><span class="nav-number">8.4.3.</span> <span class="nav-text">该数据根本不存在：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E6%93%8D%E4%BD%9C"><span class="nav-number">8.5.</span> <span class="nav-text">查询操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%85%E6%9F%A5%E8%AF%A2%E6%95%B0%E6%8D%AE%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%EF%BC%9A"><span class="nav-number">8.5.1.</span> <span class="nav-text">待查询数据在内存中：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%85%E6%9F%A5%E8%AF%A2%E6%95%B0%E6%8D%AE%E5%9C%A8%E7%A3%81%E7%9B%98%E4%B8%AD%EF%BC%9A"><span class="nav-number">8.5.2.</span> <span class="nav-text">待查询数据在磁盘中：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E6%93%8D%E4%BD%9C"><span class="nav-number">8.6.</span> <span class="nav-text">合并操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E7%A3%81%E7%9B%98%E7%9A%84%E5%9C%BA%E6%99%AF%EF%BC%9A"><span class="nav-number">8.6.1.</span> <span class="nav-text">内存数据写入磁盘的场景：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E4%B8%AD%E5%A4%9A%E4%B8%AA%E5%9D%97%E7%9A%84%E5%BD%92%E5%B9%B6%EF%BC%9A"><span class="nav-number">8.6.2.</span> <span class="nav-text">磁盘中多个块的归并：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9%E5%88%86%E6%9E%90"><span class="nav-number">8.7.</span> <span class="nav-text">优缺点分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-1"><span class="nav-number">8.8.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91%E8%AF%A6%E8%A7%A3"><span class="nav-number">9.</span> <span class="nav-text">平衡二叉树详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%EF%BC%88Binary-Sort-Tree%EF%BC%89"><span class="nav-number">9.1.</span> <span class="nav-text">二叉搜索树（Binary Sort Tree）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E5%B9%B3%E8%A1%A1%E6%90%9C%E7%B4%A2%E6%A0%91%EF%BC%88AVL%EF%BC%89"><span class="nav-number">9.2.</span> <span class="nav-text">二叉平衡搜索树（AVL）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AVL%E6%A0%91%E7%9A%84%E8%87%AA%E5%B9%B3%E8%A1%A1%E6%93%8D%E4%BD%9C%E2%80%94%E2%80%94%E6%97%8B%E8%BD%AC"><span class="nav-number">9.3.</span> <span class="nav-text">AVL树的自平衡操作——旋转</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A6%E5%8D%95%E6%97%8B%EF%BC%88%E9%80%86%E6%97%B6%E9%92%88%E6%97%8B%E8%BD%AC%EF%BC%89"><span class="nav-number">9.3.1.</span> <span class="nav-text">左单旋（逆时针旋转）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%B3%E5%8D%95%E6%97%8B%EF%BC%88%E9%A1%BA%E6%97%B6%E9%92%88%E6%97%8B%E8%BD%AC%EF%BC%89"><span class="nav-number">9.3.2.</span> <span class="nav-text">右单旋（顺时针旋转）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A6%E5%8F%B3%E5%8F%8C%E6%97%8B"><span class="nav-number">9.3.3.</span> <span class="nav-text">左右双旋</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%B3%E5%B7%A6%E5%8F%8C%E6%97%8B"><span class="nav-number">9.3.4.</span> <span class="nav-text">右左双旋</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B3%E8%A1%A1%E5%9B%A0%E5%AD%90%E6%9B%B4%E6%96%B0"><span class="nav-number">9.4.</span> <span class="nav-text">平衡因子更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%B8%85%E6%99%B0%E7%9A%84%E4%B8%80%E4%B8%AA%E5%9B%BE"><span class="nav-number">9.5.</span> <span class="nav-text">更清晰的一个图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LL%E6%97%8B%E8%BD%AC"><span class="nav-number">9.5.1.</span> <span class="nav-text">LL旋转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LR%E6%97%8B%E8%BD%AC"><span class="nav-number">9.5.2.</span> <span class="nav-text">LR旋转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RR%E6%97%8B%E8%BD%AC"><span class="nav-number">9.5.3.</span> <span class="nav-text">RR旋转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RL%E6%97%8B%E8%BD%AC"><span class="nav-number">9.5.4.</span> <span class="nav-text">RL旋转</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AVL%E6%A0%91%E7%9A%84%E5%88%A0%E9%99%A4%E6%93%8D%E4%BD%9C"><span class="nav-number">9.6.</span> <span class="nav-text">AVL树的删除操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%A2%E9%BB%91%E6%A0%91%E8%AF%A6%E8%A7%A3"><span class="nav-number">10.</span> <span class="nav-text">红黑树详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%A2%E9%BB%91%E6%A0%91%E6%A6%82%E8%BF%B0"><span class="nav-number">10.1.</span> <span class="nav-text">红黑树概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B8%8A%E7%BB%93%E7%82%B9%E7%9A%84%E6%8F%92%E5%85%A5"><span class="nav-number">10.2.</span> <span class="nav-text">红黑树上结点的插入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BB%91%E7%88%B6"><span class="nav-number">10.2.1.</span> <span class="nav-text">黑父</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%A2%E7%88%B6"><span class="nav-number">10.2.2.</span> <span class="nav-text">红父</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%A2%E5%8F%94"><span class="nav-number">10.2.3.</span> <span class="nav-text">红叔</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BB%91%E5%8F%94"><span class="nav-number">10.2.4.</span> <span class="nav-text">黑叔</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%9C%E5%A0%86%E4%B9%8B%E5%9B%BE%E6%96%87%E8%A7%A3%E6%9E%90%E5%92%8CC%E8%AF%AD%E8%A8%80%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">11.</span> <span class="nav-text">斜堆之图文解析和C语言的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%A6%81"><span class="nav-number">11.1.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%9C%E5%A0%86%E7%9A%84%E4%BB%8B%E7%BB%8D"><span class="nav-number">11.2.</span> <span class="nav-text">斜堆的介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%B4%E6%96%87%E4%BB%B6"><span class="nav-number">11.3.</span> <span class="nav-text">头文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%88%E5%B9%B6"><span class="nav-number">11.4.</span> <span class="nav-text">合并</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0"><span class="nav-number">11.5.</span> <span class="nav-text">添加</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4-1"><span class="nav-number">11.6.</span> <span class="nav-text">删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%9C%E5%A0%86%E7%9A%84C%E5%AE%9E%E7%8E%B0-%E5%AE%8C%E6%95%B4%E6%BA%90%E7%A0%81"><span class="nav-number">11.7.</span> <span class="nav-text">斜堆的C实现(完整源码)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%A6%E5%80%BE%E5%A0%86%E4%B9%8B%E5%9B%BE%E6%96%87%E8%A7%A3%E6%9E%90%E5%92%8CC%E8%AF%AD%E8%A8%80%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">12.</span> <span class="nav-text">左倾堆之图文解析和C语言的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%A6%81-1"><span class="nav-number">12.1.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A6%E5%80%BE%E5%A0%86%E7%9A%84%E4%BB%8B%E7%BB%8D"><span class="nav-number">12.2.</span> <span class="nav-text">左倾堆的介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A6%E5%80%BE%E5%A0%86%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">12.3.</span> <span class="nav-text">左倾堆的定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A6%E5%80%BE%E5%A0%86%E7%9A%84%E5%9B%BE%E6%96%87%E8%A7%A3%E6%9E%90"><span class="nav-number">12.4.</span> <span class="nav-text">左倾堆的图文解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A6%E5%80%BE%E5%A0%86%E7%9A%84%E5%A4%B4%E6%96%87%E4%BB%B6-leftist-h"><span class="nav-number">12.5.</span> <span class="nav-text">左倾堆的头文件(leftist.h)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A6%E5%80%BE%E5%A0%86%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6-leftist-c"><span class="nav-number">12.6.</span> <span class="nav-text">左倾堆的实现文件(leftist.c)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A6%E5%80%BE%E5%A0%86%E7%9A%84%E6%B5%8B%E8%AF%95%E7%A8%8B%E5%BA%8F-leftist-test-c"><span class="nav-number">12.7.</span> <span class="nav-text">左倾堆的测试程序(leftist_test.c)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A6%E5%80%BE%E5%A0%86%E7%9A%84C%E6%B5%8B%E8%AF%95%E7%A8%8B%E5%BA%8F"><span class="nav-number">12.8.</span> <span class="nav-text">左倾堆的C测试程序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B7%B3%E8%B7%83%E8%A1%A8%E5%8E%9F%E7%90%86"><span class="nav-number">13.</span> <span class="nav-text">跳跃表原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9%E8%B7%B3%E8%A1%A8"><span class="nav-number">13.1.</span> <span class="nav-text">什么选择跳表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E5%BA%8F%E8%A1%A8%E7%9A%84%E6%90%9C%E7%B4%A2"><span class="nav-number">13.2.</span> <span class="nav-text">有序表的搜索</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%B3%E8%A1%A8"><span class="nav-number">13.3.</span> <span class="nav-text">跳表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%B3%E8%A1%A8%E7%9A%84%E6%90%9C%E7%B4%A2"><span class="nav-number">13.4.</span> <span class="nav-text">跳表的搜索</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%B3%E8%A1%A8%E7%9A%84%E6%8F%92%E5%85%A5"><span class="nav-number">13.5.</span> <span class="nav-text">跳表的插入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A2%E7%A1%AC%E5%B8%81%E5%86%B3%E5%AE%9A-K"><span class="nav-number">13.6.</span> <span class="nav-text">丢硬币决定 K</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%B3%E8%A1%A8%E7%9A%84%E9%AB%98%E5%BA%A6%E3%80%82"><span class="nav-number">13.7.</span> <span class="nav-text">跳表的高度。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%B3%E8%A1%A8%E7%9A%84%E7%A9%BA%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90"><span class="nav-number">13.8.</span> <span class="nav-text">跳表的空间复杂度分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%B3%E8%A1%A8%E7%9A%84%E5%88%A0%E9%99%A4"><span class="nav-number">13.9.</span> <span class="nav-text">跳表的删除</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%97%E5%85%B8%E6%A0%91"><span class="nav-number">14.</span> <span class="nav-text">字典树</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%8D%E5%9B%BE%EF%BC%88BitMap%EF%BC%89%E7%B4%A2%E5%BC%95"><span class="nav-number">15.</span> <span class="nav-text">位图（BitMap）索引</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B"><span class="nav-number">15.1.</span> <span class="nav-text">案例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%8D%E5%9B%BE%E7%B4%A2%E5%BC%95%E5%87%BA%E9%A9%AC"><span class="nav-number">15.2.</span> <span class="nav-text">位图索引出马</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%8D%E5%9B%BE%E7%B4%A2%E5%BC%95%E7%9A%84%E9%80%82%E7%94%A8%E6%9D%A1%E4%BB%B6"><span class="nav-number">15.3.</span> <span class="nav-text">位图索引的适用条件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Boyer-Moore-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95"><span class="nav-number">16.</span> <span class="nav-text">Boyer-Moore 字符串匹配算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E9%98%B6hash%E8%A1%A8"><span class="nav-number">17.</span> <span class="nav-text">多阶hash表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hash%E7%A2%B0%E6%92%9E%E5%86%B2%E7%AA%81"><span class="nav-number">18.</span> <span class="nav-text">Hash碰撞冲突</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%8F%E5%85%B8%E5%AD%97%E7%AC%A6%E4%B8%B2hash%E5%87%BD%E6%95%B0%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%80%A7%E8%83%BD%E6%AF%94%E8%BE%83"><span class="nav-number">19.</span> <span class="nav-text">经典字符串hash函数介绍及性能比较</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Merkle-Tree"><span class="nav-number">20.</span> <span class="nav-text">Merkle Tree</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">20.1.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hash"><span class="nav-number">20.1.1.</span> <span class="nav-text">Hash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hash-List"><span class="nav-number">20.1.2.</span> <span class="nav-text">Hash List</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Merkle-Tree-1"><span class="nav-number">20.1.3.</span> <span class="nav-text">Merkle Tree</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Merkle-Tree%E7%9A%84%E7%89%B9%E7%82%B9"><span class="nav-number">20.2.</span> <span class="nav-text">Merkle Tree的特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Merkle-Tree%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="nav-number">20.3.</span> <span class="nav-text">Merkle Tree的操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAMerckle-Tree"><span class="nav-number">20.3.1.</span> <span class="nav-text">创建Merckle Tree</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E7%B4%A2%E6%95%B0%E6%8D%AE%E5%9D%97"><span class="nav-number">20.3.2.</span> <span class="nav-text">检索数据块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%EF%BC%8C%E6%8F%92%E5%85%A5%E5%92%8C%E5%88%A0%E9%99%A4"><span class="nav-number">20.3.3.</span> <span class="nav-text">更新，插入和删除</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Merkle-Tree%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">20.4.</span> <span class="nav-text">Merkle Tree的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D"><span class="nav-number">20.4.1.</span> <span class="nav-text">数字签名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#P2P%E7%BD%91%E7%BB%9C"><span class="nav-number">20.4.2.</span> <span class="nav-text">P2P网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Trusted-Computing"><span class="nav-number">20.4.3.</span> <span class="nav-text">Trusted Computing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IPFS"><span class="nav-number">20.4.4.</span> <span class="nav-text">IPFS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BitCoin%E5%92%8CEthereum"><span class="nav-number">20.4.5.</span> <span class="nav-text">BitCoin和Ethereum</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Ethereum%E7%9A%84Merkle-Proof"><span class="nav-number">20.4.6.</span> <span class="nav-text">Ethereum的Merkle Proof</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MPT-Merkle-Patricia-Trees"><span class="nav-number">20.4.7.</span> <span class="nav-text">MPT(Merkle Patricia Trees)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E6%B3%95%E5%B0%8F%E7%BB%93"><span class="nav-number">21.</span> <span class="nav-text">Leetcode二分查找法小结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%B1%BB%EF%BC%9A-%E9%9C%80%E6%9F%A5%E6%89%BE%E5%92%8C%E7%9B%AE%E6%A0%87%E5%80%BC%E5%AE%8C%E5%85%A8%E7%9B%B8%E7%AD%89%E7%9A%84%E6%95%B0"><span class="nav-number">21.1.</span> <span class="nav-text">第一类： 需查找和目标值完全相等的数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E7%B1%BB%EF%BC%9A-%E6%9F%A5%E6%89%BE%E7%AC%AC%E4%B8%80%E4%B8%AA%E4%B8%8D%E5%B0%8F%E4%BA%8E%E7%9B%AE%E6%A0%87%E5%80%BC%E7%9A%84%E6%95%B0%EF%BC%8C%E5%8F%AF%E5%8F%98%E5%BD%A2%E4%B8%BA%E6%9F%A5%E6%89%BE%E6%9C%80%E5%90%8E%E4%B8%80%E4%B8%AA%E5%B0%8F%E4%BA%8E%E7%9B%AE%E6%A0%87%E5%80%BC%E7%9A%84%E6%95%B0"><span class="nav-number">21.2.</span> <span class="nav-text">第二类： 查找第一个不小于目标值的数，可变形为查找最后一个小于目标值的数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E7%B1%BB%EF%BC%9A-%E6%9F%A5%E6%89%BE%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%A4%A7%E4%BA%8E%E7%9B%AE%E6%A0%87%E5%80%BC%E7%9A%84%E6%95%B0%EF%BC%8C%E5%8F%AF%E5%8F%98%E5%BD%A2%E4%B8%BA%E6%9F%A5%E6%89%BE%E6%9C%80%E5%90%8E%E4%B8%80%E4%B8%AA%E4%B8%8D%E5%A4%A7%E4%BA%8E%E7%9B%AE%E6%A0%87%E5%80%BC%E7%9A%84%E6%95%B0"><span class="nav-number">21.3.</span> <span class="nav-text">第三类： 查找第一个大于目标值的数，可变形为查找最后一个不大于目标值的数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E7%B1%BB%EF%BC%9A-%E7%94%A8%E5%AD%90%E5%87%BD%E6%95%B0%E5%BD%93%E4%BD%9C%E5%88%A4%E6%96%AD%E5%85%B3%E7%B3%BB%EF%BC%88%E9%80%9A%E5%B8%B8%E7%94%B1-mid-%E8%AE%A1%E7%AE%97%E5%BE%97%E5%87%BA%EF%BC%89"><span class="nav-number">21.4.</span> <span class="nav-text">第四类： 用子函数当作判断关系（通常由 mid 计算得出）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E7%B1%BB%EF%BC%9A-%E5%85%B6%E4%BB%96%EF%BC%88%E9%80%9A%E5%B8%B8-target-%E5%80%BC%E4%B8%8D%E5%9B%BA%E5%AE%9A%EF%BC%89"><span class="nav-number">21.5.</span> <span class="nav-text">第五类： 其他（通常 target 值不固定）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Top-k%E9%97%AE%E9%A2%98%E7%9A%84%E4%B8%80%E4%BA%9B%E7%AE%97%E6%B3%95"><span class="nav-number">22.</span> <span class="nav-text">Top-k问题的一些算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86%E6%8E%92%E8%A7%A3%E6%B3%95"><span class="nav-number">22.1.</span> <span class="nav-text">堆排解法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E6%8E%92%E8%A7%A3%E6%B3%95"><span class="nav-number">22.2.</span> <span class="nav-text">快排解法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E7%A7%8D%E4%B8%8D%E5%90%8C%E7%9A%84%E6%8E%92%E5%BA%8F%E6%96%B9%E6%B3%95"><span class="nav-number">23.</span> <span class="nav-text">多种不同的排序方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%B3%E5%AE%9A%E6%8E%92%E5%BA%8F%E5%92%8C%E4%B8%8D%E7%A8%B3%E5%AE%9A%E6%8E%92%E5%BA%8F"><span class="nav-number">23.1.</span> <span class="nav-text">稳定排序和不稳定排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F"><span class="nav-number">23.1.1.</span> <span class="nav-text">冒泡排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F"><span class="nav-number">23.1.2.</span> <span class="nav-text">选择排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F"><span class="nav-number">23.1.3.</span> <span class="nav-text">插入排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F"><span class="nav-number">23.1.4.</span> <span class="nav-text">快速排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F"><span class="nav-number">23.1.5.</span> <span class="nav-text">归并排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%8C%E5%B0%94%E6%8E%92%E5%BA%8F-shell"><span class="nav-number">23.1.6.</span> <span class="nav-text">希尔排序(shell)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A0%86%E6%8E%92%E5%BA%8F"><span class="nav-number">23.1.7.</span> <span class="nav-text">堆排序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#100%E4%B8%87%E4%B8%AA32%E4%BD%8D%E6%95%B4%E6%95%B0%EF%BC%8C%E5%A6%82%E4%BD%95%E6%9C%80%E5%BF%AB%E6%89%BE%E5%88%B0%E4%B8%AD%E4%BD%8D%E6%95%B0%E3%80%82%E8%83%BD%E4%BF%9D%E8%AF%81%E6%AF%8F%E4%B8%AA%E6%95%B0%E6%98%AF%E5%94%AF%E4%B8%80%E7%9A%84%EF%BC%8C%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0O-N-%E7%AE%97%E6%B3%95%EF%BC%9F"><span class="nav-number">23.2.</span> <span class="nav-text">100万个32位整数，如何最快找到中位数。能保证每个数是唯一的，如何实现O(N)算法？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F"><span class="nav-number">23.3.</span> <span class="nav-text">基数排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%83%8C%E6%99%AF"><span class="nav-number">23.3.1.</span> <span class="nav-text">数据背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E5%8E%9F%E7%90%86"><span class="nav-number">23.3.2.</span> <span class="nav-text">排序原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E6%95%B0%E6%8E%92%E5%BA%8F"><span class="nav-number">23.3.3.</span> <span class="nav-text">计数排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F%E5%8E%9F%E7%90%86%E5%9B%BE"><span class="nav-number">23.3.4.</span> <span class="nav-text">基数排序原理图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E4%BC%98%E5%8C%96"><span class="nav-number">23.3.5.</span> <span class="nav-text">算法优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">23.3.6.</span> <span class="nav-text">算法实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F%E8%BF%87%E7%A8%8B%E5%9B%BE"><span class="nav-number">23.3.7.</span> <span class="nav-text">基数排序过程图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F"><span class="nav-number">23.4.</span> <span class="nav-text">拓扑排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E5%92%8C%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="nav-number">23.4.1.</span> <span class="nav-text">定义和前置条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%81%8F%E5%BA%8F-%E5%85%A8%E5%BA%8F%E5%85%B3%E7%B3%BB"><span class="nav-number">23.4.2.</span> <span class="nav-text">偏序&#x2F;全序关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B8%E5%9E%8B%E5%AE%9E%E7%8E%B0%E7%AE%97%E6%B3%95"><span class="nav-number">23.4.3.</span> <span class="nav-text">典型实现算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Kahn%E7%AE%97%E6%B3%95"><span class="nav-number">23.4.3.1.</span> <span class="nav-text">Kahn算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8EDFS%E7%9A%84%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F"><span class="nav-number">23.4.3.2.</span> <span class="nav-text">基于DFS的拓扑排序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E5%AE%9E%E7%8E%B0%E7%AE%97%E6%B3%95%E7%9A%84%E6%80%BB%E7%BB%93"><span class="nav-number">23.4.3.3.</span> <span class="nav-text">两种实现算法的总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F%E8%A7%A3%E7%9A%84%E5%94%AF%E4%B8%80%E6%80%A7"><span class="nav-number">23.4.4.</span> <span class="nav-text">拓扑排序解的唯一性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%88%E5%AF%86%E9%A1%BF%E8%B7%AF%E5%BE%84"><span class="nav-number">23.4.5.</span> <span class="nav-text">哈密顿路径</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-常用算法收集" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/11/14/%E5%B8%B8%E7%94%A8%E7%AE%97%E6%B3%95%E6%94%B6%E9%9B%86/" class="article-date">
-  <time class="dt-published" datetime="2021-11-13T16:50:00.000Z" itemprop="datePublished">2021-11-14</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      常用算法收集
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/14/%E5%B8%B8%E7%94%A8%E7%AE%97%E6%B3%95%E6%94%B6%E9%9B%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="常用算法收集 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          常用算法收集
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-11-14 00:50:00" itemprop="dateCreated datePublished" datetime="2021-11-14T00:50:00+08:00">2021-11-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-12-26 18:10:36" itemprop="dateModified" datetime="2022-12-26T18:10:36+08:00">2022-12-26</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="求二进制数中1的个数"><a href="#求二进制数中1的个数" class="headerlink" title="求二进制数中1的个数"></a>求二进制数中1的个数</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>任意给定一个32位无符号整数n，求n的二进制表示中1的个数，比如n &#x3D; 5（0101）时，返回2，n &#x3D; 15（1111）时，返回4</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="求二进制数中1的个数"><a href="#求二进制数中1的个数" class="headerlink" title="求二进制数中1的个数"></a>求二进制数中1的个数</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>任意给定一个32位无符号整数n，求n的二进制表示中1的个数，比如n &#x3D; 5（0101）时，返回2，n &#x3D; 15（1111）时，返回4</p>
 <p>这也是一道比较经典的题目了，相信不少人面试的时候可能遇到过这道题吧，下面介绍了几种方法来实现这道题。</p>
 <h2 id="普通法"><a href="#普通法" class="headerlink" title="普通法"></a>普通法</h2><p>移位+计数，这种方法的运算次数与输入n最高位1的位置有关，最多循环32次。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">int BitCount(unsigned int n)</span><br><span class="line">&#123;</span><br><span class="line">    unsigned int c =0 ; // 计数器</span><br><span class="line">    while (n &gt;0)</span><br><span class="line">    &#123;</span><br><span class="line">        if((n &amp;1) ==1) // 当前位是1</span><br><span class="line">            ++c ; // 计数器加1</span><br><span class="line">        n &gt;&gt;=1 ; // 移位</span><br><span class="line">    &#125;</span><br><span class="line">    return c ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -1689,150 +1809,75 @@
 <p>实现代码：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Hamilton Path Detection for DAG</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DAGHamiltonPath</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">private</span> boolean hamiltonPathPresent;</span><br><span class="line">	<span class="keyword">private</span> Digraph di;</span><br><span class="line">	<span class="keyword">private</span> KahnTopological kts;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 这里使用Kahn算法进行拓扑排序</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DAGHamiltonPath</span><span class="params">(Digraph di, KahnTopological kts)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.di = di;</span><br><span class="line">		<span class="keyword">this</span>.kts = kts;</span><br><span class="line">		</span><br><span class="line">		<span class="built_in">process</span>();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="type">void</span> <span class="title">process</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		Integer[] topoResult = kts.<span class="built_in">getResultAsArray</span>();</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// 依次检查每一对相邻顶点，如果二者之间没有路径，则不存在哈密顿路径</span></span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; topoResult.length - <span class="number">1</span>; i++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>(!<span class="built_in">hasPath</span>(topoResult[i], topoResult[i + <span class="number">1</span>]))</span><br><span class="line">			&#123;</span><br><span class="line">				hamiltonPathPresent = <span class="literal">false</span>;</span><br><span class="line">				<span class="keyword">return</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		hamiltonPathPresent = <span class="literal">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">private</span> boolean <span class="title">hasPath</span><span class="params">(<span class="type">int</span> start, <span class="type">int</span> end)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> w : di.<span class="built_in">adj</span>(start))</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>(w == end)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">public</span> boolean <span class="title">hasHamiltonPath</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> hamiltonPathPresent;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/11/14/%E5%B8%B8%E7%94%A8%E7%AE%97%E6%B3%95%E6%94%B6%E9%9B%86/" data-id="cuidI_L3NTrnOwpbQfE41ltCT" data-title="常用算法收集" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/11/09/%E9%A2%91%E7%B9%81%E9%A1%B9%E9%9B%86%E7%9A%84%E4%B8%A4%E4%B8%AA%E7%AE%97%E6%B3%95/" rel="prev" title="频繁项集的两个算法">
+                  <i class="fa fa-angle-left"></i> 频繁项集的两个算法
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/11/16/6.828-lab/" rel="next" title="6.828 lab">
+                  6.828 lab <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2021/11/16/6.828-lab/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          6.828 lab
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2021/11/09/%E9%A2%91%E7%B9%81%E9%A1%B9%E9%9B%86%E7%9A%84%E4%B8%A4%E4%B8%AA%E7%AE%97%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">频繁项集的两个算法</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

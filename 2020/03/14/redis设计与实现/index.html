@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>redis设计与实现笔记 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Redis数据库中的每个键值对都是由对象组成的：  数据库键总是一个字符串对象； 数据库键的值可以是字符串对象、列表对象、哈希对象、集合对象、有序集合对象这五种对象中的一种。  数据结构与对象简单动态字符串Redis自己构建了一种名叫“简单动态字符串”（SDS）的类型，当Redis需要的不仅仅是一个字符串字面量，而是一个可以被修改的字符串值时，使用SDS用作默认字符串表示。如果执行了： 12red">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Redis数据库中的每个键值对都是由对象组成的：  数据库键总是一个字符串对象； 数据库键的值可以是字符串对象、列表对象、哈希对象、集合对象、有序集合对象这五种对象中的一种。  数据结构与对象简单动态字符串Redis自己构建了一种名叫“简单动态字符串”（SDS）的类型，当Redis需要的不仅仅是一个字符串字面量，而是一个可以被修改的字符串值时，使用SDS用作默认字符串表示。如果执行了： 12red">
 <meta property="og:type" content="article">
 <meta property="og:title" content="redis设计与实现笔记">
 <meta property="og:url" content="http://example.com/2020/03/14/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/index.html">
@@ -160,85 +174,191 @@
 <meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/img/2015-09-13_55f50d7faffa3.png">
+
+
+<link rel="canonical" href="http://example.com/2020/03/14/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2020/03/14/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/","path":"2020/03/14/redis设计与实现/","title":"redis设计与实现笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>redis设计与实现笔记 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.</span> <span class="nav-text">数据结构与对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.1.</span> <span class="nav-text">简单动态字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sds%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.1.</span> <span class="nav-text">sds的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SDS%E4%B8%8EC%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.1.2.</span> <span class="nav-text">SDS与C字符串的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SDS-API"><span class="nav-number">1.1.3.</span> <span class="nav-text">SDS API</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8"><span class="nav-number">1.2.</span> <span class="nav-text">链表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E9%93%BE%E8%A1%A8%E5%92%8C%E9%93%BE%E8%A1%A8%E8%8A%82%E7%82%B9%E7%9A%84-API"><span class="nav-number">1.2.1.</span> <span class="nav-text">Redis 链表和链表节点的 API</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E5%85%B8"><span class="nav-number">1.3.</span> <span class="nav-text">字典</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%AD%97%E5%85%B8%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.3.1.</span> <span class="nav-text">Redis 字典的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E8%A1%A8"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">哈希表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E8%A1%A8%E8%8A%82%E7%82%B9"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">哈希表节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E5%85%B8-1"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">字典</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.2.</span> <span class="nav-text">Redis 哈希算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E8%A7%A3%E5%86%B3%E9%94%AE%E5%86%B2%E7%AA%81"><span class="nav-number">1.3.3.</span> <span class="nav-text">Redis 解决键冲突</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-rehash"><span class="nav-number">1.3.4.</span> <span class="nav-text">Redis rehash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E6%B8%90%E8%BF%9B%E5%BC%8F-rehash"><span class="nav-number">1.3.5.</span> <span class="nav-text">Redis 渐进式 rehash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%AD%97%E5%85%B8-API"><span class="nav-number">1.3.6.</span> <span class="nav-text">Redis 字典 API</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%B3%E8%B7%83%E8%A1%A8"><span class="nav-number">1.4.</span> <span class="nav-text">跳跃表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%B3%E8%B7%83%E8%A1%A8%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.4.1.</span> <span class="nav-text">跳跃表的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E8%B7%B3%E8%B7%83%E8%A1%A8-API"><span class="nav-number">1.4.2.</span> <span class="nav-text">Redis 跳跃表 API</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E6%95%B0%E9%9B%86%E5%90%88"><span class="nav-number">1.5.</span> <span class="nav-text">整数集合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E6%95%B4%E6%95%B0%E9%9B%86%E5%90%88%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.5.1.</span> <span class="nav-text">Redis 整数集合的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis%E5%8D%87%E7%BA%A7"><span class="nav-number">1.5.2.</span> <span class="nav-text">Redis升级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%8D%87%E7%BA%A7%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="nav-number">1.5.3.</span> <span class="nav-text">Redis 升级的好处</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E9%99%8D%E7%BA%A7"><span class="nav-number">1.5.4.</span> <span class="nav-text">Redis 降级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E6%95%B4%E6%95%B0%E9%9B%86%E5%90%88-API"><span class="nav-number">1.5.5.</span> <span class="nav-text">Redis 整数集合 API</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8"><span class="nav-number">1.6.</span> <span class="nav-text">压缩列表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8%E7%9A%84%E6%9E%84%E6%88%90"><span class="nav-number">1.6.1.</span> <span class="nav-text">Redis 压缩列表的构成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8%E8%8A%82%E7%82%B9%E7%9A%84%E6%9E%84%E6%88%90"><span class="nav-number">1.6.2.</span> <span class="nav-text">Redis 压缩列表节点的构成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E8%BF%9E%E9%94%81%E6%9B%B4%E6%96%B0"><span class="nav-number">1.6.3.</span> <span class="nav-text">Redis 连锁更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8-API"><span class="nav-number">1.6.4.</span> <span class="nav-text">Redis 压缩列表 API</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.7.</span> <span class="nav-text">对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%B1%BB%E5%9E%8B%E4%B8%8E%E7%BC%96%E7%A0%81"><span class="nav-number">1.7.1.</span> <span class="nav-text">Redis 对象的类型与编码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E5%92%8C%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.7.1.1.</span> <span class="nav-text">编码和底层实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.7.2.</span> <span class="nav-text">Redis 字符串对象</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">字符串命令的实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%88%97%E8%A1%A8%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.7.3.</span> <span class="nav-text">Redis 列表对象</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.7.3.1.</span> <span class="nav-text">编码转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%97%E8%A1%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.7.3.2.</span> <span class="nav-text">列表命令的实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%93%88%E5%B8%8C%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.7.4.</span> <span class="nav-text">Redis 哈希对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E9%9B%86%E5%90%88%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.7.5.</span> <span class="nav-text">Redis 集合对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.7.6.</span> <span class="nav-text">Redis 有序集合对象</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.7.6.1.</span> <span class="nav-text">有序集合命令的实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E7%B1%BB%E5%9E%8B%E6%A3%80%E6%9F%A5%E4%B8%8E%E5%91%BD%E4%BB%A4%E5%A4%9A%E6%80%81"><span class="nav-number">1.7.7.</span> <span class="nav-text">Redis 类型检查与命令多态</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E6%A3%80%E6%9F%A5%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.7.7.1.</span> <span class="nav-text">类型检查的实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E6%80%81%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.7.7.2.</span> <span class="nav-text">多态命令的实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%86%85%E5%AD%98%E5%9B%9E%E6%94%B6"><span class="nav-number">1.7.8.</span> <span class="nav-text">Redis 内存回收</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%AF%B9%E8%B1%A1%E5%85%B1%E4%BA%AB"><span class="nav-number">1.7.9.</span> <span class="nav-text">Redis 对象共享</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%A9%BA%E8%BD%AC%E6%97%B6%E9%95%BF"><span class="nav-number">1.7.10.</span> <span class="nav-text">Redis 对象的空转时长</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">单机数据库的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">2.1.</span> <span class="nav-text">数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E6%95%B0%E6%8D%AE%E5%BA%93%E9%94%AE%E7%A9%BA%E9%97%B4"><span class="nav-number">2.1.1.</span> <span class="nav-text">Redis 数据库键空间</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%96%B0%E9%94%AE"><span class="nav-number">2.1.1.1.</span> <span class="nav-text">添加新键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E9%94%AE"><span class="nav-number">2.1.1.2.</span> <span class="nav-text">删除键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E9%94%AE"><span class="nav-number">2.1.1.3.</span> <span class="nav-text">更新键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E9%94%AE%E5%8F%96%E5%80%BC"><span class="nav-number">2.1.1.4.</span> <span class="nav-text">对键取值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E9%94%AE%E7%A9%BA%E9%97%B4%E6%93%8D%E4%BD%9C"><span class="nav-number">2.1.1.5.</span> <span class="nav-text">其他键空间操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E9%94%AE%E7%A9%BA%E9%97%B4%E6%97%B6%E7%9A%84%E7%BB%B4%E6%8A%A4%E6%93%8D%E4%BD%9C"><span class="nav-number">2.1.1.6.</span> <span class="nav-text">读写键空间时的维护操作</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E9%94%AE%E7%9A%84%E7%94%9F%E5%AD%98%E6%97%B6%E9%97%B4%E6%88%96%E8%BF%87%E6%9C%9F%E6%97%B6%E9%97%B4"><span class="nav-number">2.1.2.</span> <span class="nav-text">设置键的生存时间或过期时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E6%9C%9F%E9%94%AE%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5"><span class="nav-number">2.1.3.</span> <span class="nav-text">过期键删除策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis%E7%9A%84%E8%BF%87%E6%9C%9F%E9%94%AE%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5"><span class="nav-number">2.1.4.</span> <span class="nav-text">Redis的过期键删除策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AOF%E3%80%81RDB%E5%92%8C%E5%A4%8D%E5%88%B6%E5%8A%9F%E8%83%BD%E5%AF%B9%E8%BF%87%E6%9C%9F%E9%94%AE%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">2.1.5.</span> <span class="nav-text">AOF、RDB和复制功能对过期键的处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%9F%E6%88%90RDB%E6%96%87%E4%BB%B6"><span class="nav-number">2.1.5.1.</span> <span class="nav-text">生成RDB文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%BD%E5%85%A5RDB%E6%96%87%E4%BB%B6"><span class="nav-number">2.1.5.2.</span> <span class="nav-text">载入RDB文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AOF%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5"><span class="nav-number">2.1.5.3.</span> <span class="nav-text">AOF文件写入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AOF%E9%87%8D%E5%86%99"><span class="nav-number">2.1.5.4.</span> <span class="nav-text">AOF重写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6"><span class="nav-number">2.1.5.5.</span> <span class="nav-text">复制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E9%80%9A%E7%9F%A5"><span class="nav-number">2.1.6.</span> <span class="nav-text">数据库通知</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E9%80%9A%E7%9F%A5"><span class="nav-number">2.1.6.1.</span> <span class="nav-text">发送通知</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E7%82%B9%E5%9B%9E%E9%A1%BE"><span class="nav-number">2.1.7.</span> <span class="nav-text">重点回顾</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDB%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">2.2.</span> <span class="nav-text">RDB持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RDB%E6%96%87%E4%BB%B6%E7%9A%84%E5%88%9B%E5%BB%BA%E4%B8%8E%E8%BD%BD%E5%85%A5"><span class="nav-number">2.2.1.</span> <span class="nav-text">RDB文件的创建与载入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E9%97%B4%E9%9A%94%E6%80%A7%E4%BF%9D%E5%AD%98"><span class="nav-number">2.2.2.</span> <span class="nav-text">自动间隔性保存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="nav-number">2.2.3.</span> <span class="nav-text">RDB文件结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#databases-%E9%83%A8%E5%88%86"><span class="nav-number">2.2.3.1.</span> <span class="nav-text">databases 部分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#key-value-pairs-%E9%83%A8%E5%88%86"><span class="nav-number">2.2.3.2.</span> <span class="nav-text">key_value_pairs 部分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#value%E7%9A%84%E7%BC%96%E7%A0%81"><span class="nav-number">2.2.3.3.</span> <span class="nav-text">value的编码</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.2.3.3.1.</span> <span class="nav-text">字符串对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%97%E8%A1%A8%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.2.3.3.2.</span> <span class="nav-text">列表对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.2.3.3.3.</span> <span class="nav-text">集合对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E8%A1%A8%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.2.3.3.4.</span> <span class="nav-text">哈希表对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.2.3.3.5.</span> <span class="nav-text">有序集合对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#INTSET-%E7%BC%96%E7%A0%81%E7%9A%84%E9%9B%86%E5%90%88"><span class="nav-number">2.2.3.3.6.</span> <span class="nav-text">INTSET 编码的集合</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ZIPLIST-%E7%BC%96%E7%A0%81%E7%9A%84%E5%88%97%E8%A1%A8%E3%80%81%E5%93%88%E5%B8%8C%E8%A1%A8%E6%88%96%E8%80%85%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88"><span class="nav-number">2.2.3.3.7.</span> <span class="nav-text">ZIPLIST 编码的列表、哈希表或者有序集合</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90RDB%E6%96%87%E4%BB%B6"><span class="nav-number">2.2.4.</span> <span class="nav-text">分析RDB文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8D%E5%8C%85%E5%90%AB%E4%BB%BB%E4%BD%95%E9%94%AE%E5%80%BC%E5%AF%B9%E7%9A%84RDB%E6%96%87%E4%BB%B6"><span class="nav-number">2.2.4.1.</span> <span class="nav-text">不包含任何键值对的RDB文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%85%E5%90%AB%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%94%AE%E7%9A%84RDB%E6%96%87%E4%BB%B6"><span class="nav-number">2.2.4.2.</span> <span class="nav-text">包含字符串键的RDB文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">2.3.</span> <span class="nav-text">AOF持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-AOF%E6%8C%81%E4%B9%85%E5%8C%96%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.3.1.</span> <span class="nav-text">Redis AOF持久化的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%BF%BD%E5%8A%A0"><span class="nav-number">2.3.1.1.</span> <span class="nav-text">命令追加</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AOF-%E6%96%87%E4%BB%B6%E7%9A%84%E5%86%99%E5%85%A5%E4%B8%8E%E5%90%8C%E6%AD%A5"><span class="nav-number">2.3.1.2.</span> <span class="nav-text">AOF 文件的写入与同步</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AOF%E6%96%87%E4%BB%B6%E7%9A%84%E8%BD%BD%E5%85%A5%E4%B8%8E%E6%95%B0%E6%8D%AE%E8%BF%98%E5%8E%9F"><span class="nav-number">2.3.2.</span> <span class="nav-text">AOF文件的载入与数据还原</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AOF%E9%87%8D%E5%86%99-1"><span class="nav-number">2.3.3.</span> <span class="nav-text">AOF重写</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#AOF%E6%96%87%E4%BB%B6%E9%87%8D%E5%86%99%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.3.3.1.</span> <span class="nav-text">AOF文件重写的实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AOF%E5%90%8E%E5%8F%B0%E9%87%8D%E5%86%99"><span class="nav-number">2.3.3.2.</span> <span class="nav-text">AOF后台重写</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91AOF%E5%90%8E%E5%8F%B0%E9%87%8D%E5%86%99%E7%9A%84%E6%9D%A1%E4%BB%B6"><span class="nav-number">2.3.4.</span> <span class="nav-text">触发AOF后台重写的条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E7%82%B9%E5%9B%9E%E9%A1%BE-1"><span class="nav-number">2.3.5.</span> <span class="nav-text">重点回顾</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6"><span class="nav-number">2.4.</span> <span class="nav-text">事件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6"><span class="nav-number">2.4.1.</span> <span class="nav-text">文件事件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E6%9E%84%E6%88%90"><span class="nav-number">2.4.1.1.</span> <span class="nav-text">文件事件处理器的构成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#I-O-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.4.1.2.</span> <span class="nav-text">I&#x2F;O 多路复用程序的实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.4.1.3.</span> <span class="nav-text">事件的类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#API"><span class="nav-number">2.4.1.4.</span> <span class="nav-text">API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">2.4.1.5.</span> <span class="nav-text">文件事件的处理器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E6%AC%A1%E5%AE%8C%E6%95%B4%E7%9A%84%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%9E%E6%8E%A5%E4%BA%8B%E4%BB%B6%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.4.1.6.</span> <span class="nav-text">一次完整的客户端与服务器连接事件示例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E4%BA%8B%E4%BB%B6"><span class="nav-number">2.4.2.</span> <span class="nav-text">时间事件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.4.2.1.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#API-1"><span class="nav-number">2.4.2.2.</span> <span class="nav-text">API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E4%BA%8B%E4%BB%B6%E5%BA%94%E7%94%A8%E5%AE%9E%E4%BE%8B%EF%BC%9AserverCron%E5%87%BD%E6%95%B0"><span class="nav-number">2.4.2.3.</span> <span class="nav-text">时间事件应用实例：serverCron函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E8%B0%83%E5%BA%A6%E4%B8%8E%E6%89%A7%E8%A1%8C"><span class="nav-number">2.4.3.</span> <span class="nav-text">事件调度与执行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">2.5.</span> <span class="nav-text">客户端</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%B1%9E%E6%80%A7"><span class="nav-number">2.5.1.</span> <span class="nav-text">客户端属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E5%88%9B%E5%BB%BA%E4%B8%8E%E5%85%B3%E9%97%AD"><span class="nav-number">2.5.2.</span> <span class="nav-text">客户端的创建与关闭</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="nav-number">2.5.2.1.</span> <span class="nav-text">普通客户端的创建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E5%85%B3%E9%97%AD"><span class="nav-number">2.5.2.2.</span> <span class="nav-text">普通客户端的关闭</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Lua%E8%84%9A%E6%9C%AC%E7%9A%84%E4%BC%AA%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">2.5.2.3.</span> <span class="nav-text">Lua脚本的伪客户端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AOF%E6%96%87%E4%BB%B6%E7%9A%84%E4%BC%AA%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">2.5.2.4.</span> <span class="nav-text">AOF文件的伪客户端</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">2.6.</span> <span class="nav-text">服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%AF%B7%E6%B1%82%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">2.6.1.</span> <span class="nav-text">命令请求的执行过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E5%91%BD%E4%BB%A4%E8%AF%B7%E6%B1%82"><span class="nav-number">2.6.1.1.</span> <span class="nav-text">发送命令请求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E5%91%BD%E4%BB%A4%E8%AF%B7%E6%B1%82"><span class="nav-number">2.6.1.2.</span> <span class="nav-text">读取命令请求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E5%99%A8-1-%EF%BC%9A%E6%9F%A5%E6%89%BE%E5%91%BD%E4%BB%A4%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.6.1.3.</span> <span class="nav-text">命令执行器(1)：查找命令实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E5%99%A8-2-%EF%BC%9A%E6%89%A7%E8%A1%8C%E9%A2%84%E5%A4%87%E6%93%8D%E4%BD%9C"><span class="nav-number">2.6.1.4.</span> <span class="nav-text">命令执行器(2)：执行预备操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E5%99%A8-3-%EF%BC%9A%E8%B0%83%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%87%BD%E6%95%B0"><span class="nav-number">2.6.1.5.</span> <span class="nav-text">命令执行器(3)：调用命令的实现函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E5%99%A8-4-%EF%BC%9A%E6%89%A7%E8%A1%8C%E5%90%8E%E7%BB%AD%E5%B7%A5%E4%BD%9C"><span class="nav-number">2.6.1.6.</span> <span class="nav-text">命令执行器(4)：执行后续工作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E5%91%BD%E4%BB%A4%E5%9B%9E%E5%A4%8D%E5%8F%91%E9%80%81%E7%BB%99%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">2.6.1.7.</span> <span class="nav-text">将命令回复发送给客户端</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#serverCron%E5%87%BD%E6%95%B0"><span class="nav-number">2.6.2.</span> <span class="nav-text">serverCron函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%97%B6%E9%97%B4%E7%BC%93%E5%AD%98"><span class="nav-number">2.6.2.1.</span> <span class="nav-text">更新服务器时间缓存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0LRU%E6%97%B6%E9%92%9F%EF%BC%88lruclock%E5%B1%9E%E6%80%A7%E3%80%81lru%E5%B1%9E%E6%80%A7%EF%BC%89"><span class="nav-number">2.6.2.2.</span> <span class="nav-text">更新LRU时钟（lruclock属性、lru属性）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%AF%8F%E7%A7%92%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%E6%AC%A1%E6%95%B0%EF%BC%88ops-sec-%E5%BC%80%E5%A4%B4%E7%9A%84%E5%B1%9E%E6%80%A7%EF%BC%89"><span class="nav-number">2.6.2.3.</span> <span class="nav-text">更新服务器每秒执行命令次数（ops_sec_开头的属性）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%86%85%E5%AD%98%E5%B3%B0%E5%80%BC%E8%AE%B0%E5%BD%95%EF%BC%88stat-peak-memory%E5%B1%9E%E6%80%A7%EF%BC%89"><span class="nav-number">2.6.2.4.</span> <span class="nav-text">更新服务器内存峰值记录（stat_peak_memory属性）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%84%E7%90%86SIGTERM%E4%BF%A1%E5%8F%B7%EF%BC%88sigtermHandler%E5%87%BD%E6%95%B0%EF%BC%89"><span class="nav-number">2.6.2.5.</span> <span class="nav-text">处理SIGTERM信号（sigtermHandler函数）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%B5%84%E6%BA%90%EF%BC%88clientsCron%E5%87%BD%E6%95%B0%EF%BC%89"><span class="nav-number">2.6.2.6.</span> <span class="nav-text">管理客户端资源（clientsCron函数）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E6%95%B0%E6%8D%AE%E5%BA%93%E8%B5%84%E6%BA%90%EF%BC%88databasesCron%E5%87%BD%E6%95%B0%EF%BC%89"><span class="nav-number">2.6.2.7.</span> <span class="nav-text">管理数据库资源（databasesCron函数）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E8%A2%AB%E5%BB%B6%E8%BF%9F%E7%9A%84BGREWRITEAOF%EF%BC%88aof-rewrite-scheduled%E6%A0%87%E8%AE%B0%EF%BC%89"><span class="nav-number">2.6.2.8.</span> <span class="nav-text">执行被延迟的BGREWRITEAOF（aof_rewrite_scheduled标记）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E6%8C%81%E4%B9%85%E5%8C%96%E6%93%8D%E4%BD%9C%E7%9A%84%E8%BF%90%E8%A1%8C%E7%8A%B6%E6%80%81%EF%BC%88rdb-child-pid%E5%B1%9E%E6%80%A7%E3%80%81aof-child-pid%E5%B1%9E%E6%80%A7%EF%BC%89"><span class="nav-number">2.6.2.9.</span> <span class="nav-text">检查持久化操作的运行状态（rdb_child_pid属性、aof_child_pid属性）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86AOF%E7%BC%93%E5%86%B2%E5%8C%BA%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9%E5%86%99%E5%85%A5AOF%E6%96%87%E4%BB%B6"><span class="nav-number">2.6.2.10.</span> <span class="nav-text">将AOF缓冲区中的内容写入AOF文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%97%AD%E5%BC%82%E6%AD%A5%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">2.6.2.11.</span> <span class="nav-text">关闭异步客户端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0cronloops%E8%AE%A1%E6%95%B0%E5%99%A8%E7%9A%84%E5%80%BC%EF%BC%88cronloops%E5%B1%9E%E6%80%A7%EF%BC%89"><span class="nav-number">2.6.2.12.</span> <span class="nav-text">增加cronloops计数器的值（cronloops属性）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">2.6.3.</span> <span class="nav-text">初始化服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8A%B6%E6%80%81%E7%BB%93%E6%9E%84%EF%BC%88initServerConfig%E5%87%BD%E6%95%B0%EF%BC%89"><span class="nav-number">2.6.3.1.</span> <span class="nav-text">初始化服务器状态结构（initServerConfig函数）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%BD%E5%85%A5%E9%85%8D%E7%BD%AE%E9%80%89%E9%A1%B9%EF%BC%88initServerConfig%E5%87%BD%E6%95%B0%EF%BC%89"><span class="nav-number">2.6.3.2.</span> <span class="nav-text">载入配置选项（initServerConfig函数）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%88initServer%E5%87%BD%E6%95%B0%EF%BC%89"><span class="nav-number">2.6.3.3.</span> <span class="nav-text">初始化服务器数据结构（initServer函数）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%98%E5%8E%9F%E6%95%B0%E6%8D%AE%E5%BA%93%E7%8A%B6%E6%80%81"><span class="nav-number">2.6.3.4.</span> <span class="nav-text">还原数据库状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF"><span class="nav-number">2.6.3.5.</span> <span class="nav-text">执行事件循环</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">多机数据库的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6-1"><span class="nav-number">3.1.</span> <span class="nav-text">复制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A7%E7%89%88%E5%A4%8D%E5%88%B6%E5%8A%9F%E8%83%BD%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.1.1.</span> <span class="nav-text">旧版复制功能的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%EF%BC%88SYNC%E5%91%BD%E4%BB%A4%EF%BC%89"><span class="nav-number">3.1.1.1.</span> <span class="nav-text">同步（SYNC命令）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E4%BC%A0%E6%92%AD"><span class="nav-number">3.1.1.2.</span> <span class="nav-text">命令传播</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A7%E7%89%88%E5%A4%8D%E5%88%B6%E5%8A%9F%E8%83%BD%E7%9A%84%E7%BC%BA%E9%99%B7"><span class="nav-number">3.1.2.</span> <span class="nav-text">旧版复制功能的缺陷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B0%E7%89%88%E5%A4%8D%E5%88%B6%E5%8A%9F%E8%83%BD"><span class="nav-number">3.1.3.</span> <span class="nav-text">新版复制功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E5%88%86%E9%87%8D%E5%90%8C%E6%AD%A5%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.1.4.</span> <span class="nav-text">部分重同步的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E5%81%8F%E7%A7%BB%E9%87%8F"><span class="nav-number">3.1.4.1.</span> <span class="nav-text">复制偏移量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E7%A7%AF%E5%8E%8B%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="nav-number">3.1.4.2.</span> <span class="nav-text">复制积压缓冲区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E8%A1%8CID"><span class="nav-number">3.1.4.3.</span> <span class="nav-text">服务器运行ID</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PSYNC%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.1.5.</span> <span class="nav-text">PSYNC命令的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.1.6.</span> <span class="nav-text">复制的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A41%EF%BC%9A%E8%AE%BE%E7%BD%AE%E4%B8%BB%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%9C%B0%E5%9D%80%E5%92%8C%E7%AB%AF%E5%8F%A3%EF%BC%88masterhost%E3%80%81masterport%E5%B1%9E%E6%80%A7%EF%BC%89"><span class="nav-number">3.1.6.1.</span> <span class="nav-text">步骤1：设置主服务器的地址和端口（masterhost、masterport属性）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A42%EF%BC%9A%E5%BB%BA%E7%AB%8B%E5%A5%97%E6%8E%A5%E5%AD%97%E8%BF%9E%E6%8E%A5%EF%BC%88connect%E3%80%81accept%EF%BC%89"><span class="nav-number">3.1.6.2.</span> <span class="nav-text">步骤2：建立套接字连接（connect、accept）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A43%EF%BC%9A%E5%8F%91%E9%80%81PING%E5%91%BD%E4%BB%A4"><span class="nav-number">3.1.6.3.</span> <span class="nav-text">步骤3：发送PING命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A44%EF%BC%9A%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%EF%BC%88AUTH%E5%91%BD%E4%BB%A4%E3%80%81masterauth%E9%80%89%E9%A1%B9%EF%BC%89"><span class="nav-number">3.1.6.4.</span> <span class="nav-text">步骤4：身份验证（AUTH命令、masterauth选项）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A45%EF%BC%9A%E5%8F%91%E9%80%81%E7%AB%AF%E5%8F%A3%E4%BF%A1%E6%81%AF%EF%BC%88REPLCONF%E5%91%BD%E4%BB%A4%E3%80%81slave-listening-port%E5%B1%9E%E6%80%A7%EF%BC%89"><span class="nav-number">3.1.6.5.</span> <span class="nav-text">步骤5：发送端口信息（REPLCONF命令、slave_listening_port属性）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A46%EF%BC%9A%E5%90%8C%E6%AD%A5%EF%BC%88PSYNC%E5%91%BD%E4%BB%A4%EF%BC%89"><span class="nav-number">3.1.6.6.</span> <span class="nav-text">步骤6：同步（PSYNC命令）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A47%EF%BC%9A%E5%91%BD%E4%BB%A4%E4%BC%A0%E6%92%AD"><span class="nav-number">3.1.6.7.</span> <span class="nav-text">步骤7：命令传播</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%83%E8%B7%B3%E6%A3%80%E6%B5%8B"><span class="nav-number">3.1.7.</span> <span class="nav-text">心跳检测</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E4%B8%BB%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81%EF%BC%88lag%E6%A0%87%E5%BF%97%EF%BC%89"><span class="nav-number">3.1.7.1.</span> <span class="nav-text">检测主从服务器的网络连接状态（lag标志）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E5%AE%9E%E7%8E%B0min-slaves%E9%85%8D%E7%BD%AE%E9%80%89%E9%A1%B9"><span class="nav-number">3.1.7.2.</span> <span class="nav-text">辅助实现min-slaves配置选项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E5%91%BD%E4%BB%A4%E4%B8%A2%E5%A4%B1"><span class="nav-number">3.1.7.3.</span> <span class="nav-text">检测命令丢失</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sentinel%EF%BC%88%E5%93%A8%E5%B2%97%E3%80%81%E5%93%A8%E5%85%B5%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">Sentinel（哨岗、哨兵）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Sentinel%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%90%AF%E5%8A%A8%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.2.1.</span> <span class="nav-text">Sentinel服务器的启动与初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96Sentinel%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">初始化Sentinel服务器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Sentinel%E4%B8%93%E7%94%A8%E4%BB%A3%E7%A0%81"><span class="nav-number">3.2.1.2.</span> <span class="nav-text">使用Sentinel专用代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96Sentinel%E7%8A%B6%E6%80%81%EF%BC%88struct-sentinelState%EF%BC%89"><span class="nav-number">3.2.1.3.</span> <span class="nav-text">初始化Sentinel状态（struct sentinelState）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96Sentinel%E7%8A%B6%E6%80%81%E7%9A%84masters%E5%B1%9E%E6%80%A7%EF%BC%88struct-sentinelRedisInstance%EF%BC%89"><span class="nav-number">3.2.1.4.</span> <span class="nav-text">初始化Sentinel状态的masters属性（struct sentinelRedisInstance）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%BF%9E%E5%90%91%E4%B8%BB%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5"><span class="nav-number">3.2.1.5.</span> <span class="nav-text">创建连向主服务器的网络连接</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E4%B8%BB%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%BF%A1%E6%81%AF"><span class="nav-number">3.2.2.</span> <span class="nav-text">获取主服务器信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%BF%A1%E6%81%AF"><span class="nav-number">3.2.3.</span> <span class="nav-text">获取从服务器信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%91%E4%B8%BB%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%92%8C%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81%E6%B6%88%E6%81%AF"><span class="nav-number">3.2.4.</span> <span class="nav-text">向主服务器和从服务器发送消息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A5%E6%94%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%92%8C%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E9%A2%91%E9%81%93%E6%B6%88%E6%81%AF"><span class="nav-number">3.2.5.</span> <span class="nav-text">接收服务器和从服务器的频道消息</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0sentinels%E5%AD%97%E5%85%B8"><span class="nav-number">3.2.5.1.</span> <span class="nav-text">更新sentinels字典</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%BF%9E%E5%90%91%E5%85%B6%E4%BB%96Sentinel%E7%9A%84%E5%91%BD%E4%BB%A4%E8%BF%9E%E6%8E%A5"><span class="nav-number">3.2.5.2.</span> <span class="nav-text">创建连向其他Sentinel的命令连接</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E4%B8%BB%E8%A7%82%E4%B8%8B%E7%BA%BF%E7%8A%B6%E6%80%81"><span class="nav-number">3.2.6.</span> <span class="nav-text">检测主观下线状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E5%AE%A2%E8%A7%82%E4%B8%8B%E7%BA%BF%E7%8A%B6%E6%80%81"><span class="nav-number">3.2.7.</span> <span class="nav-text">检测客观下线状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E5%8F%96%E9%A2%86%E5%A4%B4Sentinel"><span class="nav-number">3.2.8.</span> <span class="nav-text">选取领头Sentinel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB"><span class="nav-number">3.2.9.</span> <span class="nav-text">故障转移</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%89%E5%87%BA%E6%96%B0%E7%9A%84%E4%B8%BB%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">3.2.9.1.</span> <span class="nav-text">选出新的主服务器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%A4%8D%E5%88%B6%E7%9B%AE%E6%A0%87"><span class="nav-number">3.2.9.2.</span> <span class="nav-text">修改从服务器的复制目标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E6%97%A7%E7%9A%84%E4%B8%BB%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%98%E4%B8%BA%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">3.2.9.3.</span> <span class="nav-text">将旧的主服务器变为从服务器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4"><span class="nav-number">3.3.</span> <span class="nav-text">集群</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E8%8A%82%E7%82%B9"><span class="nav-number">3.3.1.</span> <span class="nav-text">集群节点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E8%8A%82%E7%82%B9"><span class="nav-number">3.3.1.1.</span> <span class="nav-text">启动节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.3.1.2.</span> <span class="nav-text">集群数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CLUSTER-MEET%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.3.1.3.</span> <span class="nav-text">CLUSTER MEET命令的实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A7%BD%E6%8C%87%E6%B4%BE"><span class="nav-number">3.3.2.</span> <span class="nav-text">槽指派</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%B0%E5%BD%95%E8%8A%82%E7%82%B9%E7%9A%84%E6%A7%BD%E6%8C%87%E6%B4%BE%E4%BF%A1%E6%81%AF"><span class="nav-number">3.3.2.1.</span> <span class="nav-text">记录节点的槽指派信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%A0%E6%92%AD%E8%8A%82%E7%82%B9%E7%9A%84%E6%A7%BD%E6%8C%87%E6%B4%BE%E4%BF%A1%E6%81%AF"><span class="nav-number">3.3.2.2.</span> <span class="nav-text">传播节点的槽指派信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%B0%E5%BD%95%E9%9B%86%E7%BE%A4%E6%89%80%E6%9C%89%E6%A7%BD%E7%9A%84%E6%8C%87%E6%B4%BE%E4%BF%A1%E6%81%AF"><span class="nav-number">3.3.2.3.</span> <span class="nav-text">记录集群所有槽的指派信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CLUSTER-ADDSLOTS%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.3.2.4.</span> <span class="nav-text">CLUSTER ADDSLOTS命令的实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4"><span class="nav-number">3.3.3.</span> <span class="nav-text">在集群中执行命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E9%94%AE%E6%89%80%E5%B1%9E%E6%A7%BD"><span class="nav-number">3.3.3.1.</span> <span class="nav-text">计算键所属槽</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%A7%BD%E6%98%AF%E5%90%A6%E7%94%B1%E5%BD%93%E5%89%8D%E8%8A%82%E7%82%B9%E8%B4%9F%E8%B4%A3%E5%A4%84%E7%90%86"><span class="nav-number">3.3.3.2.</span> <span class="nav-text">判断槽是否由当前节点负责处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MOVED%E9%94%99%E8%AF%AF"><span class="nav-number">3.3.3.3.</span> <span class="nav-text">MOVED错误</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.3.3.4.</span> <span class="nav-text">节点数据库的实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E5%88%86%E7%89%87"><span class="nav-number">3.3.4.</span> <span class="nav-text">重新分片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ASK%E9%94%99%E8%AF%AF"><span class="nav-number">3.3.5.</span> <span class="nav-text">ASK错误</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CLUSTER-SETSLOT-IMPORTING%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.3.5.1.</span> <span class="nav-text">CLUSTER SETSLOT IMPORTING命令的实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CLUSTER-SETSLOT-MIGRATING%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.3.5.2.</span> <span class="nav-text">CLUSTER SETSLOT MIGRATING命令的实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ASKING%E5%91%BD%E4%BB%A4"><span class="nav-number">3.3.5.3.</span> <span class="nav-text">ASKING命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ASK%E9%94%99%E8%AF%AF%E5%92%8CMOVED%E9%94%99%E8%AF%AF%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">3.3.5.4.</span> <span class="nav-text">ASK错误和MOVED错误的区别</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E4%B8%8E%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB"><span class="nav-number">3.3.6.</span> <span class="nav-text">复制与故障转移</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E4%BB%8E%E8%8A%82%E7%82%B9"><span class="nav-number">3.3.6.1.</span> <span class="nav-text">设置从节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%A3%80%E6%B5%8B"><span class="nav-number">3.3.6.2.</span> <span class="nav-text">故障检测</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB-1"><span class="nav-number">3.3.6.3.</span> <span class="nav-text">故障转移</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E6%96%B0%E7%9A%84%E4%B8%BB%E8%8A%82%E7%82%B9"><span class="nav-number">3.3.6.4.</span> <span class="nav-text">选举新的主节点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E6%81%AF"><span class="nav-number">3.3.7.</span> <span class="nav-text">消息</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">3.3.7.1.</span> <span class="nav-text">消息的结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MEET%E3%80%81PING%E3%80%81PONG%E6%B6%88%E6%81%AF%E7%9A%84%E5%AE%9E%E7%8E%B0%EF%BC%88Gossip%E5%8D%8F%E8%AE%AE%EF%BC%89"><span class="nav-number">3.3.7.2.</span> <span class="nav-text">MEET、PING、PONG消息的实现（Gossip协议）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FAIL%E6%B6%88%E6%81%AF%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.3.7.3.</span> <span class="nav-text">FAIL消息的实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PUBLISH%E6%B6%88%E6%81%AF%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.3.7.4.</span> <span class="nav-text">PUBLISH消息的实现</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8B%AC%E7%AB%8B%E5%8A%9F%E8%83%BD%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">独立功能的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E5%B8%83%E4%B8%8E%E8%AE%A2%E9%98%85"><span class="nav-number">4.1.</span> <span class="nav-text">发布与订阅</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%91%E9%81%93%E7%9A%84%E8%AE%A2%E9%98%85%E4%B8%8E%E9%80%80%E8%AE%A2"><span class="nav-number">4.1.1.</span> <span class="nav-text">频道的订阅与退订</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%91%E9%81%93%E7%9A%84%E9%80%80%E8%AE%A2%EF%BC%88UNSUBSCRIBE%E5%91%BD%E4%BB%A4%EF%BC%89"><span class="nav-number">4.1.2.</span> <span class="nav-text">频道的退订（UNSUBSCRIBE命令）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%AE%A2%E9%98%85%E4%B8%8E%E9%80%80%E8%AE%A2"><span class="nav-number">4.1.3.</span> <span class="nav-text">模式的订阅与退订</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.1.3.1.</span> <span class="nav-text">订阅模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E7%9A%84%E9%80%80%E8%AE%A2"><span class="nav-number">4.1.3.2.</span> <span class="nav-text">模式的退订</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E7%9A%84%E5%8F%91%E9%80%81"><span class="nav-number">4.1.4.</span> <span class="nav-text">消息的发送</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81%E7%BB%99%E9%A2%91%E9%81%93%E8%AE%A2%E9%98%85%E8%80%85"><span class="nav-number">4.1.4.1.</span> <span class="nav-text">将消息发送给频道订阅者</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81%E7%BB%99%E6%A8%A1%E5%BC%8F%E8%AE%A2%E9%98%85%E8%80%85"><span class="nav-number">4.1.4.2.</span> <span class="nav-text">将消息发送给模式订阅者</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%AE%A2%E9%98%85%E4%BF%A1%E6%81%AF"><span class="nav-number">4.1.5.</span> <span class="nav-text">查看订阅信息</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PUBSUB-CHANNELS%E5%91%BD%E4%BB%A4"><span class="nav-number">4.1.5.1.</span> <span class="nav-text">PUBSUB CHANNELS命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PUBSUB-NUMSUB%E5%91%BD%E4%BB%A4"><span class="nav-number">4.1.5.2.</span> <span class="nav-text">PUBSUB NUMSUB命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PUBSUB-NUMPAT%E5%91%BD%E4%BB%A4"><span class="nav-number">4.1.5.3.</span> <span class="nav-text">PUBSUB NUMPAT命令</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1"><span class="nav-number">4.2.</span> <span class="nav-text">事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.2.1.</span> <span class="nav-text">事务的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E5%BC%80%E5%A7%8B%EF%BC%88MULTI%E5%91%BD%E4%BB%A4%EF%BC%89"><span class="nav-number">4.2.1.1.</span> <span class="nav-text">事务开始（MULTI命令）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E5%85%A5%E9%98%9F"><span class="nav-number">4.2.1.2.</span> <span class="nav-text">命令入队</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E9%98%9F%E5%88%97%EF%BC%88mstate%E5%B1%9E%E6%80%A7%EF%BC%89"><span class="nav-number">4.2.1.3.</span> <span class="nav-text">事务队列（mstate属性）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E4%BA%8B%E5%8A%A1"><span class="nav-number">4.2.1.4.</span> <span class="nav-text">执行事务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WATCH%E5%91%BD%E4%BB%A4"><span class="nav-number">4.2.2.</span> <span class="nav-text">WATCH命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8WATCH%E5%91%BD%E4%BB%A4%E7%9B%91%E8%A7%86%E6%95%B0%E6%8D%AE%E5%BA%93%E9%94%AE%EF%BC%88watched-keys%E5%AD%97%E5%85%B8%EF%BC%89"><span class="nav-number">4.2.2.1.</span> <span class="nav-text">使用WATCH命令监视数据库键（watched_keys字典）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%91%E8%A7%86%E6%9C%BA%E5%88%B6%E7%9A%84%E8%A7%A6%E5%8F%91%EF%BC%88touchWatchKey%E5%87%BD%E6%95%B0%E3%80%81REDIS-DIRTY-CAS%E6%A0%87%E8%AF%86%EF%BC%89"><span class="nav-number">4.2.2.2.</span> <span class="nav-text">监视机制的触发（touchWatchKey函数、REDIS_DIRTY_CAS标识）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E4%BA%8B%E5%8A%A1%E6%98%AF%E5%90%A6%E5%AE%89%E5%85%A8"><span class="nav-number">4.2.2.3.</span> <span class="nav-text">判断事务是否安全</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%9A%84ACID%E6%80%A7%E8%B4%A8"><span class="nav-number">4.2.3.</span> <span class="nav-text">事务的ACID性质</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="nav-number">4.2.3.1.</span> <span class="nav-text">原子性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">4.2.3.2.</span> <span class="nav-text">一致性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9A%94%E7%A6%BB%E6%80%A7"><span class="nav-number">4.2.3.3.</span> <span class="nav-text">隔离性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%80%90%E4%B9%85%E6%80%A7%EF%BC%88%E6%8C%81%E4%B9%85%E6%80%A7%EF%BC%89"><span class="nav-number">4.2.3.4.</span> <span class="nav-text">耐久性（持久性）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lua%E8%84%9A%E6%9C%AC"><span class="nav-number">4.3.</span> <span class="nav-text">Lua脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%B9%B6%E4%BF%AE%E6%94%B9Lua%E7%8E%AF%E5%A2%83"><span class="nav-number">4.3.1.</span> <span class="nav-text">创建并修改Lua环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lua%E7%8E%AF%E5%A2%83%E5%8D%8F%E4%BD%9C%E7%BB%84%E4%BB%B6"><span class="nav-number">4.3.2.</span> <span class="nav-text">Lua环境协作组件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%AA%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">4.3.2.1.</span> <span class="nav-text">伪客户端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lua-scripts%E5%AD%97%E5%85%B8"><span class="nav-number">4.3.2.2.</span> <span class="nav-text">lua_scripts字典</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EVAL%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.3.3.</span> <span class="nav-text">EVAL命令的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E8%84%9A%E6%9C%AC%E5%87%BD%E6%95%B0"><span class="nav-number">4.3.3.1.</span> <span class="nav-text">定义脚本函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E8%84%9A%E6%9C%AC%E4%BF%9D%E5%AD%98%E5%88%B0lua-scripts%E5%AD%97%E5%85%B8"><span class="nav-number">4.3.3.2.</span> <span class="nav-text">将脚本保存到lua_scripts字典</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E8%84%9A%E6%9C%AC%E5%87%BD%E6%95%B0"><span class="nav-number">4.3.3.3.</span> <span class="nav-text">执行脚本函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EVALSHA%E5%91%BD%E4%BB%A4"><span class="nav-number">4.3.4.</span> <span class="nav-text">EVALSHA命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4"><span class="nav-number">4.3.5.</span> <span class="nav-text">脚本管理命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SCRIPT-FLUSH"><span class="nav-number">4.3.5.1.</span> <span class="nav-text">SCRIPT FLUSH</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SCRIPT-EXISTS"><span class="nav-number">4.3.5.2.</span> <span class="nav-text">SCRIPT EXISTS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SCRIPT-LOAD"><span class="nav-number">4.3.5.3.</span> <span class="nav-text">SCRIPT LOAD</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SCRIPT-KILL"><span class="nav-number">4.3.5.4.</span> <span class="nav-text">SCRIPT KILL</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E7%9A%84%E5%A4%8D%E5%88%B6"><span class="nav-number">4.3.6.</span> <span class="nav-text">脚本的复制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6EVAL%E5%91%BD%E4%BB%A4%E3%80%81SCRIPT-FLUSH%E5%91%BD%E4%BB%A4%E3%80%81SCRIPT-LOAD%E5%91%BD%E4%BB%A4"><span class="nav-number">4.3.6.1.</span> <span class="nav-text">复制EVAL命令、SCRIPT FLUSH命令、SCRIPT LOAD命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6EVALSHA%E5%91%BD%E4%BB%A4"><span class="nav-number">4.3.6.2.</span> <span class="nav-text">复制EVALSHA命令</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SORT"><span class="nav-number">4.4.</span> <span class="nav-text">SORT</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SORT-%E5%91%BD%E4%BB%A4"><span class="nav-number">4.4.1.</span> <span class="nav-text">SORT 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ALPHA%E9%80%89%E9%A1%B9"><span class="nav-number">4.4.2.</span> <span class="nav-text">ALPHA选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ASC%E9%80%89%E9%A1%B9%E4%B8%8EDESC%E9%80%89%E9%A1%B9"><span class="nav-number">4.4.3.</span> <span class="nav-text">ASC选项与DESC选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BY%E9%80%89%E9%A1%B9"><span class="nav-number">4.4.4.</span> <span class="nav-text">BY选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ALPHA%E9%80%89%E9%A1%B9%E4%B8%8EBY%E9%80%89%E9%A1%B9%E7%9A%84%E9%85%8D%E5%90%88%E4%BD%BF%E7%94%A8"><span class="nav-number">4.4.5.</span> <span class="nav-text">ALPHA选项与BY选项的配合使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LIMIT%E9%80%89%E9%A1%B9"><span class="nav-number">4.4.6.</span> <span class="nav-text">LIMIT选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GET%E9%80%89%E9%A1%B9"><span class="nav-number">4.4.7.</span> <span class="nav-text">GET选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#STORE%E9%80%89%E9%A1%B9"><span class="nav-number">4.4.8.</span> <span class="nav-text">STORE选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SORT%E5%91%BD%E4%BB%A4%E9%80%89%E9%A1%B9%E7%9A%84%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="nav-number">4.4.9.</span> <span class="nav-text">SORT命令选项的执行顺序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BD%8D%E6%95%B0%E7%BB%84%E6%93%8D%E4%BD%9C"><span class="nav-number">4.5.</span> <span class="nav-text">二进制位数组操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GETBIT%E5%91%BD%E4%BB%A4"><span class="nav-number">4.5.1.</span> <span class="nav-text">GETBIT命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SETBIT%E5%91%BD%E4%BB%A4"><span class="nav-number">4.5.2.</span> <span class="nav-text">SETBIT命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%A6%E6%9C%89%E6%89%A9%E5%B1%95%E6%93%8D%E4%BD%9C%E7%9A%84SETBIT%E5%91%BD%E4%BB%A4%E6%BC%94%E7%A4%BA%E6%A1%88%E4%BE%8B"><span class="nav-number">4.5.2.1.</span> <span class="nav-text">带有扩展操作的SETBIT命令演示案例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BITCOUNT%E5%91%BD%E4%BB%A4"><span class="nav-number">4.5.3.</span> <span class="nav-text">BITCOUNT命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BD%8D%E7%BB%9F%E8%AE%A1%E7%AE%97%E6%B3%95%EF%BC%881%EF%BC%89%EF%BC%9A%E9%81%8D%E5%8E%86%E7%AE%97%E6%B3%95"><span class="nav-number">4.5.3.1.</span> <span class="nav-text">二进制位统计算法（1）：遍历算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BD%8D%E7%BB%9F%E8%AE%A1%E7%AE%97%E6%B3%95%EF%BC%882%EF%BC%89%EF%BC%9A%E6%9F%A5%E8%A1%A8%E7%AE%97%E6%B3%95"><span class="nav-number">4.5.3.2.</span> <span class="nav-text">二进制位统计算法（2）：查表算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BD%8D%E7%BB%9F%E8%AE%A1%E7%AE%97%E6%B3%95%EF%BC%883%EF%BC%89%EF%BC%9Avariable-precision-SWAR%E7%AE%97%E6%B3%95"><span class="nav-number">4.5.3.3.</span> <span class="nav-text">二进制位统计算法（3）：variable-precision SWAR算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BD%8D%E7%BB%9F%E8%AE%A1%E7%AE%97%E6%B3%95%EF%BC%884%EF%BC%89%EF%BC%9ARedis%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.5.3.4.</span> <span class="nav-text">二进制位统计算法（4）：Redis的实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BITOP%E5%91%BD%E4%BB%A4"><span class="nav-number">4.5.4.</span> <span class="nav-text">BITOP命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97"><span class="nav-number">4.6.</span> <span class="nav-text">慢查询日志</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%85%A2%E6%9F%A5%E8%AF%A2%E8%AE%B0%E5%BD%95%E7%9A%84%E4%BF%9D%E5%AD%98"><span class="nav-number">4.6.1.</span> <span class="nav-text">慢查询记录的保存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97%E7%9A%84%E9%98%85%E8%A7%88%E5%92%8C%E5%88%A0%E9%99%A4"><span class="nav-number">4.6.2.</span> <span class="nav-text">慢查询日志的阅览和删除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%96%B0%E6%97%A5%E5%BF%97%EF%BC%88slowlogPushEntryIfNeeded%E5%87%BD%E6%95%B0%EF%BC%89"><span class="nav-number">4.6.3.</span> <span class="nav-text">添加新日志（slowlogPushEntryIfNeeded函数）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%91%E8%A7%86%E5%99%A8"><span class="nav-number">4.7.</span> <span class="nav-text">监视器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E4%B8%BA%E7%9B%91%E8%A7%86%E5%99%A8"><span class="nav-number">4.7.1.</span> <span class="nav-text">成为监视器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%91%E7%9B%91%E8%A7%86%E5%99%A8%E5%8F%91%E9%80%81%E5%91%BD%E4%BB%A4%E4%BF%A1%E6%81%AF"><span class="nav-number">4.7.2.</span> <span class="nav-text">向监视器发送命令信息</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-redis设计与实现" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/03/14/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/" class="article-date">
-  <time class="dt-published" datetime="2020-03-14T08:39:00.000Z" itemprop="datePublished">2020-03-14</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      redis设计与实现笔记
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/03/14/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="redis设计与实现笔记 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          redis设计与实现笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-03-14 16:39:00" itemprop="dateCreated datePublished" datetime="2020-03-14T16:39:00+08:00">2020-03-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-12-26 16:52:02" itemprop="dateModified" datetime="2022-12-26T16:52:02+08:00">2022-12-26</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>Redis数据库中的每个键值对都是由对象组成的：</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Redis数据库中的每个键值对都是由对象组成的：</p>
 <ul>
 <li>数据库键总是一个字符串对象；</li>
 <li>数据库键的值可以是字符串对象、列表对象、哈希对象、集合对象、有序集合对象这五种对象中的一种。</li>
@@ -3221,150 +3341,75 @@
 <p>举个例子，假设服务器在时间1378822257.329412，根据IP为127.0.0.1、端口号为56604 的客户端发送的命令请求，对0号数据库执行命令KEYS*，那么服务器将创建以下信息：<br><img src="/img/20191211232308597.png"></p>
 <p>如果服务器monitors链表的当前状态如上图所示，那么服务器会分别将信息发送给c128、c256、c512和c10086四个监视器，如下图所示<br><img src="/img/20191211232359823.png"></p>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/03/14/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/" data-id="cuid9GFjJGcN2dnEmdsn_d3cT" data-title="redis设计与实现笔记" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/03/03/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/" rel="prev" title="剑指offer Python题解">
+                  <i class="fa fa-angle-left"></i> 剑指offer Python题解
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/03/25/%E5%8D%97%E4%BA%AC%E5%A4%A7%E5%AD%A6%E3%80%8A%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90%E3%80%8B%E8%AF%BE%E7%A8%8B/" rel="next" title="南京大学《软件分析》课程">
+                  南京大学《软件分析》课程 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2020/03/25/%E5%8D%97%E4%BA%AC%E5%A4%A7%E5%AD%A6%E3%80%8A%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90%E3%80%8B%E8%AF%BE%E7%A8%8B/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          南京大学《软件分析》课程
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2020/03/03/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">剑指offer Python题解</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

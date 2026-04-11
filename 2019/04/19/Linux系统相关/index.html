@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>Linux系统相关 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Linux I&#x2F;O 原理导言如今的网络应用早已从 CPU 密集型转向了 I&#x2F;O 密集型，网络服务器大多是基于 C-S 模型，也即 客户端 - 服务端 模型，客户端需要和服务端进行大量的网络通信，这也决定了现代网络应用的性能瓶颈：I&#x2F;O。 传统的 Linux 操作系统的标准 I&#x2F;O 接口是基于数据拷贝操作的，即 I&#x2F;O 操作会导致数据在操作系统内核地">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Linux I&#x2F;O 原理导言如今的网络应用早已从 CPU 密集型转向了 I&#x2F;O 密集型，网络服务器大多是基于 C-S 模型，也即 客户端 - 服务端 模型，客户端需要和服务端进行大量的网络通信，这也决定了现代网络应用的性能瓶颈：I&#x2F;O。 传统的 Linux 操作系统的标准 I&#x2F;O 接口是基于数据拷贝操作的，即 I&#x2F;O 操作会导致数据在操作系统内核地">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux系统相关">
 <meta property="og:url" content="http://example.com/2019/04/19/Linux%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/index.html">
@@ -136,85 +150,191 @@
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/img/v2-339fc1c254df291ad7eb12008f38a4ef_720w.jpg">
+
+
+<link rel="canonical" href="http://example.com/2019/04/19/Linux%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2019/04/19/Linux%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/","path":"2019/04/19/Linux系统相关/","title":"Linux系统相关"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Linux系统相关 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux-I-O-%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">Linux I&#x2F;O 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BC%E8%A8%80"><span class="nav-number">1.1.</span> <span class="nav-text">导言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%AD%98%E5%82%A8%E5%99%A8"><span class="nav-number">1.1.1.</span> <span class="nav-text">计算机存储器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98"><span class="nav-number">1.1.2.</span> <span class="nav-text">物理内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="nav-number">1.1.3.</span> <span class="nav-text">虚拟内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E6%80%81%E5%92%8C%E5%86%85%E6%A0%B8%E6%80%81"><span class="nav-number">1.1.4.</span> <span class="nav-text">用户态和内核态</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-I-O"><span class="nav-number">1.2.</span> <span class="nav-text">Linux I&#x2F;O</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O-%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="nav-number">1.2.1.</span> <span class="nav-text">I&#x2F;O 缓冲区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O-%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.2.2.</span> <span class="nav-text">I&#x2F;O 模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E6%8E%A7%E5%88%B6-I-O"><span class="nav-number">1.2.3.</span> <span class="nav-text">程序控制 I&#x2F;O</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E9%A9%B1%E5%8A%A8-I-O"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">中断驱动 I&#x2F;O</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DMA-I-O"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">DMA I&#x2F;O</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F-I-O-%E8%AF%BB%E5%86%99%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.2.4.</span> <span class="nav-text">传统 I&#x2F;O 读写模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%B6%E6%8B%B7%E8%B4%9D-Zero-copy"><span class="nav-number">1.2.5.</span> <span class="nav-text">零拷贝 (Zero-copy)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Zero-copy-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">Zero-copy 是什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Zero-copy-%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">Zero-copy 能做什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Zero-copy-%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">1.2.5.3.</span> <span class="nav-text">Zero-copy 的实现方式有哪些？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%8F%E5%B0%91%E7%94%9A%E8%87%B3%E9%81%BF%E5%85%8D%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E5%92%8C%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4%E4%B9%8B%E9%97%B4%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8B%B7%E8%B4%9D"><span class="nav-number">1.2.6.</span> <span class="nav-text">减少甚至避免用户空间和内核空间之间的数据拷贝</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mmap"><span class="nav-number">1.2.6.1.</span> <span class="nav-text">mmap()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sendfile"><span class="nav-number">1.2.6.2.</span> <span class="nav-text">sendfile()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#send%EF%AC%81le-with-DMA-Scatter-Gather-Copy"><span class="nav-number">1.2.7.</span> <span class="nav-text">sendﬁle() with DMA Scatter&#x2F;Gather Copy</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#splice"><span class="nav-number">1.2.7.1.</span> <span class="nav-text">splice()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#send-with-MSG-ZEROCOPY"><span class="nav-number">1.2.7.2.</span> <span class="nav-text">send() with MSG_ZEROCOPY</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%95%E8%BF%87%E5%86%85%E6%A0%B8%E7%9A%84%E7%9B%B4%E6%8E%A5-I-O"><span class="nav-number">1.2.8.</span> <span class="nav-text">绕过内核的直接 I&#x2F;O</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E7%9B%B4%E6%8E%A5%E8%AE%BF%E9%97%AE%E7%A1%AC%E4%BB%B6"><span class="nav-number">1.2.8.1.</span> <span class="nav-text">用户直接访问硬件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E6%8E%A7%E5%88%B6%E8%AE%BF%E9%97%AE%E7%A1%AC%E4%BB%B6"><span class="nav-number">1.2.8.2.</span> <span class="nav-text">内核控制访问硬件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E7%BC%93%E5%86%B2%E5%8C%BA%E5%92%8C%E7%94%A8%E6%88%B7%E7%BC%93%E5%86%B2%E5%8C%BA%E4%B9%8B%E9%97%B4%E7%9A%84%E4%BC%A0%E8%BE%93%E4%BC%98%E5%8C%96"><span class="nav-number">1.2.9.</span> <span class="nav-text">内核缓冲区和用户缓冲区之间的传输优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E9%87%8D%E6%98%A0%E5%B0%84%E4%B8%8E%E5%86%99%E6%97%B6%E6%8B%B7%E8%B4%9D-Copy-on-Write"><span class="nav-number">1.2.9.1.</span> <span class="nav-text">动态重映射与写时拷贝 (Copy-on-Write)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%93%E5%86%B2%E5%8C%BA%E5%85%B1%E4%BA%AB-Buffer-Sharing"><span class="nav-number">1.2.9.2.</span> <span class="nav-text">缓冲区共享 (Buffer Sharing)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fbufs-%E7%9A%84%E7%BC%BA%E9%99%B7"><span class="nav-number">1.2.9.3.</span> <span class="nav-text">fbufs 的缺陷</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.10.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#poll-select-epoll%E5%89%96%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">poll select epoll剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#poll-%E5%92%8C-select"><span class="nav-number">2.1.</span> <span class="nav-text">poll 和 select</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">2.1.1.</span> <span class="nav-text">关键结构体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AC%E5%85%B1%E5%87%BD%E6%95%B0"><span class="nav-number">2.1.2.</span> <span class="nav-text">公共函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#poll-select%E6%A0%B8%E5%BF%83%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB"><span class="nav-number">2.1.3.</span> <span class="nav-text">poll&#x2F;select核心结构关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#poll%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.2.</span> <span class="nav-text">poll的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#select-%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.3.</span> <span class="nav-text">select 实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#epoll%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.4.</span> <span class="nav-text">epoll实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#epoll%E7%9A%84%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.4.1.</span> <span class="nav-text">epoll的核心数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8Cepoll-create"><span class="nav-number">2.4.2.</span> <span class="nav-text">文件系统初始化和epoll_create</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#epoll%E4%B8%AD%E7%9A%84%E9%80%92%E5%BD%92%E6%AD%BB%E5%BE%AA%E7%8E%AF%E5%92%8C%E6%B7%B1%E5%BA%A6%E6%A3%80%E6%9F%A5"><span class="nav-number">2.4.3.</span> <span class="nav-text">epoll中的递归死循环和深度检查</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E6%B7%B1%E5%BA%A6%E6%A3%80%E6%B5%8B"><span class="nav-number">2.4.3.1.</span> <span class="nav-text">递归深度检测</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E6%A3%80%E6%B5%8B-ep-loop-check"><span class="nav-number">2.4.4.</span> <span class="nav-text">循环检测(ep_loop_check)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%94%A4%E9%86%92%E9%A3%8E%E6%9A%B4%E6%A3%80%E6%B5%8B"><span class="nav-number">2.4.5.</span> <span class="nav-text">唤醒风暴检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#epoll-%E7%9A%84%E5%94%A4%E9%86%92%E8%BF%87%E7%A8%8B"><span class="nav-number">2.4.6.</span> <span class="nav-text">epoll 的唤醒过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#epoll-ctl"><span class="nav-number">2.4.7.</span> <span class="nav-text">epoll_ctl</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EPOLL-CTL-ADD-%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.4.8.</span> <span class="nav-text">EPOLL_CTL_ADD 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EPOLL-CTL-DEL"><span class="nav-number">2.4.9.</span> <span class="nav-text">EPOLL_CTL_DEL</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#epoll-wait"><span class="nav-number">2.5.</span> <span class="nav-text">epoll_wait</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#eventpoll-poll"><span class="nav-number">2.6.</span> <span class="nav-text">eventpoll_poll</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#epoll%E5%85%A8%E6%99%AF"><span class="nav-number">2.6.1.</span> <span class="nav-text">epoll全景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#poll-select-epoll-%E5%AF%B9%E6%AF%94"><span class="nav-number">2.7.</span> <span class="nav-text">poll&#x2F;select&#x2F;epoll 对比</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">虚拟存储器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8-1"><span class="nav-number">3.1.</span> <span class="nav-text">虚拟存储器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%92%8C%E8%99%9A%E6%8B%9F%E5%AF%BB%E5%9D%80"><span class="nav-number">3.2.</span> <span class="nav-text">物理和虚拟寻址</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%AF%BB%E5%9D%80"><span class="nav-number">3.2.1.</span> <span class="nav-text">物理寻址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%AF%BB%E5%9D%80"><span class="nav-number">3.2.2.</span> <span class="nav-text">虚拟寻址</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="nav-number">3.3.</span> <span class="nav-text">地址空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8%E4%BD%9C%E4%B8%BA%E7%BC%93%E5%AD%98%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="nav-number">3.4.</span> <span class="nav-text">虚拟存储器作为缓存的工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B5%E8%A1%A8"><span class="nav-number">3.5.</span> <span class="nav-text">页表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.6.</span> <span class="nav-text">Linux虚拟存储器系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8%E5%8C%BA%E5%9F%9F-Windows%E4%B8%8B%E4%B9%9F%E6%9C%89%E5%8C%BA%E5%9F%9F%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">3.6.1.</span> <span class="nav-text">Linux虚拟存储器区域(Windows下也有区域的概念)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%99%A8%E6%98%A0%E5%B0%84-Windows%E4%B8%8B%E4%B9%9F%E6%9C%89%E7%B1%BB%E4%BC%BC%E7%9A%84%E6%9C%BA%E5%88%B6%EF%BC%8C%E5%90%8D%E5%8F%AB%E5%86%85%E5%AD%98%E6%98%A0%E5%B0%84"><span class="nav-number">3.6.2.</span> <span class="nav-text">存储器映射(Windows下也有类似的机制，名叫内存映射)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%8D%E7%9C%8Bfork%E5%87%BD%E6%95%B0"><span class="nav-number">3.6.3.</span> <span class="nav-text">再看fork函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%8D%E7%9C%8Bexecve%E5%87%BD%E6%95%B0"><span class="nav-number">3.6.4.</span> <span class="nav-text">再看execve函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8mmap%E5%87%BD%E6%95%B0%E7%9A%84%E7%94%A8%E6%88%B7%E7%BA%A7%E5%AD%98%E5%82%A8%E5%99%A8%E6%98%A0%E5%B0%84"><span class="nav-number">3.6.5.</span> <span class="nav-text">使用mmap函数的用户级存储器映射</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">3.7.</span> <span class="nav-text">垃圾回收</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E5%AD%98%E5%82%A8%E5%99%A8%E5%AD%98%E5%8F%96DMA"><span class="nav-number">4.</span> <span class="nav-text">直接存储器存取DMA</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DMA%EF%BC%88Direct-Memory-Access%EF%BC%89"><span class="nav-number">4.1.</span> <span class="nav-text">DMA（Direct Memory Access）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">4.1.1.</span> <span class="nav-text">工作原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DMA%E6%B5%81%E7%A8%8B"><span class="nav-number">4.1.2.</span> <span class="nav-text">DMA流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DMA%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F"><span class="nav-number">4.1.3.</span> <span class="nav-text">DMA工作方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F"><span class="nav-number">4.2.</span> <span class="nav-text">工作方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DMA%E4%B8%8ECPU%E8%B0%83%E5%BA%A6"><span class="nav-number">4.2.1.</span> <span class="nav-text">DMA与CPU调度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DMA%E6%A6%82%E8%BF%B0"><span class="nav-number">4.3.</span> <span class="nav-text">DMA概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DMA%E5%86%85%E5%AD%98%E8%AE%BF%E9%97%AE%E6%8A%80%E6%9C%AF"><span class="nav-number">4.3.1.</span> <span class="nav-text">DMA内存访问技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DMAC%E7%9A%84%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="nav-number">4.3.2.</span> <span class="nav-text">DMAC的基本配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8B%AC%E7%AB%8BDMA%E6%8E%A7%E5%88%B6%E8%8A%AF%E7%89%87"><span class="nav-number">4.3.3.</span> <span class="nav-text">独立DMA控制芯片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B5%8C%E5%85%A5%E5%BC%8F%E8%AE%BE%E5%A4%87%E4%B8%AD%E7%9A%84DMA"><span class="nav-number">4.3.4.</span> <span class="nav-text">嵌入式设备中的DMA</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DMA%E7%9A%84%E8%AE%BE%E7%BD%AE"><span class="nav-number">4.4.</span> <span class="nav-text">DMA的设置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84DMA"><span class="nav-number">4.4.1.</span> <span class="nav-text">基于寄存器的DMA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%8F%E8%BF%B0%E7%AC%A6%E6%A8%A1%E5%9E%8B"><span class="nav-number">4.4.2.</span> <span class="nav-text">描述符模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98%E8%AE%BF%E9%97%AE-DMA"><span class="nav-number">4.5.</span> <span class="nav-text">直接内存访问(DMA)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFDMA"><span class="nav-number">4.5.1.</span> <span class="nav-text">什么是DMA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DMA%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="nav-number">4.5.2.</span> <span class="nav-text">DMA数据传输</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E9%85%8DDMA%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="nav-number">4.5.3.</span> <span class="nav-text">分配DMA缓冲区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E7%94%A8DMA%E5%B1%82"><span class="nav-number">4.5.4.</span> <span class="nav-text">通用DMA层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DMA%E6%98%A0%E5%B0%84"><span class="nav-number">4.5.5.</span> <span class="nav-text">DMA映射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E4%B8%80%E8%87%B4%E6%80%A7%E6%98%A0%E5%B0%84"><span class="nav-number">4.5.6.</span> <span class="nav-text">建立一致性映射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DMA%E6%B1%A0"><span class="nav-number">4.5.7.</span> <span class="nav-text">DMA池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E6%B5%81%E5%BC%8FDMA%E6%98%A0%E5%B0%84"><span class="nav-number">4.5.8.</span> <span class="nav-text">建立流式DMA映射</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux-session-%E6%B5%85%E8%B0%88"><span class="nav-number">5.</span> <span class="nav-text">Linux session 浅谈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BC%9ACPU%E7%AF%87"><span class="nav-number">6.</span> <span class="nav-text">Linux性能优化：CPU篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%B9%B3%E5%9D%87%E8%B4%9F%E8%BD%BD"><span class="nav-number">6.1.</span> <span class="nav-text">系统平均负载</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">6.1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%B3%BB%E7%BB%9F%E5%B9%B3%E5%9D%87%E8%B4%9F%E8%BD%BD"><span class="nav-number">6.1.2.</span> <span class="nav-text">查看系统平均负载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%B9%B3%E5%9D%87%E8%B4%9F%E8%BD%BD%E5%8D%87%E9%AB%98%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">6.1.3.</span> <span class="nav-text">系统平均负载升高的原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="nav-number">6.1.4.</span> <span class="nav-text">案例问题排查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU-%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="nav-number">6.1.5.</span> <span class="nav-text">CPU 问题排查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IO-%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="nav-number">6.1.6.</span> <span class="nav-text">IO 问题排查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E6%95%B0%E8%BF%87%E5%A4%9A%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="nav-number">6.1.7.</span> <span class="nav-text">进程数过多问题排查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-1"><span class="nav-number">6.1.8.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU-%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">6.2.</span> <span class="nav-text">CPU 上下文切换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">6.2.1.</span> <span class="nav-text">进程上下文切换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">6.2.2.</span> <span class="nav-text">线程上下文切换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">6.2.3.</span> <span class="nav-text">中断上下文切换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%B3%BB%E7%BB%9F%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">6.2.4.</span> <span class="nav-text">查看系统上下文切换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-1"><span class="nav-number">6.2.5.</span> <span class="nav-text">案例问题排查</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E6%9E%90-cs-%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2%E9%97%AE%E9%A2%98"><span class="nav-number">6.2.5.1.</span> <span class="nav-text">分析 cs 上下文切换问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E6%9E%90-in-%E4%B8%AD%E6%96%AD%E9%97%AE%E9%A2%98"><span class="nav-number">6.2.5.2.</span> <span class="nav-text">分析 in 中断问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-2"><span class="nav-number">6.2.6.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU-%E4%BD%BF%E7%94%A8%E7%8E%87"><span class="nav-number">6.3.</span> <span class="nav-text">CPU 使用率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU-%E4%BD%BF%E7%94%A8%E7%8E%87%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="nav-number">6.4.</span> <span class="nav-text">CPU 使用率问题排查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU-%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%A5%97%E8%B7%AF"><span class="nav-number">6.5.</span> <span class="nav-text">CPU 问题排查套路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU-%E4%BD%BF%E7%94%A8%E7%8E%87-1"><span class="nav-number">6.5.1.</span> <span class="nav-text">CPU 使用率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E5%9D%87%E8%B4%9F%E8%BD%BD"><span class="nav-number">6.5.2.</span> <span class="nav-text">平均负载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">6.5.3.</span> <span class="nav-text">上下文切换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%8E%87"><span class="nav-number">6.5.4.</span> <span class="nav-text">CPU 缓存命中率</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-3"><span class="nav-number">6.6.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A1%AC%E4%B8%AD%E6%96%AD%E5%92%8C%E8%BD%AF%E4%B8%AD%E6%96%AD"><span class="nav-number">7.</span> <span class="nav-text">硬中断和软中断</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">7.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%85%B3"><span class="nav-number">7.2.</span> <span class="nav-text">开关</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E4%B8%AD%E6%96%AD%E7%9A%84%E5%BC%80%E5%85%B3"><span class="nav-number">7.2.1.</span> <span class="nav-text">硬中断的开关</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AF%E4%B8%AD%E6%96%AD%E7%9A%84%E5%BC%80%E5%85%B3"><span class="nav-number">7.2.2.</span> <span class="nav-text">软中断的开关</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E4%B8%AD%E6%96%AD%E7%8A%B6%E6%80%81"><span class="nav-number">7.2.3.</span> <span class="nav-text">判断中断状态</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%B8%AD%E6%96%AD"><span class="nav-number">7.3.</span> <span class="nav-text">硬中断</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0"><span class="nav-number">7.3.1.</span> <span class="nav-text">注册中断处理函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E9%94%80%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0"><span class="nav-number">7.3.2.</span> <span class="nav-text">注销中断处理函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%B8%AD%E6%96%AD"><span class="nav-number">7.4.</span> <span class="nav-text">软中断</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">7.4.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C%E8%BD%AF%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0"><span class="nav-number">7.4.2.</span> <span class="nav-text">注册软中断处理函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91%E8%BD%AF%E4%B8%AD%E6%96%AD"><span class="nav-number">7.4.3.</span> <span class="nav-text">触发软中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ksoftirqd%E5%86%85%E6%A0%B8%E7%BA%BF%E7%A8%8B"><span class="nav-number">7.4.4.</span> <span class="nav-text">ksoftirqd内核线程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%85%E6%9E%90CPU%E4%B8%AD%E6%96%AD%E6%8A%80%E6%9C%AF"><span class="nav-number">8.</span> <span class="nav-text">浅析CPU中断技术</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFCPU%E4%B8%AD%E6%96%AD%EF%BC%9F"><span class="nav-number">8.1.</span> <span class="nav-text">什么是CPU中断？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU%E4%B8%AD%E6%96%AD%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">8.1.1.</span> <span class="nav-text">CPU中断的作用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU%E4%B8%AD%E6%96%AD%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">8.2.</span> <span class="nav-text">CPU中断的类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E4%B8%AD%E6%96%AD"><span class="nav-number">8.2.1.</span> <span class="nav-text">硬件中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E4%B8%AD%E6%96%AD"><span class="nav-number">8.2.2.</span> <span class="nav-text">软件中断</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU%E4%B8%AD%E6%96%AD%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">8.3.</span> <span class="nav-text">CPU中断的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E8%AF%B7%E6%B1%82"><span class="nav-number">8.3.1.</span> <span class="nav-text">中断请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%93%8D%E5%BA%94%E3%80%81%E5%A4%84%E7%90%86%E5%92%8C%E8%BF%94%E5%9B%9E"><span class="nav-number">8.3.2.</span> <span class="nav-text">中断响应、处理和返回</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E6%8E%92%E9%98%9F%E5%92%8C%E4%B8%AD%E6%96%AD%E5%88%A4%E4%BC%98"><span class="nav-number">8.3.3.</span> <span class="nav-text">中断排队和中断判优</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E6%A0%B8CPU%E5%AF%B9%E4%B8%AD%E6%96%AD%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">8.4.</span> <span class="nav-text">多核CPU对中断的处理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E4%B8%AD%E6%96%AD%E5%AD%90%E7%B3%BB%E7%BB%9F"><span class="nav-number">9.</span> <span class="nav-text">Linux中断子系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E3%80%81%E4%B8%AD%E6%96%AD%E6%8E%A7%E5%88%B6%E5%99%A8%E5%92%8CCPU"><span class="nav-number">9.1.</span> <span class="nav-text">设备、中断控制器和CPU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IRQ%E7%BC%96%E5%8F%B7"><span class="nav-number">9.2.</span> <span class="nav-text">IRQ编号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E4%B8%AD%E7%94%B3%E8%AF%B7%E4%B8%AD%E6%96%AD"><span class="nav-number">9.3.</span> <span class="nav-text">在驱动程序中申请中断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E4%B8%AD%E6%96%AD%E5%AD%90%E7%B3%BB%E7%BB%9F%EF%BC%88Generic-irq%EF%BC%89%E7%9A%84%E8%BD%AF%E4%BB%B6%E6%8A%BD%E8%B1%A1"><span class="nav-number">9.4.</span> <span class="nav-text">通用中断子系统（Generic irq）的软件抽象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#irq%E6%8F%8F%E8%BF%B0%E7%BB%93%E6%9E%84%EF%BC%9Astruct-irq-desc"><span class="nav-number">9.5.</span> <span class="nav-text">irq描述结构：struct irq_desc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84proc%E6%96%87%E4%BB%B6%E6%8E%A5%E5%8F%A3"><span class="nav-number">9.6.</span> <span class="nav-text">中断子系统的proc文件接口</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux-%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E6%A0%88"><span class="nav-number">10.</span> <span class="nav-text">Linux 中的各种栈</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E6%A0%88"><span class="nav-number">10.1.</span> <span class="nav-text">进程栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%A0%88"><span class="nav-number">10.2.</span> <span class="nav-text">线程栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%86%85%E6%A0%B8%E6%A0%88"><span class="nav-number">10.3.</span> <span class="nav-text">进程内核栈</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8Bmmap%E8%AF%A6%E8%A7%A3"><span class="nav-number">11.</span> <span class="nav-text">Linux内存管理之mmap详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mmap%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">11.1.</span> <span class="nav-text">mmap系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mmap%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8-1"><span class="nav-number">11.1.1.</span> <span class="nav-text">mmap系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8munmap"><span class="nav-number">11.1.2.</span> <span class="nav-text">系统调用munmap()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8msync"><span class="nav-number">11.1.3.</span> <span class="nav-text">系统调用msync()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8mmap-%E7%94%A8%E4%BA%8E%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">11.2.</span> <span class="nav-text">系统调用mmap()用于共享内存的两种方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%99%AE%E9%80%9A%E6%96%87%E4%BB%B6%E6%8F%90%E4%BE%9B%E7%9A%84%E5%86%85%E5%AD%98%E6%98%A0%E5%B0%84"><span class="nav-number">11.2.1.</span> <span class="nav-text">使用普通文件提供的内存映射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%89%B9%E6%AE%8A%E6%96%87%E4%BB%B6%E6%8F%90%E4%BE%9B%E5%8C%BF%E5%90%8D%E5%86%85%E5%AD%98%E6%98%A0%E5%B0%84"><span class="nav-number">11.2.2.</span> <span class="nav-text">使用特殊文件提供匿名内存映射</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mmap%E8%BF%9B%E8%A1%8C%E5%86%85%E5%AD%98%E6%98%A0%E5%B0%84%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">11.3.</span> <span class="nav-text">mmap进行内存映射的原理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E5%86%85%E6%A0%B8%E4%B8%ADcache%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">12.</span> <span class="nav-text">Linux内核中cache的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%92%8C%E6%96%87%E4%BB%B6-Cache-%E7%AE%A1%E7%90%86"><span class="nav-number">12.1.</span> <span class="nav-text">操作系统和文件 Cache 管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6-Cache-%E7%9A%84%E5%9C%B0%E4%BD%8D%E5%92%8C%E4%BD%9C%E7%94%A8"><span class="nav-number">12.2.</span> <span class="nav-text">文件 Cache 的地位和作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6-Cache-%E7%9B%B8%E5%85%B3%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">12.3.</span> <span class="nav-text">文件 Cache 相关数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6Cache%E7%9A%84%E9%A2%84%E8%AF%BB%E5%92%8C%E6%9B%BF%E6%8D%A2"><span class="nav-number">12.4.</span> <span class="nav-text">文件Cache的预读和替换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6Cache%E7%9B%B8%E5%85%B3API%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0"><span class="nav-number">12.5.</span> <span class="nav-text">文件Cache相关API及其实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">12.6.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B"><span class="nav-number">13.</span> <span class="nav-text">Linux孤儿进程与僵尸进程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">13.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8F%8A%E5%8D%B1%E5%AE%B3"><span class="nav-number">13.2.</span> <span class="nav-text">问题及危害</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B%E5%92%8C%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B%E6%B5%8B%E8%AF%95"><span class="nav-number">13.3.</span> <span class="nav-text">孤儿进程和僵尸进程测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95"><span class="nav-number">13.4.</span> <span class="nav-text">僵尸进程解决办法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E4%BF%A1%E5%8F%B7%E6%9C%BA%E5%88%B6"><span class="nav-number">13.4.1.</span> <span class="nav-text">通过信号机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fork%E4%B8%A4%E6%AC%A1"><span class="nav-number">13.4.2.</span> <span class="nav-text">fork两次</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E4%B8%AD%E7%9A%84slab%E6%9C%BA%E5%88%B6"><span class="nav-number">14.</span> <span class="nav-text">Linux中的slab机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E9%83%A8%E7%A2%8E%E7%89%87%E5%92%8C%E5%A4%96%E9%83%A8%E7%A2%8E%E7%89%87"><span class="nav-number">14.1.</span> <span class="nav-text">内部碎片和外部碎片</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%96%E9%83%A8%E7%A2%8E%E7%89%87"><span class="nav-number">14.1.1.</span> <span class="nav-text">外部碎片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E9%83%A8%E7%A2%8E%E7%89%87"><span class="nav-number">14.1.2.</span> <span class="nav-text">内部碎片</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#slab%E5%88%86%E9%85%8D%E6%9C%BA%E5%88%B6"><span class="nav-number">14.2.</span> <span class="nav-text">slab分配机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E4%B8%ADslab%E7%9A%84%E4%B8%BB%E8%A6%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">14.3.</span> <span class="nav-text">内核中slab的主要数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8Eslab%E5%88%86%E9%85%8D%E5%99%A8%E7%9A%84API"><span class="nav-number">14.4.</span> <span class="nav-text">关于slab分配器的API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E4%BB%A5%E4%B8%8A%E7%9A%84API%E5%86%99%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97%EF%BC%8C%E7%94%9F%E6%88%90%E8%87%AA%E5%B7%B1%E7%9A%84slab%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E3%80%82"><span class="nav-number">14.5.</span> <span class="nav-text">使用以上的API写内核模块，生成自己的slab高速缓存。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-4"><span class="nav-number">14.6.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E7%9A%84%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6"><span class="nav-number">15.</span> <span class="nav-text">Linux的任务调度机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6%E7%9A%84%E7%9B%AE%E6%A0%87"><span class="nav-number">15.1.</span> <span class="nav-text">Linux进程调度的目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E8%BF%9B%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7"><span class="nav-number">15.2.</span> <span class="nav-text">Linux进程优先级</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E5%AE%9E%E6%97%B6%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6"><span class="nav-number">15.3.</span> <span class="nav-text">非实时进程调度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%B0%E4%BB%A3%E6%96%B9%E6%B3%95CFS"><span class="nav-number">15.4.</span> <span class="nav-text">现代方法CFS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="nav-number">15.5.</span> <span class="nav-text">Linux进程状态机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E9%87%8D%E8%A6%81%E7%9A%84%E6%9D%82%E9%A1%B9"><span class="nav-number">15.6.</span> <span class="nav-text">一些重要的杂项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%95%88%E7%8E%87"><span class="nav-number">15.6.1.</span> <span class="nav-text">调度程序的效率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E8%A7%A6%E5%8F%91%E7%9A%84%E6%97%B6%E6%9C%BA"><span class="nav-number">15.6.2.</span> <span class="nav-text">调度触发的时机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E6%8A%A2%E5%8D%A0"><span class="nav-number">15.6.3.</span> <span class="nav-text">内核抢占</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E4%B8%8B%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">15.6.4.</span> <span class="nav-text">多处理器下的负载均衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%85%88%E7%BA%A7%E7%BB%A7%E6%89%BF"><span class="nav-number">15.6.5.</span> <span class="nav-text">优先级继承</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%BA%BF%E7%A8%8B%E5%8C%96"><span class="nav-number">15.6.6.</span> <span class="nav-text">中断处理线程化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E7%94%A8Linux%E7%B3%BB%E7%BB%9F"><span class="nav-number">15.7.</span> <span class="nav-text">通用Linux系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6Linux%E7%A0%94%E7%A9%B6"><span class="nav-number">15.8.</span> <span class="nav-text">实时Linux研究</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%98%A6%E5%86%85%E6%A0%B8%EF%BC%88%E5%BE%AE%E5%86%85%E6%A0%B8%EF%BC%89-Thin-Kernel"><span class="nav-number">15.8.1.</span> <span class="nav-text">瘦内核（微内核）- Thin-Kernel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E5%BE%AE%E5%86%85%E6%A0%B8"><span class="nav-number">15.8.2.</span> <span class="nav-text">超微内核</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E5%86%85%E6%A0%B8%EF%BC%88Resource-kernel%EF%BC%89"><span class="nav-number">15.8.3.</span> <span class="nav-text">资源内核（Resource-kernel）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E7%9A%84Linux%E5%86%85%E6%A0%B8%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC2-6%E4%B8%AD%E5%8A%A0%E5%85%A5%E4%BA%86%E5%AE%9E%E6%97%B6%E5%8A%9F%E8%83%BD"><span class="nav-number">15.8.4.</span> <span class="nav-text">标准的Linux内核最新版本2.6中加入了实时功能</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E4%BB%A5%E5%8F%8ATLB%E4%B8%8E%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="nav-number">16.</span> <span class="nav-text">高速缓存以及TLB与虚拟内存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%8D%95%E5%85%83MMU"><span class="nav-number">16.1.</span> <span class="nav-text">内存管理单元MMU</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98-1"><span class="nav-number">16.1.1.</span> <span class="nav-text">虚拟内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B5%E5%BC%8F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">16.1.2.</span> <span class="nav-text">页式内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">16.1.2.1.</span> <span class="nav-text">页的概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E8%A1%A8%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">16.1.2.2.</span> <span class="nav-text">页表的概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E5%91%BD%E4%B8%AD"><span class="nav-number">16.1.2.3.</span> <span class="nav-text">页命中</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%BA%E9%A1%B5"><span class="nav-number">16.1.2.4.</span> <span class="nav-text">缺页</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B1%80%E9%83%A8%E6%80%A7%E5%8E%9F%E5%88%99"><span class="nav-number">16.1.2.5.</span> <span class="nav-text">程序的局部性原则</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E4%BD%9C%E4%B8%BA%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7"><span class="nav-number">16.1.3.</span> <span class="nav-text">虚拟内存作为内存管理工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E4%BD%9C%E4%B8%BA%E5%86%85%E5%AD%98%E4%BF%9D%E6%8A%A4%E5%B7%A5%E5%85%B7"><span class="nav-number">16.1.4.</span> <span class="nav-text">虚拟内存作为内存保护工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%B0%E5%9D%80%E7%BF%BB%E8%AF%91"><span class="nav-number">16.2.</span> <span class="nav-text">地址翻译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-5"><span class="nav-number">16.3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%EF%BC%88Cache%EF%BC%89%E7%9A%84%E5%BC%95%E5%85%A5"><span class="nav-number">16.4.</span> <span class="nav-text">高速缓存（Cache）的引入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A9%E7%94%A8TLB%E5%8A%A0%E9%80%9F%E5%9C%B0%E5%9D%80%E7%BF%BB%E8%AF%91"><span class="nav-number">16.5.</span> <span class="nav-text">利用TLB加速地址翻译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cache%E4%B8%8E%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E6%98%AF%E5%A6%82%E4%BD%95%E6%98%A0%E5%B0%84%E7%9A%84"><span class="nav-number">16.6.</span> <span class="nav-text">Cache与物理内存是如何映射的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E6%98%A0%E5%B0%84%E6%B3%95%EF%BC%9A"><span class="nav-number">16.6.1.</span> <span class="nav-text">直接映射法：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E6%98%A0%E5%B0%84%E5%8E%9F%E7%90%86"><span class="nav-number">16.6.2.</span> <span class="nav-text">直接映射原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E6%98%A0%E5%B0%84%E6%B3%95%E7%9A%84%E7%89%B9%E7%82%B9"><span class="nav-number">16.6.3.</span> <span class="nav-text">直接映射法的特点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-6"><span class="nav-number">16.7.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E6%8C%89%E5%AD%97%E5%AF%BB%E5%9D%80%E5%92%8C%E6%8C%89%E5%AD%97%E8%8A%82%E5%AF%BB%E5%9D%80%E7%9A%84%E7%90%86%E8%A7%A3"><span class="nav-number">17.</span> <span class="nav-text">关于按字寻址和按字节寻址的理解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%90%86%E8%A7%A3-CPU-Cache"><span class="nav-number">18.</span> <span class="nav-text">理解 CPU Cache</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#What-is-Cache"><span class="nav-number">18.1.</span> <span class="nav-text">What is Cache</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Why-Cache"><span class="nav-number">18.2.</span> <span class="nav-text">Why  Cache</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cache-line-size"><span class="nav-number">18.3.</span> <span class="nav-text">Cache line size</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#L1%E3%80%81L2-and-L3-cache-size"><span class="nav-number">18.4.</span> <span class="nav-text">L1、L2 and L3 cache size</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Instruction-level-parallelism"><span class="nav-number">18.5.</span> <span class="nav-text">Instruction-level parallelism</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cache-associativity"><span class="nav-number">18.6.</span> <span class="nav-text">Cache associativity</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#False-cache-line-sharing"><span class="nav-number">18.7.</span> <span class="nav-text">False cache line sharing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hardware-complexities"><span class="nav-number">18.8.</span> <span class="nav-text">Hardware complexities</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E7%A8%8B%E5%BA%8F%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="nav-number">19.</span> <span class="nav-text">Linux程序加载过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%88%86%E6%9E%90"><span class="nav-number">20.</span> <span class="nav-text">Linux系统调用的实现机制分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E6%84%8F%E4%B9%89"><span class="nav-number">20.1.</span> <span class="nav-text">系统调用意义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-POSIX-C%E5%BA%93%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">20.2.</span> <span class="nav-text">API&#x2F;POSIX&#x2F;C库的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">20.3.</span> <span class="nav-text">系统调用的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F"><span class="nav-number">20.3.1.</span> <span class="nav-text">系统调用处理程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%8F%B7"><span class="nav-number">20.3.2.</span> <span class="nav-text">系统调用号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92"><span class="nav-number">20.3.3.</span> <span class="nav-text">参数传递</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E9%AA%8C%E8%AF%81"><span class="nav-number">20.3.4.</span> <span class="nav-text">参数验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">20.3.5.</span> <span class="nav-text">系统调用的返回值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%96%B0%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">20.4.</span> <span class="nav-text">添加新系统调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">20.5.</span> <span class="nav-text">访问系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="nav-number">20.5.1.</span> <span class="nav-text">系统调用上下文</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%AE%BF%E9%97%AE%E7%A4%BA%E4%BE%8B"><span class="nav-number">20.5.2.</span> <span class="nav-text">系统调用访问示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E7%9B%B4%E6%8E%A5%E8%AE%BF%E9%97%AE%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">20.5.3.</span> <span class="nav-text">从用户空间直接访问系统调用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%A1%A8"><span class="nav-number">20.6.</span> <span class="nav-text">系统调用表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6"><span class="nav-number">20.6.1.</span> <span class="nav-text">进程控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%8E%A7%E5%88%B6"><span class="nav-number">20.6.2.</span> <span class="nav-text">文件系统控制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99%E6%93%8D%E4%BD%9C"><span class="nav-number">20.6.2.1.</span> <span class="nav-text">文件读写操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%93%8D%E4%BD%9C"><span class="nav-number">20.6.2.2.</span> <span class="nav-text">文件系统操作</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%8E%A7%E5%88%B6"><span class="nav-number">20.6.3.</span> <span class="nav-text">系统控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">20.6.4.</span> <span class="nav-text">内存管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86"><span class="nav-number">20.6.5.</span> <span class="nav-text">网络管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socket%E6%8E%A7%E5%88%B6"><span class="nav-number">20.6.6.</span> <span class="nav-text">socket控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86"><span class="nav-number">20.6.7.</span> <span class="nav-text">用户管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-number">20.6.8.</span> <span class="nav-text">进程间通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7"><span class="nav-number">20.6.9.</span> <span class="nav-text">信号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E6%81%AF"><span class="nav-number">20.6.10.</span> <span class="nav-text">消息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%A1%E9%81%93"><span class="nav-number">20.6.11.</span> <span class="nav-text">管道</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">20.6.12.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="nav-number">20.6.13.</span> <span class="nav-text">共享内存</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%92%8C%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F"><span class="nav-number">21.</span> <span class="nav-text">中断和中断处理程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E4%B8%AD%E6%96%AD%E4%B8%8E%E6%85%A2%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">22.</span> <span class="nav-text">信号中断与慢系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%85%A2%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%EF%BC%88Slow-system-call%EF%BC%89"><span class="nav-number">22.1.</span> <span class="nav-text">慢系统调用（Slow system call）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EINTR%E9%94%99%E8%AF%AF%E4%BA%A7%E7%94%9F%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">22.2.</span> <span class="nav-text">EINTR错误产生的原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E8%A2%AB%E4%B8%AD%E6%96%AD%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">22.3.</span> <span class="nav-text">如何处理被中断的系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%BA%E4%B8%BA%E9%87%8D%E5%90%AF%E8%A2%AB%E4%B8%AD%E6%96%AD%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">22.3.1.</span> <span class="nav-text">人为重启被中断的系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E4%BF%A1%E5%8F%B7%E6%97%B6%E8%AE%BE%E7%BD%AE-SA-RESTART%E5%B1%9E%E6%80%A7"><span class="nav-number">22.3.2.</span> <span class="nav-text">安装信号时设置 SA_RESTART属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%BD%E7%95%A5%E4%BF%A1%E5%8F%B7"><span class="nav-number">22.3.3.</span> <span class="nav-text">忽略信号</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81%E4%B8%80"><span class="nav-number">22.4.</span> <span class="nav-text">测试代码一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81%E4%BA%8C"><span class="nav-number">22.5.</span> <span class="nav-text">测试代码二</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-7"><span class="nav-number">22.6.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-number">23.</span> <span class="nav-text">Linux虚拟地址空间布局</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4"><span class="nav-number">23.1.</span> <span class="nav-text">内核空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%88-stack"><span class="nav-number">23.2.</span> <span class="nav-text">栈(stack)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%98%A0%E5%B0%84%E6%AE%B5-mmap"><span class="nav-number">23.3.</span> <span class="nav-text">内存映射段(mmap)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86-heap"><span class="nav-number">23.4.</span> <span class="nav-text">堆(heap)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BSS%E6%AE%B5"><span class="nav-number">23.5.</span> <span class="nav-text">BSS段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%AE%B5-Data"><span class="nav-number">23.6.</span> <span class="nav-text">数据段(Data)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E6%AE%B5-text"><span class="nav-number">23.7.</span> <span class="nav-text">代码段(text)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%9D%E7%95%99%E5%8C%BA"><span class="nav-number">23.8.</span> <span class="nav-text">保留区</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E8%AF%A6%E8%A7%A3"><span class="nav-number">24.</span> <span class="nav-text">Linux文件系统详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-1"><span class="nav-number">24.1.</span> <span class="nav-text">概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E7%9B%98%E9%A9%B1%E5%8A%A8"><span class="nav-number">24.1.1.</span> <span class="nav-text">硬盘驱动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#General-Block-Device-Layer"><span class="nav-number">24.1.2.</span> <span class="nav-text">General Block Device Layer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">24.1.3.</span> <span class="nav-text">文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-VFS"><span class="nav-number">24.1.4.</span> <span class="nav-text">虚拟文件系统(VFS)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9FNFS-Network-File-System"><span class="nav-number">24.1.5.</span> <span class="nav-text">网络文件系统NFS (Network File System)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84"><span class="nav-number">24.2.</span> <span class="nav-text">文件存储结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E7%A3%81%E7%9B%98%E5%88%B0%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">24.2.1.</span> <span class="nav-text">物理磁盘到文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%96%87%E4%BB%B6%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">24.2.2.</span> <span class="nav-text">创建一个文件的过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E7%9B%AE%E5%BD%95%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">24.2.3.</span> <span class="nav-text">创建一个目录的过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E8%A7%A3%E9%93%BE%E6%8E%A5"><span class="nav-number">24.2.4.</span> <span class="nav-text">理解链接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E8%8A%82%E7%82%B9inode"><span class="nav-number">24.3.</span> <span class="nav-text">文件节点inode</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#inode%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">24.3.1.</span> <span class="nav-text">inode是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inode%E5%86%85%E5%AE%B9"><span class="nav-number">24.3.2.</span> <span class="nav-text">inode内容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inode%E7%BB%93%E6%9E%84"><span class="nav-number">24.3.3.</span> <span class="nav-text">inode结构</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ELF%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F"><span class="nav-number">25.</span> <span class="nav-text">ELF文件格式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Segment%E5%92%8CSection"><span class="nav-number">25.1.</span> <span class="nav-text">Segment和Section</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ELF-header%E8%AF%A6%E8%A7%A3"><span class="nav-number">25.2.</span> <span class="nav-text">ELF header详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ELF-header%E8%AF%A6%E8%A7%A3-1"><span class="nav-number">25.2.1.</span> <span class="nav-text">ELF header详解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#readelf%E8%AF%BB%E5%8F%96ELF-header"><span class="nav-number">25.2.2.</span> <span class="nav-text">readelf读取ELF header</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ELF-sections"><span class="nav-number">25.3.</span> <span class="nav-text">ELF sections</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#section-header%E5%AE%9A%E4%B9%89"><span class="nav-number">25.3.1.</span> <span class="nav-text">section header定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E9%A2%84%E5%AE%9A%E4%B9%89%E7%9A%84section-name"><span class="nav-number">25.3.2.</span> <span class="nav-text">系统预定义的section name</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0%EF%BC%9A%E8%AF%BB%E5%8F%96section-names"><span class="nav-number">25.3.3.</span> <span class="nav-text">练习：读取section names</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ELF%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F-1"><span class="nav-number">25.4.</span> <span class="nav-text">ELF文件格式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-2"><span class="nav-number">25.4.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F"><span class="nav-number">25.4.2.</span> <span class="nav-text">文件格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%A1%A8%E7%A4%BA"><span class="nav-number">25.4.3.</span> <span class="nav-text">数据表示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ELF%E6%96%87%E4%BB%B6%E5%A4%B4"><span class="nav-number">25.4.4.</span> <span class="nav-text">ELF文件头</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Section-Header"><span class="nav-number">25.4.5.</span> <span class="nav-text">Section Header</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Program-Header"><span class="nav-number">25.4.6.</span> <span class="nav-text">Program Header</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Symbol-Table"><span class="nav-number">25.4.7.</span> <span class="nav-text">Symbol Table</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Section%E5%92%8CSegment%E7%9A%84%E5%8C%BA%E5%88%AB%E5%92%8C%E8%81%94%E7%B3%BB"><span class="nav-number">25.4.8.</span> <span class="nav-text">Section和Segment的区别和联系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ELF%E6%96%87%E4%BB%B6%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="nav-number">25.5.</span> <span class="nav-text">ELF文件的加载过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E5%92%8C%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E7%9A%84%E7%AE%80%E8%A6%81%E4%BB%8B%E7%BB%8D"><span class="nav-number">25.5.1.</span> <span class="nav-text">加载和动态链接的简要介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%B3%A8%E5%86%8C%E6%9C%BA%E5%88%B6"><span class="nav-number">25.5.2.</span> <span class="nav-text">Linux可执行文件类型的注册机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="nav-number">25.5.3.</span> <span class="nav-text">内核空间的加载过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ELF%E6%96%87%E4%BB%B6%E4%B8%AD%E7%AC%A6%E5%8F%B7%E7%9A%84%E5%8A%A8%E6%80%81%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B"><span class="nav-number">25.6.</span> <span class="nav-text">ELF文件中符号的动态解析过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Global-Offset-Table%EF%BC%88GOT%EF%BC%89"><span class="nav-number">25.6.1.</span> <span class="nav-text">Global Offset Table（GOT）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Procedure-Linkage-Table%EF%BC%88PLT%EF%BC%89"><span class="nav-number">25.6.2.</span> <span class="nav-text">Procedure Linkage Table（PLT）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ELF%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E5%92%8C%E9%93%BE%E6%8E%A5%E7%9A%84%E7%AE%80%E8%A6%81%E6%80%BB%E7%BB%93"><span class="nav-number">25.7.</span> <span class="nav-text">ELF文件加载和链接的简要总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-Linux系统相关" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2019/04/19/Linux%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="article-date">
-  <time class="dt-published" datetime="2019-04-19T01:36:25.000Z" itemprop="datePublished">2019-04-19</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      Linux系统相关
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/04/19/Linux%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Linux系统相关 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux系统相关
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-04-19 09:36:25" itemprop="dateCreated datePublished" datetime="2019-04-19T09:36:25+08:00">2019-04-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-12-27 14:08:46" itemprop="dateModified" datetime="2022-12-27T14:08:46+08:00">2022-12-27</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="Linux-I-O-原理"><a href="#Linux-I-O-原理" class="headerlink" title="Linux I&#x2F;O 原理"></a>Linux I&#x2F;O 原理</h1><h2 id="导言"><a href="#导言" class="headerlink" title="导言"></a>导言</h2><p>如今的网络应用早已从 CPU 密集型转向了 I&#x2F;O 密集型，网络服务器大多是基于 C-S 模型，也即 客户端 - 服务端 模型，客户端需要和服务端进行大量的网络通信，这也决定了现代网络应用的性能瓶颈：I&#x2F;O。</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Linux-I-O-原理"><a href="#Linux-I-O-原理" class="headerlink" title="Linux I&#x2F;O 原理"></a>Linux I&#x2F;O 原理</h1><h2 id="导言"><a href="#导言" class="headerlink" title="导言"></a>导言</h2><p>如今的网络应用早已从 CPU 密集型转向了 I&#x2F;O 密集型，网络服务器大多是基于 C-S 模型，也即 客户端 - 服务端 模型，客户端需要和服务端进行大量的网络通信，这也决定了现代网络应用的性能瓶颈：I&#x2F;O。</p>
 <p>传统的 Linux 操作系统的标准 I&#x2F;O 接口是基于数据拷贝操作的，即 I&#x2F;O 操作会导致数据在操作系统内核地址空间的缓冲区和用户进程地址空间定义的缓冲区之间进行传输。设置缓冲区最大的好处是可以减少磁盘 I&#x2F;O 的操作，如果所请求的数据已经存放在操作系统的高速缓冲存储器中，那么就不需要再进行实际的物理磁盘 I&#x2F;O 操作；然而传统的 Linux I&#x2F;O 在数据传输过程中的数据拷贝操作深度依赖 CPU，也就是说 I&#x2F;O 过程需要 CPU 去执行数据拷贝的操作，因此导致了极大的系统开销，限制了操作系统有效进行数据传输操作的能力。</p>
 <p>I&#x2F;O 是决定网络服务器性能瓶颈的关键，而传统的 Linux I&#x2F;O 机制又会导致大量的数据拷贝操作，损耗性能，所以我们亟需一种新的技术来解决数据大量拷贝的问题，这个答案就是零拷贝(Zero-copy)。</p>
 <h3 id="计算机存储器"><a href="#计算机存储器" class="headerlink" title="计算机存储器"></a>计算机存储器</h3><p>既然要分析 Linux I&#x2F;O，就不能不了解计算机的各类存储器。</p>
@@ -3518,150 +3638,75 @@
 <p>sys_execve经过一系列过程，并最终通过ELF文件的处理函数load_elf_binary将用户程序和ELF解释器加载进内存，并将控制权交给解释器。（Kernel-Mode）</p>
 <p>ELF解释器进行相关库的加载，并最终把控制权交给用户程序。由解释器处理用户程序运行过程中符号的动态解析。（User-Mode）</p>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2019/04/19/Linux%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" data-id="cuidJmlLwrZTB-ZtOLdCc7tHE" data-title="Linux系统相关" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/04/09/GCC%E5%8F%8A%E7%BC%96%E8%AF%91%E6%8C%87%E5%8D%97/" rel="prev" title="GCC及软件编译指南">
+                  <i class="fa fa-angle-left"></i> GCC及软件编译指南
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/04/24/%E7%90%86%E8%A7%A3glibc_malloc_%E4%B8%BB%E6%B5%81%E7%94%A8%E6%88%B7%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" rel="next" title="理解 glibc malloc：主流用户态内存分配器实现原理">
+                  理解 glibc malloc：主流用户态内存分配器实现原理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2019/04/24/%E7%90%86%E8%A7%A3glibc_malloc_%E4%B8%BB%E6%B5%81%E7%94%A8%E6%88%B7%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          理解 glibc malloc：主流用户态内存分配器实现原理
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2019/04/09/GCC%E5%8F%8A%E7%BC%96%E8%AF%91%E6%8C%87%E5%8D%97/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">GCC及软件编译指南</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

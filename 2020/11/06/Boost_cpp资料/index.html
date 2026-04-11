@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>Boost C++库 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="本书是对Boost C++库的介绍，Boost 库通过加入一些在实践中非常有用的函数对C++标准进行了补充。由于Boost C++库是基于C++标准的，所以它们是使用最先进的C++来实现的。它们是平台独立的，并由于有一个大型的开发人员社区，它可以被包括Windows和Linux在内的许多操作系统所支持。 Boost C++库可以提升你作为一个C++开发人员的生产力。例如，你可以从智能指针中受益，帮">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="本书是对Boost C++库的介绍，Boost 库通过加入一些在实践中非常有用的函数对C++标准进行了补充。由于Boost C++库是基于C++标准的，所以它们是使用最先进的C++来实现的。它们是平台独立的，并由于有一个大型的开发人员社区，它可以被包括Windows和Linux在内的许多操作系统所支持。 Boost C++库可以提升你作为一个C++开发人员的生产力。例如，你可以从智能指针中受益，帮">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Boost C++库">
 <meta property="og:url" content="http://example.com/2020/11/06/Boost_cpp%E8%B5%84%E6%96%99/index.html">
@@ -18,85 +32,191 @@
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="C++">
 <meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2020/11/06/Boost_cpp%E8%B5%84%E6%96%99/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2020/11/06/Boost_cpp%E8%B5%84%E6%96%99/","path":"2020/11/06/Boost_cpp资料/","title":"Boost C++库"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Boost C++库 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-1-%E7%AB%A0-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">第 1 章 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-C-%E4%B8%8EBoost"><span class="nav-number">1.1.</span> <span class="nav-text">1.1.C++与Boost</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">1.2. 开发过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-%E5%AE%89%E8%A3%85"><span class="nav-number">1.3.</span> <span class="nav-text">1.3. 安装</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-2-%E7%AB%A0-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88"><span class="nav-number">2.</span> <span class="nav-text">第 2 章 智能指针</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E6%A6%82%E8%BF%B0"><span class="nav-number">2.1.</span> <span class="nav-text">2.1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-RAII"><span class="nav-number">2.2.</span> <span class="nav-text">2.2. RAII</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E4%BD%9C%E7%94%A8%E5%9F%9F%E6%8C%87%E9%92%88"><span class="nav-number">2.3.</span> <span class="nav-text">2.3. 作用域指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-%E4%BD%9C%E7%94%A8%E5%9F%9F%E6%95%B0%E7%BB%84"><span class="nav-number">2.4.</span> <span class="nav-text">2.4. 作用域数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-%E5%85%B1%E4%BA%AB%E6%8C%87%E9%92%88"><span class="nav-number">2.5.</span> <span class="nav-text">2.5. 共享指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-%E5%85%B1%E4%BA%AB%E6%95%B0%E7%BB%84"><span class="nav-number">2.6.</span> <span class="nav-text">2.6. 共享数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-7-%E5%BC%B1%E6%8C%87%E9%92%88"><span class="nav-number">2.7.</span> <span class="nav-text">2.7. 弱指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-8-%E4%BB%8B%E5%85%A5%E5%BC%8F%E6%8C%87%E9%92%88"><span class="nav-number">2.8.</span> <span class="nav-text">2.8. 介入式指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-9-%E6%8C%87%E9%92%88%E5%AE%B9%E5%99%A8"><span class="nav-number">2.9.</span> <span class="nav-text">2.9. 指针容器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-3-%E6%95%B0%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.</span> <span class="nav-text">第 3 数对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-%E6%A6%82%E8%BF%B0"><span class="nav-number">3.1.</span> <span class="nav-text">3.1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-Boost-Bind"><span class="nav-number">3.2.</span> <span class="nav-text">3.2.Boost.Bind</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-Boost-Ref"><span class="nav-number">3.3.</span> <span class="nav-text">3.3.Boost.Ref</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-Boost-Function"><span class="nav-number">3.4.</span> <span class="nav-text">3.4.Boost.Function</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-Boost-Lambda"><span class="nav-number">3.5.</span> <span class="nav-text">3.5.Boost.Lambda</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-4-%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86"><span class="nav-number">4.</span> <span class="nav-text">第 4 事件处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-%E6%A6%82%E8%BF%B0"><span class="nav-number">4.1.</span> <span class="nav-text">4.1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-%E4%BF%A1%E5%8F%B7-Signals"><span class="nav-number">4.2.</span> <span class="nav-text">4.2. 信号 Signals</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-%E8%BF%9E%E6%8E%A5-Connections"><span class="nav-number">4.3.</span> <span class="nav-text">4.3. 连接 Connections</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-5-%E7%AB%A0-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%84%E7%90%86"><span class="nav-number">5.</span> <span class="nav-text">第 5 章 字符串处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-%E5%89%8D%E8%A8%80"><span class="nav-number">5.1.</span> <span class="nav-text">5.1. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2-%E5%8C%BA%E5%9F%9F%E8%AE%BE%E7%BD%AE"><span class="nav-number">5.2.</span> <span class="nav-text">5.2. 区域设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-3-%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%AE%97%E6%B3%95%E5%BA%93Boost-StringAlgorithms"><span class="nav-number">5.3.</span> <span class="nav-text">5.3. 字符串算法库Boost.StringAlgorithms</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-4-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%BA%93Boost-Regex"><span class="nav-number">5.4.</span> <span class="nav-text">5.4. 正则表达式库Boost.Regex</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-5-%E8%AF%8D%E6%B1%87%E5%88%86%E5%89%B2%E5%99%A8%E5%BA%93Boost-Tokenizer"><span class="nav-number">5.5.</span> <span class="nav-text">5.5. 词汇分割器库Boost.Tokenizer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-6-%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%87%BA%E5%BA%93Boost-Format"><span class="nav-number">5.6.</span> <span class="nav-text">5.6. 格式化输出库Boost.Format</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-6-%E7%AB%A0-%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">6.</span> <span class="nav-text">第 6 章 多线程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-1-%E6%A6%82%E8%BF%B0"><span class="nav-number">6.1.</span> <span class="nav-text">6.1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-2-%E7%BA%BF%E7%A8%8B%E7%AE%A1%E7%90%86"><span class="nav-number">6.2.</span> <span class="nav-text">6.2. 线程管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-3-%E5%90%8C%E6%AD%A5"><span class="nav-number">6.3.</span> <span class="nav-text">6.3. 同步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-4-%E7%BA%BF%E7%A8%8B%E6%9C%AC%E5%9C%B0%E5%AD%98%E5%82%A8"><span class="nav-number">6.4.</span> <span class="nav-text">6.4. 线程本地存储</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-7-%E7%AB%A0-%E5%BC%82%E6%AD%A5%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA"><span class="nav-number">7.</span> <span class="nav-text">第 7 章 异步输入输出</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#7-1-%E6%A6%82%E8%BF%B0"><span class="nav-number">7.1.</span> <span class="nav-text">7.1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-2-I-O%E6%9C%8D%E5%8A%A1%E4%B8%8EI-O%E5%AF%B9%E8%B1%A1"><span class="nav-number">7.2.</span> <span class="nav-text">7.2. I&#x2F;O服务与I&#x2F;O对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-3-%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7%E4%B8%8E%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">7.3.</span> <span class="nav-text">7.3. 可扩展性与多线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-4-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B"><span class="nav-number">7.4.</span> <span class="nav-text">7.4. 网络编程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-5-%E5%BC%80%E5%8F%91Boost-Asio%E6%89%A9%E5%B1%95"><span class="nav-number">7.5.</span> <span class="nav-text">7.5. 开发Boost.Asio扩展</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-8-%E7%AB%A0-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E8%AE%AF"><span class="nav-number">8.</span> <span class="nav-text">第 8 章 进程间通讯</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#8-1-%E6%A6%82%E8%BF%B0"><span class="nav-number">8.1.</span> <span class="nav-text">8.1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-2-%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="nav-number">8.2.</span> <span class="nav-text">8.2. 共享内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-3-%E6%89%98%E7%AE%A1%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="nav-number">8.3.</span> <span class="nav-text">8.3. 托管共享内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-4-%E5%90%8C%E6%AD%A5"><span class="nav-number">8.4.</span> <span class="nav-text">8.4. 同步</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-9-%E7%AB%A0-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">9.</span> <span class="nav-text">第 9 章 文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#9-1-%E6%A6%82%E8%BF%B0"><span class="nav-number">9.1.</span> <span class="nav-text">9.1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-2-%E8%B7%AF%E5%BE%84"><span class="nav-number">9.2.</span> <span class="nav-text">9.2. 路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-3-%E6%96%87%E4%BB%B6%E4%B8%8E%E7%9B%AE%E5%BD%95"><span class="nav-number">9.3.</span> <span class="nav-text">9.3. 文件与目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-4-%E6%96%87%E4%BB%B6%E6%B5%81"><span class="nav-number">9.4.</span> <span class="nav-text">9.4. 文件流</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-10-%E7%AB%A0-%E6%97%A5%E6%9C%9F%E4%B8%8E%E6%97%B6%E9%97%B4"><span class="nav-number">10.</span> <span class="nav-text">第 10 章 日期与时间</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#10-1-%E6%A6%82%E8%BF%B0"><span class="nav-number">10.1.</span> <span class="nav-text">10.1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-2-%E5%8E%86%E6%B3%95%E6%97%A5%E6%9C%9F"><span class="nav-number">10.2.</span> <span class="nav-text">10.2. 历法日期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-3-%E4%BD%8D%E7%BD%AE%E6%97%A0%E5%85%B3%E7%9A%84%E6%97%B6%E9%97%B4"><span class="nav-number">10.3.</span> <span class="nav-text">10.3. 位置无关的时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-4-%E4%BD%8D%E7%BD%AE%E7%9B%B8%E5%85%B3%E7%9A%84%E6%97%B6%E9%97%B4"><span class="nav-number">10.4.</span> <span class="nav-text">10.4. 位置相关的时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-5-%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA"><span class="nav-number">10.5.</span> <span class="nav-text">10.5. 格式化输入输出</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-11-%E7%AB%A0-%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">11.</span> <span class="nav-text">第 11 章 序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#11-1-%E6%A6%82%E8%BF%B0"><span class="nav-number">11.1.</span> <span class="nav-text">11.1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-2-%E5%BD%92%E6%A1%A3"><span class="nav-number">11.2.</span> <span class="nav-text">11.2. 归档</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-3-%E6%8C%87%E9%92%88%E5%92%8C%E5%BC%95%E7%94%A8"><span class="nav-number">11.3.</span> <span class="nav-text">11.3. 指针和引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-4-%E5%AF%B9%E8%B1%A1%E7%B1%BB%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84%E7%9A%84%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">11.4.</span> <span class="nav-text">11.4. 对象类层次结构的序列化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-5-%E4%BC%98%E5%8C%96%E7%94%A8%E5%B0%81%E8%A3%85%E5%87%BD%E6%95%B0"><span class="nav-number">11.5.</span> <span class="nav-text">11.5. 优化用封装函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-12-%E7%AB%A0-%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90%E5%99%A8"><span class="nav-number">12.</span> <span class="nav-text">第 12 章 词法分析器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#12-1-%E6%A6%82%E8%BF%B0"><span class="nav-number">12.1.</span> <span class="nav-text">12.1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-2-%E6%89%A9%E5%B1%95BNF%E8%8C%83%E5%BC%8F"><span class="nav-number">12.2.</span> <span class="nav-text">12.2. 扩展BNF范式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-3-%E8%AF%AD%E6%B3%95"><span class="nav-number">12.3.</span> <span class="nav-text">12.3. 语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-4-%E5%8A%A8%E4%BD%9C"><span class="nav-number">12.4.</span> <span class="nav-text">12.4. 动作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-13-%E7%AB%A0-%E5%AE%B9%E5%99%A8"><span class="nav-number">13.</span> <span class="nav-text">第 13 章 容器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#13-1-%E6%A6%82%E8%BF%B0"><span class="nav-number">13.1.</span> <span class="nav-text">13.1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-2-Boost-Array"><span class="nav-number">13.2.</span> <span class="nav-text">13.2. Boost.Array</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-Boost-Unordered"><span class="nav-number">13.3.</span> <span class="nav-text">13.3. Boost.Unordered</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-4-Boost-MultiIndex"><span class="nav-number">13.4.</span> <span class="nav-text">13.4. Boost.MultiIndex</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-5-Boost-Bimap"><span class="nav-number">13.5.</span> <span class="nav-text">13.5. Boost.Bimap</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-14-%E7%AB%A0-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">14.</span> <span class="nav-text">第 14 章 数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#14-1-%E6%A6%82%E8%BF%B0"><span class="nav-number">14.1.</span> <span class="nav-text">14.1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-2-%E5%85%83%E7%BB%84"><span class="nav-number">14.2.</span> <span class="nav-text">14.2. 元组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-3-Boost-Any"><span class="nav-number">14.3.</span> <span class="nav-text">14.3. Boost.Any</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-4-Boost-Variant"><span class="nav-number">14.4.</span> <span class="nav-text">14.4. Boost.Variant</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-15-%E7%AB%A0-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">15.</span> <span class="nav-text">第 15 章 错误处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#15-1-%E6%A6%82%E8%BF%B0"><span class="nav-number">15.1.</span> <span class="nav-text">15.1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-2-Boost-System"><span class="nav-number">15.2.</span> <span class="nav-text">15.2. Boost.System</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-3-Boost-Exception"><span class="nav-number">15.3.</span> <span class="nav-text">15.3. Boost.Exception</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-16-%E7%AB%A0-%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="nav-number">16.</span> <span class="nav-text">第 16 章 类型转换操作符</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#16-1-%E6%A6%82%E8%BF%B0"><span class="nav-number">16.1.</span> <span class="nav-text">16.1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-2-Boost-Conversion"><span class="nav-number">16.2.</span> <span class="nav-text">16.2. Boost.Conversion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-3-Boost-NumericConversion"><span class="nav-number">16.3.</span> <span class="nav-text">16.3. Boost.NumericConversion</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-Boost_cpp资料" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/11/06/Boost_cpp%E8%B5%84%E6%96%99/" class="article-date">
-  <time class="dt-published" datetime="2020-11-06T01:16:00.000Z" itemprop="datePublished">2020-11-06</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      Boost C++库
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/06/Boost_cpp%E8%B5%84%E6%96%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Boost C++库 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Boost C++库
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-11-06 09:16:00" itemprop="dateCreated datePublished" datetime="2020-11-06T09:16:00+08:00">2020-11-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-01-06 22:18:58" itemprop="dateModified" datetime="2022-01-06T22:18:58+08:00">2022-01-06</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>本书是对Boost C++库的介绍，Boost 库通过加入一些在实践中非常有用的函数对C++标准进行了补充。由于Boost C++库是基于C++标准的，所以它们是使用最先进的C++来实现的。它们是平台独立的，并由于有一个大型的开发人员社区，它可以被包括Windows和Linux在内的许多操作系统所支持。</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>本书是对Boost C++库的介绍，Boost 库通过加入一些在实践中非常有用的函数对C++标准进行了补充。由于Boost C++库是基于C++标准的，所以它们是使用最先进的C++来实现的。它们是平台独立的，并由于有一个大型的开发人员社区，它可以被包括Windows和Linux在内的许多操作系统所支持。</p>
 <p>Boost C++库可以提升你作为一个C++开发人员的生产力。例如，你可以从智能指针中受益，帮助你写出更可靠的代码，或者使用某个库来开发平台独立的网络应用。因为多数Boost C++库正被收录进下一个版本的C++标准，所以你可以从今天就开始作好准备。</p>
 <h1 id="第-1-章-简介"><a href="#第-1-章-简介" class="headerlink" title="第 1 章 简介"></a>第 1 章 简介</h1><h2 id="1-1-C-与Boost"><a href="#1-1-C-与Boost" class="headerlink" title="1.1.C++与Boost"></a>1.1.C++与Boost</h2><p>Boost C++库 是一组基于C++标准的现代库。其源码按Boost Software License 来发布，允许任何人自由地使用、修改和分发。这些库是平台独立的，且支持大多数知名和不那么知名的编译器。</p>
 <p>Boost 社区负责开发和发布Boost C++库。社区由一个很大的C++开发人员群组组成，这些开发人员来自于全球，他们通过网站 <a target="_blank" rel="noopener" href="http://www.boost.org/">www.boost.org</a> 以及几个邮件列表相互协调。社区的使命是开发和收集高质量的库，作为C++标准的补充。那些被证实有价值且对于C++应用开发非常重要的库，将会有很大机会在某天被纳入C++标准中。</p>
@@ -1299,150 +1419,75 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;boost/numeric/conversion/cast.hpp&gt;</span> </span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span> </span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">  <span class="keyword">try</span> </span><br><span class="line">  &#123; </span><br><span class="line">    <span class="type">int</span> i = <span class="number">-0x10000</span>; </span><br><span class="line">    <span class="type">short</span> s = boost::<span class="built_in">numeric_cast</span>&lt;<span class="type">short</span>&gt;(i); </span><br><span class="line">    std::cout &lt;&lt; s &lt;&lt; std::endl; </span><br><span class="line">  &#125; </span><br><span class="line">  <span class="built_in">catch</span> (boost::numeric::negative_overflow &amp;e) </span><br><span class="line">  &#123; </span><br><span class="line">    std::cerr &lt;&lt; e.<span class="built_in">what</span>() &lt;&lt; std::endl; </span><br><span class="line">  &#125; </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
 <p><code>Boost.NumericConversion</code>还定义了其他的异常类型，都继承自<code>boost::numeric::bad_numeric_cast</code>。因为<code>boost::numeric::bad_numeric_cast</code>继承自<code>std::bad_cast</code>，所以<code>catch</code>处理也可以捕获这个类型的异常。</p>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/11/06/Boost_cpp%E8%B5%84%E6%96%99/" data-id="cuidsDSMioo7KlpVMmSTIOTHQ" data-title="Boost C++库" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C++</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/10/31/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B06/" rel="prev" title="深入理解Linux内核16-17章">
+                  <i class="fa fa-angle-left"></i> 深入理解Linux内核16-17章
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/11/08/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B07/" rel="next" title="深入理解Linux内核18-20章">
+                  深入理解Linux内核18-20章 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2020/11/08/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B07/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          深入理解Linux内核18-20章
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2020/10/31/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B06/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">深入理解Linux内核16-17章</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>清华大学操作系统课程笔记 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="第五讲 物理内存管理5.1 计算机体系结构和内存层次一个进程使用内存时要满足其要求，在不用时应及时回收。寄存器是非常小的；内存的最小访问是8bit，一次读写32位的话也要注意对齐问题。高速缓存如果不命中，则到内存中查找，在内存中找不到，就读取到内存中再读取，需要操作系统的介入。内存中每一个字节有一个物理地址，硬盘中扇区512字节最小单位，我们希望将线性的物理内存空间转换成逻辑内存空间；很好的把保护">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第五讲 物理内存管理5.1 计算机体系结构和内存层次一个进程使用内存时要满足其要求，在不用时应及时回收。寄存器是非常小的；内存的最小访问是8bit，一次读写32位的话也要注意对齐问题。高速缓存如果不命中，则到内存中查找，在内存中找不到，就读取到内存中再读取，需要操作系统的介入。内存中每一个字节有一个物理地址，硬盘中扇区512字节最小单位，我们希望将线性的物理内存空间转换成逻辑内存空间；很好的把保护">
 <meta property="og:type" content="article">
 <meta property="og:title" content="清华大学操作系统课程笔记">
 <meta property="og:url" content="http://example.com/2019/06/29/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/index.html">
@@ -18,85 +32,191 @@
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2019/06/29/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2019/06/29/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/","path":"2019/06/29/清华大学操作系统课程笔记/","title":"清华大学操作系统课程笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>清华大学操作系统课程笔记 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E8%AE%B2-%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">第五讲 物理内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E5%92%8C%E5%86%85%E5%AD%98%E5%B1%82%E6%AC%A1"><span class="nav-number">1.1.</span> <span class="nav-text">5.1 计算机体系结构和内存层次</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2-%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%92%8C%E5%9C%B0%E5%9D%80%E7%94%9F%E6%88%90"><span class="nav-number">1.2.</span> <span class="nav-text">5.2 地址空间和地址生成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-3-%E8%BF%9E%E7%BB%AD%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">1.3.</span> <span class="nav-text">5.3 连续内存分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-4%E7%A2%8E%E7%89%87%E6%95%B4%E7%90%86"><span class="nav-number">1.4.</span> <span class="nav-text">5.4碎片整理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-5-%E4%BC%99%E4%BC%B4%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.5.</span> <span class="nav-text">5.5 伙伴系统</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E8%AE%B2-%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E9%9D%9E%E8%BF%9E%E7%BB%AD%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">2.</span> <span class="nav-text">第六讲 物理内存管理: 非连续内存分配</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-1-%E9%9D%9E%E8%BF%9E%E7%BB%AD%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%9A%84%E9%9C%80%E6%B1%82%E8%83%8C%E6%99%AF"><span class="nav-number">2.1.</span> <span class="nav-text">6.1 非连续内存分配的需求背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-2-%E6%AE%B5%E5%BC%8F%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86"><span class="nav-number">2.2.</span> <span class="nav-text">6.2 段式存储管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-3-%E9%A1%B5%E5%BC%8F%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86"><span class="nav-number">2.3.</span> <span class="nav-text">6.3 页式存储管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-4-%E9%A1%B5%E8%A1%A8%E6%A6%82%E8%BF%B0"><span class="nav-number">2.4.</span> <span class="nav-text">6.4 页表概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-5-%E5%BF%AB%E8%A1%A8%E5%92%8C%E5%A4%9A%E7%BA%A7%E9%A1%B5%E8%A1%A8"><span class="nav-number">2.5.</span> <span class="nav-text">6.5 快表和多级页表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-6-%E5%8F%8D%E7%BD%AE%E9%A1%B5%E8%A1%A8"><span class="nav-number">2.6.</span> <span class="nav-text">6.6 反置页表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-7-%E6%AE%B5%E9%A1%B5%E5%BC%8F%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86"><span class="nav-number">2.7.</span> <span class="nav-text">6.7 段页式存储管理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%83%E8%AE%B2-%E5%AE%9E%E9%AA%8C%E4%BA%8C-%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">第七讲 实验二 物理内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#7-1-x86%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%89%B9%E6%9D%83%E7%BA%A7"><span class="nav-number">3.1.</span> <span class="nav-text">7.1 x86保护模式的特权级</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-2-%E4%BA%86%E8%A7%A3%E7%89%B9%E6%9D%83%E7%BA%A7%E5%88%87%E6%8D%A2%E8%BF%87%E7%A8%8B"><span class="nav-number">3.2.</span> <span class="nav-text">7.2 了解特权级切换过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-3-%E4%BA%86%E8%A7%A3%E6%AE%B5-%E9%A1%B5%E8%A1%A8"><span class="nav-number">3.3.</span> <span class="nav-text">7.3 了解段&#x2F;页表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-4-%E4%BA%86%E8%A7%A3UCORE%E5%BB%BA%E7%AB%8B%E6%AE%B5-%E9%A1%B5%E8%A1%A8"><span class="nav-number">3.4.</span> <span class="nav-text">7.4 了解UCORE建立段&#x2F;页表</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%85%AB%E8%AE%B2-%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E6%A6%82%E5%BF%B5"><span class="nav-number">4.</span> <span class="nav-text">第八讲 虚拟存储概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#8-1-%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E7%9A%84%E9%9C%80%E6%B1%82%E8%83%8C%E6%99%AF"><span class="nav-number">4.1.</span> <span class="nav-text">8.1 虚拟存储的需求背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-2-%E8%A6%86%E7%9B%96%E5%92%8C%E4%BA%A4%E6%8D%A2"><span class="nav-number">4.2.</span> <span class="nav-text">8.2 覆盖和交换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-3-%E5%B1%80%E9%83%A8%E6%80%A7%E5%8E%9F%E7%90%86"><span class="nav-number">4.3.</span> <span class="nav-text">8.3 局部性原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-4-%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E6%A6%82%E5%BF%B5"><span class="nav-number">4.4.</span> <span class="nav-text">8.4 虚拟存储概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-5-%E8%99%9A%E6%8B%9F%E9%A1%B5%E5%BC%8F%E5%AD%98%E5%82%A8"><span class="nav-number">4.5.</span> <span class="nav-text">8.5 虚拟页式存储</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-6-%E7%BC%BA%E9%A1%B5%E5%BC%82%E5%B8%B8"><span class="nav-number">4.6.</span> <span class="nav-text">8.6 缺页异常</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B9%9D%E8%AE%B2-%E9%A1%B5%E9%9D%A2%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95"><span class="nav-number">5.</span> <span class="nav-text">第九讲 页面置换算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#9-1-%E9%A1%B5%E9%9D%A2%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">5.1.</span> <span class="nav-text">9.1 页面置换算法的概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-2-%E6%9C%80%E4%BC%98%E7%AE%97%E6%B3%95%E3%80%81%E5%85%88%E8%BF%9B%E5%85%88%E5%87%BA%E7%AE%97%E6%B3%95%E5%92%8C%E6%9C%80%E8%BF%91%E6%9C%80%E4%B9%85%E6%9C%AA%E4%BD%BF%E7%94%A8%E7%AE%97%E6%B3%95"><span class="nav-number">5.2.</span> <span class="nav-text">9.2 最优算法、先进先出算法和最近最久未使用算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-3-%E6%97%B6%E9%92%9F%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95%E5%92%8C%E6%9C%80%E4%B8%8D%E5%B8%B8%E7%94%A8%E7%AE%97%E6%B3%95"><span class="nav-number">5.3.</span> <span class="nav-text">9.3 时钟置换算法和最不常用算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-4-BELADY%E7%8E%B0%E8%B1%A1%E5%92%8C%E5%B1%80%E9%83%A8%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95%E6%AF%94%E8%BE%83"><span class="nav-number">5.4.</span> <span class="nav-text">9.4 BELADY现象和局部置换算法比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-5-%E5%B7%A5%E4%BD%9C%E9%9B%86%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95"><span class="nav-number">5.5.</span> <span class="nav-text">9.5 工作集置换算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-6-%E7%BC%BA%E9%A1%B5%E7%8E%87%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95"><span class="nav-number">5.6.</span> <span class="nav-text">9.6 缺页率置换算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-7-%E6%8A%96%E5%8A%A8%E5%92%8C%E8%B4%9F%E8%BD%BD%E6%8E%A7%E5%88%B6"><span class="nav-number">5.7.</span> <span class="nav-text">9.7 抖动和负载控制</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E8%AE%B2-%E5%AE%9E%E9%AA%8C%E4%B8%89-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">6.</span> <span class="nav-text">第十讲 实验三 虚拟内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#10-1-%E5%AE%9E%E9%AA%8C%E7%9B%AE%E6%A0%87%EF%BC%9A%E8%99%9A%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">6.1.</span> <span class="nav-text">10.1 实验目标：虚存管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-2-%E5%9B%9E%E9%A1%BE%E5%8E%86%E5%8F%B2%E5%92%8C%E4%BA%86%E8%A7%A3%E5%BD%93%E4%B8%8B"><span class="nav-number">6.2.</span> <span class="nav-text">10.2 回顾历史和了解当下</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-3-%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B%E3%80%81%E5%85%B3%E9%94%AE%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E5%8A%9F%E8%83%BD"><span class="nav-number">6.3.</span> <span class="nav-text">10.3 处理流程、关键数据结构和功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-4-%E9%A1%B5%E8%AE%BF%E9%97%AE%E5%BC%82%E5%B8%B8"><span class="nav-number">6.4.</span> <span class="nav-text">10.4 页访问异常</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-5-%E9%A1%B5%E6%8D%A2%E5%85%A5%E6%8D%A2%E5%87%BA%E6%9C%BA%E5%88%B6"><span class="nav-number">6.5.</span> <span class="nav-text">10.5 页换入换出机制</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E4%B8%80%E8%AE%B2-%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B"><span class="nav-number">7.</span> <span class="nav-text">第十一讲 进程和线程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#11-1-%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">7.1.</span> <span class="nav-text">11.1 进程的概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-2-%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%9D%97%EF%BC%88PCB%EF%BC%89"><span class="nav-number">7.2.</span> <span class="nav-text">11.2 进程控制块（PCB）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-3-%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81"><span class="nav-number">7.3.</span> <span class="nav-text">11.3 进程状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-4-%E4%B8%89%E7%8A%B6%E6%80%81%E8%BF%9B%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">7.4.</span> <span class="nav-text">11.4 三状态进程模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-5-%E6%8C%82%E8%B5%B7%E8%BF%9B%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">7.5.</span> <span class="nav-text">11.5 挂起进程模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-6-%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">7.6.</span> <span class="nav-text">11.6 线程的概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-7-%E7%94%A8%E6%88%B7%E7%BA%BF%E7%A8%8B"><span class="nav-number">7.7.</span> <span class="nav-text">11.7 用户线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-8-%E5%86%85%E6%A0%B8%E7%BA%BF%E7%A8%8B"><span class="nav-number">7.8.</span> <span class="nav-text">11.8 内核线程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%AE%B2-%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6"><span class="nav-number">8.</span> <span class="nav-text">第十二讲 进程控制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#12-1-%E8%BF%9B%E7%A8%8B%E5%88%87%E6%8D%A2"><span class="nav-number">8.1.</span> <span class="nav-text">12.1 进程切换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-2-%E8%BF%9B%E7%A8%8B%E5%88%9B%E5%BB%BA"><span class="nav-number">8.2.</span> <span class="nav-text">12.2 进程创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-3-%E8%BF%9B%E7%A8%8B%E5%8A%A0%E8%BD%BD"><span class="nav-number">8.3.</span> <span class="nav-text">12.3 进程加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-4-%E8%BF%9B%E7%A8%8B%E7%AD%89%E5%BE%85%E4%B8%8E%E9%80%80%E5%87%BA"><span class="nav-number">8.4.</span> <span class="nav-text">12.4 进程等待与退出</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E4%B8%89%E8%AE%B2-%E5%AE%9E%E9%AA%8C%E5%9B%9B-%E5%86%85%E6%A0%B8%E7%BA%BF%E7%A8%8B%E7%AE%A1%E7%90%86"><span class="nav-number">9.</span> <span class="nav-text">第十三讲 实验四 内核线程管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#13-1-%E6%80%BB%E4%BD%93%E4%BB%8B%E7%BB%8D"><span class="nav-number">9.1.</span> <span class="nav-text">13.1 总体介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-2-%E5%85%B3%E9%94%AE%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">9.2.</span> <span class="nav-text">13.2 关键数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="nav-number">9.3.</span> <span class="nav-text">13.3 执行流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-4-%E5%AE%9E%E9%99%85%E6%93%8D%E4%BD%9C"><span class="nav-number">9.4.</span> <span class="nav-text">13.4 实际操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%AE%B2-%E5%AE%9E%E9%AA%8C%E4%BA%94-%E7%94%A8%E6%88%B7%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86"><span class="nav-number">10.</span> <span class="nav-text">第十四讲 实验五 用户进程管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#14-1-%E6%80%BB%E4%BD%93%E4%BB%8B%E7%BB%8D"><span class="nav-number">10.1.</span> <span class="nav-text">14.1 总体介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-2-%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80"><span class="nav-number">10.2.</span> <span class="nav-text">14.2 进程的内存布局</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-3-%E6%89%A7%E8%A1%8CELF%E6%A0%BC%E5%BC%8F%E7%9A%84%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81-do-execve%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">10.3.</span> <span class="nav-text">14.3 执行ELF格式的二进制代码-do_execve的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-4-%E6%89%A7%E8%A1%8CELF%E6%A0%BC%E5%BC%8F%E7%9A%84%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81-load-icode%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">10.4.</span> <span class="nav-text">14.4 执行ELF格式的二进制代码-load_icode的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-5-%E8%BF%9B%E7%A8%8B%E5%A4%8D%E5%88%B6"><span class="nav-number">10.5.</span> <span class="nav-text">14.5 进程复制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-6-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84copy-on-write%E6%9C%BA%E5%88%B6"><span class="nav-number">10.6.</span> <span class="nav-text">14.6 内存管理的copy-on-write机制</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E6%9C%BA%E8%B0%83%E5%BA%A6"><span class="nav-number">11.</span> <span class="nav-text">处理机调度</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E6%9C%BA%E8%B0%83%E5%BA%A6%E6%A6%82%E5%BF%B5"><span class="nav-number">11.1.</span> <span class="nav-text">处理机调度概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E5%87%86%E5%88%99"><span class="nav-number">11.2.</span> <span class="nav-text">调度准则</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E6%97%B6%E6%9C%BA"><span class="nav-number">11.2.1.</span> <span class="nav-text">调度时机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E7%AD%96%E7%95%A5"><span class="nav-number">11.2.2.</span> <span class="nav-text">调度策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E6%9D%A5%E5%85%88%E6%9C%8D%E5%8A%A1%E3%80%81%E7%9F%AD%E8%BF%9B%E7%A8%8B%E4%BC%98%E5%85%88%E5%92%8C%E6%9C%80%E9%AB%98%E5%93%8D%E5%BA%94%E6%AF%94%E4%BC%98%E5%85%88%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="nav-number">11.3.</span> <span class="nav-text">先来先服务、短进程优先和最高响应比优先调度算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%9D%A5%E5%85%88%E6%9C%8D%E5%8A%A1"><span class="nav-number">11.3.1.</span> <span class="nav-text">先来先服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%AD%E8%BF%9B%E7%A8%8B%E4%BC%98%E5%85%88"><span class="nav-number">11.3.2.</span> <span class="nav-text">短进程优先</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E9%AB%98%E5%93%8D%E5%BA%94%E6%AF%94%E4%BC%98%E5%85%88"><span class="nav-number">11.3.3.</span> <span class="nav-text">最高响应比优先</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E7%89%87%E8%BD%AE%E8%BD%AC%E3%80%81%E5%A4%9A%E7%BA%A7%E5%8F%8D%E9%A6%88%E9%98%9F%E5%88%97%E3%80%81%E5%85%AC%E5%B9%B3%E5%85%B1%E4%BA%AB%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E5%92%8Cucore%E8%B0%83%E5%BA%A6%E6%A1%86%E6%9E%B6"><span class="nav-number">11.4.</span> <span class="nav-text">时间片轮转、多级反馈队列、公平共享调度算法和ucore调度框架</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E7%89%87%E8%BD%AE%E8%BD%AC"><span class="nav-number">11.4.1.</span> <span class="nav-text">时间片轮转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BA%A7%E5%8F%8D%E9%A6%88%E9%98%9F%E5%88%97"><span class="nav-number">11.4.2.</span> <span class="nav-text">多级反馈队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AC%E5%B9%B3%E5%85%B1%E4%BA%AB%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="nav-number">11.4.3.</span> <span class="nav-text">公平共享调度算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#uCore%E7%9A%84%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97run-queue"><span class="nav-number">11.4.4.</span> <span class="nav-text">uCore的调度队列run_queue</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E8%B0%83%E5%BA%A6%E5%92%8C%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6"><span class="nav-number">11.5.</span> <span class="nav-text">实时调度和多处理器调度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6"><span class="nav-number">11.5.1.</span> <span class="nav-text">多处理器调度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%85%88%E7%BA%A7%E5%8F%8D%E7%BD%AE"><span class="nav-number">11.6.</span> <span class="nav-text">优先级反置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E5%85%AD-%E8%B0%83%E5%BA%A6%E5%99%A8"><span class="nav-number">12.</span> <span class="nav-text">实验六 调度器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#16-1-%E6%80%BB%E4%BD%93%E4%BB%8B%E7%BB%8D%E5%92%8C%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B"><span class="nav-number">12.1.</span> <span class="nav-text">16.1 总体介绍和调度过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-2-%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%94%AF%E6%92%91%E6%A1%86%E6%9E%B6"><span class="nav-number">12.2.</span> <span class="nav-text">16.2 调度算法支撑框架</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-3-%E6%97%B6%E9%97%B4%E7%89%87%E8%BD%AE%E8%BD%AC%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%EF%BC%88RR%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%EF%BC%89"><span class="nav-number">12.3.</span> <span class="nav-text">16.3 时间片轮转调度算法（RR调度算法）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-4-Stride%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="nav-number">12.4.</span> <span class="nav-text">16.4 Stride调度算法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E4%B8%83%E8%AE%B2-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5"><span class="nav-number">13.</span> <span class="nav-text">第十七讲 同步互斥</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">13.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%B0%E5%AE%9E%E7%94%9F%E6%B4%BB%E4%B8%AD%E7%9A%84%E5%90%8C%E6%AD%A5%E9%97%AE%E9%A2%98"><span class="nav-number">13.2.</span> <span class="nav-text">现实生活中的同步问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%B4%E7%95%8C%E5%8C%BA%E5%92%8C%E7%A6%81%E7%94%A8%E7%A1%AC%E4%BB%B6%E4%B8%AD%E6%96%AD%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95"><span class="nav-number">13.3.</span> <span class="nav-text">临界区和禁用硬件中断同步方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95"><span class="nav-number">13.4.</span> <span class="nav-text">基于软件的同步方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E6%8A%BD%E8%B1%A1%E7%9A%84%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95"><span class="nav-number">13.5.</span> <span class="nav-text">高级抽象的同步方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E5%85%AB%E8%AE%B2-%E4%BF%A1%E5%8F%B7%E9%87%8F%E4%B8%8E%E7%AE%A1%E7%A8%8B"><span class="nav-number">14.</span> <span class="nav-text">第十八讲 信号量与管程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">14.1.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F%E4%BD%BF%E7%94%A8"><span class="nav-number">14.2.</span> <span class="nav-text">信号量使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%A1%E7%A8%8B"><span class="nav-number">14.3.</span> <span class="nav-text">管程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%B0%B1%E9%A4%90%E9%97%AE%E9%A2%98"><span class="nav-number">14.4.</span> <span class="nav-text">哲学家就餐问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB%E8%80%85-%E5%86%99%E8%80%85%E9%97%AE%E9%A2%98"><span class="nav-number">14.5.</span> <span class="nav-text">读者-写者问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E4%B9%9D%E8%AE%B2-%E5%AE%9E%E9%AA%8C%E4%B8%83-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5"><span class="nav-number">15.</span> <span class="nav-text">第十九讲 实验七 同步互斥</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E4%BD%93%E4%BB%8B%E7%BB%8D"><span class="nav-number">15.1.</span> <span class="nav-text">总体介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%95%E5%B1%82%E6%94%AF%E6%92%91"><span class="nav-number">15.2.</span> <span class="nav-text">底层支撑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0"><span class="nav-number">15.3.</span> <span class="nav-text">信号量设计实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%A1%E7%A8%8B%E5%92%8C%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0"><span class="nav-number">15.4.</span> <span class="nav-text">管程和条件变量设计实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%B0%B1%E9%A4%90%E9%97%AE%E9%A2%98-1"><span class="nav-number">15.5.</span> <span class="nav-text">哲学家就餐问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E4%B9%9D%E8%AE%B2-%E5%AE%9E%E9%AA%8C%E4%B8%83-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5-1"><span class="nav-number">16.</span> <span class="nav-text">第十九讲 实验七 同步互斥</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E6%A6%82%E5%BF%B5"><span class="nav-number">16.1.</span> <span class="nav-text">死锁概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95"><span class="nav-number">16.2.</span> <span class="nav-text">死锁处理方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%B6%E8%A1%8C%E5%AE%B6%E7%AE%97%E6%B3%95"><span class="nav-number">16.3.</span> <span class="nav-text">银行家算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E6%A3%80%E6%B5%8B"><span class="nav-number">16.4.</span> <span class="nav-text">死锁检测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1%EF%BC%88IPC%EF%BC%89%E6%A6%82%E5%BF%B5"><span class="nav-number">16.5.</span> <span class="nav-text">进程通信（IPC）概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E5%92%8C%E7%AE%A1%E9%81%93"><span class="nav-number">16.6.</span> <span class="nav-text">信号和管道</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E5%92%8C%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="nav-number">16.7.</span> <span class="nav-text">消息队列和共享内存</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-清华大学操作系统课程笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2019/06/29/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/" class="article-date">
-  <time class="dt-published" datetime="2019-06-29T15:56:00.000Z" itemprop="datePublished">2019-06-29</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      清华大学操作系统课程笔记
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/06/29/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="清华大学操作系统课程笔记 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          清华大学操作系统课程笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-06-29 23:56:00" itemprop="dateCreated datePublished" datetime="2019-06-29T23:56:00+08:00">2019-06-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-01-06 19:10:54" itemprop="dateModified" datetime="2022-01-06T19:10:54+08:00">2022-01-06</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="第五讲-物理内存管理"><a href="#第五讲-物理内存管理" class="headerlink" title="第五讲 物理内存管理"></a>第五讲 物理内存管理</h1><h2 id="5-1-计算机体系结构和内存层次"><a href="#5-1-计算机体系结构和内存层次" class="headerlink" title="5.1 计算机体系结构和内存层次"></a>5.1 计算机体系结构和内存层次</h2><p>一个进程使用内存时要满足其要求，在不用时应及时回收。<br>寄存器是非常小的；内存的最小访问是8bit，一次读写32位的话也要注意对齐问题。<br>高速缓存如果不命中，则到内存中查找，在内存中找不到，就读取到内存中再读取，需要操作系统的介入。<br>内存中每一个字节有一个物理地址，硬盘中扇区512字节最小单位，我们希望将线性的物理内存空间转换成逻辑内存空间；很好的把保护（独立地址空间）和共享（访问相同内存）结合，虚拟化（实现更大的逻辑空间）。<br>操作系统中采用的内存管理：重定位（段地址+offset）、分段（希望他能够不连续，将程序分成三个相对独立的空间，代码数据加堆栈）、分页（把内存分成最基本的单位）。<br>MMU（内存管理单元）</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="第五讲-物理内存管理"><a href="#第五讲-物理内存管理" class="headerlink" title="第五讲 物理内存管理"></a>第五讲 物理内存管理</h1><h2 id="5-1-计算机体系结构和内存层次"><a href="#5-1-计算机体系结构和内存层次" class="headerlink" title="5.1 计算机体系结构和内存层次"></a>5.1 计算机体系结构和内存层次</h2><p>一个进程使用内存时要满足其要求，在不用时应及时回收。<br>寄存器是非常小的；内存的最小访问是8bit，一次读写32位的话也要注意对齐问题。<br>高速缓存如果不命中，则到内存中查找，在内存中找不到，就读取到内存中再读取，需要操作系统的介入。<br>内存中每一个字节有一个物理地址，硬盘中扇区512字节最小单位，我们希望将线性的物理内存空间转换成逻辑内存空间；很好的把保护（独立地址空间）和共享（访问相同内存）结合，虚拟化（实现更大的逻辑空间）。<br>操作系统中采用的内存管理：重定位（段地址+offset）、分段（希望他能够不连续，将程序分成三个相对独立的空间，代码数据加堆栈）、分页（把内存分成最基本的单位）。<br>MMU（内存管理单元）</p>
 <h2 id="5-2-地址空间和地址生成"><a href="#5-2-地址空间和地址生成" class="headerlink" title="5.2 地址空间和地址生成"></a>5.2 地址空间和地址生成</h2><p>物理地址空间是硬件支持的地址空间，多少位就是有多少条地址线；逻辑地址是CPU运行时进程看到的地址，对应可执行文件中的区域，进程的逻辑地址空间需要转换成物理地址空间，最后在总线上访问相应的物理单元。<br>逻辑地址生成：将程序转成汇编码，添加逻辑地址，再进行链接，把多个模块和函数库排成线性的序列，在程序加载要进行重定位，把链接时生成的地址进行平移。<br>在编译时，如果已知运行时起始地址，则可以直接生成地址，如果起始地址改变则要重新编译；在加载时也可生成绝对地址，编译器生成可重定位的代码；执行时地址生成出现在使用虚拟存储的情况下，在执行指令时进行地址转换，最灵活，可以移动指令实现虚拟内存。</p>
 <p>CPU：ALU需要逻辑地址的内存内容，MMU进行逻辑地址和内存地址的转换，CPU控制逻辑给总线发送物理地址请求，内存发送物理地址的内容给CPU，操作系统建立逻辑地址和物理地址的映射。<br>CPU在执行指令时，如果访问数据段的数据，如果数据段基址+offset超过了数据段，则内存访问异常，执行失败，调用中断处理程序；如果正确那在段基址寄存器配合下得到相应的地址。  </p>
 <h2 id="5-3-连续内存分配"><a href="#5-3-连续内存分配" class="headerlink" title="5.3 连续内存分配"></a>5.3 连续内存分配</h2><p>为了提高效率，采用动态分配算法。<br>连续内存分配指给进程分配一块不小于指定大小的连续物理内存区域，会产生一些碎片，一种是两块分配单元之间的未被使用的内存，内部碎片是分配单元内部的未被使用的内存，取决于分配单元大小是否要考虑取整和对齐。<br>动态分区分配是指程序加载时分配一个进程指定大小可变的分区，分配得到的地址是连续的。操作系统维护两个数据结构，一个是所有进程已分配的分区，另一个是空闲分区。动态分区分配策略有很多：<br>最先匹配（从空闲分区列表里找第一个符合的，释放时检查是不是可以和邻近的空闲分区合并，在高地址有大块的空闲分区，但有很多外部碎片，分配大块时较慢）；<br>最佳匹配（全找一遍，找最合适的，空闲分区按照从小往大排序，释放时跟邻近地址的合并，并且重排序，大部分分配的尺寸较小时比较好，避免大的空闲分区被拆分，减小外部碎片，但是增加了无用的小碎片）；<br>最差匹配（找相差最大的，空闲分区从大到小拍，分配时找最大的，释放时检查可否与邻近的空闲分区合并，进行合并并重排序，如果中等大小的分配较多，则最好，避免出现太多小碎片，但是释放分区比较慢，容易破坏大的空闲分区）。  </p>
@@ -837,150 +957,75 @@
 <p>消息队列独立于进程，进程结束了之后消息队列可以继续存在，实现两个不同生命周期的进程之间的通信。</p>
 <p>共享内存是把同一个物理内存区域同时映射到多个进程的内存地址空间的通信机制。每个进程都有私有内存地址空间，需要明确设置共享内存段。同一进程的线程总是共享相同的内存地址空间。</p>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2019/06/29/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/" data-id="cuidGHEnuzRN3ddIr42U9cwR0" data-title="清华大学操作系统课程笔记" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag"># 操作系统</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/06/29/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%BE%E7%A8%8B%E5%AE%9E%E9%AA%8C/" rel="prev" title="清华大学操作系统课程实验">
+                  <i class="fa fa-angle-left"></i> 清华大学操作系统课程实验
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/08/12/%E8%B0%88%E8%B0%88%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84ACID/" rel="next" title="谈谈数据库的ACID">
+                  谈谈数据库的ACID <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2019/08/12/%E8%B0%88%E8%B0%88%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84ACID/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          谈谈数据库的ACID
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2019/06/29/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%BE%E7%A8%8B%E5%AE%9E%E9%AA%8C/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">清华大学操作系统课程实验</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

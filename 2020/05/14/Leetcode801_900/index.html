@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>Leetcode801 - 900 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Leetcode802. Find Eventual Safe StatesWe start at some node in a directed graph, and every turn, we walk along a directed edge of the graph. If we reach a terminal node (that is, it has no outgoing di">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Leetcode802. Find Eventual Safe StatesWe start at some node in a directed graph, and every turn, we walk along a directed edge of the graph. If we reach a terminal node (that is, it has no outgoing di">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Leetcode801 - 900">
 <meta property="og:url" content="http://example.com/2020/05/14/Leetcode801_900/index.html">
@@ -31,85 +45,191 @@
 <meta property="article:tag" content="Leetcode">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/img/20210904105200.png">
+
+
+<link rel="canonical" href="http://example.com/2020/05/14/Leetcode801_900/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2020/05/14/Leetcode801_900/","path":"2020/05/14/Leetcode801_900/","title":"Leetcode801 - 900"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Leetcode801 - 900 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode802-Find-Eventual-Safe-States"><span class="nav-number">1.</span> <span class="nav-text">Leetcode802. Find Eventual Safe States</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode804-Unique-Morse-Code-Words"><span class="nav-number">2.</span> <span class="nav-text">Leetcode804. Unique Morse Code Words</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode806-Number-of-Lines-To-Write-String"><span class="nav-number">3.</span> <span class="nav-text">Leetcode806. Number of Lines To Write String</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode807-Max-Increase-to-Keep-City-Skyline"><span class="nav-number">4.</span> <span class="nav-text">Leetcode807. Max Increase to Keep City Skyline</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode808-Soup-Servings"><span class="nav-number">5.</span> <span class="nav-text">Leetcode808. Soup Servings</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode809-Expressive-Words"><span class="nav-number">6.</span> <span class="nav-text">Leetcode809. Expressive Words</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode811-Subdomain-Visit-Count"><span class="nav-number">7.</span> <span class="nav-text">Leetcode811. Subdomain Visit Count</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode812-Largest-Triangle-Area"><span class="nav-number">8.</span> <span class="nav-text">Leetcode812. Largest Triangle Area</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode813-Largest-Sum-of-Averages"><span class="nav-number">9.</span> <span class="nav-text">Leetcode813. Largest Sum of Averages</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode814-Binary-Tree-Pruning"><span class="nav-number">10.</span> <span class="nav-text">Leetcode814. Binary Tree Pruning</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode816-Ambiguous-Coordinates"><span class="nav-number">11.</span> <span class="nav-text">Leetcode816. Ambiguous Coordinates</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode817-Linked-List-Components"><span class="nav-number">12.</span> <span class="nav-text">Leetcode817. Linked List Components</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode819-Most-Common-Word"><span class="nav-number">13.</span> <span class="nav-text">Leetcode819. Most Common Word</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode820-Short-Encoding-of-Words"><span class="nav-number">14.</span> <span class="nav-text">Leetcode820. Short Encoding of Words</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode821-Shortest-Distance-to-a-Character"><span class="nav-number">15.</span> <span class="nav-text">Leetcode821. Shortest Distance to a Character</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode822-Card-Flipping-Game"><span class="nav-number">16.</span> <span class="nav-text">Leetcode822. Card Flipping Game</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode823-Binary-Trees-With-Factors"><span class="nav-number">17.</span> <span class="nav-text">Leetcode823. Binary Trees With Factors</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode824-Goat-Latin"><span class="nav-number">18.</span> <span class="nav-text">Leetcode824. Goat Latin</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode825-Friends-Of-Appropriate-Ages"><span class="nav-number">19.</span> <span class="nav-text">Leetcode825. Friends Of Appropriate Ages</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode826-Most-Profit-Assigning-Work"><span class="nav-number">20.</span> <span class="nav-text">Leetcode826. Most Profit Assigning Work</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode830-Positions-of-Large-Groups"><span class="nav-number">21.</span> <span class="nav-text">Leetcode830. Positions of Large Groups</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode831-Masking-Personal-Information"><span class="nav-number">22.</span> <span class="nav-text">Leetcode831. Masking Personal Information</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode832-Flipping-an-Image"><span class="nav-number">23.</span> <span class="nav-text">Leetcode832. Flipping an Image</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode833-Find-And-Replace-in-String"><span class="nav-number">24.</span> <span class="nav-text">Leetcode833. Find And Replace in String</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode835-Image-Overlap"><span class="nav-number">25.</span> <span class="nav-text">Leetcode835. Image Overlap</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode836-Rectangle-Overlap"><span class="nav-number">26.</span> <span class="nav-text">Leetcode836. Rectangle Overlap</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode838-Push-Dominoes"><span class="nav-number">27.</span> <span class="nav-text">Leetcode838. Push Dominoes</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode840-Magic-Squares-In-Grid"><span class="nav-number">28.</span> <span class="nav-text">Leetcode840. Magic Squares In Grid</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode841-Keys-and-Rooms"><span class="nav-number">29.</span> <span class="nav-text">Leetcode841. Keys and Rooms</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode844-Backspace-String-Compare"><span class="nav-number">30.</span> <span class="nav-text">Leetcode844. Backspace String Compare</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode845-Longest-Mountain-in-Array-%E6%95%B0%E7%BB%84%E4%B8%AD%E6%9C%80%E9%95%BF%E7%9A%84%E5%B1%B1"><span class="nav-number">31.</span> <span class="nav-text">Leetcode845. Longest Mountain in Array 数组中最长的山</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode848-Shifting-Letters"><span class="nav-number">32.</span> <span class="nav-text">Leetcode848. Shifting Letters</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode849-Maximize-Distance-to-Closest-Person"><span class="nav-number">33.</span> <span class="nav-text">Leetcode849. Maximize Distance to Closest Person</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode851-Loud-and-Rich"><span class="nav-number">34.</span> <span class="nav-text">Leetcode851. Loud and Rich</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode852-Peak-Index-in-a-Mountain-Array"><span class="nav-number">35.</span> <span class="nav-text">Leetcode852. Peak Index in a Mountain Array</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode853-Car-Fleet"><span class="nav-number">36.</span> <span class="nav-text">Leetcode853. Car Fleet</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode855-Exam-Room"><span class="nav-number">37.</span> <span class="nav-text">Leetcode855. Exam Room</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode856-Score-of-Parentheses"><span class="nav-number">38.</span> <span class="nav-text">Leetcode856. Score of Parentheses</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode858-Mirror-Reflection"><span class="nav-number">39.</span> <span class="nav-text">Leetcode858. Mirror Reflection</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%A4%A7%E6%84%8F%EF%BC%9A"><span class="nav-number">39.1.</span> <span class="nav-text">题目大意：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="nav-number">39.2.</span> <span class="nav-text">解题思路</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode859-Buddy-Strings"><span class="nav-number">40.</span> <span class="nav-text">Leetcode859. Buddy Strings</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode860-Lemonade-Change"><span class="nav-number">41.</span> <span class="nav-text">Leetcode860. Lemonade Change</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode861-Score-After-Flipping-Matrix"><span class="nav-number">42.</span> <span class="nav-text">Leetcode861. Score After Flipping Matrix</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode863-All-Nodes-Distance-K-in-Binary-Tree"><span class="nav-number">43.</span> <span class="nav-text">Leetcode863. All Nodes Distance K in Binary Tree</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode865-Smallest-Subtree-with-all-the-Deepest-Nodes"><span class="nav-number">44.</span> <span class="nav-text">Leetcode865. Smallest Subtree with all the Deepest Nodes</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode867-Transpose-Matrix"><span class="nav-number">45.</span> <span class="nav-text">Leetcode867. Transpose Matrix</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode868-Binary-Gap"><span class="nav-number">46.</span> <span class="nav-text">Leetcode868. Binary Gap</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LeetCode869-Reordered-Power-of-2"><span class="nav-number">47.</span> <span class="nav-text">LeetCode869. Reordered Power of 2</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode870-Advantage-Shuffle"><span class="nav-number">48.</span> <span class="nav-text">Leetcode870. Advantage Shuffle</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode871-Minimum-Number-of-Refueling-Stops"><span class="nav-number">49.</span> <span class="nav-text">Leetcode871. Minimum Number of Refueling Stops</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode872-Leaf-Similar-Trees"><span class="nav-number">50.</span> <span class="nav-text">Leetcode872. Leaf-Similar Trees</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode873-Length-of-Longest-Fibonacci-Subsequence"><span class="nav-number">51.</span> <span class="nav-text">Leetcode873. Length of Longest Fibonacci Subsequence</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode874-Walking-Robot-Simulation"><span class="nav-number">52.</span> <span class="nav-text">Leetcode874. Walking Robot Simulation</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode875-Koko-Eating-Bananas"><span class="nav-number">53.</span> <span class="nav-text">Leetcode875. Koko Eating Bananas</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode876-Middle-of-the-Linked-List"><span class="nav-number">54.</span> <span class="nav-text">Leetcode876. Middle of the Linked List</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode877-Stone-Game"><span class="nav-number">55.</span> <span class="nav-text">Leetcode877. Stone Game</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode881-Boats-to-Save-People"><span class="nav-number">56.</span> <span class="nav-text">Leetcode881. Boats to Save People</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode883-Projection-Area-of-3D-Shapes"><span class="nav-number">57.</span> <span class="nav-text">Leetcode883. Projection Area of 3D Shapes</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode884-Uncommon-Words-from-Two-Sentences"><span class="nav-number">58.</span> <span class="nav-text">Leetcode884. Uncommon Words from Two Sentences</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode885-Spiral-Matrix-III"><span class="nav-number">59.</span> <span class="nav-text">Leetcode885. Spiral Matrix III</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LeetCode886-Possible-Bipartition"><span class="nav-number">60.</span> <span class="nav-text">LeetCode886. Possible Bipartition</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode888-Fair-Candy-Swap"><span class="nav-number">61.</span> <span class="nav-text">Leetcode888. Fair Candy Swap</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode889-Construct-Binary-Tree-from-Preorder-and-Postorder-Traversal"><span class="nav-number">62.</span> <span class="nav-text">Leetcode889. Construct Binary Tree from Preorder and Postorder Traversal</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode890-Find-and-Replace-Pattern"><span class="nav-number">63.</span> <span class="nav-text">Leetcode890. Find and Replace Pattern</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode892-Surface-Area-of-3D-Shapes"><span class="nav-number">64.</span> <span class="nav-text">Leetcode892. Surface Area of 3D Shapes</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode893-Groups-of-Special-Equivalent-Strings"><span class="nav-number">65.</span> <span class="nav-text">Leetcode893. Groups of Special-Equivalent Strings</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode894-All-Possible-Full-Binary-Trees"><span class="nav-number">66.</span> <span class="nav-text">Leetcode894. All Possible Full Binary Trees</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode896-Monotonic-Array"><span class="nav-number">67.</span> <span class="nav-text">Leetcode896. Monotonic Array</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode897-Increasing-Order-Search-Tree"><span class="nav-number">68.</span> <span class="nav-text">Leetcode897. Increasing Order Search Tree</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode900-RLE-Iterator"><span class="nav-number">69.</span> <span class="nav-text">Leetcode900. RLE Iterator</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-Leetcode801_900" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/05/14/Leetcode801_900/" class="article-date">
-  <time class="dt-published" datetime="2020-05-13T16:41:00.000Z" itemprop="datePublished">2020-05-14</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      Leetcode801 - 900
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/05/14/Leetcode801_900/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Leetcode801 - 900 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Leetcode801 - 900
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-05-14 00:41:00" itemprop="dateCreated datePublished" datetime="2020-05-14T00:41:00+08:00">2020-05-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-12-26 16:02:38" itemprop="dateModified" datetime="2022-12-26T16:02:38+08:00">2022-12-26</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="Leetcode802-Find-Eventual-Safe-States"><a href="#Leetcode802-Find-Eventual-Safe-States" class="headerlink" title="Leetcode802. Find Eventual Safe States"></a>Leetcode802. Find Eventual Safe States</h1><p>We start at some node in a directed graph, and every turn, we walk along a directed edge of the graph. If we reach a terminal node (that is, it has no outgoing directed edges), we stop.</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Leetcode802-Find-Eventual-Safe-States"><a href="#Leetcode802-Find-Eventual-Safe-States" class="headerlink" title="Leetcode802. Find Eventual Safe States"></a>Leetcode802. Find Eventual Safe States</h1><p>We start at some node in a directed graph, and every turn, we walk along a directed edge of the graph. If we reach a terminal node (that is, it has no outgoing directed edges), we stop.</p>
 <p>We define a starting node to be safe if we must eventually walk to a terminal node. More specifically, there is a natural number k, so that we must have stopped at a terminal node in less than k steps for any choice of where to walk.</p>
 <p>Return an array containing all the safe nodes of the graph. The answer should be sorted in ascending order.</p>
 <p>The directed graph has n nodes with labels from 0 to n - 1, where n is the length of graph. The graph is given in the following form: graph[i] is a list of labels j such that (i, j) is a directed edge of the graph, going from node i to node j.</p>
@@ -480,7 +600,7 @@
 <li>Email address:<ul>
 <li>We define a name to be a string of length ≥ 2consisting of only lowercase letters a-z or uppercase letters A-Z.</li>
 <li>An email address starts with a name, followed by the symbol ‘@’, followed by a name, followed by the dot ‘.’ and followed by a name. </li>
-<li>All email addresses are guaranteed to be valid and in the format of “<a href="mailto:&#110;&#x61;&#x6d;&#101;&#49;&#x40;&#110;&#97;&#109;&#x65;&#50;&#46;&#x6e;&#97;&#109;&#x65;&#51;">name1@name2.name3</a>“.</li>
+<li>All email addresses are guaranteed to be valid and in the format of “<a href="mailto:&#x6e;&#97;&#x6d;&#x65;&#x31;&#x40;&#x6e;&#97;&#x6d;&#101;&#x32;&#x2e;&#x6e;&#97;&#109;&#101;&#x33;">name1@name2.name3</a>“.</li>
 <li>To mask an email, all names must be converted to lowercase and all letters between the first and last letter of the first name must be replaced by 5 asterisks ‘*’.</li>
 </ul>
 </li>
@@ -1431,150 +1551,75 @@
 <p>其实我们根本不用将数字对儿抽离出来，直接用输入数组的形式就可以，再用一个指针 cur，指向当前数字对儿的次数即可。那么在 next 函数中，我们首先来个 while 循环，判读假如 cur 没有越界，且当n大于当前当次数了，则n减去当前次数，cur 自增2，移动到下一个数字对儿的次数上。当 while 循环结束后，判断若此时 cur 已经越界了，则返回 -1，否则当前次数减去n，并且返回当前数字即可，参见代码如下：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RLEIterator</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">RLEIterator</span>(vector&amp; A): <span class="built_in">nums</span>(A), <span class="built_in">cur</span>(<span class="number">0</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">next</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (cur &lt; nums.<span class="built_in">size</span>() &amp;&amp; n &gt; nums[cur]) &#123;</span><br><span class="line">            n -= nums[cur];</span><br><span class="line">            cur += <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (cur &gt;= nums.<span class="built_in">size</span>()) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        nums[cur] -= n;</span><br><span class="line">        <span class="keyword">return</span> nums[cur + <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> cur;</span><br><span class="line">    vector nums;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/05/14/Leetcode801_900/" data-id="cuidJUmbGseMFAf_7D7d8Jm6D" data-title="Leetcode801 - 900" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Leetcode/" rel="tag"># Leetcode</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/05/12/Leetcode701_800/" rel="prev" title="Leetcode701 - 800">
+                  <i class="fa fa-angle-left"></i> Leetcode701 - 800
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/05/20/Leetcode1_100/" rel="next" title="Leetcode1 - 100">
+                  Leetcode1 - 100 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2020/05/20/Leetcode1_100/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Leetcode1 - 100
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2020/05/12/Leetcode701_800/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Leetcode701 - 800</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

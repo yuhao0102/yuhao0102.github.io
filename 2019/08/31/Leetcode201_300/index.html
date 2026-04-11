@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>Leetcode201 - 300 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Leetcode201. Bitwise AND of Numbers RangeGiven two integers left and right that represent the range [left, right], return the bitwise AND of all numbers in this range, inclusive. Example 1: 12Input: l">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Leetcode201. Bitwise AND of Numbers RangeGiven two integers left and right that represent the range [left, right], return the bitwise AND of all numbers in this range, inclusive. Example 1: 12Input: l">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Leetcode201 - 300">
 <meta property="og:url" content="http://example.com/2019/08/31/Leetcode201_300/index.html">
@@ -18,85 +32,191 @@
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="Leetcode">
 <meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2019/08/31/Leetcode201_300/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2019/08/31/Leetcode201_300/","path":"2019/08/31/Leetcode201_300/","title":"Leetcode201 - 300"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Leetcode201 - 300 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode201-Bitwise-AND-of-Numbers-Range"><span class="nav-number">1.</span> <span class="nav-text">Leetcode201. Bitwise AND of Numbers Range</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode202-Happy-Number"><span class="nav-number">2.</span> <span class="nav-text">Leetcode202. Happy Number</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode203-Remove-Linked-List-Elements"><span class="nav-number">3.</span> <span class="nav-text">Leetcode203. Remove Linked List Elements</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode204-Count-Primes"><span class="nav-number">4.</span> <span class="nav-text">Leetcode204. Count Primes</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode205-Isomorphic-Strings"><span class="nav-number">5.</span> <span class="nav-text">Leetcode205. Isomorphic Strings</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode206-Reverse-Linked-List"><span class="nav-number">6.</span> <span class="nav-text">Leetcode206. Reverse Linked List</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode207-Course-Schedule"><span class="nav-number">7.</span> <span class="nav-text">Leetcode207. Course Schedule</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode208-Implement-Trie-Prefix-Tree"><span class="nav-number">8.</span> <span class="nav-text">Leetcode208. Implement Trie (Prefix Tree)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode209-Minimum-Size-Subarray-Sum"><span class="nav-number">9.</span> <span class="nav-text">Leetcode209. Minimum Size Subarray Sum</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode210-Course-Schedule-II"><span class="nav-number">10.</span> <span class="nav-text">Leetcode210. Course Schedule II</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode212-Word-Search-II"><span class="nav-number">11.</span> <span class="nav-text">Leetcode212.Word Search II</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode213-House-Robber-II"><span class="nav-number">12.</span> <span class="nav-text">Leetcode213. House Robber II</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode215-Kth-Largest-Element-in-an-Array"><span class="nav-number">13.</span> <span class="nav-text">Leetcode215. Kth Largest Element in an Array</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode216-Combination-Sum-III"><span class="nav-number">14.</span> <span class="nav-text">Leetcode216. Combination Sum III</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode217-Contains-Duplicate"><span class="nav-number">15.</span> <span class="nav-text">Leetcode217. Contains Duplicate</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode218-The-Skyline-Problem"><span class="nav-number">16.</span> <span class="nav-text">Leetcode218. The Skyline Problem</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode219-Contains-Duplicate-II"><span class="nav-number">17.</span> <span class="nav-text">Leetcode219. Contains Duplicate II</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode221-Maximal-Square"><span class="nav-number">18.</span> <span class="nav-text">Leetcode221. Maximal Square</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode222-Count-Complete-Tree-Nodes"><span class="nav-number">19.</span> <span class="nav-text">Leetcode222. Count Complete Tree Nodes</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode223-Rectangle-Area"><span class="nav-number">20.</span> <span class="nav-text">Leetcode223. Rectangle Area</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode224-Basic-Calculator"><span class="nav-number">21.</span> <span class="nav-text">Leetcode224. Basic Calculator</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode225-Implement-Stack-using-Queues"><span class="nav-number">22.</span> <span class="nav-text">Leetcode225. Implement Stack using Queues</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode226-Invert-Binary-Tree"><span class="nav-number">23.</span> <span class="nav-text">Leetcode226. Invert Binary Tree</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode227-Basic-Calculator-II"><span class="nav-number">24.</span> <span class="nav-text">Leetcode227. Basic Calculator II</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode228-Summary-Ranges"><span class="nav-number">25.</span> <span class="nav-text">Leetcode228. Summary Ranges</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode229-Majority-Element-II"><span class="nav-number">26.</span> <span class="nav-text">Leetcode229. Majority Element II</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode230-Kth-Smallest-Element-in-a-BST"><span class="nav-number">27.</span> <span class="nav-text">Leetcode230. Kth Smallest Element in a BST</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode231-Power-of-Two"><span class="nav-number">28.</span> <span class="nav-text">Leetcode231. Power of Two</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode232-Implement-Queue-using-Stacks"><span class="nav-number">29.</span> <span class="nav-text">Leetcode232. Implement Queue using Stacks</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode233-Number-of-Digit-One"><span class="nav-number">30.</span> <span class="nav-text">Leetcode233. Number of Digit One</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode234-Palindrome-Linked-List"><span class="nav-number">31.</span> <span class="nav-text">Leetcode234. Palindrome Linked List</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode235-Lowest-Common-Ancestor-of-a-Binary-Search-Tree"><span class="nav-number">32.</span> <span class="nav-text">Leetcode235. Lowest Common Ancestor of a Binary Search Tree</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode236-Lowest-Common-Ancestor-of-a-Binary-Tree"><span class="nav-number">33.</span> <span class="nav-text">Leetcode236. Lowest Common Ancestor of a Binary Tree</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode237-Delete-Node-in-a-Linked-List"><span class="nav-number">34.</span> <span class="nav-text">Leetcode237. Delete Node in a Linked List</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode238-Product-of-Array-Except-Self"><span class="nav-number">35.</span> <span class="nav-text">Leetcode238. Product of Array Except Self</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode239-Sliding-Window-Maximum"><span class="nav-number">36.</span> <span class="nav-text">Leetcode239. Sliding Window Maximum</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8C%E7%AB%AF%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97"><span class="nav-number">36.1.</span> <span class="nav-text">双端单调队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%9D%97%E6%B3%95"><span class="nav-number">36.2.</span> <span class="nav-text">分块法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">36.3.</span> <span class="nav-text">代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode240-Search-a-2D-Matrix-II"><span class="nav-number">37.</span> <span class="nav-text">Leetcode240. Search a 2D Matrix II</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode241-Different-Ways-to-Add-Parentheses-%E6%B7%BB%E5%8A%A0%E6%8B%AC%E5%8F%B7%E7%9A%84%E4%B8%8D%E5%90%8C%E6%96%B9%E5%BC%8F"><span class="nav-number">38.</span> <span class="nav-text">Leetcode241. Different Ways to Add Parentheses 添加括号的不同方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode242-Valid-Anagram"><span class="nav-number">39.</span> <span class="nav-text">Leetcode242. Valid Anagram</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode243-Shortest-Word-Distance"><span class="nav-number">40.</span> <span class="nav-text">Leetcode243. Shortest Word Distance</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode246-Strobogrammatic-Number"><span class="nav-number">41.</span> <span class="nav-text">Leetcode246. Strobogrammatic Number</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode247-Strobogrammatic-Number-II"><span class="nav-number">42.</span> <span class="nav-text">Leetcode247. Strobogrammatic Number II</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode252-Meeting-Rooms"><span class="nav-number">43.</span> <span class="nav-text">Leetcode252. Meeting Rooms</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode253-Meeting-Rooms-II"><span class="nav-number">44.</span> <span class="nav-text">Leetcode253. Meeting Rooms II</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode256-Paint-House"><span class="nav-number">45.</span> <span class="nav-text">Leetcode256. Paint House</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode257-Binary-Tree-Paths"><span class="nav-number">46.</span> <span class="nav-text">Leetcode257. Binary Tree Paths</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode258-Add-Digits"><span class="nav-number">47.</span> <span class="nav-text">Leetcode258. Add Digits</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode259-3Sum-Smaller"><span class="nav-number">48.</span> <span class="nav-text">Leetcode259. 3Sum Smaller</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode260-Single-Number-III"><span class="nav-number">49.</span> <span class="nav-text">Leetcode260. Single Number III</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode261-Graph-Valid-Tree"><span class="nav-number">50.</span> <span class="nav-text">Leetcode261. Graph Valid Tree</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode263-Ugly-Number"><span class="nav-number">51.</span> <span class="nav-text">Leetcode263. Ugly Number</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode264-Ugly-Number-II"><span class="nav-number">52.</span> <span class="nav-text">Leetcode264. Ugly Number II</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode266-Palindrome-Permutation"><span class="nav-number">53.</span> <span class="nav-text">Leetcode266. Palindrome Permutation</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode268-Missing-Number"><span class="nav-number">54.</span> <span class="nav-text">Leetcode268. Missing Number</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode270-Closest-Binary-Search-Tree-Value"><span class="nav-number">55.</span> <span class="nav-text">Leetcode270. Closest Binary Search Tree Value</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode273-Integer-to-English-Words"><span class="nav-number">56.</span> <span class="nav-text">Leetcode273. Integer to English Words</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode274-H-Index"><span class="nav-number">57.</span> <span class="nav-text">Leetcode274. H-Index</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode275-H-Index-II"><span class="nav-number">58.</span> <span class="nav-text">Leetcode275. H-Index II</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode278-First-Bad-Version"><span class="nav-number">59.</span> <span class="nav-text">Leetcode278. First Bad Version</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode279-Perfect-Squares"><span class="nav-number">60.</span> <span class="nav-text">Leetcode279. Perfect Squares</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode282-Expression-Add-Operators"><span class="nav-number">61.</span> <span class="nav-text">Leetcode282. Expression Add Operators</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode283-Move-Zeroes"><span class="nav-number">62.</span> <span class="nav-text">Leetcode283. Move Zeroes</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode287-Find-the-Duplicate-Number"><span class="nav-number">63.</span> <span class="nav-text">Leetcode287. Find the Duplicate Number</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode289-Game-of-Life"><span class="nav-number">64.</span> <span class="nav-text">Leetcode289. Game of Life</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode290-Word-Pattern"><span class="nav-number">65.</span> <span class="nav-text">Leetcode290. Word Pattern</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode292-Nim-Game"><span class="nav-number">66.</span> <span class="nav-text">Leetcode292. Nim Game</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode293-Flip-Game"><span class="nav-number">67.</span> <span class="nav-text">Leetcode293. Flip Game</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode295-Find-Median-from-Data-Stream"><span class="nav-number">68.</span> <span class="nav-text">Leetcode295. Find Median from Data Stream</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LeetCode296-Best-Meeting-Point"><span class="nav-number">69.</span> <span class="nav-text">LeetCode296. Best Meeting Point</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode297-Serialize-and-Deserialize-Binary-Tree"><span class="nav-number">70.</span> <span class="nav-text">Leetcode297. Serialize and Deserialize Binary Tree</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode299-Bulls-and-Cows"><span class="nav-number">71.</span> <span class="nav-text">Leetcode299. Bulls and Cows</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode300-Longest-Increasing-Subsequence"><span class="nav-number">72.</span> <span class="nav-text">Leetcode300. Longest Increasing Subsequence</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-Leetcode201_300" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2019/08/31/Leetcode201_300/" class="article-date">
-  <time class="dt-published" datetime="2019-08-31T07:21:00.000Z" itemprop="datePublished">2019-08-31</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      Leetcode201 - 300
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/08/31/Leetcode201_300/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Leetcode201 - 300 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Leetcode201 - 300
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-08-31 15:21:00" itemprop="dateCreated datePublished" datetime="2019-08-31T15:21:00+08:00">2019-08-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-12-26 16:02:32" itemprop="dateModified" datetime="2022-12-26T16:02:32+08:00">2022-12-26</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="Leetcode201-Bitwise-AND-of-Numbers-Range"><a href="#Leetcode201-Bitwise-AND-of-Numbers-Range" class="headerlink" title="Leetcode201. Bitwise AND of Numbers Range"></a>Leetcode201. Bitwise AND of Numbers Range</h1><p>Given two integers left and right that represent the range [left, right], return the bitwise AND of all numbers in this range, inclusive.</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Leetcode201-Bitwise-AND-of-Numbers-Range"><a href="#Leetcode201-Bitwise-AND-of-Numbers-Range" class="headerlink" title="Leetcode201. Bitwise AND of Numbers Range"></a>Leetcode201. Bitwise AND of Numbers Range</h1><p>Given two integers left and right that represent the range [left, right], return the bitwise AND of all numbers in this range, inclusive.</p>
 <p>Example 1:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: left = 5, right = 7</span><br><span class="line">Output: 4</span><br></pre></td></tr></table></figure>
 
@@ -1103,150 +1223,75 @@
 <p>下面来看一种优化时间复杂度到 O(nlgn) 的解法，这里用到了二分查找法，所以才能加快运行时间哇。思路是，先建立一个数组 ends，把首元素放进去，然后比较之后的元素，如果遍历到的新元素比 ends 数组中的首元素小的话，替换首元素为此新元素，如果遍历到的新元素比 ends 数组中的末尾元素还大的话，将此新元素添加到 ends 数组末尾(注意不覆盖原末尾元素)。如果遍历到的新元素比 ends 数组首元素大，比尾元素小时，此时用二分查找法找到第一个不小于此新元素的位置，覆盖掉位置的原来的数字，以此类推直至遍历完整个 nums 数组，此时 ends 数组的长度就是要求的LIS的长度，特别注意的是 ends 数组的值可能不是一个真实的 LIS，比如若输入数组 nums 为 {4, 2， 4， 5， 3， 7}，那么算完后的 ends 数组为 {2， 3， 5， 7}，可以发现它不是一个原数组的 LIS，只是长度相等而已，千万要注意这点。参见代码如下：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">lengthOfLIS</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums.<span class="built_in">empty</span>()) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; ends&#123;nums[<span class="number">0</span>]&#125;;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> a : nums) &#123;</span><br><span class="line">            <span class="keyword">if</span> (a &lt; ends[<span class="number">0</span>]) ends[<span class="number">0</span>] = a;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (a &gt; ends.<span class="built_in">back</span>()) ends.<span class="built_in">push_back</span>(a);</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="type">int</span> left = <span class="number">0</span>, right = ends.<span class="built_in">size</span>();</span><br><span class="line">                <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">                    <span class="type">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">                    <span class="keyword">if</span> (ends[mid] &lt; a) left = mid + <span class="number">1</span>;</span><br><span class="line">                    <span class="keyword">else</span> right = mid;</span><br><span class="line">                &#125;</span><br><span class="line">                ends[right] = a;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ends.<span class="built_in">size</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2019/08/31/Leetcode201_300/" data-id="cuid0tWkybcU-_ZHsB6T7CokW" data-title="Leetcode201 - 300" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Leetcode/" rel="tag"># Leetcode</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/08/28/cpp%E5%85%B3%E9%94%AE%E5%AD%97%E5%8F%8A%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7/" rel="prev" title="C++关键字及语言特性">
+                  <i class="fa fa-angle-left"></i> C++关键字及语言特性
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/01/04/Makefile%E6%95%99%E7%A8%8B/" rel="next" title="Makefile教程">
+                  Makefile教程 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2020/01/04/Makefile%E6%95%99%E7%A8%8B/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Makefile教程
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2019/08/28/cpp%E5%85%B3%E9%94%AE%E5%AD%97%E5%8F%8A%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">C++关键字及语言特性</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

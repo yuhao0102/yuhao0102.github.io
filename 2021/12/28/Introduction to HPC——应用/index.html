@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>Introduction to HPC——应用 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="分子动力学分子动力学是模拟分子的逐个原子行为并从这些原子运动中推导出宏观属性的技术。它适用于生物分子，如蛋白质和核酸，以及材料科学和纳米技术的天然和合成分子。分子动力学属于粒子方法的范畴，其中包括天体力学和天体物理学中的N体问题，这里介绍的许多观点将延续到这些其他领域。此外，还有一些分子动力学的特殊情况，包括从头开始的分子动力学，其中电子被量子力学地处理，因此可以对化学反应进行建模。我们将不讨论这">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="分子动力学分子动力学是模拟分子的逐个原子行为并从这些原子运动中推导出宏观属性的技术。它适用于生物分子，如蛋白质和核酸，以及材料科学和纳米技术的天然和合成分子。分子动力学属于粒子方法的范畴，其中包括天体力学和天体物理学中的N体问题，这里介绍的许多观点将延续到这些其他领域。此外，还有一些分子动力学的特殊情况，包括从头开始的分子动力学，其中电子被量子力学地处理，因此可以对化学反应进行建模。我们将不讨论这">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Introduction to HPC——应用">
 <meta property="og:url" content="http://example.com/2021/12/28/Introduction%20to%20HPC%E2%80%94%E2%80%94%E5%BA%94%E7%94%A8/index.html">
@@ -50,85 +64,185 @@
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/img/fig-nb-cell.jpg">
+
+
+<link rel="canonical" href="http://example.com/2021/12/28/Introduction%20to%20HPC%E2%80%94%E2%80%94%E5%BA%94%E7%94%A8/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2021/12/28/Introduction%20to%20HPC%E2%80%94%E2%80%94%E5%BA%94%E7%94%A8/","path":"2021/12/28/Introduction to HPC——应用/","title":"Introduction to HPC——应用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Introduction to HPC——应用 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%AD%90%E5%8A%A8%E5%8A%9B%E5%AD%A6"><span class="nav-number">1.</span> <span class="nav-text">分子动力学</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%97%E5%8A%9B%E8%AE%A1%E7%AE%97"><span class="nav-number">1.1.</span> <span class="nav-text">受力计算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9B%E5%9C%BA%E5%88%86%E6%9E%90"><span class="nav-number">1.1.1.</span> <span class="nav-text">力场分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E7%9F%AD%E7%A8%8B%E9%9D%9E%E7%BB%93%E5%90%88%E5%8A%9B"><span class="nav-number">1.1.2.</span> <span class="nav-text">计算短程非结合力</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%83%E8%83%9E%E5%88%97%E8%A1%A8"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">元胞列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Verlet%E8%BF%91%E9%82%BB%E8%A1%A8"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">Verlet近邻表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8C%E6%97%B6%E4%BD%BF%E7%94%A8%E5%85%83%E8%83%9E%E5%92%8C%E8%BF%91%E9%82%BB%E8%A1%A8"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">同时使用元胞和近邻表</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E9%95%BF%E7%A8%8B%E5%8A%9B"><span class="nav-number">1.1.3.</span> <span class="nav-text">计算长程力</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%B1%82N%E4%BD%93%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">分层N体方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B2%92%E5%AD%90%E7%BD%91%E6%A0%BC%E6%B3%95"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">粒子网格法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%83%E7%93%A6%E5%B0%94%E5%BE%B7%E6%B3%95"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">埃瓦尔德法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%88%86%E8%A7%A3"><span class="nav-number">1.2.</span> <span class="nav-text">并行分解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E5%88%86%E8%A7%A3"><span class="nav-number">1.2.1.</span> <span class="nav-text">原子分解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9B%E7%9A%84%E5%88%86%E8%A7%A3"><span class="nav-number">1.2.2.</span> <span class="nav-text">力的分解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A9%BA%E9%97%B4%E5%88%86%E8%A7%A3"><span class="nav-number">1.2.3.</span> <span class="nav-text">空间分解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Neutral-Territory-Methods"><span class="nav-number">1.2.4.</span> <span class="nav-text">Neutral Territory Methods</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%BF%AB%E9%80%9F%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2"><span class="nav-number">1.3.</span> <span class="nav-text">并行快速傅立叶变换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E4%B8%80%E7%BB%B4FFT"><span class="nav-number">1.3.1.</span> <span class="nav-text">并行一维FFT</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A0%E8%BD%AC%E7%BD%AE%E7%9A%84%E4%B8%80%E7%BB%B4FFT"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">无转置的一维FFT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AC%E7%BD%AE%E7%9A%84%E4%B8%80%E7%BB%B4FFT"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">转置的一维FFT</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E4%B8%89%E7%BB%B4FFT"><span class="nav-number">1.3.2.</span> <span class="nav-text">并行三维FFT</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9D%97%E7%8A%B6%E5%88%86%E8%A7%A3%E7%9A%84%E4%B8%89%E7%BB%B4FFT"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">块状分解的三维FFT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E7%BB%B4FFT%E4%B8%8E%E6%9D%BF%E5%9D%97%E5%88%86%E8%A7%A3"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">三维FFT与板块分解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E7%BB%B4FFT%E4%B8%8E%E9%93%85%E7%AC%94%E5%BC%8F%E5%88%86%E8%A7%A3"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">三维FFT与铅笔式分解</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%AD%90%E5%8A%A8%E5%8A%9B%E5%AD%A6%E7%9A%84%E6%95%B4%E5%90%88"><span class="nav-number">1.4.</span> <span class="nav-text">分子动力学的整合</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%84%E5%90%88%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">组合算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%A6%82%E8%A6%81"><span class="nav-number">2.1.</span> <span class="nav-text">排序算法概要</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">2.1.1.</span> <span class="nav-text">复杂度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E7%BD%91%E7%BB%9C"><span class="nav-number">2.1.2.</span> <span class="nav-text">排序网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">2.1.3.</span> <span class="nav-text">并行复杂度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A5%87%E5%81%B6%E4%BA%A4%E6%8D%A2%E6%8E%92%E5%BA%8F"><span class="nav-number">2.2.</span> <span class="nav-text">奇偶交换排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F"><span class="nav-number">2.3.</span> <span class="nav-text">快速排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E4%B8%AD%E8%BF%9B%E8%A1%8C%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F"><span class="nav-number">2.3.1.</span> <span class="nav-text">在共享内存中进行快速排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E7%AB%8B%E6%96%B9%E4%BD%93%E4%B8%8A%E7%9A%84%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F"><span class="nav-number">2.3.2.</span> <span class="nav-text">超立方体上的快速排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E4%B8%80%E8%88%AC%E7%9A%84%E5%B9%B6%E8%A1%8C%E5%A4%84%E7%90%86%E5%99%A8%E4%B8%8A%E8%BF%9B%E8%A1%8C%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F"><span class="nav-number">2.3.3.</span> <span class="nav-text">在一般的并行处理器上进行快速排序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F"><span class="nav-number">2.4.</span> <span class="nav-text">基数排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F"><span class="nav-number">2.4.1.</span> <span class="nav-text">并行基数排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E6%95%88%E5%B0%8F%E6%95%B0%E7%9A%84%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F"><span class="nav-number">2.4.2.</span> <span class="nav-text">有效小数的基数排序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B7%E6%9C%AC%E6%8E%92%E5%BA%8F"><span class="nav-number">2.5.</span> <span class="nav-text">样本排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87MapReduce%E6%8E%92%E5%BA%8F"><span class="nav-number">2.5.1.</span> <span class="nav-text">通过MapReduce排序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8C%E8%B0%83%E6%8E%92%E5%BA%8F"><span class="nav-number">2.6.</span> <span class="nav-text">双调排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A0%E6%95%B0%E6%9F%A5%E6%89%BE"><span class="nav-number">2.7.</span> <span class="nav-text">素数查找</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%BE%E8%AE%BA%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">图论分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E5%9B%BE%E7%AE%97%E6%B3%95"><span class="nav-number">3.1.</span> <span class="nav-text">传统图算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84%E7%AE%97%E6%B3%95"><span class="nav-number">3.1.1.</span> <span class="nav-text">最短路径算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Floyd-Warshall%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84"><span class="nav-number">3.1.2.</span> <span class="nav-text">Floyd-Warshall最短路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">3.1.3.</span> <span class="nav-text">生成树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Graph-cut"><span class="nav-number">3.1.4.</span> <span class="nav-text">Graph cut</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%8C%96"><span class="nav-number">3.2.</span> <span class="nav-text">并行化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%96%E7%95%A5"><span class="nav-number">3.2.1.</span> <span class="nav-text">策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">动态规划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E8%A7%A3%E9%87%8A"><span class="nav-number">3.2.1.2.</span> <span class="nav-text">线性代数解释</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%AF%B9%E7%AE%97%E6%B3%95%E7%9A%84%E5%B9%B6%E8%A1%8C%E5%8C%96"><span class="nav-number">3.2.2.</span> <span class="nav-text">全对算法的并行化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%89%B2"><span class="nav-number">3.2.3.</span> <span class="nav-text">分割</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%B0%E5%AE%9E%E4%B8%96%E7%95%8C-%E2%80%9C%E5%9B%BE"><span class="nav-number">3.3.</span> <span class="nav-text">现实世界 “图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%9A%84%E6%80%A7%E8%B4%A8"><span class="nav-number">3.3.1.</span> <span class="nav-text">随机图的性质</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B6%85%E6%96%87%E6%9C%AC%E7%AE%97%E6%B3%95"><span class="nav-number">3.4.</span> <span class="nav-text">超文本算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HITS"><span class="nav-number">3.4.1.</span> <span class="nav-text">HITS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PageRank"><span class="nav-number">3.4.2.</span> <span class="nav-text">PageRank</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E5%9E%8B%E8%AE%A1%E7%AE%97%E5%9B%BE%E8%AE%BA"><span class="nav-number">3.5.</span> <span class="nav-text">大型计算图论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E4%B8%8E%E8%BE%B9%E7%9A%84%E5%88%86%E5%B8%83"><span class="nav-number">3.5.1.</span> <span class="nav-text">节点与边的分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E7%A8%80%E7%96%8F%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.5.2.</span> <span class="nav-text">超稀疏数据结构</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#N%E4%BD%93%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">N体问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%B4%E6%81%A9%E6%96%AF-%E8%83%A1%E7%89%B9%E7%AE%97%E6%B3%95"><span class="nav-number">4.1.</span> <span class="nav-text">巴恩斯-胡特算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E5%A4%9A%E6%9E%81%E7%82%B9%E6%B3%95"><span class="nav-number">4.2.</span> <span class="nav-text">快速多极点法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E7%A8%8B%E8%AE%A1%E7%AE%97"><span class="nav-number">4.3.</span> <span class="nav-text">全程计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C"><span class="nav-number">4.4.</span> <span class="nav-text">执行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%A2%E9%87%8F%E5%8C%96"><span class="nav-number">4.4.1.</span> <span class="nav-text">矢量化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.4.2.</span> <span class="nav-text">共享内存的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E5%86%85%E5%AD%98%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.4.3.</span> <span class="nav-text">分布式内存的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E6%96%B9%E6%B3%95%E7%9A%841-5D%E5%AE%9E%E6%96%BD"><span class="nav-number">4.4.4.</span> <span class="nav-text">完整方法的1.5D实施</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">4.4.4.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%97%E7%B2%92%E5%88%86%E5%B8%83"><span class="nav-number">4.4.4.2.</span> <span class="nav-text">颗粒分布</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%88%86%E5%B8%83"><span class="nav-number">4.4.4.3.</span> <span class="nav-text">工作分布</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E6%96%B9%E6%B3%95"><span class="nav-number">5.</span> <span class="nav-text">蒙特卡洛方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BF%80%E5%8A%B1"><span class="nav-number">5.1.</span> <span class="nav-text">激励</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%B8%E5%BC%95%E4%BA%BA%E7%9A%84%E5%9C%B0%E6%96%B9%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">5.1.1.</span> <span class="nav-text">吸引人的地方是什么？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">5.2.</span> <span class="nav-text">示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%8A%E8%BE%9B%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E6%A8%A1%E6%8B%9F"><span class="nav-number">5.2.1.</span> <span class="nav-text">伊辛模型的蒙特卡洛模拟</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0"><span class="nav-number">6.</span> <span class="nav-text">机器学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="nav-number">6.1.</span> <span class="nav-text">神经网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E4%B8%AA%E6%95%B0%E6%8D%AE%E7%82%B9"><span class="nav-number">6.1.1.</span> <span class="nav-text">单个数据点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><span class="nav-number">6.1.2.</span> <span class="nav-text">激活函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BB%B4%E8%BE%93%E5%87%BA"><span class="nav-number">6.1.3.</span> <span class="nav-text">多维输出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%B7%E7%A7%AF"><span class="nav-number">6.1.4.</span> <span class="nav-text">卷积</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%BD%91%E7%BB%9C"><span class="nav-number">6.2.</span> <span class="nav-text">深度学习网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB"><span class="nav-number">6.2.1.</span> <span class="nav-text">分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AF%E5%B7%AE%E6%9C%80%E5%B0%8F%E5%8C%96"><span class="nav-number">6.2.2.</span> <span class="nav-text">误差最小化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E6%95%B0%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="nav-number">6.2.3.</span> <span class="nav-text">系数的计算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number">6.2.4.</span> <span class="nav-text">算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%B1%82%E9%9D%A2"><span class="nav-number">6.3.</span> <span class="nav-text">计算层面</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E9%87%8F%E7%9F%A9%E9%98%B5%E4%B9%98%E7%A7%AF"><span class="nav-number">6.3.1.</span> <span class="nav-text">重量矩阵乘积</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%87%8D%E7%9F%A9%E9%98%B5%E4%B9%98%E7%A7%AF%E7%9A%84%E5%B9%B6%E8%A1%8C%E6%80%A7"><span class="nav-number">6.3.2.</span> <span class="nav-text">权重矩阵乘积的并行性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%87%8D%E6%9B%B4%E6%96%B0"><span class="nav-number">6.3.3.</span> <span class="nav-text">权重更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="nav-number">6.3.4.</span> <span class="nav-text">流水线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%B7%E7%A7%AF-1"><span class="nav-number">6.3.5.</span> <span class="nav-text">卷积</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%80%E7%96%8F%E7%9F%A9%E9%98%B5"><span class="nav-number">6.3.6.</span> <span class="nav-text">稀疏矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E6%94%AF%E6%8C%81"><span class="nav-number">6.3.7.</span> <span class="nav-text">硬件支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%8D%E4%BD%8E%E7%B2%BE%E5%BA%A6"><span class="nav-number">6.3.8.</span> <span class="nav-text">降低精度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stuff"><span class="nav-number">6.4.</span> <span class="nav-text">Stuff</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-Introduction to HPC——应用" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/12/28/Introduction%20to%20HPC%E2%80%94%E2%80%94%E5%BA%94%E7%94%A8/" class="article-date">
-  <time class="dt-published" datetime="2021-12-28T02:27:01.000Z" itemprop="datePublished">2021-12-28</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      Introduction to HPC——应用
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/28/Introduction%20to%20HPC%E2%80%94%E2%80%94%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Introduction to HPC——应用 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Introduction to HPC——应用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
       
-        <h1 id="分子动力学"><a href="#分子动力学" class="headerlink" title="分子动力学"></a>分子动力学</h1><p>分子动力学是模拟分子的逐个原子行为并从这些原子运动中推导出宏观属性的技术。它适用于生物分子，如蛋白质和核酸，以及材料科学和纳米技术的天然和合成分子。分子动力学属于粒子方法的范畴，其中包括天体力学和天体物理学中的N体问题，这里介绍的许多观点将延续到这些其他领域。此外，还有一些分子动力学的特殊情况，包括从头开始的分子动力学，其中电子被量子力学地处理，因此可以对化学反应进行建模。我们将不讨论这些特殊情况，而是集中讨论经典的分子动力学。</p>
+
+      <time title="Created: 2021-12-28 10:27:01 / Modified: 15:31:46" itemprop="dateCreated datePublished" datetime="2021-12-28T10:27:01+08:00">2021-12-28</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="分子动力学"><a href="#分子动力学" class="headerlink" title="分子动力学"></a>分子动力学</h1><p>分子动力学是模拟分子的逐个原子行为并从这些原子运动中推导出宏观属性的技术。它适用于生物分子，如蛋白质和核酸，以及材料科学和纳米技术的天然和合成分子。分子动力学属于粒子方法的范畴，其中包括天体力学和天体物理学中的N体问题，这里介绍的许多观点将延续到这些其他领域。此外，还有一些分子动力学的特殊情况，包括从头开始的分子动力学，其中电子被量子力学地处理，因此可以对化学反应进行建模。我们将不讨论这些特殊情况，而是集中讨论经典的分子动力学。</p>
 <p>分子动力学的想法非常简单：一组粒子根据牛顿运动定律相互作用，$F &#x3D; ma$。考虑到初始粒子的位置和速度、粒子的质量和其他参数，以及粒子之间的作用力模型，牛顿运动定律可以通过数值集成来给出每个粒子在未来（和过去）所有时间的运动轨迹。通常情况下，粒子居住在一个具有周期性边界条件的计算箱中。</p>
 <p>因此，一个分子动力学的时间步骤由两部分组成。</p>
 <ol>
@@ -659,150 +773,75 @@
 <p><a target="_blank" rel="noopener" href="https://stats.stackexchange.com/questions/217703/can-deep-neural-network-approximate">https://stats.stackexchange.com/questions/217703/can-deep-neural-network-approximate</a></p>
 <p>传统的神经网络由线性图和Lipschitiz激活函数组成。作为Lischitz连续函数的组合，神经网络也是Lipschitz连续的，但乘法不是Lipschitz连续。这意味着，当$x$或$y$中的一个数字过大时，神经网络工作不能近似于乘法。</p>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/28/Introduction%20to%20HPC%E2%80%94%E2%80%94%E5%BA%94%E7%94%A8/" data-id="cuidA2JGml20djY-_ecOIB2VV" data-title="Introduction to HPC——应用" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/12/27/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%AE%97%E6%B3%95%E5%AE%9D%E5%85%B8/" rel="prev" title="服务器开发设计之算法宝典">
+                  <i class="fa fa-angle-left"></i> 服务器开发设计之算法宝典
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/01/04/Introduction%20to%20HPC%E2%80%94%E2%80%94%E7%90%86%E8%AE%BA/" rel="next" title="Introduction to HPC——理论">
+                  Introduction to HPC——理论 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2022/01/04/Introduction%20to%20HPC%E2%80%94%E2%80%94%E7%90%86%E8%AE%BA/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Introduction to HPC——理论
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2021/12/27/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%AE%97%E6%B3%95%E5%AE%9D%E5%85%B8/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">服务器开发设计之算法宝典</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

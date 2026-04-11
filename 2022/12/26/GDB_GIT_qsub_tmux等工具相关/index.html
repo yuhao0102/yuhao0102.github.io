@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>gdb、git、qsub、tmux、memcached开发工具相关 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="TAUTAU是一个面向MPI与OpenMP并行程序的profiler，在目前看到的OpenMPI的Profiler中算是比较健全的一个（x）。官网：https:&#x2F;&#x2F;www.cs.uoregon.edu&#x2F;research&#x2F;tau&#x2F;home.php 。 其实Intel的vtune也不是不能用，但是面向OpenMPI的时候会有些限制。TAU可以根据不同的MPI发行版重新编译，感觉会好一些。 安装官方的I">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="TAUTAU是一个面向MPI与OpenMP并行程序的profiler，在目前看到的OpenMPI的Profiler中算是比较健全的一个（x）。官网：https:&#x2F;&#x2F;www.cs.uoregon.edu&#x2F;research&#x2F;tau&#x2F;home.php 。 其实Intel的vtune也不是不能用，但是面向OpenMPI的时候会有些限制。TAU可以根据不同的MPI发行版重新编译，感觉会好一些。 安装官方的I">
 <meta property="og:type" content="article">
 <meta property="og:title" content="gdb、git、qsub、tmux、memcached开发工具相关">
 <meta property="og:url" content="http://example.com/2022/12/26/GDB_GIT_qsub_tmux%E7%AD%89%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/index.html">
@@ -50,85 +64,191 @@
 <meta property="article:tag" content="积累">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/img/3149063-20230326103354863-88530209.png">
+
+
+<link rel="canonical" href="http://example.com/2022/12/26/GDB_GIT_qsub_tmux%E7%AD%89%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/12/26/GDB_GIT_qsub_tmux%E7%AD%89%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/","path":"2022/12/26/GDB_GIT_qsub_tmux等工具相关/","title":"gdb、git、qsub、tmux、memcached开发工具相关"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>gdb、git、qsub、tmux、memcached开发工具相关 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#TAU"><span class="nav-number">1.</span> <span class="nav-text">TAU</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#interposition"><span class="nav-number">1.2.1.</span> <span class="nav-text">interposition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#recompile"><span class="nav-number">1.2.2.</span> <span class="nav-text">recompile</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B"><span class="nav-number">1.3.</span> <span class="nav-text">测试过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E6%8F%92%E6%A1%A9%EF%BC%88Dynamic-instrumentation%EF%BC%89"><span class="nav-number">1.3.1.</span> <span class="nav-text">动态插桩（Dynamic instrumentation）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E6%8F%92%E6%A1%A9%EF%BC%88Source-instrumentation%EF%BC%89"><span class="nav-number">1.3.2.</span> <span class="nav-text">源码插桩（Source instrumentation）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E6%8F%92%E6%A1%A9%EF%BC%88Compiler-based-instrumentation%EF%BC%89%E5%92%8C%E5%8F%AF%E9%80%89%E6%8B%A9%E4%BB%A3%E7%A0%81%E5%8C%BA%E5%9F%9F%E7%9A%84%E6%8F%92%E6%A1%A9%EF%BC%88Selective-instrumentation"><span class="nav-number">1.3.3.</span> <span class="nav-text">基于编译器的插桩（Compiler-based instrumentation）和可选择代码区域的插桩（Selective instrumentation</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GDB"><span class="nav-number">2.</span> <span class="nav-text">GDB</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.1.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E5%8E%9F%E7%90%86"><span class="nav-number">2.1.1.</span> <span class="nav-text">调试原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#attach%E8%BF%90%E8%A1%8C%E7%9A%84%E8%BF%9B%E7%A8%8B"><span class="nav-number">2.1.2.</span> <span class="nav-text">attach运行的进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%AD%E7%82%B9%E5%8E%9F%E7%90%86"><span class="nav-number">2.1.3.</span> <span class="nav-text">断点原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">2.1.3.1.</span> <span class="nav-text">实现原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%8E%9F%E7%90%86"><span class="nav-number">2.1.3.2.</span> <span class="nav-text">设置原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%B8%AD%E5%88%A4%E6%96%AD"><span class="nav-number">2.1.3.3.</span> <span class="nav-text">命中判断</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="nav-number">2.1.3.4.</span> <span class="nav-text">条件判断</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E6%AD%A5%E5%8E%9F%E7%90%86"><span class="nav-number">2.1.3.5.</span> <span class="nav-text">单步原理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.1.4.</span> <span class="nav-text">测试程序</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E5%8E%9F%E7%90%86-1"><span class="nav-number">2.1.4.1.</span> <span class="nav-text">调试原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B"><span class="nav-number">2.1.4.2.</span> <span class="nav-text">调试过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GDB%E8%B0%83%E8%AF%95%E7%B2%BE%E7%B2%B9"><span class="nav-number">2.2.</span> <span class="nav-text">GDB调试精粹</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%88%97%E6%96%87%E4%BB%B6%E6%B8%85%E5%8D%95"><span class="nav-number">2.2.1.</span> <span class="nav-text">一、列文件清单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%89%A7%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.2.2.</span> <span class="nav-text">二、执行程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%98%BE%E7%A4%BA%E6%95%B0%E6%8D%AE"><span class="nav-number">2.2.3.</span> <span class="nav-text">三、显示数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E8%AE%BE%E7%BD%AE%E4%B8%8E%E6%B8%85%E9%99%A4%E6%96%AD%E7%82%B9"><span class="nav-number">2.2.4.</span> <span class="nav-text">四、设置与清除断点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E6%96%AD%E7%82%B9%E7%9A%84%E7%AE%A1%E7%90%86"><span class="nav-number">2.2.5.</span> <span class="nav-text">五、断点的管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%8D%95%E6%AD%A5%E6%89%A7%E8%A1%8C"><span class="nav-number">2.2.6.</span> <span class="nav-text">六、单步执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E5%87%BD%E6%95%B0%E7%9A%84%E8%B0%83%E7%94%A8"><span class="nav-number">2.2.7.</span> <span class="nav-text">七、函数的调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AB%E3%80%81-%E5%8E%9F%E6%96%87%E4%BB%B6%E7%9A%84%E6%90%9C%E7%B4%A2"><span class="nav-number">2.2.8.</span> <span class="nav-text">八、 原文件的搜索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E6%9F%A5%E7%9C%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE"><span class="nav-number">2.2.9.</span> <span class="nav-text">九、查看运行时数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E8%BF%9B%E7%A8%8B%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">2.3.</span> <span class="nav-text">多进程、多线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E8%BF%9B%E7%A8%8B"><span class="nav-number">2.3.1.</span> <span class="nav-text">多进程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#attach"><span class="nav-number">2.3.1.1.</span> <span class="nav-text">attach</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E5%AE%9A%E8%BF%9B%E7%A8%8B"><span class="nav-number">2.3.1.2.</span> <span class="nav-text">指定进程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">2.3.2.</span> <span class="nav-text">多线程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93%E4%B8%AD%E5%87%BD%E6%95%B0%E7%9A%84%E5%9C%B0%E5%9D%80%E7%A1%AE%E5%AE%9A"><span class="nav-number">2.4.</span> <span class="nav-text">动态链接库中函数的地址确定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E4%BD%BF%E7%94%A8-perf"><span class="nav-number">2.4.1.</span> <span class="nav-text">准备使用 perf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#perf-%E2%80%93help"><span class="nav-number">2.4.2.</span> <span class="nav-text">perf –help</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Perf-list%EF%BC%8Cperf-%E4%BA%8B%E4%BB%B6"><span class="nav-number">2.4.3.</span> <span class="nav-text">Perf list，perf 事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Perf-stat"><span class="nav-number">2.4.4.</span> <span class="nav-text">Perf stat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#perf-top"><span class="nav-number">2.4.5.</span> <span class="nav-text">perf  top</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-perf-record-%E8%A7%A3%E8%AF%BB-report"><span class="nav-number">2.5.</span> <span class="nav-text">使用 perf record, 解读 report</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Perf-Script"><span class="nav-number">2.6.</span> <span class="nav-text">Perf Script</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-PMU-%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="nav-number">2.7.</span> <span class="nav-text">使用 PMU 的例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E7%94%A8%E6%B3%95%E4%BB%A5%E5%8F%8A%E5%86%85%E6%A0%B8%E8%B0%83%E4%BC%98%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.8.</span> <span class="nav-text">特殊用法以及内核调优示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-tracepoint"><span class="nav-number">2.8.1.</span> <span class="nav-text">使用 tracepoint</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Perf-probe"><span class="nav-number">2.8.2.</span> <span class="nav-text">Perf probe</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Perf-sched"><span class="nav-number">2.8.3.</span> <span class="nav-text">Perf sched</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#perf-bench"><span class="nav-number">2.8.4.</span> <span class="nav-text">perf bench</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#perf-lock"><span class="nav-number">2.8.5.</span> <span class="nav-text">perf lock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#perf-tracepoint"><span class="nav-number">2.8.6.</span> <span class="nav-text">perf tracepoint</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#perf-Kmem"><span class="nav-number">2.8.7.</span> <span class="nav-text">perf Kmem</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Perf-timechart"><span class="nav-number">2.8.8.</span> <span class="nav-text">Perf timechart</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%98%E5%88%B6perf%E7%81%AB%E7%84%B0%E5%9B%BE"><span class="nav-number">2.8.9.</span> <span class="nav-text">绘制perf火焰图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%98%E5%88%B6perf%E7%83%AD%E5%8A%9B%E5%9B%BE"><span class="nav-number">2.8.10.</span> <span class="nav-text">绘制perf热力图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-Script-%E5%A2%9E%E5%BC%BA-perf-%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="nav-number">2.9.</span> <span class="nav-text">使用 Script 增强 perf 的功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%87%E5%88%B0%E7%9A%84%E5%85%B6%E5%AE%83%E9%97%AE%E9%A2%98"><span class="nav-number">2.10.</span> <span class="nav-text">遇到的其它问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#qsub%E6%95%99%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">qsub教程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9EPBS%E4%B8%8Bmpi%E8%AE%A1%E7%AE%97"><span class="nav-number">3.1.</span> <span class="nav-text">非PBS下mpi计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PBS%E4%BD%9C%E4%B8%9A%E6%8F%90%E4%BA%A4"><span class="nav-number">3.2.</span> <span class="nav-text">PBS作业提交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E4%BD%9C%E4%B8%9A%E7%8A%B6%E6%80%81"><span class="nav-number">3.3.</span> <span class="nav-text">查看作业状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E4%BD%9C%E4%B8%9A"><span class="nav-number">3.4.</span> <span class="nav-text">删除作业</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E4%BD%9C%E4%B8%9A"><span class="nav-number">3.5.</span> <span class="nav-text">管理作业</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E7%9A%84%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">3.6.</span> <span class="nav-text">脚本的正确使用方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tmux%E4%BD%BF%E7%94%A8%E5%A4%87%E5%BF%98"><span class="nav-number">4.</span> <span class="nav-text">tmux使用备忘</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">4.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="nav-number">4.2.</span> <span class="nav-text">快捷键</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%87%E6%8D%A2pane"><span class="nav-number">4.2.1.</span> <span class="nav-text">切换pane</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%97%ADpane"><span class="nav-number">4.2.2.</span> <span class="nav-text">关闭pane</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tmux-window%E4%B8%AD%E7%9A%84%E5%8E%86%E5%8F%B2%E8%BE%93%E5%87%BA%E6%9F%A5%E7%9C%8B"><span class="nav-number">4.3.</span> <span class="nav-text">tmux window中的历史输出查看</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8mpiP%E5%B7%A5%E5%85%B7%E5%88%86%E6%9E%90AMG%E7%A8%8B%E5%BA%8F"><span class="nav-number">5.</span> <span class="nav-text">使用mpiP工具分析AMG程序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BDmpiP"><span class="nav-number">5.1.</span> <span class="nav-text">下载mpiP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85libunwind"><span class="nav-number">5.2.</span> <span class="nav-text">安装libunwind</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AMG%E7%BC%96%E8%AF%91%E5%92%8C%E8%BF%90%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">5.3.</span> <span class="nav-text">AMG编译和运行过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mpiP%E5%AF%B9AMG%E7%9A%84%E5%88%86%E6%9E%90%E7%BB%93%E6%9E%9C"><span class="nav-number">5.4.</span> <span class="nav-text">mpiP对AMG的分析结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E7%BB%93%E6%9E%9C%E7%9A%84%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90%E5%92%8C%E7%90%86%E8%A7%A3"><span class="nav-number">5.5.</span> <span class="nav-text">分析结果的简单分析和理解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">5.6.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Git%E7%9A%84%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7"><span class="nav-number">6.</span> <span class="nav-text">Git的奇技淫巧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8D%B7%E5%BF%85%E8%AF%BB"><span class="nav-number">6.1.</span> <span class="nav-text">开卷必读</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%95%E7%A4%BA%E5%B8%AE%E5%8A%A9%E4%BF%A1%E6%81%AF"><span class="nav-number">6.2.</span> <span class="nav-text">展示帮助信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E5%88%B0%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E7%9A%84%E7%8A%B6%E6%80%81"><span class="nav-number">6.3.</span> <span class="nav-text">回到远程仓库的状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E8%AE%BE%E7%AC%AC%E4%B8%80%E4%B8%AA-commit"><span class="nav-number">6.4.</span> <span class="nav-text">重设第一个 commit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%95%E7%A4%BA%E5%B7%A5%E4%BD%9C%E5%8C%BA%E5%92%8C%E6%9A%82%E5%AD%98%E5%8C%BA%E7%9A%84%E4%B8%8D%E5%90%8C"><span class="nav-number">6.5.</span> <span class="nav-text">展示工作区和暂存区的不同</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%95%E7%A4%BA%E6%9A%82%E5%AD%98%E5%8C%BA%E5%92%8C%E6%9C%80%E8%BF%91%E7%89%88%E6%9C%AC%E7%9A%84%E4%B8%8D%E5%90%8C"><span class="nav-number">6.6.</span> <span class="nav-text">展示暂存区和最近版本的不同</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%95%E7%A4%BA%E6%9A%82%E5%AD%98%E5%8C%BA%E3%80%81%E5%B7%A5%E4%BD%9C%E5%8C%BA%E5%92%8C%E6%9C%80%E8%BF%91%E7%89%88%E6%9C%AC%E7%9A%84%E4%B8%8D%E5%90%8C"><span class="nav-number">6.7.</span> <span class="nav-text">展示暂存区、工作区和最近版本的不同</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E5%88%87%E6%8D%A2%E5%88%B0%E4%B8%8A%E4%B8%80%E4%B8%AA%E5%88%86%E6%94%AF"><span class="nav-number">6.8.</span> <span class="nav-text">快速切换到上一个分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%B7%B2%E7%BB%8F%E5%90%88%E5%B9%B6%E5%88%B0-master-%E7%9A%84%E5%88%86%E6%94%AF"><span class="nav-number">6.9.</span> <span class="nav-text">删除已经合并到 master 的分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%95%E7%A4%BA%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF%E5%85%B3%E8%81%94%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">6.10.</span> <span class="nav-text">展示本地分支关联远程仓库的情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E8%BF%9C%E7%A8%8B%E5%88%86%E6%94%AF"><span class="nav-number">6.11.</span> <span class="nav-text">关联远程分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%97%E5%87%BA%E6%89%80%E6%9C%89%E8%BF%9C%E7%A8%8B%E5%88%86%E6%94%AF"><span class="nav-number">6.12.</span> <span class="nav-text">列出所有远程分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%97%E5%87%BA%E6%9C%AC%E5%9C%B0%E5%92%8C%E8%BF%9C%E7%A8%8B%E5%88%86%E6%94%AF"><span class="nav-number">6.13.</span> <span class="nav-text">列出本地和远程分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%B9%B6%E5%88%87%E6%8D%A2%E5%88%B0%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF"><span class="nav-number">6.14.</span> <span class="nav-text">创建并切换到本地分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E8%BF%9C%E7%A8%8B%E5%88%86%E6%94%AF%E4%B8%AD%E5%88%9B%E5%BB%BA%E5%B9%B6%E5%88%87%E6%8D%A2%E5%88%B0%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF"><span class="nav-number">6.15.</span> <span class="nav-text">从远程分支中创建并切换到本地分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF"><span class="nav-number">6.16.</span> <span class="nav-text">删除本地分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E8%BF%9C%E7%A8%8B%E5%88%86%E6%94%AF"><span class="nav-number">6.17.</span> <span class="nav-text">删除远程分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E5%91%BD%E5%90%8D%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF"><span class="nav-number">6.18.</span> <span class="nav-text">重命名本地分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%A0%87%E7%AD%BE"><span class="nav-number">6.19.</span> <span class="nav-text">查看标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%A0%87%E7%AD%BE%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF"><span class="nav-number">6.20.</span> <span class="nav-text">查看标签详细信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E5%88%9B%E5%BB%BA%E6%A0%87%E7%AD%BE"><span class="nav-number">6.21.</span> <span class="nav-text">本地创建标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A8%E9%80%81%E6%A0%87%E7%AD%BE%E5%88%B0%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93"><span class="nav-number">6.22.</span> <span class="nav-text">推送标签到远程仓库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E6%A0%87%E7%AD%BE"><span class="nav-number">6.23.</span> <span class="nav-text">删除本地标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E8%BF%9C%E7%A8%8B%E6%A0%87%E7%AD%BE"><span class="nav-number">6.24.</span> <span class="nav-text">删除远程标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%87%E5%9B%9E%E5%88%B0%E6%9F%90%E4%B8%AA%E6%A0%87%E7%AD%BE"><span class="nav-number">6.25.</span> <span class="nav-text">切回到某个标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%BE%E5%BC%83%E5%B7%A5%E4%BD%9C%E5%8C%BA%E7%9A%84%E4%BF%AE%E6%94%B9"><span class="nav-number">6.26.</span> <span class="nav-text">放弃工作区的修改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%81%A2%E5%A4%8D%E5%88%A0%E9%99%A4%E7%9A%84%E6%96%87%E4%BB%B6"><span class="nav-number">6.27.</span> <span class="nav-text">恢复删除的文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A5%E6%96%B0%E5%A2%9E%E4%B8%80%E4%B8%AA-commit-%E7%9A%84%E6%96%B9%E5%BC%8F%E8%BF%98%E5%8E%9F%E6%9F%90%E4%B8%80%E4%B8%AA-commit-%E7%9A%84%E4%BF%AE%E6%94%B9"><span class="nav-number">6.28.</span> <span class="nav-text">以新增一个 commit 的方式还原某一个 commit 的修改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E5%88%B0%E6%9F%90%E4%B8%AA-commit-%E7%9A%84%E7%8A%B6%E6%80%81%EF%BC%8C%E5%B9%B6%E5%88%A0%E9%99%A4%E5%90%8E%E9%9D%A2%E7%9A%84-commit"><span class="nav-number">6.29.</span> <span class="nav-text">回到某个 commit 的状态，并删除后面的 commit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E4%B8%8A%E4%B8%80%E4%B8%AA-commit-%E7%9A%84%E6%8F%8F%E8%BF%B0"><span class="nav-number">6.30.</span> <span class="nav-text">修改上一个 commit 的描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B-commit-%E5%8E%86%E5%8F%B2"><span class="nav-number">6.31.</span> <span class="nav-text">查看 commit 历史</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%9F%90%E6%AE%B5%E4%BB%A3%E7%A0%81%E6%98%AF%E8%B0%81%E5%86%99%E7%9A%84"><span class="nav-number">6.32.</span> <span class="nav-text">查看某段代码是谁写的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%BE%E7%A4%BA%E6%9C%AC%E5%9C%B0%E6%9B%B4%E6%96%B0%E8%BF%87-HEAD-%E7%9A%84-git-%E5%91%BD%E4%BB%A4%E8%AE%B0%E5%BD%95"><span class="nav-number">6.33.</span> <span class="nav-text">显示本地更新过 HEAD 的 git 命令记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E4%BD%9C%E8%80%85%E5%90%8D"><span class="nav-number">6.34.</span> <span class="nav-text">修改作者名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E7%9A%84-url"><span class="nav-number">6.35.</span> <span class="nav-text">修改远程仓库的 url</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93"><span class="nav-number">6.36.</span> <span class="nav-text">增加远程仓库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%97%E5%87%BA%E6%89%80%E6%9C%89%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93"><span class="nav-number">6.37.</span> <span class="nav-text">列出所有远程仓库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E4%B8%A4%E4%B8%AA%E6%98%9F%E6%9C%9F%E5%86%85%E7%9A%84%E6%94%B9%E5%8A%A8"><span class="nav-number">6.38.</span> <span class="nav-text">查看两个星期内的改动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A-A-%E5%88%86%E6%94%AF%E7%9A%84%E6%9F%90%E4%B8%80%E4%B8%AA-commit%EF%BC%8C%E6%94%BE%E5%88%B0-B-%E5%88%86%E6%94%AF%E4%B8%8A"><span class="nav-number">6.39.</span> <span class="nav-text">把 A 分支的某一个 commit，放到 B 分支上</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%99-git-%E5%91%BD%E4%BB%A4%E8%B5%B7%E5%88%AB%E5%90%8D"><span class="nav-number">6.40.</span> <span class="nav-text">给 git 命令起别名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%BD%93%E5%89%8D%E7%9A%84%E4%BF%AE%E6%94%B9%EF%BC%8C%E4%BD%86%E4%B8%8D%E7%94%A8%E6%8F%90%E4%BA%A4-commit"><span class="nav-number">6.41.</span> <span class="nav-text">存储当前的修改，但不用提交 commit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%9D%E5%AD%98%E5%BD%93%E5%89%8D%E7%8A%B6%E6%80%81%EF%BC%8C%E5%8C%85%E6%8B%AC-untracked-%E7%9A%84%E6%96%87%E4%BB%B6"><span class="nav-number">6.42.</span> <span class="nav-text">保存当前状态，包括 untracked 的文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%95%E7%A4%BA%E6%89%80%E6%9C%89-stashes"><span class="nav-number">6.43.</span> <span class="nav-text">展示所有 stashes</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E5%88%B0%E6%9F%90%E4%B8%AA-stash-%E7%9A%84%E7%8A%B6%E6%80%81"><span class="nav-number">6.44.</span> <span class="nav-text">回到某个 stash 的状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E5%88%B0%E6%9C%80%E5%90%8E%E4%B8%80%E4%B8%AA-stash-%E7%9A%84%E7%8A%B6%E6%80%81%EF%BC%8C%E5%B9%B6%E5%88%A0%E9%99%A4%E8%BF%99%E4%B8%AA-stash"><span class="nav-number">6.45.</span> <span class="nav-text">回到最后一个 stash 的状态，并删除这个 stash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%89%80%E6%9C%89%E7%9A%84-stash"><span class="nav-number">6.46.</span> <span class="nav-text">删除所有的 stash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E-stash-%E4%B8%AD%E6%8B%BF%E5%87%BA%E6%9F%90%E4%B8%AA%E6%96%87%E4%BB%B6%E7%9A%84%E4%BF%AE%E6%94%B9"><span class="nav-number">6.47.</span> <span class="nav-text">从 stash 中拿出某个文件的修改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%95%E7%A4%BA%E6%89%80%E6%9C%89-tracked-%E7%9A%84%E6%96%87%E4%BB%B6"><span class="nav-number">6.48.</span> <span class="nav-text">展示所有 tracked 的文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%95%E7%A4%BA%E6%89%80%E6%9C%89-untracked-%E7%9A%84%E6%96%87%E4%BB%B6"><span class="nav-number">6.49.</span> <span class="nav-text">展示所有 untracked 的文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%95%E7%A4%BA%E6%89%80%E6%9C%89%E5%BF%BD%E7%95%A5%E7%9A%84%E6%96%87%E4%BB%B6"><span class="nav-number">6.50.</span> <span class="nav-text">展示所有忽略的文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%BA%E5%88%B6%E5%88%A0%E9%99%A4-untracked-%E7%9A%84%E6%96%87%E4%BB%B6"><span class="nav-number">6.51.</span> <span class="nav-text">强制删除 untracked 的文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%BA%E5%88%B6%E5%88%A0%E9%99%A4-untracked-%E7%9A%84%E7%9B%AE%E5%BD%95"><span class="nav-number">6.52.</span> <span class="nav-text">强制删除 untracked 的目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%95%E7%A4%BA%E7%AE%80%E5%8C%96%E7%9A%84-commit-%E5%8E%86%E5%8F%B2"><span class="nav-number">6.53.</span> <span class="nav-text">展示简化的 commit 历史</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E6%9F%90%E4%B8%80%E4%B8%AA%E5%88%86%E6%94%AF%E5%88%B0%E5%AF%BC%E5%87%BA%E6%88%90%E4%B8%80%E4%B8%AA%E6%96%87%E4%BB%B6"><span class="nav-number">6.54.</span> <span class="nav-text">把某一个分支到导出成一个文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E5%8C%85%E4%B8%AD%E5%AF%BC%E5%85%A5%E5%88%86%E6%94%AF"><span class="nav-number">6.55.</span> <span class="nav-text">从包中导入分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C-rebase-%E4%B9%8B%E5%89%8D%E8%87%AA%E5%8A%A8-stash"><span class="nav-number">6.56.</span> <span class="nav-text">执行 rebase 之前自动 stash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E6%A0%B9%E6%8D%AE-ID%EF%BC%8C%E6%8B%89%E4%B8%8B%E6%9F%90%E4%B8%80%E7%8A%B6%E6%80%81%EF%BC%8C%E5%88%B0%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF"><span class="nav-number">6.57.</span> <span class="nav-text">从远程仓库根据 ID，拉下某一状态，到本地分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%A6%E7%BB%86%E5%B1%95%E7%A4%BA%E4%B8%80%E8%A1%8C%E4%B8%AD%E7%9A%84%E4%BF%AE%E6%94%B9"><span class="nav-number">6.58.</span> <span class="nav-text">详细展示一行中的修改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B8%85%E9%99%A4-gitignore-%E6%96%87%E4%BB%B6%E4%B8%AD%E8%AE%B0%E5%BD%95%E7%9A%84%E6%96%87%E4%BB%B6"><span class="nav-number">6.59.</span> <span class="nav-text">清除 gitignore 文件中记录的文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%95%E7%A4%BA%E6%89%80%E6%9C%89-alias-%E5%92%8C-configs"><span class="nav-number">6.60.</span> <span class="nav-text">展示所有 alias 和 configs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%95%E7%A4%BA%E5%BF%BD%E7%95%A5%E7%9A%84%E6%96%87%E4%BB%B6"><span class="nav-number">6.61.</span> <span class="nav-text">展示忽略的文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#commit-%E5%8E%86%E5%8F%B2%E4%B8%AD%E6%98%BE%E7%A4%BA-Branch1-%E6%9C%89%E7%9A%84%EF%BC%8C%E4%BD%86%E6%98%AF-Branch2-%E6%B2%A1%E6%9C%89-commit"><span class="nav-number">6.62.</span> <span class="nav-text">commit 历史中显示 Branch1 有的，但是 Branch2 没有 commit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8-commit-log-%E4%B8%AD%E6%98%BE%E7%A4%BA-GPG-%E7%AD%BE%E5%90%8D"><span class="nav-number">6.63.</span> <span class="nav-text">在 commit log 中显示 GPG 签名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%85%A8%E5%B1%80%E8%AE%BE%E7%BD%AE"><span class="nav-number">6.64.</span> <span class="nav-text">删除全局设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B0%E5%BB%BA%E5%B9%B6%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E5%88%86%E6%94%AF%E4%B8%8A%EF%BC%8C%E5%90%8C%E6%97%B6%E8%BF%99%E4%B8%AA%E5%88%86%E6%94%AF%E6%B2%A1%E6%9C%89%E4%BB%BB%E4%BD%95-commit"><span class="nav-number">6.65.</span> <span class="nav-text">新建并切换到新分支上，同时这个分支没有任何 commit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%95%E7%A4%BA%E4%BB%BB%E6%84%8F%E5%88%86%E6%94%AF%E6%9F%90%E4%B8%80%E6%96%87%E4%BB%B6%E7%9A%84%E5%86%85%E5%AE%B9"><span class="nav-number">6.66.</span> <span class="nav-text">展示任意分支某一文件的内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#clone-%E4%B8%8B%E6%9D%A5%E6%8C%87%E5%AE%9A%E7%9A%84%E5%8D%95%E4%B8%80%E5%88%86%E6%94%AF"><span class="nav-number">6.67.</span> <span class="nav-text">clone 下来指定的单一分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%BD%E7%95%A5%E6%9F%90%E4%B8%AA%E6%96%87%E4%BB%B6%E7%9A%84%E6%94%B9%E5%8A%A8"><span class="nav-number">6.68.</span> <span class="nav-text">忽略某个文件的改动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%BD%E7%95%A5%E6%96%87%E4%BB%B6%E7%9A%84%E6%9D%83%E9%99%90%E5%8F%98%E5%8C%96"><span class="nav-number">6.69.</span> <span class="nav-text">忽略文件的权限变化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A5%E6%9C%80%E5%90%8E%E6%8F%90%E4%BA%A4%E7%9A%84%E9%A1%BA%E5%BA%8F%E5%88%97%E5%87%BA%E6%89%80%E6%9C%89-Git-%E5%88%86%E6%94%AF"><span class="nav-number">6.70.</span> <span class="nav-text">以最后提交的顺序列出所有 Git 分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8-commit-log-%E4%B8%AD%E6%9F%A5%E6%89%BE%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9"><span class="nav-number">6.71.</span> <span class="nav-text">在 commit log 中查找相关内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E6%9A%82%E5%AD%98%E5%8C%BA%E7%9A%84%E6%8C%87%E5%AE%9A-file-%E6%94%BE%E5%88%B0%E5%B7%A5%E4%BD%9C%E5%8C%BA%E4%B8%AD"><span class="nav-number">6.72.</span> <span class="nav-text">把暂存区的指定 file 放到工作区中</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%BA%E5%88%B6%E6%8E%A8%E9%80%81"><span class="nav-number">6.73.</span> <span class="nav-text">强制推送</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E5%9B%BE%E8%AF%A6%E8%A7%A3"><span class="nav-number">6.74.</span> <span class="nav-text">一图详解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E9%9B%85%E7%9A%84%E6%8F%90%E4%BA%A4Commit%E4%BF%A1%E6%81%AF"><span class="nav-number">6.75.</span> <span class="nav-text">优雅的提交Commit信息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#memcached%E5%AE%8C%E5%85%A8%E5%89%96%E6%9E%90"><span class="nav-number">7.</span> <span class="nav-text">memcached完全剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#memcached%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">7.1.</span> <span class="nav-text">memcached是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memcached%E7%9A%84%E7%89%B9%E5%BE%81"><span class="nav-number">7.2.</span> <span class="nav-text">memcached的特征</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E7%AE%80%E5%8D%95"><span class="nav-number">7.2.1.</span> <span class="nav-text">协议简单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8Elibevent%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86"><span class="nav-number">7.2.2.</span> <span class="nav-text">基于libevent的事件处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E7%BD%AE%E5%86%85%E5%AD%98%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">7.2.3.</span> <span class="nav-text">内置内存存储方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#memcached%E4%B8%8D%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F"><span class="nav-number">7.2.4.</span> <span class="nav-text">memcached不互相通信的分布式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#memcached%E7%9A%84%E5%AE%89%E8%A3%85"><span class="nav-number">7.2.5.</span> <span class="nav-text">memcached的安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#memcached%E7%9A%84%E5%90%AF%E5%8A%A8"><span class="nav-number">7.2.6.</span> <span class="nav-text">memcached的启动</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Cache-Memcached"><span class="nav-number">7.3.</span> <span class="nav-text">使用Cache::Memcached</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Cache-Memcached%E8%BF%9E%E6%8E%A5memcached"><span class="nav-number">7.3.1.</span> <span class="nav-text">使用Cache::Memcached连接memcached</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE"><span class="nav-number">7.3.2.</span> <span class="nav-text">保存数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="nav-number">7.3.3.</span> <span class="nav-text">获取数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE"><span class="nav-number">7.3.4.</span> <span class="nav-text">删除数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E4%B8%80%E5%92%8C%E5%87%8F%E4%B8%80%E6%93%8D%E4%BD%9C"><span class="nav-number">7.3.5.</span> <span class="nav-text">增一和减一操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Slab-Allocation%E6%9C%BA%E5%88%B6%EF%BC%9A%E6%95%B4%E7%90%86%E5%86%85%E5%AD%98%E4%BB%A5%E4%BE%BF%E9%87%8D%E5%A4%8D%E4%BD%BF%E7%94%A8"><span class="nav-number">7.3.6.</span> <span class="nav-text">Slab Allocation机制：整理内存以便重复使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Slab-Allocation%E7%9A%84%E4%B8%BB%E8%A6%81%E6%9C%AF%E8%AF%AD"><span class="nav-number">7.3.7.</span> <span class="nav-text">Slab Allocation的主要术语</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Page"><span class="nav-number">7.3.7.1.</span> <span class="nav-text">Page</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Chunk"><span class="nav-number">7.3.7.2.</span> <span class="nav-text">Chunk</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Slab-Class"><span class="nav-number">7.3.7.3.</span> <span class="nav-text">Slab Class</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8Slab%E4%B8%AD%E7%BC%93%E5%AD%98%E8%AE%B0%E5%BD%95%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">7.4.</span> <span class="nav-text">在Slab中缓存记录的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Slab-Allocator%E7%9A%84%E7%BC%BA%E7%82%B9"><span class="nav-number">7.5.</span> <span class="nav-text">Slab Allocator的缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Growth-Factor%E8%BF%9B%E8%A1%8C%E8%B0%83%E4%BC%98"><span class="nav-number">7.6.</span> <span class="nav-text">使用Growth Factor进行调优</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bmemcached%E7%9A%84%E5%86%85%E9%83%A8%E7%8A%B6%E6%80%81"><span class="nav-number">7.7.</span> <span class="nav-text">查看memcached的内部状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bslabs%E7%9A%84%E4%BD%BF%E7%94%A8%E7%8A%B6%E5%86%B5"><span class="nav-number">7.8.</span> <span class="nav-text">查看slabs的使用状况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memcached%E5%9C%A8%E6%95%B0%E6%8D%AE%E5%88%A0%E9%99%A4%E6%96%B9%E9%9D%A2%E6%9C%89%E6%95%88%E5%88%A9%E7%94%A8%E8%B5%84%E6%BA%90"><span class="nav-number">7.9.</span> <span class="nav-text">memcached在数据删除方面有效利用资源</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Lazy-Expiration"><span class="nav-number">7.9.1.</span> <span class="nav-text">Lazy Expiration</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LRU%EF%BC%9A%E4%BB%8E%E7%BC%93%E5%AD%98%E4%B8%AD%E6%9C%89%E6%95%88%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">7.10.</span> <span class="nav-text">LRU：从缓存中有效删除数据的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memcached%E7%9A%84%E6%9C%80%E6%96%B0%E5%8F%91%E5%B1%95%E6%96%B9%E5%90%91"><span class="nav-number">7.11.</span> <span class="nav-text">memcached的最新发展方向</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8D%8F%E8%AE%AE"><span class="nav-number">7.11.1.</span> <span class="nav-text">关于二进制协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8D%8F%E8%AE%AE%E7%9A%84%E6%A0%BC%E5%BC%8F"><span class="nav-number">7.11.1.1.</span> <span class="nav-text">二进制协议的格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HEADER%E4%B8%AD%E5%BC%95%E4%BA%BA%E6%B3%A8%E7%9B%AE%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="nav-number">7.11.1.2.</span> <span class="nav-text">HEADER中引人注目的地方</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%96%E9%83%A8%E5%BC%95%E6%93%8E%E6%94%AF%E6%8C%81"><span class="nav-number">7.11.2.</span> <span class="nav-text">外部引擎支持</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%96%E9%83%A8%E5%BC%95%E6%93%8E%E6%94%AF%E6%8C%81%E7%9A%84%E5%BF%85%E8%A6%81%E6%80%A7"><span class="nav-number">7.11.2.1.</span> <span class="nav-text">外部引擎支持的必要性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E5%8D%95API%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%88%90%E5%8A%9F%E7%9A%84%E5%85%B3%E9%94%AE"><span class="nav-number">7.11.2.2.</span> <span class="nav-text">简单API设计的成功的关键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E5%AE%A1%E8%A7%86%E7%8E%B0%E5%9C%A8%E7%9A%84%E4%BD%93%E7%B3%BB"><span class="nav-number">7.11.2.3.</span> <span class="nav-text">重新审视现在的体系</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memcached%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F"><span class="nav-number">7.12.</span> <span class="nav-text">memcached的分布式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cache-Memcached%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%B9%E6%B3%95"><span class="nav-number">7.13.</span> <span class="nav-text">Cache::Memcached的分布式方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E4%BD%99%E6%95%B0%E8%AE%A1%E7%AE%97%E5%88%86%E6%95%A3"><span class="nav-number">7.13.1.</span> <span class="nav-text">根据余数计算分散</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E4%BD%99%E6%95%B0%E8%AE%A1%E7%AE%97%E5%88%86%E6%95%A3%E7%9A%84%E7%BC%BA%E7%82%B9"><span class="nav-number">7.13.2.</span> <span class="nav-text">根据余数计算分散的缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Consistent-Hashing"><span class="nav-number">7.14.</span> <span class="nav-text">Consistent Hashing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Consistent-Hashing%E7%9A%84%E7%AE%80%E5%8D%95%E8%AF%B4%E6%98%8E"><span class="nav-number">7.14.1.</span> <span class="nav-text">Consistent Hashing的简单说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E6%8C%81Consistent-Hashing%E7%9A%84%E5%87%BD%E6%95%B0%E5%BA%93"><span class="nav-number">7.14.2.</span> <span class="nav-text">支持Consistent Hashing的函数库</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-GDB_GIT_qsub_tmux等工具相关" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/12/26/GDB_GIT_qsub_tmux%E7%AD%89%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/" class="article-date">
-  <time class="dt-published" datetime="2022-12-26T12:15:00.000Z" itemprop="datePublished">2022-12-26</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      gdb、git、qsub、tmux、memcached开发工具相关
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/26/GDB_GIT_qsub_tmux%E7%AD%89%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="gdb、git、qsub、tmux、memcached开发工具相关 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          gdb、git、qsub、tmux、memcached开发工具相关
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-12-26 20:15:00" itemprop="dateCreated datePublished" datetime="2022-12-26T20:15:00+08:00">2022-12-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-09-08 09:53:22" itemprop="dateModified" datetime="2023-09-08T09:53:22+08:00">2023-09-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="TAU"><a href="#TAU" class="headerlink" title="TAU"></a>TAU</h1><p>TAU是一个面向MPI与OpenMP并行程序的profiler，在目前看到的OpenMPI的Profiler中算是比较健全的一个（x）。官网：<a target="_blank" rel="noopener" href="https://www.cs.uoregon.edu/research/tau/home.php">https://www.cs.uoregon.edu/research/tau/home.php</a> 。</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="TAU"><a href="#TAU" class="headerlink" title="TAU"></a>TAU</h1><p>TAU是一个面向MPI与OpenMP并行程序的profiler，在目前看到的OpenMPI的Profiler中算是比较健全的一个（x）。官网：<a target="_blank" rel="noopener" href="https://www.cs.uoregon.edu/research/tau/home.php">https://www.cs.uoregon.edu/research/tau/home.php</a> 。</p>
 <p>其实Intel的vtune也不是不能用，但是面向OpenMPI的时候会有些限制。TAU可以根据不同的MPI发行版重新编译，感觉会好一些。</p>
 <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>官方的INSTALL中给出的configure建议参数：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Copy% ./configure -c++=mpicxx -cc=mpicc -fortran=mpif90 -mpi -ompt -iowrapper -bfd=download -dwarf=download -otf=download -unwind=download -pdt=&lt;path_to_pdt_dir&gt;</span><br></pre></td></tr></table></figure>
@@ -1749,150 +1869,75 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">my $memcached = Cache::Memcached::Fast-&gt;new(&#123;</span><br><span class="line">    servers =&gt; [&quot;192.168.0.1:11211&quot;,&quot;192.168.0.2:11211&quot;],</span><br><span class="line">    ketama_points =&gt; 150</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>另外，Cache::Memcached::libmemcached 是一个使用了Brain Aker开发的C函数库libmemcached的Perl模块。 libmemcached本身支持几种分布式算法，也支持Consistent Hashing， 其Perl绑定也支持Consistent Hashing。</p>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2022/12/26/GDB_GIT_qsub_tmux%E7%AD%89%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/" data-id="cuidXEfWkwkv0UzP2ExAL2Ler" data-title="gdb、git、qsub、tmux、memcached开发工具相关" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag"># 积累</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/12/26/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/" rel="prev" title="机器学习中的高性能计算">
+                  <i class="fa fa-angle-left"></i> 机器学习中的高性能计算
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/01/04/HIP%E7%BC%96%E7%A8%8B/" rel="next" title="HIP编程">
+                  HIP编程 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2023/01/04/HIP%E7%BC%96%E7%A8%8B/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          HIP编程
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2022/12/26/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">机器学习中的高性能计算</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

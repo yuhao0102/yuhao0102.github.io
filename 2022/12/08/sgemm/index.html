@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>SGEMM实施的完整演练 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="在开始之前，我想提一下，这项工作的大部分都是从对cublas Kepler和Maxwell的sgemm实现的详细研究中得出的。我做了一些适度的改进，但大多数难题都由英伟达的优秀工程师和他们对硬件的专业知识解决了。本文档的目标是传播这些知识，供其他人在自己的代码中使用。我还想联系两篇关于sgemm主题的优秀论文：MAGMA原始论文（http:&#x2F;&#x2F;icl.cs.utk.edu&#x2F;projectsfile">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="在开始之前，我想提一下，这项工作的大部分都是从对cublas Kepler和Maxwell的sgemm实现的详细研究中得出的。我做了一些适度的改进，但大多数难题都由英伟达的优秀工程师和他们对硬件的专业知识解决了。本文档的目标是传播这些知识，供其他人在自己的代码中使用。我还想联系两篇关于sgemm主题的优秀论文：MAGMA原始论文（http:&#x2F;&#x2F;icl.cs.utk.edu&#x2F;projectsfile">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SGEMM实施的完整演练">
 <meta property="og:url" content="http://example.com/2022/12/08/sgemm/index.html">
@@ -67,85 +81,191 @@
 <meta property="article:tag" content="积累">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/img/image-20221208152310575.png">
+
+
+<link rel="canonical" href="http://example.com/2022/12/08/sgemm/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/12/08/sgemm/","path":"2022/12/08/sgemm/","title":"SGEMM实施的完整演练"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>SGEMM实施的完整演练 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Overview"><span class="nav-number">1.</span> <span class="nav-text">Overview</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#64-Thread-Implementation"><span class="nav-number">2.</span> <span class="nav-text">64 Thread Implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BDA%E5%92%8CB%EF%BC%8C%E7%84%B6%E5%90%8E%E5%AD%98%E5%82%A8%E5%88%B0%E5%85%B1%E4%BA%AB"><span class="nav-number">2.1.</span> <span class="nav-text">加载A和B，然后存储到共享</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E5%85%B1%E4%BA%AB%E8%AF%BB%E5%8F%96"><span class="nav-number">2.2.</span> <span class="nav-text">从共享读取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97C%EF%BC%9A%E5%AF%84%E5%AD%98%E5%99%A8bank%E5%92%8C%E9%87%8D%E7%94%A8"><span class="nav-number">2.3.</span> <span class="nav-text">计算C：寄存器bank和重用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#warp%E5%90%8C%E6%AD%A5%E6%97%A0%E5%BA%8F%E6%98%A0%E5%B0%84"><span class="nav-number">2.4.</span> <span class="nav-text">warp同步无序映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Warp-Shuffling%E5%92%8C%E8%81%94%E5%90%88%E5%AD%98%E5%82%A8%E5%88%B0%E5%85%A8%E5%B1%80"><span class="nav-number">2.5.</span> <span class="nav-text">Warp Shuffling和联合存储到全局</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SGEMM-256-Thread-Implementation"><span class="nav-number">3.</span> <span class="nav-text">SGEMM - 256 Thread Implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Loading-A-and-B"><span class="nav-number">3.1.</span> <span class="nav-text">Loading A and B</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Storing-to-Shared"><span class="nav-number">3.2.</span> <span class="nav-text">Storing to Shared</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reading-from-Shared"><span class="nav-number">3.3.</span> <span class="nav-text">Reading from Shared</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Warp-Synchronous-Shuffle"><span class="nav-number">3.4.</span> <span class="nav-text">Warp Synchronous Shuffle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Storing-to-Global"><span class="nav-number">3.5.</span> <span class="nav-text">Storing to Global</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAGPU%E4%BC%98%E5%8C%96%E7%B3%BB%E5%88%97"><span class="nav-number">4.</span> <span class="nav-text">深入浅出GPU优化系列</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">4.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1"><span class="nav-number">4.2.</span> <span class="nav-text">并行算法设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reduce%E4%BC%98%E5%8C%96"><span class="nav-number">4.3.</span> <span class="nav-text">reduce优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#reduce-baseline%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">4.3.1.</span> <span class="nav-text">reduce baseline算法介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A71%EF%BC%9A%E8%A7%A3%E5%86%B3warp-divergence"><span class="nav-number">4.3.2.</span> <span class="nav-text">优化技巧1：解决warp divergence</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%B0%E6%9C%89%E9%97%AE%E9%A2%98"><span class="nav-number">4.3.2.1.</span> <span class="nav-text">现有问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F"><span class="nav-number">4.3.2.2.</span> <span class="nav-text">解决方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A72%EF%BC%9A%E8%A7%A3%E5%86%B3bank%E5%86%B2%E7%AA%81"><span class="nav-number">4.3.3.</span> <span class="nav-text">优化技巧2：解决bank冲突</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%B0%E6%9C%89%E9%97%AE%E9%A2%98-1"><span class="nav-number">4.3.3.1.</span> <span class="nav-text">现有问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F-1"><span class="nav-number">4.3.3.2.</span> <span class="nav-text">解决方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A73%EF%BC%9A%E8%A7%A3%E5%86%B3idle%E7%BA%BF%E7%A8%8B"><span class="nav-number">4.3.4.</span> <span class="nav-text">优化技巧3：解决idle线程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%B0%E6%9C%89%E9%97%AE%E9%A2%98-2"><span class="nav-number">4.3.4.1.</span> <span class="nav-text">现有问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F-2"><span class="nav-number">4.3.4.2.</span> <span class="nav-text">解决方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A74%EF%BC%9A%E5%B1%95%E5%BC%80%E6%9C%80%E5%90%8E%E4%B8%80%E7%BB%B4%E5%87%8F%E5%B0%91%E5%90%8C%E6%AD%A5"><span class="nav-number">4.3.5.</span> <span class="nav-text">优化技巧4：展开最后一维减少同步</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%B0%E6%9C%89%E9%97%AE%E9%A2%98-3"><span class="nav-number">4.3.5.1.</span> <span class="nav-text">现有问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F-3"><span class="nav-number">4.3.5.2.</span> <span class="nav-text">解决方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A75%EF%BC%9A%E5%AE%8C%E5%85%A8%E5%B1%95%E5%BC%80%E5%87%8F%E5%B0%91%E8%AE%A1%E7%AE%97"><span class="nav-number">4.3.6.</span> <span class="nav-text">优化技巧5：完全展开减少计算</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%B0%E6%9C%89%E9%97%AE%E9%A2%98-4"><span class="nav-number">4.3.6.1.</span> <span class="nav-text">现有问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">4.3.6.2.</span> <span class="nav-text">解决方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A76%EF%BC%9A%E5%90%88%E7%90%86%E8%AE%BE%E7%BD%AEblock%E6%95%B0%E9%87%8F"><span class="nav-number">4.3.7.</span> <span class="nav-text">优化技巧6：合理设置block数量</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%B0%E6%9C%89%E9%97%AE%E9%A2%98-5"><span class="nav-number">4.3.7.1.</span> <span class="nav-text">现有问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F-4"><span class="nav-number">4.3.7.2.</span> <span class="nav-text">解决方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A77%EF%BC%9A%E4%BD%BF%E7%94%A8shuffle%E6%8C%87%E4%BB%A4"><span class="nav-number">4.3.8.</span> <span class="nav-text">优化技巧7：使用shuffle指令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%B0%E6%9C%89%E9%97%AE%E9%A2%98-6"><span class="nav-number">4.3.8.1.</span> <span class="nav-text">现有问题</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GEMM%E4%BC%98%E5%8C%96"><span class="nav-number">4.4.</span> <span class="nav-text">GEMM优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80-1"><span class="nav-number">4.4.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8Eglobal-memory%E5%88%B0shared-memory"><span class="nav-number">4.4.2.</span> <span class="nav-text">从global memory到shared memory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8Eshared-memory%E5%88%B0register"><span class="nav-number">4.4.3.</span> <span class="nav-text">从shared memory到register</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#register%E5%88%86%E5%9D%97"><span class="nav-number">4.4.4.</span> <span class="nav-text">register分块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%9A%84prefetch"><span class="nav-number">4.4.5.</span> <span class="nav-text">数据的prefetch</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GEMM%E7%AE%97%E6%B3%95%E6%A6%82%E8%BF%B0"><span class="nav-number">4.5.</span> <span class="nav-text">GEMM算法概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E9%87%87%E7%94%A8%E6%95%B0%E6%8D%AE%E9%A2%84%E5%8F%96"><span class="nav-number">4.5.1.</span> <span class="nav-text">不采用数据预取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%87%E7%94%A8%E6%95%B0%E6%8D%AE%E9%A2%84%E5%8F%96"><span class="nav-number">4.5.2.</span> <span class="nav-text">采用数据预取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GEMM%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90"><span class="nav-number">4.5.3.</span> <span class="nav-text">GEMM代码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="nav-number">4.5.3.1.</span> <span class="nav-text">参数说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%A7%E8%BF%AD%E4%BB%A3%E5%89%8D%E9%A2%84%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="nav-number">4.5.3.2.</span> <span class="nav-text">大迭代前预取数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%A7%E8%BF%AD%E4%BB%A3%E9%80%BB%E8%BE%91"><span class="nav-number">4.5.3.3.</span> <span class="nav-text">大迭代逻辑</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%A7%E8%BF%AD%E4%BB%A3%E8%AF%A6%E7%BB%86%E8%A7%A3%E6%9E%90"><span class="nav-number">4.5.3.4.</span> <span class="nav-text">大迭代详细解析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E5%86%99%E5%9B%9E"><span class="nav-number">4.5.3.5.</span> <span class="nav-text">计算结果写回</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C"><span class="nav-number">4.5.4.</span> <span class="nav-text">实验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E7%A8%8B%E5%BA%8F%E6%80%A7%E8%83%BD"><span class="nav-number">4.5.5.</span> <span class="nav-text">从汇编代码分析程序性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E4%BA%8E%E7%8E%B0%E6%9C%89sgemm%E7%9A%84%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E5%8F%8A%E8%A7%82%E5%AF%9F"><span class="nav-number">4.5.6.</span> <span class="nav-text">对于现有sgemm的代码分析及观察</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%87%E7%BC%96%E7%BA%A7%E5%88%AB%E4%BB%A3%E7%A0%81%E8%B0%83%E6%95%B4"><span class="nav-number">4.5.7.</span> <span class="nav-text">汇编级别代码调整</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E9%87%8D%E6%98%A0%E5%B0%84"><span class="nav-number">4.5.7.1.</span> <span class="nav-text">寄存器的重映射</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92"><span class="nav-number">4.5.7.2.</span> <span class="nav-text">指令重排</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%8E%E6%80%BB%E7%BB%93"><span class="nav-number">4.5.8.</span> <span class="nav-text">实验与总结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CUDA-C-%E8%B0%83%E4%BC%98"><span class="nav-number">4.5.8.1.</span> <span class="nav-text">CUDA C 调优</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E8%B0%83%E4%BC%98"><span class="nav-number">4.5.8.2.</span> <span class="nav-text">汇编代码调优</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SGEMM"><span class="nav-number">5.</span> <span class="nav-text">SGEMM</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">5.1.</span> <span class="nav-text">基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%BA%E5%88%86-FLOPS-%E5%92%8C-FLOPs"><span class="nav-number">5.1.1.</span> <span class="nav-text">区分 FLOPS 和 FLOPs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97-CPU-%E7%9A%84-FLOPS"><span class="nav-number">5.1.2.</span> <span class="nav-text">计算 CPU 的 FLOPS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A9%E9%98%B5%E4%B9%98%E5%AE%9E%E7%8E%B0%E5%92%8C%E4%BC%98%E5%8C%96"><span class="nav-number">5.2.</span> <span class="nav-text">基础矩阵乘实现和优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80-GEMM-%E5%AE%9E%E7%8E%B0%E5%92%8C%E5%BA%A6%E9%87%8F"><span class="nav-number">5.2.1.</span> <span class="nav-text">基础 GEMM 实现和度量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%A1%8C%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%E5%8D%81%E5%80%8D%E6%80%A7%E8%83%BD"><span class="nav-number">5.2.2.</span> <span class="nav-text">一行代码优化十倍性能</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BLAS-%E6%8E%A5%E5%8F%A3%E7%AE%80%E4%BB%8B"><span class="nav-number">5.3.</span> <span class="nav-text">BLAS 接口简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%8C%96%E7%9F%A9%E9%98%B5%E4%B9%98%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.4.</span> <span class="nav-text">深度优化矩阵乘实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%89%93%E5%8C%85"><span class="nav-number">5.4.1.</span> <span class="nav-text">数据打包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E4%BC%98%E5%8C%96-Micro-Kernel"><span class="nav-number">5.4.2.</span> <span class="nav-text">寄存器优化(Micro Kernel)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E6%95%B0%E6%8D%AE"><span class="nav-number">5.4.3.</span> <span class="nav-text">性能数据</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-sgemm" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/12/08/sgemm/" class="article-date">
-  <time class="dt-published" datetime="2022-12-08T06:55:00.000Z" itemprop="datePublished">2022-12-08</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      SGEMM实施的完整演练
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/08/sgemm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="SGEMM实施的完整演练 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SGEMM实施的完整演练
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-12-08 14:55:00" itemprop="dateCreated datePublished" datetime="2022-12-08T14:55:00+08:00">2022-12-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-01-19 10:14:36" itemprop="dateModified" datetime="2023-01-19T10:14:36+08:00">2023-01-19</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>在开始之前，我想提一下，这项工作的大部分都是从对cublas Kepler和Maxwell的sgemm实现的详细研究中得出的。我做了一些适度的改进，但大多数难题都由英伟达的优秀工程师和他们对硬件的专业知识解决了。本文档的目标是传播这些知识，供其他人在自己的代码中使用。我还想联系两篇关于sgemm主题的优秀论文：MAGMA原始论文（<a target="_blank" rel="noopener" href="http://icl.cs.utk.edu/projectsfiles/magma/pubs/fermi_gemm.pdf%EF%BC%89%E5%92%8C%E8%B5%96%E4%BF%8A%E6%9D%B0%E7%9A%84Kepler">http://icl.cs.utk.edu/projectsfiles/magma/pubs/fermi_gemm.pdf）和赖俊杰的Kepler</a> sgemm论文（<a target="_blank" rel="noopener" href="http://hal.inria.fr/docs/00/78/99/58/PDF/112_Lai.pdf%EF%BC%89%E3%80%82%E6%9C%AC%E6%96%87%E6%A1%A3%E5%9F%BA%E6%9C%AC%E4%B8%8A%E6%98%AFJunjie%E5%B7%A5%E4%BD%9C%E7%9A%84%E6%89%A9%E5%B1%95%EF%BC%8C%E4%BD%86%E5%85%B7%E6%9C%89Maxwell%E6%9E%B6%E6%9E%84%E5%92%8C%E9%A2%9D%E5%A4%96%E7%9A%84%E6%B1%87%E7%BC%96%E7%BA%A7%E4%BC%98%E5%8C%96%E3%80%82">http://hal.inria.fr/docs/00/78/99/58/PDF/112_Lai.pdf）。本文档基本上是Junjie工作的扩展，但具有Maxwell架构和额外的汇编级优化。</a></p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>在开始之前，我想提一下，这项工作的大部分都是从对cublas Kepler和Maxwell的sgemm实现的详细研究中得出的。我做了一些适度的改进，但大多数难题都由英伟达的优秀工程师和他们对硬件的专业知识解决了。本文档的目标是传播这些知识，供其他人在自己的代码中使用。我还想联系两篇关于sgemm主题的优秀论文：MAGMA原始论文（<a target="_blank" rel="noopener" href="http://icl.cs.utk.edu/projectsfiles/magma/pubs/fermi_gemm.pdf%EF%BC%89%E5%92%8C%E8%B5%96%E4%BF%8A%E6%9D%B0%E7%9A%84Kepler">http://icl.cs.utk.edu/projectsfiles/magma/pubs/fermi_gemm.pdf）和赖俊杰的Kepler</a> sgemm论文（<a target="_blank" rel="noopener" href="http://hal.inria.fr/docs/00/78/99/58/PDF/112_Lai.pdf%EF%BC%89%E3%80%82%E6%9C%AC%E6%96%87%E6%A1%A3%E5%9F%BA%E6%9C%AC%E4%B8%8A%E6%98%AFJunjie%E5%B7%A5%E4%BD%9C%E7%9A%84%E6%89%A9%E5%B1%95%EF%BC%8C%E4%BD%86%E5%85%B7%E6%9C%89Maxwell%E6%9E%B6%E6%9E%84%E5%92%8C%E9%A2%9D%E5%A4%96%E7%9A%84%E6%B1%87%E7%BC%96%E7%BA%A7%E4%BC%98%E5%8C%96%E3%80%82">http://hal.inria.fr/docs/00/78/99/58/PDF/112_Lai.pdf）。本文档基本上是Junjie工作的扩展，但具有Maxwell架构和额外的汇编级优化。</a></p>
 <h1 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h1><p>以sgemm为例，本文旨在描述如何最大化Maxwell架构及其他架构的计算能力。拥有数千个计算核心对你没有好处，除非你让它们得到数据。要做到这一点，您需要构建计算结构，以最大限度地重用通过各种内存层次结构提取的数据。在GPU上，这些是：设备内存到二级缓存，二级缓存到纹理缓存，纹理缓存到寄存器，寄存器到共享内存，共享内存到寄存器，从寄存器到指令操作数缓存（Maxwell的新功能），最后从寄存器返回到设备内存。这些数据路径中的每一条都有延迟，我们需要用指令和线程级并行性（ILP&amp;TLP）来隐藏这些延迟。此外，还可能存在bank和联合约束。所提出的sgemm代码能够克服所有这些约束，并在硬件理论错误的2%内运行。</p>
 <p>本文档将介绍两种不同的布局：每个块64个线程和每个块256个线程。我将主要讨论64线程版本，因为映射更小更简单。256线程版本或多或少是相同的，只是放大了4倍。这两个版本分别针对小型或大型矩阵进行了优化。较小的64线程版本可以将矩阵拆分为4倍多的块，这在SM稀少的情况下非常有用，但代价是所需的设备内存带宽是256线程版本的两倍。在GM204硬件上，这个额外的带宽实际上超过了可用的带宽，因此只有当有更多的可用块来填充SM超过了成本时，您才想使用它（除非L2可以隐藏它）。虽然，如果您有足够的并行工作，使用流来填充SM是更好的方法。</p>
 <p>在这两个版本中，我们将使用双缓冲8寄存器块来加载A和B中的每一个。双缓冲允许我们从共享内存中隐藏加载的大部分延迟：我们可以计算一个寄存器块，同时加载下一个寄存器。我们选择8个寄存器块，因为它与使用四矢量内存指令很好地对齐，并且因为我们可以将总寄存器预算保持在128以下。跨越128个寄存器的障碍将使我们的占用率从每个调度器的4个活动减少到64线程版本的3个，从256线程版本的4个减少到2个。64线程版本不太容易受到下降的影响，我实际上看到了一些矩阵大小的性能提高（减少了L2和纹理缓存稀释，每个SM的块更少），但256线程版本的工作性能稍好，每个调度程序多了1个扭曲，以覆盖延迟。我们在这两种实现中的性能都不会受到占用率下降的巨大影响，这说明了这段代码如何很好地隐藏ILP的延迟。</p>
@@ -837,150 +957,75 @@
 </tbody></table>
 <p>从数据上来看，avx2_col_major_sgemm 相较于 Naive 实现已经具备了质的飞跃，并且在多数shapes下可以取得接近 oneDNN 的性能，不过在 (128, 128, 128) 下和oneDNN 存在比较大的性能差异，这也说明 avx2_col_major_sgemm 仍然存在一定的优化空间。这很令人兴奋，不是么？</p>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2022/12/08/sgemm/" data-id="cuidaD69fqEgH6PgbM1FKaLMo" data-title="SGEMM实施的完整演练" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag"># 积累</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/10/03/cuda%E6%95%99%E7%A8%8B%E5%8A%A0%E4%BB%A3%E7%A0%81/" rel="prev" title="CUDA教程">
+                  <i class="fa fa-angle-left"></i> CUDA教程
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/12/22/CUDA%E5%AE%98%E6%96%B9%E6%89%8B%E5%86%8C/" rel="next" title="CUDA 编程手册">
+                  CUDA 编程手册 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2022/12/22/CUDA%E5%AE%98%E6%96%B9%E6%89%8B%E5%86%8C/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          CUDA 编程手册
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2022/10/03/cuda%E6%95%99%E7%A8%8B%E5%8A%A0%E4%BB%A3%E7%A0%81/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">CUDA教程</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

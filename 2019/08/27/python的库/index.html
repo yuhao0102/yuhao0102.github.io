@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>python的PIL库 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Python的PIL库Image读出来的是PIL的类型，而skimage.io读出来的数据是numpy格式的 1234567# Image和skimage读图片import Image as imgimport osfrom matplotlib import pyplot as plotfrom skimage import io,transformimg_file1 &#x3D; img.open(&amp;#">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Python的PIL库Image读出来的是PIL的类型，而skimage.io读出来的数据是numpy格式的 1234567# Image和skimage读图片import Image as imgimport osfrom matplotlib import pyplot as plotfrom skimage import io,transformimg_file1 &#x3D; img.open(&amp;#">
 <meta property="og:type" content="article">
 <meta property="og:title" content="python的PIL库">
 <meta property="og:url" content="http://example.com/2019/08/27/python%E7%9A%84%E5%BA%93/index.html">
@@ -18,85 +32,191 @@
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="积累">
 <meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2019/08/27/python%E7%9A%84%E5%BA%93/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2019/08/27/python%E7%9A%84%E5%BA%93/","path":"2019/08/27/python的库/","title":"python的PIL库"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>python的PIL库 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Python%E7%9A%84PIL%E5%BA%93"><span class="nav-number">1.</span> <span class="nav-text">Python的PIL库</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E5%9B%BE%E7%89%87%E4%B8%8A%E9%9D%A2%E5%8A%A0%E6%96%87%E5%AD%97"><span class="nav-number">1.1.</span> <span class="nav-text">在图片上面加文字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E7%89%87%E4%BF%A1%E6%81%AF"><span class="nav-number">1.2.</span> <span class="nav-text">图片信息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pil%E8%83%BD%E5%A4%84%E7%90%86%E7%9A%84%E5%9B%BE%E7%89%87%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">pil能处理的图片类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E9%81%93"><span class="nav-number">1.2.2.</span> <span class="nav-text">通道</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%90%E6%A0%87"><span class="nav-number">1.2.3.</span> <span class="nav-text">坐标</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%BE%E7%89%87%E7%9A%84%E6%89%93%E5%BC%80%E4%B8%8E%E6%98%BE%E7%A4%BA"><span class="nav-number">2.</span> <span class="nav-text">图片的打开与显示</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#matplotlib%E6%A0%87%E5%87%86%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">matplotlib标准模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E7%89%87%E7%9A%84%E4%BF%9D%E5%AD%98"><span class="nav-number">2.2.</span> <span class="nav-text">图片的保存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E9%80%9A%E9%81%93-%E5%87%A0%E4%BD%95%E5%8F%98%E6%8D%A2-%E8%A3%81%E5%89%AA"><span class="nav-number">2.3.</span> <span class="nav-text">图像通道\几何变换\裁剪</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%A9%E8%89%B2%E5%9B%BE%E5%83%8F%E8%BD%AC%E7%81%B0%E5%BA%A6%E5%9B%BE"><span class="nav-number">2.3.1.</span> <span class="nav-text">彩色图像转灰度图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E9%81%93%E5%88%86%E7%A6%BB%E4%B8%8E%E5%90%88%E5%B9%B6"><span class="nav-number">2.4.</span> <span class="nav-text">通道分离与合并</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B0%B4%E5%B9%B3%E6%8B%BC%E6%8E%A5%E5%9B%BE%E7%89%87"><span class="nav-number">2.4.1.</span> <span class="nav-text">水平拼接图片</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AB%96%E7%9B%B4%E6%8B%BC%E6%8E%A5%E5%9B%BE%E7%89%87"><span class="nav-number">2.5.</span> <span class="nav-text">竖直拼接图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A3%81%E5%89%AA%E5%9B%BE%E7%89%87"><span class="nav-number">2.6.</span> <span class="nav-text">裁剪图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%A0%E4%BD%95%E5%8F%98%E6%8D%A2"><span class="nav-number">2.7.</span> <span class="nav-text">几何变换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2%E5%9B%BE%E5%83%8F"><span class="nav-number">2.8.</span> <span class="nav-text">转换图像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E5%BA%93Image%E6%A8%A1%E5%9D%97"><span class="nav-number">2.9.</span> <span class="nav-text">python图像处理库Image模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%96%B0%E7%9A%84%E5%9B%BE%E7%89%87"><span class="nav-number">2.9.1.</span> <span class="nav-text">创建一个新的图片</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%82%E5%8F%A0%E5%9B%BE%E7%89%87"><span class="nav-number">2.10.</span> <span class="nav-text">层叠图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%B0%B4%E5%8D%B0"><span class="nav-number">2.11.</span> <span class="nav-text">添加水印</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%96%87%E5%AD%97%E6%B0%B4%E5%8D%B0"><span class="nav-number">2.11.1.</span> <span class="nav-text">添加文字水印</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%B0%8F%E5%9B%BE%E7%89%87%E6%B0%B4%E5%8D%B0"><span class="nav-number">2.11.2.</span> <span class="nav-text">添加小图片水印</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PIL-Image-%E5%9B%BE%E5%83%8F%E4%BA%92%E8%BD%AC-numpy-%E6%95%B0%E7%BB%84"><span class="nav-number">2.11.3.</span> <span class="nav-text">PIL Image 图像互转 numpy 数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#numpy-image-%E6%9F%A5%E7%9C%8B%E5%9B%BE%E7%89%87%E4%BF%A1%E6%81%AF%EF%BC%8C%E5%8F%AF%E7%94%A8%E5%A6%82%E4%B8%8B%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">2.11.4.</span> <span class="nav-text">numpy image 查看图片信息，可用如下的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86-numpy-%E6%95%B0%E7%BB%84%E8%BD%AC%E6%8D%A2%E4%B8%BA-PIL-%E5%9B%BE%E7%89%87"><span class="nav-number">2.11.5.</span> <span class="nav-text">将 numpy 数组转换为 PIL 图片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PIL-image-%E6%9F%A5%E7%9C%8B%E5%9B%BE%E7%89%87%E4%BF%A1%E6%81%AF%EF%BC%8C%E5%8F%AF%E7%94%A8%E5%A6%82%E4%B8%8B%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">2.11.6.</span> <span class="nav-text">PIL image 查看图片信息，可用如下的方法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E4%B8%AD%E7%9A%84%E5%83%8F%E7%B4%A0%E8%AE%BF%E9%97%AE"><span class="nav-number">3.</span> <span class="nav-text">图像中的像素访问</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E6%93%8D%E4%BD%9C%E5%83%8F%E7%B4%A0%E7%82%B9"><span class="nav-number">3.1.</span> <span class="nav-text">直接操作像素点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E7%9B%B4%E6%96%B9%E5%9B%BE"><span class="nav-number">3.2.</span> <span class="nav-text">图像直方图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%BB%E7%81%B0%E5%BA%A6%E5%9B%BE%E7%9B%B4%E6%96%B9%E5%9B%BE"><span class="nav-number">3.2.1.</span> <span class="nav-text">画灰度图直方图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%A9%E8%89%B2%E5%9B%BE%E7%89%87%E7%9B%B4%E6%96%B9%E5%9B%BE"><span class="nav-number">3.2.2.</span> <span class="nav-text">彩色图片直方图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Python%E5%A6%82%E4%BD%95%E8%AF%BB%E5%8F%96%E6%8C%87%E5%AE%9A%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%8B%E7%9A%84%E6%89%80%E6%9C%89%E5%9B%BE%E5%83%8F"><span class="nav-number">3.3.</span> <span class="nav-text">Python如何读取指定文件夹下的所有图像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Python%E5%9B%BE%E5%BD%A2%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E5%BA%93ImageEnhance%E6%A8%A1%E5%9D%97%E5%9B%BE%E5%83%8F%E5%A2%9E%E5%BC%BA"><span class="nav-number">3.4.</span> <span class="nav-text">Python图形图像处理库ImageEnhance模块图像增强</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Python%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E5%BA%93ImageChops%E6%A8%A1%E5%9D%97"><span class="nav-number">3.5.</span> <span class="nav-text">Python图像处理库ImageChops模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Python%E5%9B%BE%E5%BD%A2%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E5%BA%93ImageFilter%E6%A8%A1%E5%9D%97%E5%9B%BE%E5%83%8F%E6%BB%A4%E9%95%9C"><span class="nav-number">3.6.</span> <span class="nav-text">Python图形图像处理库ImageFilter模块图像滤镜</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Python-netcdf4%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">Python netcdf4包的使用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Python-%E7%94%A8matplotlib%E7%94%BB%E4%B8%89%E8%A7%92%E5%BD%A2"><span class="nav-number">5.</span> <span class="nav-text">Python 用matplotlib画三角形</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Python%E4%BD%BF%E7%94%A8thinter%E5%86%99%E7%95%8C%E9%9D%A2"><span class="nav-number">6.</span> <span class="nav-text">Python使用thinter写界面</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-python的库" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2019/08/27/python%E7%9A%84%E5%BA%93/" class="article-date">
-  <time class="dt-published" datetime="2019-08-27T02:23:00.000Z" itemprop="datePublished">2019-08-27</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      python的PIL库
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/08/27/python%E7%9A%84%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="python的PIL库 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          python的PIL库
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-08-27 10:23:00" itemprop="dateCreated datePublished" datetime="2019-08-27T10:23:00+08:00">2019-08-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-01-07 14:13:54" itemprop="dateModified" datetime="2022-01-07T14:13:54+08:00">2022-01-07</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="Python的PIL库"><a href="#Python的PIL库" class="headerlink" title="Python的PIL库"></a>Python的PIL库</h1><p>Image读出来的是PIL的类型，而skimage.io读出来的数据是numpy格式的</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Python的PIL库"><a href="#Python的PIL库" class="headerlink" title="Python的PIL库"></a>Python的PIL库</h1><p>Image读出来的是PIL的类型，而skimage.io读出来的数据是numpy格式的</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Image和skimage读图片</span></span><br><span class="line"><span class="keyword">import</span> Image <span class="keyword">as</span> img</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> pyplot <span class="keyword">as</span> plot</span><br><span class="line"><span class="keyword">from</span> skimage <span class="keyword">import</span> io,transform</span><br><span class="line">img_file1 = img.<span class="built_in">open</span>(<span class="string">&#x27;./CXR_png/MCUCXR_0042_0.png&#x27;</span>)</span><br><span class="line">img_file2 = io.imread(<span class="string">&#x27;./CXR_png/MCUCXR_0042_0.png&#x27;</span>)</span><br></pre></td></tr></table></figure>
 
 <p>输出可以看出Img读图片的大小是图片的(width, height)；而skimage的是(height,width, channel)，这也是为什么caffe在单独测试时要要在代码中设置：transformer.set_transpose(‘data’,(2,0,1))，因为caffe可以处理的图片的数据格式是(channel,height,width)，所以要转换数据。</p>
@@ -335,150 +455,75 @@
 
 <h1 id="Python使用thinter写界面"><a href="#Python使用thinter写界面" class="headerlink" title="Python使用thinter写界面"></a>Python使用thinter写界面</h1><p>找了一个样例，以后以此为模板。注意前边的import，在python3下可以正常运行，python3自带了Tkinter。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> _tkinter</span><br><span class="line"><span class="keyword">from</span> tkinter <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">LOG_LINE_NUM = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MY_GUI</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,init_window_name</span>):</span><br><span class="line">        <span class="variable language_">self</span>.init_window_name = init_window_name</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">#设置窗口</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">set_init_window</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.init_window_name.title(<span class="string">&quot;文本处理工具_v1.2&quot;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.init_window_name.geometry(<span class="string">&#x27;1068x681+10+10&#x27;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.init_window_name[<span class="string">&quot;bg&quot;</span>] = <span class="string">&quot;white&quot;</span>                                    <span class="comment">#窗口背景色，其他背景色见：blog.csdn.net/chl0000/article/details/7657887</span></span><br><span class="line">        <span class="variable language_">self</span>.init_window_name.attributes(<span class="string">&quot;-alpha&quot;</span>,<span class="number">0.9</span>)                          <span class="comment">#虚化，值越小虚化程度越高</span></span><br><span class="line">        <span class="comment">#标签</span></span><br><span class="line">        <span class="variable language_">self</span>.init_data_label = Label(<span class="variable language_">self</span>.init_window_name, text=<span class="string">&quot;待处理数据&quot;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.init_data_label.grid(row=<span class="number">0</span>, column=<span class="number">0</span>)</span><br><span class="line">        <span class="variable language_">self</span>.result_data_label = Label(<span class="variable language_">self</span>.init_window_name, text=<span class="string">&quot;输出结果&quot;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.result_data_label.grid(row=<span class="number">0</span>, column=<span class="number">12</span>)</span><br><span class="line">        <span class="variable language_">self</span>.log_label = Label(<span class="variable language_">self</span>.init_window_name, text=<span class="string">&quot;日志&quot;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.log_label.grid(row=<span class="number">12</span>, column=<span class="number">0</span>)</span><br><span class="line">        <span class="comment">#文本框</span></span><br><span class="line">        <span class="variable language_">self</span>.init_data_Text = Text(<span class="variable language_">self</span>.init_window_name, width=<span class="number">67</span>, height=<span class="number">35</span>)  <span class="comment">#原始数据录入框</span></span><br><span class="line">        <span class="variable language_">self</span>.init_data_Text.grid(row=<span class="number">1</span>, column=<span class="number">0</span>, rowspan=<span class="number">10</span>, columnspan=<span class="number">10</span>)</span><br><span class="line">        <span class="variable language_">self</span>.result_data_Text = Text(<span class="variable language_">self</span>.init_window_name, width=<span class="number">70</span>, height=<span class="number">49</span>)  <span class="comment">#处理结果展示</span></span><br><span class="line">        <span class="variable language_">self</span>.result_data_Text.grid(row=<span class="number">1</span>, column=<span class="number">12</span>, rowspan=<span class="number">15</span>, columnspan=<span class="number">10</span>)</span><br><span class="line">        <span class="variable language_">self</span>.log_data_Text = Text(<span class="variable language_">self</span>.init_window_name, width=<span class="number">66</span>, height=<span class="number">9</span>)  <span class="comment"># 日志框</span></span><br><span class="line">        <span class="variable language_">self</span>.log_data_Text.grid(row=<span class="number">13</span>, column=<span class="number">0</span>, columnspan=<span class="number">10</span>)</span><br><span class="line">        <span class="comment">#按钮</span></span><br><span class="line">        <span class="variable language_">self</span>.str_trans_to_md5_button = Button(<span class="variable language_">self</span>.init_window_name, text=<span class="string">&quot;字符串转MD5&quot;</span>, bg=<span class="string">&quot;lightblue&quot;</span>, width=<span class="number">10</span>,command=<span class="variable language_">self</span>.str_trans_to_md5)</span><br><span class="line">        <span class="variable language_">self</span>.str_trans_to_md5_button.grid(row=<span class="number">1</span>, column=<span class="number">11</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">#功能函数</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">str_trans_to_md5</span>(<span class="params">self</span>):</span><br><span class="line">        src = <span class="variable language_">self</span>.init_data_Text.get(<span class="number">1.0</span>,END).strip().replace(<span class="string">&quot;\n&quot;</span>,<span class="string">&quot;&quot;</span>).encode()</span><br><span class="line">        <span class="comment">#print(&quot;src =&quot;,src)</span></span><br><span class="line">        <span class="keyword">if</span> src:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                myMd5 = hashlib.md5()</span><br><span class="line">                myMd5.update(src)</span><br><span class="line">                myMd5_Digest = myMd5.hexdigest()</span><br><span class="line">                <span class="comment">#print(myMd5_Digest)</span></span><br><span class="line">                <span class="comment">#输出到界面</span></span><br><span class="line">                <span class="variable language_">self</span>.result_data_Text.delete(<span class="number">1.0</span>,END)</span><br><span class="line">                <span class="variable language_">self</span>.result_data_Text.insert(<span class="number">1.0</span>,myMd5_Digest)</span><br><span class="line">                <span class="variable language_">self</span>.write_log_to_Text(<span class="string">&quot;INFO:str_trans_to_md5 success&quot;</span>)</span><br><span class="line">            <span class="keyword">except</span>:</span><br><span class="line">                <span class="variable language_">self</span>.result_data_Text.delete(<span class="number">1.0</span>,END)</span><br><span class="line">                <span class="variable language_">self</span>.result_data_Text.insert(<span class="number">1.0</span>,<span class="string">&quot;字符串转MD5失败&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="variable language_">self</span>.write_log_to_Text(<span class="string">&quot;ERROR:str_trans_to_md5 failed&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">#获取当前时间</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_current_time</span>(<span class="params">self</span>):</span><br><span class="line">        current_time = time.strftime(<span class="string">&#x27;%Y-%m-%d %H:%M:%S&#x27;</span>,time.localtime(time.time()))</span><br><span class="line">        <span class="keyword">return</span> current_time</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">#日志动态打印</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">write_log_to_Text</span>(<span class="params">self,logmsg</span>):</span><br><span class="line">        <span class="keyword">global</span> LOG_LINE_NUM</span><br><span class="line">        current_time = <span class="variable language_">self</span>.get_current_time()</span><br><span class="line">        logmsg_in = <span class="built_in">str</span>(current_time) +<span class="string">&quot; &quot;</span> + <span class="built_in">str</span>(logmsg) + <span class="string">&quot;\n&quot;</span>      <span class="comment">#换行</span></span><br><span class="line">        <span class="keyword">if</span> LOG_LINE_NUM &lt;= <span class="number">7</span>:</span><br><span class="line">            <span class="variable language_">self</span>.log_data_Text.insert(END, logmsg_in)</span><br><span class="line">            LOG_LINE_NUM = LOG_LINE_NUM + <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="variable language_">self</span>.log_data_Text.delete(<span class="number">1.0</span>,<span class="number">2.0</span>)</span><br><span class="line">            <span class="variable language_">self</span>.log_data_Text.insert(END, logmsg_in)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gui_start</span>():</span><br><span class="line">    init_window = Tk()              <span class="comment">#实例化出一个父窗口</span></span><br><span class="line">    ZMJ_PORTAL = MY_GUI(init_window)</span><br><span class="line">    <span class="comment"># 设置根窗口默认属性</span></span><br><span class="line">    ZMJ_PORTAL.set_init_window()</span><br><span class="line"></span><br><span class="line">    init_window.mainloop()          <span class="comment">#父窗口进入事件循环，可以理解为保持窗口运行，否则界面不展示</span></span><br><span class="line"></span><br><span class="line">gui_start()</span><br></pre></td></tr></table></figure>
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2019/08/27/python%E7%9A%84%E5%BA%93/" data-id="cuidUZfd94IHnEKkZPDzTqbBT" data-title="python的PIL库" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag"># 积累</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/08/12/%E8%B0%88%E8%B0%88%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84ACID/" rel="prev" title="谈谈数据库的ACID">
+                  <i class="fa fa-angle-left"></i> 谈谈数据库的ACID
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/08/28/cpp%E5%85%B3%E9%94%AE%E5%AD%97%E5%8F%8A%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7/" rel="next" title="C++关键字及语言特性">
+                  C++关键字及语言特性 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2019/08/28/cpp%E5%85%B3%E9%94%AE%E5%AD%97%E5%8F%8A%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          C++关键字及语言特性
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2019/08/12/%E8%B0%88%E8%B0%88%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84ACID/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">谈谈数据库的ACID</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

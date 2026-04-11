@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>HIP编程 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="什么是rocm？Radeon Open Computing platform 全套驱动程序，开发工具，API和AMD GPU监控工具的集合。用来支持AMD的GPU以及其他现有的加速器。 CUDA到HIP转码CUDA与HIPCUDA是NVIDIA开发的GPU SDK（软件开发框架），主要针对NVIDIA GPU硬件开发，而HIP是AMD开发的GPU SDK，主要是针对AMD GPU硬件开发，同时兼容">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="什么是rocm？Radeon Open Computing platform 全套驱动程序，开发工具，API和AMD GPU监控工具的集合。用来支持AMD的GPU以及其他现有的加速器。 CUDA到HIP转码CUDA与HIPCUDA是NVIDIA开发的GPU SDK（软件开发框架），主要针对NVIDIA GPU硬件开发，而HIP是AMD开发的GPU SDK，主要是针对AMD GPU硬件开发，同时兼容">
 <meta property="og:type" content="article">
 <meta property="og:title" content="HIP编程">
 <meta property="og:url" content="http://example.com/2023/01/04/HIP%E7%BC%96%E7%A8%8B/index.html">
@@ -27,85 +41,191 @@
 <meta property="article:tag" content="积累">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/img/1794499-20200417143326110-1808551587.png">
+
+
+<link rel="canonical" href="http://example.com/2023/01/04/HIP%E7%BC%96%E7%A8%8B/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2023/01/04/HIP%E7%BC%96%E7%A8%8B/","path":"2023/01/04/HIP编程/","title":"HIP编程"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>HIP编程 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFrocm%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">什么是rocm？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CUDA%E5%88%B0HIP%E8%BD%AC%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">CUDA到HIP转码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CUDA%E4%B8%8EHIP"><span class="nav-number">2.1.</span> <span class="nav-text">CUDA与HIP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HIP%E8%BD%AC%E7%A0%81%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.2.</span> <span class="nav-text">HIP转码的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hipify-clang%E4%BB%A3%E7%A0%81%E7%AE%80%E4%BB%8B"><span class="nav-number">2.3.</span> <span class="nav-text">hipify-clang代码简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hipify-perl%E7%A8%8B%E5%BA%8F%E7%AE%80%E4%BB%8B"><span class="nav-number">2.4.</span> <span class="nav-text">hipify-perl程序简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E"><span class="nav-number">2.5.</span> <span class="nav-text">使用说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hipify-clang"><span class="nav-number">2.6.</span> <span class="nav-text">hipify-clang</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hipify-perl"><span class="nav-number">2.7.</span> <span class="nav-text">hipify-perl</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cuda2hip-sh"><span class="nav-number">2.8.</span> <span class="nav-text">cuda2hip.sh</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cuda2hip-sed"><span class="nav-number">2.9.</span> <span class="nav-text">cuda2hip.sed</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cuda2hipsed-sh"><span class="nav-number">2.10.</span> <span class="nav-text">cuda2hipsed.sh</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Getting-Started-with-HIP-API"><span class="nav-number">2.11.</span> <span class="nav-text">Getting Started with HIP API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HIP-API-Overview"><span class="nav-number">2.11.1.</span> <span class="nav-text">HIP API Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HIP-API-Examples"><span class="nav-number">2.11.2.</span> <span class="nav-text">HIP API Examples</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Example-1"><span class="nav-number">2.11.2.1.</span> <span class="nav-text">Example 1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Example-2"><span class="nav-number">2.11.2.2.</span> <span class="nav-text">Example 2</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction-to-Memory-Allocation"><span class="nav-number">2.12.</span> <span class="nav-text">Introduction to Memory Allocation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Host-Memory"><span class="nav-number">2.12.1.</span> <span class="nav-text">Host Memory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Memory-allocation-flags"><span class="nav-number">2.12.2.</span> <span class="nav-text">Memory allocation flags</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NUMA-aware-host-memory-allocation"><span class="nav-number">2.12.3.</span> <span class="nav-text">NUMA-aware host memory allocation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Managed-memory-allocation"><span class="nav-number">2.12.4.</span> <span class="nav-text">Managed memory allocation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HIP-Stream-Memory-Operations"><span class="nav-number">2.12.5.</span> <span class="nav-text">HIP Stream Memory Operations</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Coherency-Controls"><span class="nav-number">2.12.6.</span> <span class="nav-text">Coherency Controls</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Visibility-of-Zero-Copy-Host-Memory"><span class="nav-number">2.12.7.</span> <span class="nav-text">Visibility of Zero-Copy Host Memory</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#hipEventSynchronize"><span class="nav-number">2.12.7.1.</span> <span class="nav-text">hipEventSynchronize</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Direct-Dispatch"><span class="nav-number">2.12.7.2.</span> <span class="nav-text">Direct Dispatch</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HIP-Runtime-Compilation"><span class="nav-number">2.12.7.3.</span> <span class="nav-text">HIP Runtime Compilation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Use-of-Long-Double-Type"><span class="nav-number">2.12.7.4.</span> <span class="nav-text">Use of Long Double Type</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FMA-and-Contractions"><span class="nav-number">2.12.7.5.</span> <span class="nav-text">FMA and Contractions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Use-of-Float16-Type"><span class="nav-number">2.12.7.6.</span> <span class="nav-text">Use of _Float16 Type</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Math-Functions-with-Special-Rounding-Modes"><span class="nav-number">2.12.7.7.</span> <span class="nav-text">Math Functions with Special Rounding Modes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Creating-Static-Libraries"><span class="nav-number">2.12.7.8.</span> <span class="nav-text">Creating Static Libraries</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HIP-Kernel-Language"><span class="nav-number">2.13.</span> <span class="nav-text">HIP Kernel Language</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Function-Type-Qualifiers"><span class="nav-number">2.13.1.</span> <span class="nav-text">Function-Type Qualifiers</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Calling-global-Functions"><span class="nav-number">2.13.1.1.</span> <span class="nav-text">Calling global Functions</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Variable-Type-Qualifiers"><span class="nav-number">2.13.2.</span> <span class="nav-text">Variable-Type Qualifiers</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#constant"><span class="nav-number">2.13.2.1.</span> <span class="nav-text">constant</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shared"><span class="nav-number">2.13.2.2.</span> <span class="nav-text">shared</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#managed"><span class="nav-number">2.13.2.3.</span> <span class="nav-text">managed</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#restrict"><span class="nav-number">2.13.2.4.</span> <span class="nav-text">restrict</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Built-In-Variables"><span class="nav-number">2.13.3.</span> <span class="nav-text">Built-In Variables</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Coordinate-Built-Ins"><span class="nav-number">2.13.3.1.</span> <span class="nav-text">Coordinate Built-Ins</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#warpSize"><span class="nav-number">2.13.3.2.</span> <span class="nav-text">warpSize</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vector-Types"><span class="nav-number">2.13.4.</span> <span class="nav-text">Vector Types</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Short-Vector-Types"><span class="nav-number">2.13.4.1.</span> <span class="nav-text">Short Vector Types</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dim3"><span class="nav-number">2.13.4.2.</span> <span class="nav-text">dim3</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Memory-Fence-Instructions"><span class="nav-number">2.13.5.</span> <span class="nav-text">Memory-Fence Instructions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Synchronization-Functions"><span class="nav-number">2.13.6.</span> <span class="nav-text">Synchronization Functions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Math-Functions"><span class="nav-number">2.13.7.</span> <span class="nav-text">Math Functions</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Single-Precision-Mathematical-Functions"><span class="nav-number">2.13.7.1.</span> <span class="nav-text">Single Precision Mathematical Functions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Double-Precision-Mathematical-Functions"><span class="nav-number">2.13.7.2.</span> <span class="nav-text">Double Precision Mathematical Functions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Integer-Intrinsics"><span class="nav-number">2.13.7.3.</span> <span class="nav-text">Integer Intrinsics</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Floating-point-Intrinsics"><span class="nav-number">2.13.7.4.</span> <span class="nav-text">Floating-point Intrinsics</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Texture-Functions"><span class="nav-number">2.13.7.5.</span> <span class="nav-text">Texture Functions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Timer-Functions"><span class="nav-number">2.13.7.6.</span> <span class="nav-text">Timer Functions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Atomic-Functions"><span class="nav-number">2.13.7.7.</span> <span class="nav-text">Atomic Functions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Warp-Cross-Lane-Functions"><span class="nav-number">2.13.7.8.</span> <span class="nav-text">Warp Cross-Lane Functions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Warp-Vote-and-Ballot-Functions"><span class="nav-number">2.13.7.9.</span> <span class="nav-text">Warp Vote and Ballot Functions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cooperative-Groups-Functions"><span class="nav-number">2.13.7.10.</span> <span class="nav-text">Cooperative Groups Functions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Warp-Matrix-Functions"><span class="nav-number">2.13.7.11.</span> <span class="nav-text">Warp Matrix Functions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Independent-Thread-Scheduling"><span class="nav-number">2.13.7.12.</span> <span class="nav-text">Independent Thread Scheduling</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Assert"><span class="nav-number">2.13.7.13.</span> <span class="nav-text">Assert</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Printf"><span class="nav-number">2.13.7.14.</span> <span class="nav-text">Printf</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Device-Side-Dynamic-Global-Memory-Allocation"><span class="nav-number">2.13.8.</span> <span class="nav-text">Device-Side Dynamic Global Memory Allocation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#launch-bounds"><span class="nav-number">2.13.9.</span> <span class="nav-text">__launch_bounds__</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Compiler-Impact"><span class="nav-number">2.13.9.1.</span> <span class="nav-text">Compiler Impact</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CU-and-EU-Definitions"><span class="nav-number">2.13.9.2.</span> <span class="nav-text">CU and EU Definitions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Porting-from-CUDA-launch-bounds"><span class="nav-number">2.13.9.3.</span> <span class="nav-text">Porting from CUDA __launch_bounds</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Maxregcount"><span class="nav-number">2.13.9.4.</span> <span class="nav-text">Maxregcount</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Register-Keyword"><span class="nav-number">2.13.10.</span> <span class="nav-text">Register Keyword</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pragma-Unroll"><span class="nav-number">2.13.11.</span> <span class="nav-text">Pragma Unroll</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#In-Line-Assembly"><span class="nav-number">2.13.12.</span> <span class="nav-text">In-Line Assembly</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-Support"><span class="nav-number">2.13.13.</span> <span class="nav-text">C++ Support</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kernel-Compilation"><span class="nav-number">2.13.14.</span> <span class="nav-text">Kernel Compilation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ROCm-Code-Object-Tooling"><span class="nav-number">2.14.</span> <span class="nav-text">ROCm Code Object Tooling</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#roc-obj"><span class="nav-number">2.14.1.</span> <span class="nav-text">roc-obj</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Examples"><span class="nav-number">2.14.1.1.</span> <span class="nav-text">Examples</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HIP-Logging"><span class="nav-number">2.15.</span> <span class="nav-text">HIP Logging</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HIP-Logging-Level"><span class="nav-number">2.15.1.</span> <span class="nav-text">HIP Logging Level</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HIP-Logging-Mask"><span class="nav-number">2.15.2.</span> <span class="nav-text">HIP Logging Mask</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HIP-Logging-Command"><span class="nav-number">2.15.3.</span> <span class="nav-text">HIP Logging Command</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HIP-Logging-Example"><span class="nav-number">2.15.4.</span> <span class="nav-text">HIP Logging Example</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Debugging-HIP"><span class="nav-number">2.16.</span> <span class="nav-text">Debugging HIP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Debugging-tools"><span class="nav-number">2.16.1.</span> <span class="nav-text">Debugging tools</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Using-ltrace"><span class="nav-number">2.16.1.1.</span> <span class="nav-text">Using ltrace</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Using-ROCgdb"><span class="nav-number">2.16.1.2.</span> <span class="nav-text">Using ROCgdb</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Debugging-HIP-Applications"><span class="nav-number">2.16.2.</span> <span class="nav-text">Debugging HIP Applications</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Useful-Environment-Variables"><span class="nav-number">2.16.3.</span> <span class="nav-text">Useful Environment Variables</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Kernel-Enqueue-Serialization-%E5%86%85%E6%A0%B8%E6%8E%92%E9%98%9F%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">2.16.3.1.</span> <span class="nav-text">Kernel Enqueue Serialization  内核排队序列化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Making-Device-Visible"><span class="nav-number">2.16.3.2.</span> <span class="nav-text">Making Device Visible</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dump-code-object"><span class="nav-number">2.16.3.3.</span> <span class="nav-text">Dump code object</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HSA-related-environment-variables"><span class="nav-number">2.16.3.4.</span> <span class="nav-text">HSA related environment variables</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Summary-of-Environment-Variables-in-HIP"><span class="nav-number">2.16.3.5.</span> <span class="nav-text">Summary of Environment Variables in HIP</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#General-Debugging-Tips"><span class="nav-number">2.16.4.</span> <span class="nav-text">General Debugging Tips</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HIP-Version"><span class="nav-number">2.17.</span> <span class="nav-text">HIP Version</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transiting-from-CUDA-to-HIP"><span class="nav-number">3.</span> <span class="nav-text">Transiting from CUDA to HIP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Transition-Tool-HIPIFY"><span class="nav-number">3.1.</span> <span class="nav-text">Transition Tool: HIPIFY</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Sample-and-Practice"><span class="nav-number">3.1.1.</span> <span class="nav-text">Sample and Practice</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HIP-Porting-Process"><span class="nav-number">3.2.</span> <span class="nav-text">HIP Porting Process</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Porting-a-New-CUDA-Project"><span class="nav-number">3.2.1.</span> <span class="nav-text">Porting a New CUDA Project</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#General-Tips"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">General Tips</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Scanning-existing-CUDA-code-to-scope-the-porting-effort-%E6%89%AB%E6%8F%8F%E7%8E%B0%E6%9C%89CUDA%E4%BB%A3%E7%A0%81%E4%BB%A5%E7%A1%AE%E5%AE%9A%E7%A7%BB%E6%A4%8D%E5%B7%A5%E4%BD%9C%E7%9A%84%E8%8C%83%E5%9B%B4"><span class="nav-number">3.2.1.2.</span> <span class="nav-text">Scanning existing CUDA code to scope the porting effort  扫描现有CUDA代码以确定移植工作的范围</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Converting-a-project-in-place"><span class="nav-number">3.2.1.3.</span> <span class="nav-text">Converting a project in-place</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Library-Equivalents"><span class="nav-number">3.2.1.4.</span> <span class="nav-text">Library Equivalents</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Distinguishing-Compiler-Modes"><span class="nav-number">3.2.2.</span> <span class="nav-text">Distinguishing Compiler Modes</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Identifying-HIP-Target-Platform"><span class="nav-number">3.2.2.1.</span> <span class="nav-text">Identifying HIP Target Platform</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Identifying-the-Compiler-HIP-Clang-or-NVIDIA"><span class="nav-number">3.2.2.2.</span> <span class="nav-text">Identifying the Compiler: HIP-Clang or NVIDIA</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Identifying-Current-Compilation-Pass-Host-or-Device-%E8%AF%86%E5%88%AB%E5%BD%93%E5%89%8D%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B%EF%BC%9A%E4%B8%BB%E6%9C%BA%E6%88%96%E8%AE%BE%E5%A4%87"><span class="nav-number">3.2.2.3.</span> <span class="nav-text">Identifying Current Compilation Pass: Host or Device  识别当前编译过程：主机或设备</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Compiler-Defines-Summary"><span class="nav-number">3.2.3.</span> <span class="nav-text">Compiler Defines: Summary</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Identifying-Architecture-Features"><span class="nav-number">3.3.</span> <span class="nav-text">Identifying Architecture Features</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HIP-ARCH-Defines"><span class="nav-number">3.3.1.</span> <span class="nav-text">HIP_ARCH Defines</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Device-Architecture-Properties"><span class="nav-number">3.3.2.</span> <span class="nav-text">Device-Architecture Properties</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Table-of-Architecture-Properties"><span class="nav-number">3.3.3.</span> <span class="nav-text">Table of Architecture Properties</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Finding-HIP"><span class="nav-number">3.3.4.</span> <span class="nav-text">Finding HIP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Identifying-HIP-Runtime"><span class="nav-number">3.3.5.</span> <span class="nav-text">Identifying HIP Runtime</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hipLaunchKernel"><span class="nav-number">3.3.6.</span> <span class="nav-text">hipLaunchKernel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Compiler-Options"><span class="nav-number">3.3.7.</span> <span class="nav-text">Compiler Options</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Compiler-Options-Supported-on-AMD-Platforms"><span class="nav-number">3.3.7.1.</span> <span class="nav-text">Compiler Options Supported on AMD Platforms</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Option-for-specifying-GPU-processor"><span class="nav-number">3.3.7.2.</span> <span class="nav-text">Option for specifying GPU processor</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linking-Issues"><span class="nav-number">3.3.8.</span> <span class="nav-text">Linking Issues</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Linking-with-hipcc"><span class="nav-number">3.3.8.1.</span> <span class="nav-text">Linking with hipcc</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linking-Code-with-Other-Compilers"><span class="nav-number">3.4.</span> <span class="nav-text">Linking Code with Other Compilers</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#libc-and-libstdc"><span class="nav-number">3.4.1.</span> <span class="nav-text">libc++ and libstdc++</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HIP-Headers-hip-runtime-h-hip-runtime-api-h"><span class="nav-number">3.4.2.</span> <span class="nav-text">HIP Headers (hip_runtime.h, hip_runtime_api.h)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-a-Standard-C-Compiler"><span class="nav-number">3.4.3.</span> <span class="nav-text">Using a Standard C++ Compiler</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#cuda-h"><span class="nav-number">3.4.3.1.</span> <span class="nav-text">cuda.h</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Choosing-HIP-File-Extensions"><span class="nav-number">3.4.4.</span> <span class="nav-text">Choosing HIP File Extensions</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Workarounds"><span class="nav-number">3.5.</span> <span class="nav-text">Workarounds</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#memcpyToSymbol"><span class="nav-number">3.5.1.</span> <span class="nav-text">memcpyToSymbol</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CU-POINTER-ATTRIBUTE-MEMORY-TYPE"><span class="nav-number">3.5.2.</span> <span class="nav-text">CU_POINTER_ATTRIBUTE_MEMORY_TYPE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#threadfence-system"><span class="nav-number">3.5.3.</span> <span class="nav-text">threadfence_system</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Textures-and-Cache-Control"><span class="nav-number">3.5.4.</span> <span class="nav-text">Textures and Cache Control</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HIP-Porting-Driver-API"><span class="nav-number">3.6.</span> <span class="nav-text">HIP Porting Driver API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Porting-CUDA-Driver-API"><span class="nav-number">3.6.1.</span> <span class="nav-text">Porting CUDA Driver API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cuModule-API"><span class="nav-number">3.6.2.</span> <span class="nav-text">cuModule API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cuCtx-API"><span class="nav-number">3.6.3.</span> <span class="nav-text">cuCtx API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HIP-Module-and-Ctx-APIs"><span class="nav-number">3.6.4.</span> <span class="nav-text">HIP Module and Ctx APIs</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#hipModule-API"><span class="nav-number">3.6.4.1.</span> <span class="nav-text">hipModule API</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hipCtx-API"><span class="nav-number">3.6.5.</span> <span class="nav-text">hipCtx API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hipify-translation-of-CUDA-Driver-API"><span class="nav-number">3.6.6.</span> <span class="nav-text">hipify translation of CUDA Driver API</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HIP-Clang-Implementation-Notes"><span class="nav-number">3.7.</span> <span class="nav-text">HIP-Clang Implementation Notes</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#hip-fatbin"><span class="nav-number">3.7.1.</span> <span class="nav-text">.hip_fatbin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Initialization-and-Termination-Functions"><span class="nav-number">3.7.2.</span> <span class="nav-text">Initialization and Termination Functions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kernel-Launching"><span class="nav-number">3.7.3.</span> <span class="nav-text">Kernel Launching</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Address-Spaces"><span class="nav-number">3.7.4.</span> <span class="nav-text">Address Spaces</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-hipModuleLaunchKernel"><span class="nav-number">3.7.5.</span> <span class="nav-text">Using hipModuleLaunchKernel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Additional-Information"><span class="nav-number">3.7.6.</span> <span class="nav-text">Additional Information</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NVCC-Implementation-Notes"><span class="nav-number">3.8.</span> <span class="nav-text">NVCC Implementation Notes</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Interoperation-between-HIP-and-CUDA-Driver"><span class="nav-number">3.8.1.</span> <span class="nav-text">Interoperation between HIP and CUDA Driver</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Compilation-Options"><span class="nav-number">3.8.2.</span> <span class="nav-text">Compilation Options</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HIP-Module-and-Texture-Driver-API"><span class="nav-number">3.8.3.</span> <span class="nav-text">HIP Module and Texture Driver API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8hip%E5%AE%9E%E7%8E%B0%E7%9F%A9%E9%98%B5%E4%B9%98"><span class="nav-number">4.</span> <span class="nav-text">使用hip实现矩阵乘</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9E%E7%8E%B0HIP%E7%9A%84%E7%9F%A9%E9%98%B5%E4%B9%98"><span class="nav-number">5.</span> <span class="nav-text">使用结构体实现HIP的矩阵乘</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9E%E7%8E%B0HIP%E7%9A%84%E6%95%B0%E7%BB%84%E7%9B%B8%E5%8A%A0"><span class="nav-number">6.</span> <span class="nav-text">利用结构体实现HIP的数组相加</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E5%AE%9E%E7%8E%B0%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95%EF%BC%88%E5%88%A9%E7%94%A8%E4%BA%86%E7%BB%93%E6%9E%84%E4%BD%93%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">使用共享内存实现矩阵乘法（利用了结构体）</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-HIP编程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2023/01/04/HIP%E7%BC%96%E7%A8%8B/" class="article-date">
-  <time class="dt-published" datetime="2023-01-04T06:59:00.000Z" itemprop="datePublished">2023-01-04</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      HIP编程
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/04/HIP%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="HIP编程 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HIP编程
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2023-01-04 14:59:00" itemprop="dateCreated datePublished" datetime="2023-01-04T14:59:00+08:00">2023-01-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-01-05 23:20:00" itemprop="dateModified" datetime="2023-01-05T23:20:00+08:00">2023-01-05</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="什么是rocm？"><a href="#什么是rocm？" class="headerlink" title="什么是rocm？"></a>什么是rocm？</h1><p>Radeon Open Computing platform 全套驱动程序，开发工具，API和AMD GPU监控工具的集合。用来支持AMD的GPU以及其他现有的加速器。</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="什么是rocm？"><a href="#什么是rocm？" class="headerlink" title="什么是rocm？"></a>什么是rocm？</h1><p>Radeon Open Computing platform 全套驱动程序，开发工具，API和AMD GPU监控工具的集合。用来支持AMD的GPU以及其他现有的加速器。</p>
 <h1 id="CUDA到HIP转码"><a href="#CUDA到HIP转码" class="headerlink" title="CUDA到HIP转码"></a>CUDA到HIP转码</h1><h2 id="CUDA与HIP"><a href="#CUDA与HIP" class="headerlink" title="CUDA与HIP"></a>CUDA与HIP</h2><p>CUDA是NVIDIA开发的GPU SDK（软件开发框架），主要针对NVIDIA GPU硬件开发，而HIP是AMD开发的GPU SDK，主要是针对AMD GPU硬件开发，同时兼容NVIDIA GPU硬件上的开发。试想AMD为何会如此雄心壮志？其实是无奈之举。显然当今CUDA的生态处于绝对优势（dominant），AMD要想迎头赶上，必须兼容CUDA。如何实现兼容CUDA？答案就是利用HIP。</p>
 <p>HIP（Heterogeneous-Computing Interface for Portability）实际上就是构造异构计算的接口，一方面对接AMD HCC（Heterogeneous Compute Compiler），另一方面对接CUDA NVCC。HIP位于HCC和NVCC的上层（或者说在HC和CUDA的上层），HIP的API接口与CUDA API接口类似，但不完全相同。CUDA代码需要通过转码改写为HIP形式才可以在AMD GPU上编译运行，AMD编译环境称为ROCm（Radeon Open Compute Platform），早期使用HCC&#x2F;HC模式，而今主要发展基于Clang和LLVM开发的编译器，实际上命令行在Clang模式下，hcc就是alias到clang命令。我们都知道Clang+LLVM是一个开源的编译器框架，除了支持C&#x2F;C++编译，也支持<a target="_blank" rel="noopener" href="https://llvm.org/docs/CompileCudaWithLLVM.html#compiling-cuda-code">CUDA的编译</a>。AMD将Clang+LLVM进行扩展形成HIP的底层编译器，以支持AMD GPU编译。实际上在ROCm环境，HIP有三种平台模式（通过环境变量HIP_PLATFORM区别）：clang、hcc和nvcc。而HIP提供的hipcc命令，实质是一个perl脚本，通过HIP_PLATFORM等环境变量，调用不同的底层编译器，实现统一编译模式。</p>
 <h2 id="HIP转码的实现"><a href="#HIP转码的实现" class="headerlink" title="HIP转码的实现"></a>HIP转码的实现</h2><p>如果你留意，可以发现ROCm的HIP项目中提供了一个<a target="_blank" rel="noopener" href="https://github.com/ROCm-Developer-Tools/HIP/tree/master/hipify-clang">hipify-clang</a>的工具。这个hipify-clang工具是基于Clang编译器的<a target="_blank" rel="noopener" href="https://clang.llvm.org/docs/IntroductionToTheClangAST.html">抽象语法树</a>和<a target="_blank" rel="noopener" href="https://clang.llvm.org/docs/RefactoringEngine.html">重构引擎</a>机制，实现CUDA到HIP的API函数名和type名的重命名和include头文件名的替换（详见下一节分析），理论上是最可靠的一种代码转换方式。因为字面意思的文本转换难以区分API语义，如分别函数名还是参数名。</p>
@@ -2903,150 +3023,75 @@
 <p>运行结果如下：</p>
 <p><img src="/img/1794499-20200424150302330-1828113155.png" alt="img"></p>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2023/01/04/HIP%E7%BC%96%E7%A8%8B/" data-id="cuidju-vumu8RxOynAda04Lcx" data-title="HIP编程" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag"># 积累</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/12/26/GDB_GIT_qsub_tmux%E7%AD%89%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/" rel="prev" title="gdb、git、qsub、tmux、memcached开发工具相关">
+                  <i class="fa fa-angle-left"></i> gdb、git、qsub、tmux、memcached开发工具相关
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/01/12/parallel_cuda/" rel="next" title="parallel CUDA 介绍">
+                  parallel CUDA 介绍 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2023/01/12/parallel_cuda/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          parallel CUDA 介绍
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2022/12/26/GDB_GIT_qsub_tmux%E7%AD%89%E5%B7%A5%E5%85%B7%E7%9B%B8%E5%85%B3/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">gdb、git、qsub、tmux、memcached开发工具相关</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

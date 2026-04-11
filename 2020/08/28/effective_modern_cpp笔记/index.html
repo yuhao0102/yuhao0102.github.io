@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>Effective modern C++ 笔记 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="CHAPTER 1 Deducing TypesC++98有一套用于模板类型推导的规则，C++11修改了其中的一些规则并为auto和decltype添加了新的规则。类型推导的广泛应用让我们不必再输入那些明显多余的类型，它让C++程序更具适应性，因为在源代码某处修改类型会通过类型推导自动传播到其它地方。但是类型推导也会让代码更复杂，因为由编译器进行的类型推导并不总是如我们期望的那样进行。 如果对于类">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="CHAPTER 1 Deducing TypesC++98有一套用于模板类型推导的规则，C++11修改了其中的一些规则并为auto和decltype添加了新的规则。类型推导的广泛应用让我们不必再输入那些明显多余的类型，它让C++程序更具适应性，因为在源代码某处修改类型会通过类型推导自动传播到其它地方。但是类型推导也会让代码更复杂，因为由编译器进行的类型推导并不总是如我们期望的那样进行。 如果对于类">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Effective modern C++ 笔记">
 <meta property="og:url" content="http://example.com/2020/08/28/effective_modern_cpp%E7%AC%94%E8%AE%B0/index.html">
@@ -24,85 +38,191 @@
 <meta property="article:tag" content="C++">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/x.public/item19_1.png">
+
+
+<link rel="canonical" href="http://example.com/2020/08/28/effective_modern_cpp%E7%AC%94%E8%AE%B0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2020/08/28/effective_modern_cpp%E7%AC%94%E8%AE%B0/","path":"2020/08/28/effective_modern_cpp笔记/","title":"Effective modern C++ 笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Effective modern C++ 笔记 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CHAPTER-1-Deducing-Types"><span class="nav-number">1.</span> <span class="nav-text">CHAPTER 1 Deducing Types</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-1-Understand-template-type-deduction"><span class="nav-number">1.1.</span> <span class="nav-text">Item 1 :Understand template type deduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%83%85%E6%99%AF%E4%B8%80%EF%BC%9AParamType%E6%98%AF%E4%B8%80%E4%B8%AA%E6%8C%87%E9%92%88%E6%88%96%E5%BC%95%E7%94%A8%E4%BD%86%E4%B8%8D%E6%98%AF%E9%80%9A%E7%94%A8%E5%BC%95%E7%94%A8"><span class="nav-number">1.1.1.</span> <span class="nav-text">情景一：ParamType是一个指针或引用但不是通用引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%83%85%E6%99%AF%E4%BA%8C%EF%BC%9AParamType%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8%E5%BC%95%E7%94%A8"><span class="nav-number">1.1.2.</span> <span class="nav-text">情景二：ParamType一个通用引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%83%85%E6%99%AF%E4%B8%89%EF%BC%9AParamType%E6%97%A2%E4%B8%8D%E6%98%AF%E6%8C%87%E9%92%88%E4%B9%9F%E4%B8%8D%E6%98%AF%E5%BC%95%E7%94%A8"><span class="nav-number">1.1.3.</span> <span class="nav-text">情景三：ParamType既不是指针也不是引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E5%AE%9E%E5%8F%82"><span class="nav-number">1.1.4.</span> <span class="nav-text">数组实参</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%AE%9E%E5%8F%82"><span class="nav-number">1.1.5.</span> <span class="nav-text">函数实参</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-2-Understand-auto-type-deduction"><span class="nav-number">1.2.</span> <span class="nav-text">Item 2:Understand auto type deduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-3-Understand-decltype"><span class="nav-number">1.3.</span> <span class="nav-text">Item 3: Understand decltype</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-4-Know-how-to-view-deduced-types"><span class="nav-number">1.4.</span> <span class="nav-text">Item 4:Know how to view deduced types</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IDE%E7%BC%96%E8%BE%91%E5%99%A8"><span class="nav-number">1.4.1.</span> <span class="nav-text">IDE编辑器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8%E8%AF%8A%E6%96%AD"><span class="nav-number">1.4.2.</span> <span class="nav-text">编译器诊断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E8%BE%93%E5%87%BA"><span class="nav-number">1.4.3.</span> <span class="nav-text">运行时输出</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CHAPTER-2-auto"><span class="nav-number">2.</span> <span class="nav-text">CHAPTER 2 auto</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-5-Prefer-auto-to-explicit-type-declarations"><span class="nav-number">2.1.</span> <span class="nav-text">Item 5:Prefer auto to explicit type declarations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-6-Use-the-explicitly-typed-initializer-idiom-when-auto-deduces-undesired-types"><span class="nav-number">2.2.</span> <span class="nav-text">Item 6:Use the explicitly typed initializer idiom when auto deduces undesired types.</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CHAPTER-3-Moving-to-Modern-C"><span class="nav-number">3.</span> <span class="nav-text">CHAPTER 3 Moving to Modern C++</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-7-Distinguish-between-and-when-creating-objects"><span class="nav-number">3.1.</span> <span class="nav-text">Item 7:Distinguish between () and {} when creating objects</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-8-Prefer-nullptr-to-0-and-NULL"><span class="nav-number">3.2.</span> <span class="nav-text">Item 8: Prefer nullptr to 0 and NULL.</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-9-Prefer-alias-declarations-to-typedefs"><span class="nav-number">3.3.</span> <span class="nav-text">Item 9:Prefer alias declarations to typedefs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-10-%E4%BC%98%E5%85%88%E8%80%83%E8%99%91%E9%99%90%E5%9F%9F%E6%9E%9A%E4%B8%BE%E8%80%8C%E9%9D%9E%E6%9C%AA%E9%99%90%E5%9F%9F%E6%9E%9A%E4%B8%BE"><span class="nav-number">3.4.</span> <span class="nav-text">Item 10:优先考虑限域枚举而非未限域枚举</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-11-%E4%BC%98%E5%85%88%E8%80%83%E8%99%91%E4%BD%BF%E7%94%A8deleted%E5%87%BD%E6%95%B0%E8%80%8C%E9%9D%9E%E4%BD%BF%E7%94%A8%E6%9C%AA%E5%AE%9A%E4%B9%89%E7%9A%84%E7%A7%81%E6%9C%89%E5%A3%B0%E6%98%8E"><span class="nav-number">3.5.</span> <span class="nav-text">Item 11:优先考虑使用deleted函数而非使用未定义的私有声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-12-%E4%BD%BF%E7%94%A8override%E5%A3%B0%E6%98%8E%E9%87%8D%E8%BD%BD%E5%87%BD%E6%95%B0"><span class="nav-number">3.6.</span> <span class="nav-text">Item 12:使用override声明重载函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-13-%E4%BC%98%E5%85%88%E8%80%83%E8%99%91const-iterator%E8%80%8C%E9%9D%9Eiterator"><span class="nav-number">3.7.</span> <span class="nav-text">Item 13:优先考虑const_iterator而非iterator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-14-%E5%A6%82%E6%9E%9C%E5%87%BD%E6%95%B0%E4%B8%8D%E6%8A%9B%E5%87%BA%E5%BC%82%E5%B8%B8%E8%AF%B7%E4%BD%BF%E7%94%A8noexcept"><span class="nav-number">3.8.</span> <span class="nav-text">Item 14:如果函数不抛出异常请使用noexcept</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-15-%E5%B0%BD%E5%8F%AF%E8%83%BD%E7%9A%84%E4%BD%BF%E7%94%A8constexpr"><span class="nav-number">3.9.</span> <span class="nav-text">Item 15:尽可能的使用constexpr</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-16-%E8%AE%A9const%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8"><span class="nav-number">3.10.</span> <span class="nav-text">Item 16:让const成员函数线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-17-%E7%90%86%E8%A7%A3%E7%89%B9%E6%AE%8A%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E7%9A%84%E7%94%9F%E6%88%90"><span class="nav-number">3.11.</span> <span class="nav-text">Item 17:理解特殊成员函数的生成</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CHAPTER-4-Smart-Pointers"><span class="nav-number">4.</span> <span class="nav-text">CHAPTER 4 Smart Pointers</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-18-%E5%AF%B9%E4%BA%8E%E7%8B%AC%E5%8D%A0%E8%B5%84%E6%BA%90%E4%BD%BF%E7%94%A8std-unique-ptr"><span class="nav-number">4.1.</span> <span class="nav-text">Item 18:对于独占资源使用std::unique_ptr</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">4.1.1.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-19-%E5%AF%B9%E4%BA%8E%E5%85%B1%E4%BA%AB%E8%B5%84%E6%BA%90%E4%BD%BF%E7%94%A8std-shared-ptr"><span class="nav-number">4.2.</span> <span class="nav-text">Item 19:对于共享资源使用std::shared_ptr</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-20-%E5%83%8Fstd-shared-ptr%E4%B8%80%E6%A0%B7%E4%BD%BF%E7%94%A8std-weak-ptr%E5%8F%AF%E8%83%BD%E9%80%A0%E6%88%90dangle"><span class="nav-number">4.3.</span> <span class="nav-text">Item 20:像std::shared_ptr一样使用std::weak_ptr可能造成dangle</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%B0%E4%BD%8F"><span class="nav-number">4.3.1.</span> <span class="nav-text">记住</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-21-%E4%BC%98%E5%85%88%E8%80%83%E8%99%91%E4%BD%BF%E7%94%A8std-make-unique%E5%92%8Cstd-make-shared%E8%80%8C%E9%9D%9Enew"><span class="nav-number">4.4.</span> <span class="nav-text">Item 21:优先考虑使用std::make_unique和std::make_shared而非new</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-22-%E5%BD%93%E4%BD%BF%E7%94%A8Pimpl%E6%83%AF%E7%94%A8%E6%B3%95%EF%BC%8C%E8%AF%B7%E5%9C%A8%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AE%9A%E4%B9%89%E7%89%B9%E6%AE%8A%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0"><span class="nav-number">4.5.</span> <span class="nav-text">Item 22:当使用Pimpl惯用法，请在实现文件中定义特殊成员函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%B0%E4%BD%8F-1"><span class="nav-number">4.5.1.</span> <span class="nav-text">记住</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CHAPTER-5-RValue-References-Move-Semantics-and-Perfect-Forwarding"><span class="nav-number">5.</span> <span class="nav-text">CHAPTER 5 RValue References, Move Semantics and Perfect Forwarding</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-23-%E7%90%86%E8%A7%A3std-move%E5%92%8Cstd-forward"><span class="nav-number">5.1.</span> <span class="nav-text">Item 23: 理解std::move和std::forward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-24-%E5%8C%BA%E5%88%86%E9%80%9A%E7%94%A8%E5%BC%95%E7%94%A8%E4%B8%8E%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8"><span class="nav-number">5.2.</span> <span class="nav-text">Item 24:区分通用引用与右值引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-25-%E5%AF%B9%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E4%BD%BF%E7%94%A8std-move%EF%BC%8C%E5%AF%B9%E9%80%9A%E7%94%A8%E5%BC%95%E7%94%A8%E4%BD%BF%E7%94%A8std-forward"><span class="nav-number">5.3.</span> <span class="nav-text">Item 25: 对右值引用使用std::move，对通用引用使用std::forward</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%AE%B0%E4%BD%8F%E7%9A%84%E7%82%B9"><span class="nav-number">5.3.1.</span> <span class="nav-text">需要记住的点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-26-%E9%81%BF%E5%85%8D%E5%9C%A8%E9%80%9A%E7%94%A8%E5%BC%95%E7%94%A8%E4%B8%8A%E9%87%8D%E8%BD%BD"><span class="nav-number">5.4.</span> <span class="nav-text">Item 26: 避免在通用引用上重载</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%AE%B0%E4%BD%8F%E7%9A%84%E4%BA%8B"><span class="nav-number">5.4.1.</span> <span class="nav-text">需要记住的事</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-27-%E7%86%9F%E6%82%89%E9%80%9A%E7%94%A8%E5%BC%95%E7%94%A8%E9%87%8D%E8%BD%BD%E7%9A%84%E6%9B%BF%E4%BB%A3%E6%96%B9%E6%B3%95"><span class="nav-number">5.5.</span> <span class="nav-text">Item 27:熟悉通用引用重载的替代方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Abandon-overloading"><span class="nav-number">5.5.1.</span> <span class="nav-text">Abandon overloading</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pass-by-const-T"><span class="nav-number">5.5.2.</span> <span class="nav-text">Pass by const T&amp;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pass-by-value"><span class="nav-number">5.5.3.</span> <span class="nav-text">Pass by value</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Tag-dispatch"><span class="nav-number">5.5.4.</span> <span class="nav-text">Use Tag dispatch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Constraining-templates-that-take-universal-references%EF%BC%88%E7%BA%A6%E6%9D%9F%E4%BD%BF%E7%94%A8%E9%80%9A%E7%94%A8%E5%BC%95%E7%94%A8%E7%9A%84%E6%A8%A1%E6%9D%BF%EF%BC%89"><span class="nav-number">5.5.5.</span> <span class="nav-text">Constraining templates that take universal references（约束使用通用引用的模板）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Trade-offs-%EF%BC%88%E6%9D%83%E8%A1%A1%EF%BC%8C%E6%8A%98%E4%B8%AD%EF%BC%89"><span class="nav-number">5.5.6.</span> <span class="nav-text">Trade-offs （权衡，折中）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%AE%B0%E4%BD%8F%E7%9A%84%E4%BA%8B-1"><span class="nav-number">5.5.7.</span> <span class="nav-text">需要记住的事</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-28%EF%BC%9A%E7%90%86%E8%A7%A3%E5%BC%95%E7%94%A8%E6%8A%98%E5%8F%A0"><span class="nav-number">5.6.</span> <span class="nav-text">Item 28：理解引用折叠</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%AE%B0%E4%BD%8F%E7%9A%84%E4%BA%8B-2"><span class="nav-number">5.6.1.</span> <span class="nav-text">需要记住的事</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-29-Assume-that-move-operations-are-not-present-not-cheap-and-not-used"><span class="nav-number">5.7.</span> <span class="nav-text">Item 29: Assume that move operations are not present, not cheap, and not used</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%AE%B0%E4%BD%8F%E7%9A%84%E4%BA%8B-3"><span class="nav-number">5.7.1.</span> <span class="nav-text">需要记住的事</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-30%EF%BC%9A%E7%86%9F%E6%82%89%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91%E7%9A%84%E5%A4%B1%E8%B4%A5case"><span class="nav-number">5.8.</span> <span class="nav-text">Item 30：熟悉完美转发的失败case</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Braced-initializers%EF%BC%88%E6%94%AF%E6%92%91%E5%88%9D%E5%A7%8B%E5%8C%96%E5%99%A8%EF%BC%89"><span class="nav-number">5.8.1.</span> <span class="nav-text">Braced initializers（支撑初始化器）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0%E6%88%96%E8%80%85NULL%E4%BD%9C%E4%B8%BA%E7%A9%BA%E6%8C%87%E9%92%88"><span class="nav-number">5.8.2.</span> <span class="nav-text">0或者NULL作为空指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%85%E5%A3%B0%E6%98%8E%E7%9A%84%E6%95%B4%E6%95%B0%E9%9D%99%E6%80%81const%E6%95%B0%E6%8D%AE%E6%88%90%E5%91%98"><span class="nav-number">5.8.3.</span> <span class="nav-text">仅声明的整数静态const数据成员</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E8%BD%BD%E7%9A%84%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0%E5%92%8C%E6%A8%A1%E6%9D%BF%E5%90%8D%E7%A7%B0"><span class="nav-number">5.8.4.</span> <span class="nav-text">重载的函数名称和模板名称</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%8D%E5%9F%9F"><span class="nav-number">5.8.5.</span> <span class="nav-text">位域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.8.6.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%AE%B0%E4%BD%8F%E7%9A%84%E4%BA%8B-4"><span class="nav-number">5.8.7.</span> <span class="nav-text">需要记住的事</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CHAPTER6-Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">6.</span> <span class="nav-text">CHAPTER6 Lambda表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-31-%E9%81%BF%E5%85%8D%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E6%8D%95%E8%8E%B7%E6%A8%A1%E5%BC%8F"><span class="nav-number">6.1.</span> <span class="nav-text">Item 31:避免使用默认捕获模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E8%AE%AE"><span class="nav-number">6.1.1.</span> <span class="nav-text">建议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-32-%E4%BD%BF%E7%94%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E6%8D%95%E8%8E%B7%E6%9D%A5%E7%A7%BB%E5%8A%A8%E5%AF%B9%E8%B1%A1%E5%88%B0%E9%97%AD%E5%8C%85%E4%B8%AD"><span class="nav-number">6.2.</span> <span class="nav-text">Item 32:使用初始化捕获来移动对象到闭包中</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-33-%E5%AF%B9%E4%BA%8Estd-forward%E7%9A%84auto-%E5%BD%A2%E5%8F%82%E4%BD%BF%E7%94%A8decltype"><span class="nav-number">6.3.</span> <span class="nav-text">Item 33:对于std::forward的auto&amp;&amp;形参使用decltype</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-34-%E8%80%83%E8%99%91lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%80%8C%E9%9D%9Estd-bind"><span class="nav-number">6.4.</span> <span class="nav-text">Item 34:考虑lambda表达式而非std::bind</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CHAPTER7-%E5%B9%B6%E5%8F%91API"><span class="nav-number">7.</span> <span class="nav-text">CHAPTER7: 并发API</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-35-%E4%BC%98%E5%85%88%E5%9F%BA%E4%BA%8E%E4%BB%BB%E5%8A%A1%E7%BC%96%E7%A8%8B%E8%80%8C%E4%B8%8D%E6%98%AF%E5%9F%BA%E4%BA%8E%E7%BA%BF%E7%A8%8B"><span class="nav-number">7.1.</span> <span class="nav-text">Item 35:优先基于任务编程而不是基于线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%B0%E4%BD%8F-2"><span class="nav-number">7.1.1.</span> <span class="nav-text">记住</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-36%EF%BC%9A-%E7%A1%AE%E4%BF%9D%E5%9C%A8%E5%BC%82%E6%AD%A5%E4%B8%BA%E5%BF%85%E9%A1%BB%E6%97%B6%EF%BC%8C%E6%89%8D%E6%8C%87%E5%AE%9Astd-launch-async"><span class="nav-number">7.2.</span> <span class="nav-text">Item 36： 确保在异步为必须时，才指定std::launch::async</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%AE%B0%E4%BD%8F%E7%9A%84%E4%BA%8B-5"><span class="nav-number">7.2.1.</span> <span class="nav-text">需要记住的事</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-37%EF%BC%9AMake-std-threads-unjoinable-on-all-paths"><span class="nav-number">7.3.</span> <span class="nav-text">Item 37：Make std::threads unjoinable on all paths</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%AE%B0%E4%BD%8F%E7%9A%84%E4%BA%8B-6"><span class="nav-number">7.3.1.</span> <span class="nav-text">需要记住的事</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-38%EF%BC%9A%E5%85%B3%E6%B3%A8%E4%B8%8D%E5%90%8C%E7%BA%BF%E7%A8%8B%E5%8F%A5%E6%9F%84%E7%9A%84%E6%9E%90%E6%9E%84%E8%A1%8C%E4%B8%BA"><span class="nav-number">7.4.</span> <span class="nav-text">Item 38：关注不同线程句柄的析构行为</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%AE%B0%E4%BD%8F%E7%9A%84%E4%BA%8B-7"><span class="nav-number">7.4.1.</span> <span class="nav-text">需要记住的事</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-39-%E5%AF%B9%E4%BA%8E%E4%B8%80%E6%AC%A1%E6%80%A7%E4%BA%8B%E4%BB%B6%E9%80%9A%E4%BF%A1%E8%80%83%E8%99%91%E4%BD%BF%E7%94%A8%E6%97%A0%E8%BF%94%E5%9B%9Efutures"><span class="nav-number">7.5.</span> <span class="nav-text">Item 39:对于一次性事件通信考虑使用无返回futures</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%AE%B0%E4%BD%8F%E7%9A%84%E4%BA%8B-8"><span class="nav-number">7.5.1.</span> <span class="nav-text">需要记住的事</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-40-%E5%BD%93%E9%9C%80%E8%A6%81%E5%B9%B6%E5%8F%91%E6%97%B6%E4%BD%BF%E7%94%A8std-atomic%EF%BC%8C%E7%89%B9%E5%AE%9A%E5%86%85%E5%AD%98%E6%89%8D%E4%BD%BF%E7%94%A8volatile"><span class="nav-number">7.6.</span> <span class="nav-text">Item 40: 当需要并发时使用std::atomic，特定内存才使用volatile</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%85%E9%A1%BB%E8%AE%B0%E4%BD%8F%E7%9A%84%E4%BA%8B"><span class="nav-number">7.6.1.</span> <span class="nav-text">必须记住的事</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CHAPTER8-Tweaks"><span class="nav-number">8.</span> <span class="nav-text">CHAPTER8 Tweaks</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-41-Consider-pass-by-value-for-copyable-parameters-that-are-cheap-to-move-and-always-copied-%E5%A6%82%E6%9E%9C%E5%8F%82%E6%95%B0%E5%8F%AF%E6%8B%B7%E8%B4%9D%E5%B9%B6%E4%B8%94%E7%A7%BB%E5%8A%A8%E6%93%8D%E4%BD%9C%E5%BC%80%E9%94%80%E5%BE%88%E4%BD%8E%EF%BC%8C%E6%80%BB%E6%98%AF%E8%80%83%E8%99%91%E7%9B%B4%E6%8E%A5%E6%8C%89%E5%80%BC%E4%BC%A0%E9%80%92"><span class="nav-number">8.1.</span> <span class="nav-text">Item 41.Consider pass by value for copyable parameters that are cheap to move and always copied 如果参数可拷贝并且移动操作开销很低，总是考虑直接按值传递</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%AE%B0%E4%BD%8F%E7%9A%84%E4%BA%8B-9"><span class="nav-number">8.2.</span> <span class="nav-text">需要记住的事</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-42-%E8%80%83%E8%99%91%E4%BD%BF%E7%94%A8emplacement%E4%BB%A3%E6%9B%BFinsertion"><span class="nav-number">8.3.</span> <span class="nav-text">Item 42: 考虑使用emplacement代替insertion</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%AE%B0%E4%BD%8F%E7%9A%84%E4%BA%8B-10"><span class="nav-number">8.3.1.</span> <span class="nav-text">需要记住的事</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-effective_modern_cpp笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/08/28/effective_modern_cpp%E7%AC%94%E8%AE%B0/" class="article-date">
-  <time class="dt-published" datetime="2020-08-28T06:16:00.000Z" itemprop="datePublished">2020-08-28</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      Effective modern C++ 笔记
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/08/28/effective_modern_cpp%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Effective modern C++ 笔记 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Effective modern C++ 笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-08-28 14:16:00" itemprop="dateCreated datePublished" datetime="2020-08-28T14:16:00+08:00">2020-08-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2020-11-03 13:55:34" itemprop="dateModified" datetime="2020-11-03T13:55:34+08:00">2020-11-03</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="CHAPTER-1-Deducing-Types"><a href="#CHAPTER-1-Deducing-Types" class="headerlink" title="CHAPTER 1 Deducing Types"></a>CHAPTER 1 Deducing Types</h1><p>C++98有一套用于模板类型推导的规则，C++11修改了其中的一些规则并为<strong>auto</strong>和<strong>decltype</strong>添加了新的规则。类型推导的广泛应用让我们不必再输入那些明显多余的类型，它让C++程序更具适应性，因为在源代码某处修改类型会通过类型推导自动传播到其它地方。但是类型推导也会让代码更复杂，因为由编译器进行的类型推导并不总是如我们期望的那样进行。</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="CHAPTER-1-Deducing-Types"><a href="#CHAPTER-1-Deducing-Types" class="headerlink" title="CHAPTER 1 Deducing Types"></a>CHAPTER 1 Deducing Types</h1><p>C++98有一套用于模板类型推导的规则，C++11修改了其中的一些规则并为<strong>auto</strong>和<strong>decltype</strong>添加了新的规则。类型推导的广泛应用让我们不必再输入那些明显多余的类型，它让C++程序更具适应性，因为在源代码某处修改类型会通过类型推导自动传播到其它地方。但是类型推导也会让代码更复杂，因为由编译器进行的类型推导并不总是如我们期望的那样进行。</p>
 <p>如果对于类型推导操作没有一个扎实的理解，要想写出有现代感的C++程序是不可能的。类型推导随处可见：在函数模板调用中，在<strong>auto</strong>出现的地方，在<strong>decltype</strong>表达式出现的地方，以及C++14的<strong>decltype(auto)</strong> 中。</p>
 <p>这一章的内容是每个C++程序员都应该掌握的知识。它解释了模板类型推导是如何工作的，<strong>auto</strong>是如何依赖模板类型推导的，以及<strong>decltype</strong>是如何按照它自己那套独特的规则工作的。它甚至解释了你该如何强制编译器产生他进行类型推导的结果，这能让你确认编译器的类型推导是否按照你期望的那样进行。</p>
 <h2 id="Item-1-Understand-template-type-deduction"><a href="#Item-1-Understand-template-type-deduction" class="headerlink" title="Item 1 :Understand template type deduction"></a>Item 1 :Understand template type deduction</h2><p>条款一:理解模板类型推导</p>
@@ -2721,150 +2841,75 @@
 <li>emplacement函数可能执行insertion函数拒绝的显示构造</li>
 </ul>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/08/28/effective_modern_cpp%E7%AC%94%E8%AE%B0/" data-id="cuidkXkegr0QDZ9stsT4WrpXR" data-title="Effective modern C++ 笔记" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C++</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/08/27/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/" rel="prev" title="正则表达式及其简单实现">
+                  <i class="fa fa-angle-left"></i> 正则表达式及其简单实现
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/08/28/Effective_STL%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="next" title="《Effective STL》读书笔记">
+                  《Effective STL》读书笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2020/08/28/Effective_STL%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          《Effective STL》读书笔记
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2020/08/27/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">正则表达式及其简单实现</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

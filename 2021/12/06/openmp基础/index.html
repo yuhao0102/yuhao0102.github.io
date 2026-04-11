@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>OpenMP基础 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="1. OpenMP基本介绍OpenMP是一个编译器指令和库函数的集合，主要是为共享式存储计算机上的并行程序设计使用的。目前支持OpenMP的语言主要有Fortran，C&#x2F;C++。 1.1 fork&#x2F;join并行执行模式的概念OpenMP在并行执行程序时，采用的是fork&#x2F;join式并行模式，共享存储式并行程序就是使用fork&#x2F;join式并行的。在开始时，只有">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="1. OpenMP基本介绍OpenMP是一个编译器指令和库函数的集合，主要是为共享式存储计算机上的并行程序设计使用的。目前支持OpenMP的语言主要有Fortran，C&#x2F;C++。 1.1 fork&#x2F;join并行执行模式的概念OpenMP在并行执行程序时，采用的是fork&#x2F;join式并行模式，共享存储式并行程序就是使用fork&#x2F;join式并行的。在开始时，只有">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OpenMP基础">
 <meta property="og:url" content="http://example.com/2021/12/06/openmp%E5%9F%BA%E7%A1%80/index.html">
@@ -35,85 +49,191 @@
 <meta property="article:tag" content="积累">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/img/22782486-39c6a9a1da904c10.gif">
+
+
+<link rel="canonical" href="http://example.com/2021/12/06/openmp%E5%9F%BA%E7%A1%80/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2021/12/06/openmp%E5%9F%BA%E7%A1%80/","path":"2021/12/06/openmp基础/","title":"OpenMP基础"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>OpenMP基础 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-OpenMP%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">1. OpenMP基本介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-fork-join%E5%B9%B6%E8%A1%8C%E6%89%A7%E8%A1%8C%E6%A8%A1%E5%BC%8F%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 fork&#x2F;join并行执行模式的概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenMP%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">OpenMP编程模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">共享内存模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8-HPC-%E4%B8%AD%E4%BD%BF%E7%94%A8-OpenMP-%E7%9A%84%E5%8A%A8%E6%9C%BA"><span class="nav-number">1.2.2.</span> <span class="nav-text">在 HPC 中使用 OpenMP 的动机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%B9%B6%E8%A1%8C%E6%80%A7"><span class="nav-number">1.2.3.</span> <span class="nav-text">基于线程的并行性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%BE%E5%BC%8F%E5%B9%B6%E8%A1%8C%E6%80%A7"><span class="nav-number">1.2.4.</span> <span class="nav-text">显式并行性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fork-Join-%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.5.</span> <span class="nav-text">Fork - Join 模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%8C%83%E5%9B%B4"><span class="nav-number">1.2.6.</span> <span class="nav-text">数据范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E7%BA%BF%E7%A8%8B"><span class="nav-number">1.2.7.</span> <span class="nav-text">动态线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O"><span class="nav-number">1.2.8.</span> <span class="nav-text">I&#x2F;O</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%9A%E7%BB%8F%E5%B8%B8%E5%88%B7%E6%96%B0%EF%BC%9F"><span class="nav-number">1.2.9.</span> <span class="nav-text">内存模型：经常刷新？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-OpenMP%E7%BC%96%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">2. OpenMP编程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-OpenMP%E6%8C%87%E4%BB%A4%E5%92%8C%E5%BA%93%E5%87%BD%E6%95%B0%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 OpenMP指令和库函数介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-OpenMP%E6%8C%87%E4%BB%A4%E5%88%97%E8%A1%A8"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 OpenMP指令列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-OpenMP%E5%BA%93%E5%87%BD%E6%95%B0"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 OpenMP库函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-OpenMP%E5%AD%90%E5%8F%A5"><span class="nav-number">2.4.</span> <span class="nav-text">2.3 OpenMP子句</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">2.5.</span> <span class="nav-text">2.4 环境变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-%E7%BC%96%E8%AF%91-OpenMP-%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.6.</span> <span class="nav-text">2.5 编译 OpenMP 程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-OpenMP-API-%E6%A6%82%E8%BF%B0"><span class="nav-number">2.7.</span> <span class="nav-text">2.6 OpenMP API 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E5%A4%A7%E6%9E%84%E6%88%90"><span class="nav-number">2.7.1.</span> <span class="nav-text">三大构成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8%E6%8C%87%E4%BB%A4"><span class="nav-number">2.7.2.</span> <span class="nav-text">编译器指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%BA%93%E5%87%BD%E6%95%B0-Run-time-Library-Routines"><span class="nav-number">2.7.3.</span> <span class="nav-text">运行时库函数 Run-time Library Routines:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-7-OpenMP-%E6%8C%87%E4%BB%A4"><span class="nav-number">2.8.</span> <span class="nav-text">2.7 OpenMP 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#C-C-%E6%8C%87%E4%BB%A4%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.8.1.</span> <span class="nav-text">C&#x2F;C++ 指令格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E8%8C%83%E5%9B%B4"><span class="nav-number">2.8.2.</span> <span class="nav-text">指令范围</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%99%E6%80%81-%E8%AF%8D%E6%B3%95-%E8%8C%83%E5%9B%B4"><span class="nav-number">2.8.2.1.</span> <span class="nav-text">静态(词法)范围</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%A4%E7%AB%8B%E7%9A%84%E6%8C%87%E4%BB%A4"><span class="nav-number">2.8.2.2.</span> <span class="nav-text">孤立的指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%8C%83%E5%9B%B4"><span class="nav-number">2.8.2.3.</span> <span class="nav-text">动态范围</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E5%BE%88%E9%87%8D%E8%A6%81%EF%BC%9F"><span class="nav-number">2.8.2.4.</span> <span class="nav-text">为什么这很重要？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%8C%BA%E5%9F%9F%E7%BB%93%E6%9E%84"><span class="nav-number">2.8.3.</span> <span class="nav-text">并行区域结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84"><span class="nav-number">2.8.3.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.8.3.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F"><span class="nav-number">2.8.3.3.</span> <span class="nav-text">注意</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%89%E5%A4%9A%E5%B0%91%E7%BA%BF%E7%A8%8B"><span class="nav-number">2.8.3.4.</span> <span class="nav-text">有多少线程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E7%BA%BF%E7%A8%8B-1"><span class="nav-number">2.8.3.5.</span> <span class="nav-text">动态线程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%90%E5%8F%A5"><span class="nav-number">2.8.3.6.</span> <span class="nav-text">子句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6"><span class="nav-number">2.8.3.7.</span> <span class="nav-text">限制条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%8C%BA%E5%9F%9F%E4%BE%8B%E5%AD%90"><span class="nav-number">2.8.3.8.</span> <span class="nav-text">并行区域例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%85%B1%E4%BA%AB%E7%BB%93%E6%9E%84"><span class="nav-number">2.8.3.9.</span> <span class="nav-text">工作共享结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6-1"><span class="nav-number">2.8.3.10.</span> <span class="nav-text">限制条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DO-for-%E6%8C%87%E4%BB%A4"><span class="nav-number">2.8.3.11.</span> <span class="nav-text">DO &#x2F; for 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6-2"><span class="nav-number">2.8.3.11.1.</span> <span class="nav-text">限制条件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DO-for-%E6%8C%87%E4%BB%A4%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.8.3.11.2.</span> <span class="nav-text">DO &#x2F; for 指令示例</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sections-%E6%8C%87%E4%BB%A4"><span class="nav-number">2.8.3.12.</span> <span class="nav-text">sections 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-1"><span class="nav-number">2.8.3.12.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AD%90%E5%8F%A5-1"><span class="nav-number">2.8.3.12.2.</span> <span class="nav-text">子句</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6-3"><span class="nav-number">2.8.3.12.3.</span> <span class="nav-text">限制条件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#sections-%E6%8C%87%E4%BB%A4%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.8.3.12.4.</span> <span class="nav-text">sections 指令示例</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#single-%E6%8C%87%E4%BB%A4"><span class="nav-number">2.8.3.13.</span> <span class="nav-text">single 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-2"><span class="nav-number">2.8.3.13.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-1"><span class="nav-number">2.8.3.13.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AD%90%E5%8F%A5-2"><span class="nav-number">2.8.3.13.3.</span> <span class="nav-text">子句</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6-4"><span class="nav-number">2.8.3.13.4.</span> <span class="nav-text">限制条件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E5%B9%B6%E8%A1%8C%E5%B7%A5%E4%BD%9C%E5%85%B1%E4%BA%AB%E7%BB%93%E6%9E%84"><span class="nav-number">2.8.4.</span> <span class="nav-text">合并并行工作共享结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E7%BB%93%E6%9E%84"><span class="nav-number">2.8.5.</span> <span class="nav-text">任务结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-3"><span class="nav-number">2.8.5.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-2"><span class="nav-number">2.8.5.2.</span> <span class="nav-text">格式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E7%BB%93%E6%9E%84"><span class="nav-number">2.8.6.</span> <span class="nav-text">同步结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#master-%E6%8C%87%E4%BB%A4"><span class="nav-number">2.8.6.1.</span> <span class="nav-text">master 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-4"><span class="nav-number">2.8.6.1.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-3"><span class="nav-number">2.8.6.1.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6-5"><span class="nav-number">2.8.6.1.3.</span> <span class="nav-text">限制条件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#critical-%E6%8C%87%E4%BB%A4"><span class="nav-number">2.8.6.2.</span> <span class="nav-text">critical 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-5"><span class="nav-number">2.8.6.2.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-4"><span class="nav-number">2.8.6.2.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">2.8.6.2.3.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6-6"><span class="nav-number">2.8.6.2.4.</span> <span class="nav-text">限制条件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#critical-%E7%BB%93%E6%9E%84%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.8.6.2.5.</span> <span class="nav-text">critical 结构示例</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#barrier-%E6%8C%87%E4%BB%A4"><span class="nav-number">2.8.6.3.</span> <span class="nav-text">barrier 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-6"><span class="nav-number">2.8.6.3.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-5"><span class="nav-number">2.8.6.3.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6-7"><span class="nav-number">2.8.6.3.3.</span> <span class="nav-text">限制条件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#taskwait-%E6%8C%87%E4%BB%A4"><span class="nav-number">2.8.6.4.</span> <span class="nav-text">taskwait 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-7"><span class="nav-number">2.8.6.4.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-6"><span class="nav-number">2.8.6.4.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6-8"><span class="nav-number">2.8.6.4.3.</span> <span class="nav-text">限制条件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#atomic-%E6%8C%87%E4%BB%A4"><span class="nav-number">2.8.6.5.</span> <span class="nav-text">atomic 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-8"><span class="nav-number">2.8.6.5.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-7"><span class="nav-number">2.8.6.5.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6-9"><span class="nav-number">2.8.6.5.3.</span> <span class="nav-text">限制条件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#flush-%E6%8C%87%E4%BB%A4"><span class="nav-number">2.8.6.6.</span> <span class="nav-text">flush 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-9"><span class="nav-number">2.8.6.6.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-8"><span class="nav-number">2.8.6.6.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-1"><span class="nav-number">2.8.6.6.3.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ordered-%E6%8C%87%E4%BB%A4"><span class="nav-number">2.8.6.7.</span> <span class="nav-text">ordered 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-10"><span class="nav-number">2.8.6.7.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-9"><span class="nav-number">2.8.6.7.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6-10"><span class="nav-number">2.8.6.7.3.</span> <span class="nav-text">限制条件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#threadprivate-%E6%8C%87%E4%BB%A4"><span class="nav-number">2.8.7.</span> <span class="nav-text">threadprivate 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-11"><span class="nav-number">2.8.7.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-10"><span class="nav-number">2.8.7.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-2"><span class="nav-number">2.8.7.3.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.8.7.4.</span> <span class="nav-text">示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6-11"><span class="nav-number">2.8.7.5.</span> <span class="nav-text">限制条件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%8C%83%E5%9B%B4%E5%B1%9E%E6%80%A7%E5%AD%90%E5%8F%A5"><span class="nav-number">2.8.8.</span> <span class="nav-text">数据范围属性子句</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#private-%E5%AD%90%E5%8F%A5"><span class="nav-number">2.8.8.1.</span> <span class="nav-text">private 子句</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-12"><span class="nav-number">2.8.8.1.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-11"><span class="nav-number">2.8.8.1.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-3"><span class="nav-number">2.8.8.1.3.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shared-%E5%AD%90%E5%8F%A5"><span class="nav-number">2.8.8.2.</span> <span class="nav-text">shared 子句</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-13"><span class="nav-number">2.8.8.2.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-12"><span class="nav-number">2.8.8.2.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-4"><span class="nav-number">2.8.8.2.3.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#default-%E5%AD%90%E5%8F%A5"><span class="nav-number">2.8.8.3.</span> <span class="nav-text">default 子句</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-14"><span class="nav-number">2.8.8.3.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-13"><span class="nav-number">2.8.8.3.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-5"><span class="nav-number">2.8.8.3.3.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#firstprivate-%E5%AD%90%E5%8F%A5"><span class="nav-number">2.8.8.4.</span> <span class="nav-text">firstprivate 子句</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-15"><span class="nav-number">2.8.8.4.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-14"><span class="nav-number">2.8.8.4.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-6"><span class="nav-number">2.8.8.4.3.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lastprivate-%E5%AD%90%E5%8F%A5"><span class="nav-number">2.8.8.5.</span> <span class="nav-text">lastprivate 子句</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-16"><span class="nav-number">2.8.8.5.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-15"><span class="nav-number">2.8.8.5.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-7"><span class="nav-number">2.8.8.5.3.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#copyin-%E5%AD%90%E5%8F%A5"><span class="nav-number">2.8.8.6.</span> <span class="nav-text">copyin 子句</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-17"><span class="nav-number">2.8.8.6.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-16"><span class="nav-number">2.8.8.6.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-8"><span class="nav-number">2.8.8.6.3.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#copyprivate-%E5%AD%90%E5%8F%A5"><span class="nav-number">2.8.8.7.</span> <span class="nav-text">copyprivate 子句</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-18"><span class="nav-number">2.8.8.7.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-17"><span class="nav-number">2.8.8.7.2.</span> <span class="nav-text">格式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reduction-%E5%AD%90%E5%8F%A5"><span class="nav-number">2.8.8.8.</span> <span class="nav-text">reduction 子句</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-19"><span class="nav-number">2.8.8.8.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F-18"><span class="nav-number">2.8.8.8.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Example-REDUCTION-Vector-Dot-Product"><span class="nav-number">2.8.8.8.3.</span> <span class="nav-text">Example: REDUCTION - Vector Dot Product:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6-12"><span class="nav-number">2.8.8.8.4.</span> <span class="nav-text">限制条件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E7%BB%91%E5%AE%9A%E5%92%8C%E5%B5%8C%E5%A5%97%E8%A7%84%E5%88%99"><span class="nav-number">2.8.9.</span> <span class="nav-text">指令绑定和嵌套规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E7%BB%91%E5%AE%9A"><span class="nav-number">2.8.9.1.</span> <span class="nav-text">指令绑定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E5%B5%8C%E5%A5%97"><span class="nav-number">2.8.9.2.</span> <span class="nav-text">指令嵌套</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-8-%E7%BA%BF%E7%A8%8B%E5%A0%86%E6%A0%88%E5%A4%A7%E5%B0%8F%E5%92%8C%E7%BA%BF%E7%A8%8B%E7%BB%91%E5%AE%9A"><span class="nav-number">2.9.</span> <span class="nav-text">2.8 线程堆栈大小和线程绑定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%A0%86%E6%A0%88%E5%A4%A7%E5%B0%8F"><span class="nav-number">2.9.1.</span> <span class="nav-text">线程堆栈大小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E7%BB%91%E5%AE%9A"><span class="nav-number">2.9.2.</span> <span class="nav-text">线程绑定</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-OpenMP%E8%AF%A6%E7%BB%86%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.</span> <span class="nav-text">3. OpenMP详细代码示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-hello-openmp-cpp"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 hello_openmp.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-header-and-env-cpp"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 header_and_env.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-parallel-cpp"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 parallel.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-parallel-cout-cpp"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 parallel_cout.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-nested-cpp"><span class="nav-number">3.5.</span> <span class="nav-text">3.5 nested.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-6-parallel-for-cpp"><span class="nav-number">3.6.</span> <span class="nav-text">3.6 parallel-for.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-7-scoping-cpp"><span class="nav-number">3.7.</span> <span class="nav-text">3.7 scoping.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-8-firstprivate-cpp"><span class="nav-number">3.8.</span> <span class="nav-text">3.8 firstprivate.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-9-lastprivate-cpp"><span class="nav-number">3.9.</span> <span class="nav-text">3.9 lastprivate.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-10-single-master-critical-cpp"><span class="nav-number">3.10.</span> <span class="nav-text">3.10 single-master-critical.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-11-mutex-cpp"><span class="nav-number">3.11.</span> <span class="nav-text">3.11 mutex.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-12-barrier-cpp"><span class="nav-number">3.12.</span> <span class="nav-text">3.12 barrier.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-13-atomic-cpp"><span class="nav-number">3.13.</span> <span class="nav-text">3.13 atomic.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-14-reduction-cpp"><span class="nav-number">3.14.</span> <span class="nav-text">3.14 reduction.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-15-scheduling-cpp"><span class="nav-number">3.15.</span> <span class="nav-text">3.15 scheduling.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-16-ordered-cpp"><span class="nav-number">3.16.</span> <span class="nav-text">3.16 ordered.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-17-loop-dependencies-cpp"><span class="nav-number">3.17.</span> <span class="nav-text">3.17 loop-dependencies.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-18-sections-cpp"><span class="nav-number">3.18.</span> <span class="nav-text">3.18 sections.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-19-threadprivate-cpp"><span class="nav-number">3.19.</span> <span class="nav-text">3.19 threadprivate.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-20-Copyin-cpp"><span class="nav-number">3.20.</span> <span class="nav-text">3.20 Copyin.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-21-Copyprivate-cpp"><span class="nav-number">3.21.</span> <span class="nav-text">3.21 Copyprivate.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-22-nowait-cpp"><span class="nav-number">3.22.</span> <span class="nav-text">3.22 nowait.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-23-task"><span class="nav-number">3.23.</span> <span class="nav-text">3.23 task</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-25-flush-cpp"><span class="nav-number">3.24.</span> <span class="nav-text">3.25 flush.cpp</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#OpenMP%E4%B8%AD%E6%95%B0%E6%8D%AE%E5%B1%9E%E6%80%A7%E7%9B%B8%E5%85%B3%E5%AD%90%E5%8F%A5%E8%AF%A6%E8%A7%A3"><span class="nav-number">4.</span> <span class="nav-text">OpenMP中数据属性相关子句详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#private-firstprivate-lastprivate-threadprivate%E4%B9%8B%E9%97%B4%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">4.1.</span> <span class="nav-text">private&#x2F;firstprivate&#x2F;lastprivate&#x2F;threadprivate之间的比较</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#private"><span class="nav-number">4.1.1.</span> <span class="nav-text">private</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#firstprivate"><span class="nav-number">4.1.2.</span> <span class="nav-text">firstprivate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lastprivate"><span class="nav-number">4.1.3.</span> <span class="nav-text">lastprivate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#threadprivate"><span class="nav-number">4.1.4.</span> <span class="nav-text">threadprivate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.1.5.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shared-default-copyin-copyprivate%E5%AD%90%E5%8F%A5%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">4.2.</span> <span class="nav-text">shared&#x2F;default&#x2F;copyin&#x2F;copyprivate子句的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#shared"><span class="nav-number">4.2.1.</span> <span class="nav-text">shared</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#default"><span class="nav-number">4.2.2.</span> <span class="nav-text">default</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#copyin"><span class="nav-number">4.2.3.</span> <span class="nav-text">copyin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#copyprivate"><span class="nav-number">4.2.4.</span> <span class="nav-text">copyprivate</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reduction%E5%AD%90%E5%8F%A5"><span class="nav-number">4.3.</span> <span class="nav-text">reduction子句</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#OpenMP%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">5.</span> <span class="nav-text">OpenMP参考文档</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-openmp基础" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/12/06/openmp%E5%9F%BA%E7%A1%80/" class="article-date">
-  <time class="dt-published" datetime="2021-12-06T13:45:00.000Z" itemprop="datePublished">2021-12-06</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      OpenMP基础
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/06/openmp%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="OpenMP基础 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OpenMP基础
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-12-06 21:45:00" itemprop="dateCreated datePublished" datetime="2021-12-06T21:45:00+08:00">2021-12-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-12-26 16:52:02" itemprop="dateModified" datetime="2022-12-26T16:52:02+08:00">2022-12-26</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1-OpenMP基本介绍"><a href="#1-OpenMP基本介绍" class="headerlink" title="1. OpenMP基本介绍"></a>1. OpenMP基本介绍</h1><p>OpenMP是一个编译器指令和库函数的集合，主要是为共享式存储计算机上的并行程序设计使用的。目前支持OpenMP的语言主要有Fortran，C&#x2F;C++。</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="1-OpenMP基本介绍"><a href="#1-OpenMP基本介绍" class="headerlink" title="1. OpenMP基本介绍"></a>1. OpenMP基本介绍</h1><p>OpenMP是一个编译器指令和库函数的集合，主要是为共享式存储计算机上的并行程序设计使用的。目前支持OpenMP的语言主要有Fortran，C&#x2F;C++。</p>
 <h2 id="1-1-fork-join并行执行模式的概念"><a href="#1-1-fork-join并行执行模式的概念" class="headerlink" title="1.1 fork&#x2F;join并行执行模式的概念"></a>1.1 fork&#x2F;join并行执行模式的概念</h2><p>OpenMP在并行执行程序时，采用的是fork&#x2F;join式并行模式，共享存储式并行程序就是使用fork&#x2F;join式并行的。在开始时，只有一个叫做主线程的运行线程存在 。在运行过程中，当遇到需要进行并行计算的时候，派生出（Fork）线程来执行并行任务 。在并行代码结束执行，派生线程退出或挂起，控制流程回到单独的主线程中（Join）。</p>
 <p>如图，标准并行模式执行代码的基本思想是，程序开始时只有一个主线程，程序中的串行部分都由主线程执行，并行的部分是通过派生其他线程来执行，但是如果并行部分没有结束时是不会执行串行部分的，先看一个简单例子：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">test</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">     <span class="type">int</span> a = <span class="number">0</span>;</span><br><span class="line">     <span class="type">clock_t</span> t1 = <span class="built_in">clock</span>();</span><br><span class="line">     <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100000000</span>; i++)</span><br><span class="line">     &#123;</span><br><span class="line">         a = i<span class="number">+1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="type">clock_t</span> t2 = <span class="built_in">clock</span>();</span><br><span class="line">     <span class="built_in">printf</span>(<span class="string">&quot;Time = %d\n&quot;</span>, t2-t1);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">     <span class="type">clock_t</span> t1 = <span class="built_in">clock</span>();</span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> omp parallel for</span></span><br><span class="line">     <span class="keyword">for</span> ( <span class="type">int</span> j = <span class="number">0</span>; j &lt; <span class="number">2</span>; j++ )&#123;</span><br><span class="line">         <span class="built_in">test</span>();</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="type">clock_t</span> t2 = <span class="built_in">clock</span>();</span><br><span class="line">     <span class="built_in">printf</span>(<span class="string">&quot;Total time = %d\n&quot;</span>, t2-t1);</span><br><span class="line">     <span class="built_in">test</span>();</span><br><span class="line">     <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -1114,150 +1234,75 @@
 <p><img src="/img/OpenMPRef-5.0-111802-web_Page11.png"></p>
 <p><img src="/img/OpenMPRef-5.0-111802-web_Page12.png"></p>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/06/openmp%E5%9F%BA%E7%A1%80/" data-id="cuidxkm6Phd3TLLulmSzSONeZ" data-title="OpenMP基础" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag"># 积累</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/12/06/%E6%9C%89%E8%B6%A3%E7%9A%84cache%E6%B5%8B%E9%87%8F%E6%95%B0%E6%8D%AE/" rel="prev" title="有趣的cache测量数据">
+                  <i class="fa fa-angle-left"></i> 有趣的cache测量数据
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/12/14/Intel_MPI%E6%89%8B%E5%86%8C/" rel="next" title="Intel MPI library developer reference for Linux">
+                  Intel MPI library developer reference for Linux <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2021/12/14/Intel_MPI%E6%89%8B%E5%86%8C/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Intel MPI library developer reference for Linux
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2021/12/06/%E6%9C%89%E8%B6%A3%E7%9A%84cache%E6%B5%8B%E9%87%8F%E6%95%B0%E6%8D%AE/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">有趣的cache测量数据</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>Introduction to HPC——笔记 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="高性能计算｜硬件架构与基准测试「高性能计算」（High performance computing，HPC）指通常使用很多处理器（作为单个机器的一部分）或者某一集群中组织的几台计算机（作为单个计算资源操作）的计算系统和环境。有许多类型的 HPC 系统，其范围从标准计算机的大型集群，到高度专用的硬件。 大多数基于集群的 HPC 系统使用高性能网络互连，比如一些来自 InfiniBand 或 Myri">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="高性能计算｜硬件架构与基准测试「高性能计算」（High performance computing，HPC）指通常使用很多处理器（作为单个机器的一部分）或者某一集群中组织的几台计算机（作为单个计算资源操作）的计算系统和环境。有许多类型的 HPC 系统，其范围从标准计算机的大型集群，到高度专用的硬件。 大多数基于集群的 HPC 系统使用高性能网络互连，比如一些来自 InfiniBand 或 Myri">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Introduction to HPC——笔记">
 <meta property="og:url" content="http://example.com/2022/01/04/Introduction%20to%20HPC%E2%80%94%E2%80%94%E7%AC%94%E8%AE%B0/index.html">
@@ -56,85 +70,185 @@
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/img/cpu_memory.png">
+
+
+<link rel="canonical" href="http://example.com/2022/01/04/Introduction%20to%20HPC%E2%80%94%E2%80%94%E7%AC%94%E8%AE%B0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/01/04/Introduction%20to%20HPC%E2%80%94%E2%80%94%E7%AC%94%E8%AE%B0/","path":"2022/01/04/Introduction to HPC——笔记/","title":"Introduction to HPC——笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Introduction to HPC——笔记 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97%EF%BD%9C%E7%A1%AC%E4%BB%B6%E6%9E%B6%E6%9E%84%E4%B8%8E%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95"><span class="nav-number">1.</span> <span class="nav-text">高性能计算｜硬件架构与基准测试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97%E6%9E%B6%E6%9E%84%E5%8F%B2"><span class="nav-number">1.1.</span> <span class="nav-text">高性能计算架构史</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E6%80%A7%E8%83%BD%E8%8A%82%E7%82%B9%E6%9E%B6%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">高性能节点架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%BA%94%E7%94%A8%E7%8E%AF%E5%A2%83"><span class="nav-number">1.2.1.</span> <span class="nav-text">不同架构模式的应用环境</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CPU-%E5%B9%B6%E8%A1%8C%E6%9E%B6%E6%9E%84"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">CPU 并行架构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CPU-MIC-%E5%BC%82%E6%9E%84"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">CPU+MIC 异构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CPU-GPU-%E5%BC%82%E6%9E%84"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">CPU + GPU 异构</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E6%B5%8B%E8%AF%95"><span class="nav-number">1.3.</span> <span class="nav-text">主要测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E8%AE%BA%E5%B3%B0%E5%80%BC%E6%80%A7%E8%83%BD"><span class="nav-number">1.3.1.</span> <span class="nav-text">理论峰值性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E6%B5%8B%E5%B3%B0%E5%80%BC%E6%80%A7%E8%83%BD"><span class="nav-number">1.3.2.</span> <span class="nav-text">实测峰值性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%84%E4%BB%B7%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.3.</span> <span class="nav-text">评价参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E7%A8%8B%E5%BA%8FStream"><span class="nav-number">1.3.4.</span> <span class="nav-text">内存性能测试程序Stream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E7%A8%8B%E5%BA%8F-OMB"><span class="nav-number">1.3.5.</span> <span class="nav-text">通信性能测试程序 OMB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%AE%E7%82%B9%E8%AE%A1%E7%AE%97%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E7%A8%8B%E5%BA%8F-HPL"><span class="nav-number">1.3.6.</span> <span class="nav-text">浮点计算性能测试程序 HPL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%BC%E5%90%88%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E7%A8%8B%E5%BA%8F-HPCC"><span class="nav-number">1.3.7.</span> <span class="nav-text">综合性能测试程序 HPCC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F%E6%B5%8B%E8%AF%95%E7%A8%8B%E5%BA%8F%E9%9B%86-NPB"><span class="nav-number">1.3.8.</span> <span class="nav-text">领域测试程序集 NPB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F%E6%B5%8B%E8%AF%95%E7%A8%8B%E5%BA%8F%E9%9B%86-IAPCM-Benchmarks"><span class="nav-number">1.3.9.</span> <span class="nav-text">领域测试程序集 IAPCM Benchmarks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F%E6%B5%8B%E8%AF%95%E7%A8%8B%E5%BA%8F%E9%9B%86-Graph500-Benchmark"><span class="nav-number">1.3.10.</span> <span class="nav-text">领域测试程序集 Graph500 Benchmark</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%AE%E7%82%B9%E8%AE%A1%E7%AE%97%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E7%A8%8B%E5%BA%8F-HPCG"><span class="nav-number">1.3.11.</span> <span class="nav-text">浮点计算性能测试程序 HPCG</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%B5%8B%E8%AF%95%E6%B1%87%E6%80%BB"><span class="nav-number">1.3.12.</span> <span class="nav-text">其他测试汇总</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97%EF%BD%9C%E9%9B%86%E7%BE%A4%E5%8A%9F%E7%8E%87%E4%B8%8E%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7"><span class="nav-number">2.</span> <span class="nav-text">高性能计算｜集群功率与系统监控</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%9F%E8%80%97%E7%9B%91%E6%8E%A7"><span class="nav-number">2.1.</span> <span class="nav-text">功耗监控</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E7%89%B9%E5%BE%81%E4%B8%8E%E7%9B%91%E6%B5%8B%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7"><span class="nav-number">2.1.1.</span> <span class="nav-text">应用特征与监测分析工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B6%85%E7%AE%97%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%80%A7%E8%83%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">2.2.</span> <span class="nav-text">超算系统的性能均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E5%86%85%E9%85%8D%E7%BD%AE%E5%9D%87%E8%A1%A1"><span class="nav-number">2.2.1.</span> <span class="nav-text">节点内配置均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CPU%E5%90%8C%E6%9E%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">CPU同构类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%82%E6%9E%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">异构类型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E9%97%B4%E9%85%8D%E7%BD%AE%E5%9D%87%E8%A1%A1"><span class="nav-number">2.2.2.</span> <span class="nav-text">节点间配置均衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%9D%87%E8%A1%A1"><span class="nav-number">2.2.3.</span> <span class="nav-text">网络均衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E5%90%8C%E4%B8%80%E5%BA%94%E7%94%A8%E7%9A%84%E8%8A%82%E7%82%B9%E9%85%8D%E7%BD%AE%E5%9D%87%E8%A1%A1"><span class="nav-number">2.2.4.</span> <span class="nav-text">执行同一应用的节点配置均衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E8%AE%BE%E5%A4%87%E9%97%B4%E7%9A%84%E5%9D%87%E8%A1%A1"><span class="nav-number">2.2.5.</span> <span class="nav-text">不同设备间的均衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9F%E8%80%97%E5%9D%87%E8%A1%A1"><span class="nav-number">2.2.6.</span> <span class="nav-text">功耗均衡</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86%E8%BD%AF%E4%BB%B6"><span class="nav-number">2.3.</span> <span class="nav-text">集群管理软件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.3.1.</span> <span class="nav-text">集群管理系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E4%BD%9C%E4%B8%9A%E8%B0%83%E5%BA%A6%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.3.2.</span> <span class="nav-text">集群作业调度系统</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97%EF%BD%9C%E7%BD%91%E7%BB%9C%E7%B3%BB%E7%BB%9F%E4%B8%8E%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.</span> <span class="nav-text">高性能计算｜网络系统与存储系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#InfiniBand-%E7%BD%91%E7%BB%9C"><span class="nav-number">3.1.</span> <span class="nav-text">InfiniBand 网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IB-%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.1.1.</span> <span class="nav-text">IB 通信协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#InfiniBand-%E4%B8%8E-RDMA"><span class="nav-number">3.1.1.1.</span> <span class="nav-text">InfiniBand 与 RDMA</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#InfiniBand-%E4%B8%8E%E5%85%B6%E4%BB%96%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">3.1.1.2.</span> <span class="nav-text">InfiniBand 与其他协议的关系</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E-InfiniBand-%E7%9A%84HPC-%E5%BA%94%E7%94%A8%E4%BC%98%E5%8C%96"><span class="nav-number">3.1.2.</span> <span class="nav-text">基于 InfiniBand 的HPC 应用优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MPI-%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">MPI 通信协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MPI-%E5%87%BD%E6%95%B0"><span class="nav-number">3.1.2.2.</span> <span class="nav-text">MPI 函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MPI-%E5%9F%BA%E4%BA%8E%E4%B8%8D%E5%90%8C%E7%BD%91%E7%BB%9C%E7%9A%84%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94"><span class="nav-number">3.1.2.3.</span> <span class="nav-text">MPI 基于不同网络的性能对比</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.2.</span> <span class="nav-text">存储系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E7%BD%91%E6%A0%BC"><span class="nav-number">3.2.1.</span> <span class="nav-text">存储网格</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DAS"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">DAS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NAS"><span class="nav-number">3.2.1.2.</span> <span class="nav-text">NAS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SAN"><span class="nav-number">3.2.1.3.</span> <span class="nav-text">SAN</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E9%98%B5%E5%88%97-RAID"><span class="nav-number">3.2.2.</span> <span class="nav-text">磁盘阵列 RAID</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RAID-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%8F%96%E6%96%B9%E5%BC%8F"><span class="nav-number">3.2.2.1.</span> <span class="nav-text">RAID 数据存取方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RAID-0"><span class="nav-number">3.2.2.2.</span> <span class="nav-text">RAID 0</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RAID-1"><span class="nav-number">3.2.2.3.</span> <span class="nav-text">RAID 1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RAID-5"><span class="nav-number">3.2.2.4.</span> <span class="nav-text">RAID 5</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RAID-6-P-Q"><span class="nav-number">3.2.2.5.</span> <span class="nav-text">RAID 6 P+Q</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RAID-10"><span class="nav-number">3.2.2.6.</span> <span class="nav-text">RAID 10</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%83%AD%E5%A4%87%E6%8A%80%E6%9C%AF%EF%BC%88HotSpare%EF%BC%89"><span class="nav-number">3.2.2.7.</span> <span class="nav-text">热备技术（HotSpare）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.2.3.</span> <span class="nav-text">分布式文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.2.3.1.</span> <span class="nav-text">文件系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E9%9B%86%E7%BE%A4%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E6%9E%B6%E6%9E%84"><span class="nav-number">3.2.3.2.</span> <span class="nav-text">基于集群的分布式架构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E8%AF%84%E4%BB%B7%E6%96%B9%E6%B3%95"><span class="nav-number">3.2.3.3.</span> <span class="nav-text">性能评价方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.2.4.</span> <span class="nav-text">并行文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PVFS"><span class="nav-number">3.2.4.1.</span> <span class="nav-text">PVFS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Lustre"><span class="nav-number">3.2.4.2.</span> <span class="nav-text">Lustre</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#C%E8%AF%AD%E8%A8%80%E5%B8%B8%E8%A7%81%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5"><span class="nav-number">4.</span> <span class="nav-text">C语言常见优化策略</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BC%98%E5%8C%96"><span class="nav-number">4.1.</span> <span class="nav-text">基本优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E6%80%9D%E8%B7%AF%E4%B8%8E%E8%AF%AF%E5%8C%BA"><span class="nav-number">4.1.1.</span> <span class="nav-text">整体思路与误区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%BB%E4%BD%8D%E5%AE%9E%E7%8E%B0%E4%B9%98%E9%99%A4"><span class="nav-number">4.2.</span> <span class="nav-text">移位实现乘除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93%E6%88%90%E5%91%98%E7%9A%84%E5%B8%83%E5%B1%80"><span class="nav-number">4.3.</span> <span class="nav-text">结构体成员的布局</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E4%BC%98%E5%8C%96"><span class="nav-number">4.4.</span> <span class="nav-text">循环优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80%EF%BC%8C%E9%99%8D%E4%BD%8E%E5%BE%AA%E7%8E%AF%E5%B1%82%E6%AC%A1%E6%88%96%E8%80%85%E6%AC%A1%E6%95%B0"><span class="nav-number">4.4.1.</span> <span class="nav-text">循环展开，降低循环层次或者次数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E5%90%88%E5%B9%B6%EF%BC%88%E8%AE%A1%E6%95%B0%E5%99%A8%E7%9B%B8%E5%90%8C%E7%9A%84%EF%BC%89%EF%BC%8C%E9%81%BF%E5%85%8D%E5%A4%9A%E6%AC%A1%E8%BD%AE%E8%AF%A2"><span class="nav-number">4.4.2.</span> <span class="nav-text">循环合并（计数器相同的），避免多次轮询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E9%A1%BA%E5%BA%8F%E4%BA%A4%E6%8D%A2"><span class="nav-number">4.4.3.</span> <span class="nav-text">循环顺序交换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E9%AB%98CPU%E7%9A%84%E5%B9%B6%E8%A1%8C%E6%80%A7"><span class="nav-number">4.5.</span> <span class="nav-text">提高CPU的并行性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E4%B8%8D%E5%8F%98%E8%AE%A1%E7%AE%97"><span class="nav-number">4.6.</span> <span class="nav-text">循环不变计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E4%BC%98%E5%8C%96"><span class="nav-number">4.7.</span> <span class="nav-text">函数优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E9%87%8F"><span class="nav-number">4.8.</span> <span class="nav-text">变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="nav-number">4.9.</span> <span class="nav-text">条件判断</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-Introduction to HPC——笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/01/04/Introduction%20to%20HPC%E2%80%94%E2%80%94%E7%AC%94%E8%AE%B0/" class="article-date">
-  <time class="dt-published" datetime="2022-01-04T01:36:00.000Z" itemprop="datePublished">2022-01-04</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      Introduction to HPC——笔记
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/04/Introduction%20to%20HPC%E2%80%94%E2%80%94%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Introduction to HPC——笔记 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Introduction to HPC——笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
       
-        <h1 id="高性能计算｜硬件架构与基准测试"><a href="#高性能计算｜硬件架构与基准测试" class="headerlink" title="高性能计算｜硬件架构与基准测试"></a>高性能计算｜硬件架构与基准测试</h1><p>「<strong>高性能计算</strong>」（High performance computing，HPC）指通常使用很多处理器（作为单个机器的一部分）或者某一集群中组织的几台计算机（作为单个计算资源操作）的计算系统和环境。有许多类型的 HPC 系统，其范围从标准计算机的大型集群，到高度专用的硬件。 大多数基于集群的 HPC 系统使用高性能网络互连，比如一些来自 InfiniBand 或 Myrinet 的网络互连。基本的网络拓扑和组织可以使用一个简单的总线拓扑，在性能很高的环境中，网状网络系统在主机之间提供较短的潜伏期，所以可改善总体网络性能和传输速率。</p>
+
+      <time title="Created: 2022-01-04 09:36:00 / Modified: 10:06:42" itemprop="dateCreated datePublished" datetime="2022-01-04T09:36:00+08:00">2022-01-04</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="高性能计算｜硬件架构与基准测试"><a href="#高性能计算｜硬件架构与基准测试" class="headerlink" title="高性能计算｜硬件架构与基准测试"></a>高性能计算｜硬件架构与基准测试</h1><p>「<strong>高性能计算</strong>」（High performance computing，HPC）指通常使用很多处理器（作为单个机器的一部分）或者某一集群中组织的几台计算机（作为单个计算资源操作）的计算系统和环境。有许多类型的 HPC 系统，其范围从标准计算机的大型集群，到高度专用的硬件。 大多数基于集群的 HPC 系统使用高性能网络互连，比如一些来自 InfiniBand 或 Myrinet 的网络互连。基本的网络拓扑和组织可以使用一个简单的总线拓扑，在性能很高的环境中，网状网络系统在主机之间提供较短的潜伏期，所以可改善总体网络性能和传输速率。</p>
 <h2 id="高性能计算架构史"><a href="#高性能计算架构史" class="headerlink" title="高性能计算架构史"></a>高性能计算架构史</h2><p>当代计算机的原型最早可追溯到1943年的 Colossus，第二次世界大战期间，英国曾用该机器来破解截获纳粹德国的无线电报信息。两年后，美国研制了人类历史上第一台计算机 ENIAC ，用来快速计算炮兵射击表。</p>
 <p>回顾计算机的历史，人们最早设计了「<strong>固定程序计算机</strong>」（Fixed Program Computer），如：算盘、计算器等，这种计算机的特点是无法编程，只能解决固定的问题，通用性较差。这显然不符合我们设计计算机的初衷，如何设计出可编程的计算机？</p>
 <p>我们常说的「程序」，无非就是指一系列指令的集合。如果能将这些指令存储在计算机中，人们可以随意编程，计算机就会更加通用。可是程序应该怎么存储？历史上出现了两种不同的声音：</p>
@@ -455,7 +569,7 @@
 <p>intel 5650（12 线程）：<br>$$<br>29.3GB &#x3D;45.7% \quad 1 \quad 线程 \quad 9.13GB<br>$$</p>
 <p>AMD 6136（16 线程）：<br>$$<br>49.0GB &#x3D;57.4%\quad 1\quad 线程\quad 5.18GB<br>$$</p>
 <h1 id="高性能计算｜集群功率与系统监控"><a href="#高性能计算｜集群功率与系统监控" class="headerlink" title="高性能计算｜集群功率与系统监控"></a>高性能计算｜集群功率与系统监控</h1><blockquote>
-<p>Yurk（<a href="mailto:&#x72;&#x65;&#x61;&#x6c;&#x79;&#x75;&#x72;&#107;&#x40;&#103;&#109;&#97;&#x69;&#x6c;&#x2e;&#x63;&#x6f;&#x6d;">realyurk@gmail.com</a>）整理</p>
+<p>Yurk（<a href="mailto:&#114;&#101;&#x61;&#108;&#121;&#x75;&#114;&#x6b;&#x40;&#x67;&#x6d;&#x61;&#105;&#x6c;&#x2e;&#x63;&#111;&#109;">realyurk@gmail.com</a>）整理</p>
 <p>参考内容：《高性能计算》（张广勇）</p>
 <p>​					《超算竞赛导引》（科学出版社）</p>
 <p>​					《Introduction to High Performance Scientific Computing》(Victor Eijkhout)</p>
@@ -569,7 +683,7 @@
 <li><strong>灵活性</strong>：支持交互和批处理作业。torque PBS 提供对批处理作业和分散的<strong>计算节点</strong> （Compute nodes） 的控制。</li>
 </ul>
 <h1 id="高性能计算｜网络系统与存储系统"><a href="#高性能计算｜网络系统与存储系统" class="headerlink" title="高性能计算｜网络系统与存储系统"></a>高性能计算｜网络系统与存储系统</h1><blockquote>
-<p>Yurk（<a href="mailto:&#114;&#101;&#x61;&#108;&#121;&#x75;&#x72;&#107;&#64;&#x67;&#x6d;&#97;&#105;&#x6c;&#x2e;&#x63;&#x6f;&#x6d;">realyurk@gmail.com</a>）整理</p>
+<p>Yurk（<a href="mailto:&#x72;&#x65;&#x61;&#x6c;&#x79;&#x75;&#114;&#x6b;&#x40;&#x67;&#109;&#97;&#105;&#x6c;&#x2e;&#x63;&#x6f;&#109;">realyurk@gmail.com</a>）整理</p>
 <p>参考内容：《高性能计算》（张广勇）</p>
 <p>​					《超算竞赛导引》（科学出版社）</p>
 <p>​					《Introduction to High Performance Scientific Computing》（Victor Eijkhout）</p>
@@ -1149,150 +1263,75 @@
 <li>使用嵌套的if结构：在if结构中如果要判断的并列条件较多，最好将它们拆分成多个if结构，然后嵌套在一起，这样可以避免无谓的判断。</li>
 </ol>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2022/01/04/Introduction%20to%20HPC%E2%80%94%E2%80%94%E7%AC%94%E8%AE%B0/" data-id="cuidQ6bqIglZyZpIA5G4C5M0d" data-title="Introduction to HPC——笔记" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/04/Introduction%20to%20HPC%E2%80%94%E2%80%94%E7%90%86%E8%AE%BA/" rel="prev" title="Introduction to HPC——理论">
+                  <i class="fa fa-angle-left"></i> Introduction to HPC——理论
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/01/07/cpp%E6%A8%A1%E6%9D%BF/" rel="next" title="C++模板">
+                  C++模板 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2022/01/07/cpp%E6%A8%A1%E6%9D%BF/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          C++模板
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2022/01/04/Introduction%20to%20HPC%E2%80%94%E2%80%94%E7%90%86%E8%AE%BA/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Introduction to HPC——理论</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

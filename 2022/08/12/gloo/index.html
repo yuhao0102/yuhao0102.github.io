@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>gloo介绍 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Gloo 是一个集合通信库。它带有许多对机器学习应用有用的集体算法。参与机器之间的数据传输是抽象的，因此可以随时使用 IP，或者在可用时使用 InifiniBand（或 RoCE）。 在后一种情况下，如果使用 InfiniBand 传输，GPUDirect可用于加速跨机器 GPU 到 GPU 的内存传输。 在适用的情况下，算法具有一种适用于系统内存缓冲区的实现，以及一种适用于 NVIDIA GPU">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Gloo 是一个集合通信库。它带有许多对机器学习应用有用的集体算法。参与机器之间的数据传输是抽象的，因此可以随时使用 IP，或者在可用时使用 InifiniBand（或 RoCE）。 在后一种情况下，如果使用 InfiniBand 传输，GPUDirect可用于加速跨机器 GPU 到 GPU 的内存传输。 在适用的情况下，算法具有一种适用于系统内存缓冲区的实现，以及一种适用于 NVIDIA GPU">
 <meta property="og:type" content="article">
 <meta property="og:title" content="gloo介绍">
 <meta property="og:url" content="http://example.com/2022/08/12/gloo/index.html">
@@ -18,85 +32,191 @@
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="积累">
 <meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2022/08/12/gloo/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/08/12/gloo/","path":"2022/08/12/gloo/","title":"gloo介绍"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>gloo介绍 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#aligned-allocator"><span class="nav-number">1.</span> <span class="nav-text">aligned_allocator</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#transport"><span class="nav-number">2.</span> <span class="nav-text">transport</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ibverbs"><span class="nav-number">2.1.</span> <span class="nav-text">ibverbs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp"><span class="nav-number">2.2.</span> <span class="nav-text">tcp</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tls"><span class="nav-number">2.2.1.</span> <span class="nav-text">tls</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E7%BB%8Ftcp"><span class="nav-number">2.2.2.</span> <span class="nav-text">正经tcp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#loop"><span class="nav-number">2.2.3.</span> <span class="nav-text">loop</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mpi"><span class="nav-number">3.</span> <span class="nav-text">mpi</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1"><span class="nav-number">4.</span> <span class="nav-text">通信</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#allgather"><span class="nav-number">5.</span> <span class="nav-text">allgather</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E7%9A%84allgather"><span class="nav-number">6.</span> <span class="nav-text">一般的allgather</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#allgatherv"><span class="nav-number">7.</span> <span class="nav-text">allgatherv</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#allreduce"><span class="nav-number">8.</span> <span class="nav-text">allreduce</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#allreduce%E7%9A%84ring%E6%96%B9%E6%B3%95"><span class="nav-number">8.1.</span> <span class="nav-text">allreduce的ring方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bcube-%E7%AE%97%E6%B3%95"><span class="nav-number">8.2.</span> <span class="nav-text">bcube 算法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#alltoallv"><span class="nav-number">9.</span> <span class="nav-text">alltoallv</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#barrier"><span class="nav-number">10.</span> <span class="nav-text">barrier</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#broadcast"><span class="nav-number">11.</span> <span class="nav-text">broadcast</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#avx%E4%BC%98%E5%8C%96"><span class="nav-number">12.</span> <span class="nav-text">avx优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reduce"><span class="nav-number">13.</span> <span class="nav-text">reduce</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-gloo" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/08/12/gloo/" class="article-date">
-  <time class="dt-published" datetime="2022-08-12T04:52:00.000Z" itemprop="datePublished">2022-08-12</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      gloo介绍
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/12/gloo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="gloo介绍 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          gloo介绍
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-08-12 12:52:00" itemprop="dateCreated datePublished" datetime="2022-08-12T12:52:00+08:00">2022-08-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-08-18 21:01:36" itemprop="dateModified" datetime="2022-08-18T21:01:36+08:00">2022-08-18</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>Gloo 是一个集合通信库。它带有许多对机器学习应用有用的集体算法。参与机器之间的数据传输是抽象的，因此可以随时使用 IP，或者在可用时使用 InifiniBand（或 RoCE）。 在后一种情况下，如果使用 InfiniBand 传输，GPUDirect可用于加速跨机器 GPU 到 GPU 的内存传输。</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Gloo 是一个集合通信库。它带有许多对机器学习应用有用的集体算法。参与机器之间的数据传输是抽象的，因此可以随时使用 IP，或者在可用时使用 InifiniBand（或 RoCE）。 在后一种情况下，如果使用 InfiniBand 传输，GPUDirect可用于加速跨机器 GPU 到 GPU 的内存传输。</p>
 <p>在适用的情况下，算法具有一种适用于系统内存缓冲区的实现，以及一种适用于 NVIDIA GPU 内存缓冲区的实现。 在后一种情况下，主机和设备之间不需要复制内存； 这是由算法实现处理的。</p>
 <h1 id="aligned-allocator"><a href="#aligned-allocator" class="headerlink" title="aligned_allocator"></a>aligned_allocator</h1><p>将分配的内存区域对齐到32字节。使用了using和模板。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Align buffers to 32 bytes to support vectorized code</span></span><br><span class="line"><span class="type">const</span> <span class="type">size_t</span> kBufferAlignment = <span class="number">32</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="type">int</span> ALIGNMENT = kBufferAlignment&gt;</span><br><span class="line"><span class="keyword">class</span> aligned_allocator &#123;</span><br><span class="line">  <span class="built_in">static_assert</span>(</span><br><span class="line">      !(ALIGNMENT &amp; (ALIGNMENT - <span class="number">1</span>)),</span><br><span class="line">      <span class="string">&quot;alignment must be a power of 2&quot;</span>);</span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">using</span> value_type = T;</span><br><span class="line">  <span class="keyword">using</span> pointer = value_type*;</span><br><span class="line">  <span class="keyword">using</span> const_pointer = <span class="type">const</span> value_type*;</span><br><span class="line">  <span class="keyword">using</span> reference = value_type&amp;;</span><br><span class="line">  <span class="keyword">using</span> const_reference = <span class="type">const</span> value_type&amp;;</span><br><span class="line">  <span class="keyword">using</span> size_type = std::<span class="type">size_t</span>;</span><br><span class="line">  <span class="keyword">using</span> difference_type = std::<span class="type">ptrdiff_t</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> U&gt;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">rebind</span> &#123;</span><br><span class="line">    <span class="keyword">using</span> other = aligned_allocator&lt;U, ALIGNMENT&gt;;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">inline</span> <span class="keyword">explicit</span> <span class="title">aligned_allocator</span><span class="params">()</span> </span>= <span class="keyword">default</span>;</span><br><span class="line">  <span class="keyword">inline</span> ~<span class="built_in">aligned_allocator</span>() = <span class="keyword">default</span>;</span><br><span class="line">  <span class="function"><span class="keyword">inline</span> <span class="keyword">explicit</span> <span class="title">aligned_allocator</span><span class="params">(<span class="type">const</span> aligned_allocator&amp; a)</span> </span>= <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">inline</span> pointer <span class="title">address</span><span class="params">(reference r)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;r;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">inline</span> const_pointer <span class="title">address</span><span class="params">(const_reference r)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;r;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">inline</span> pointer <span class="title">allocate</span><span class="params">(size_type sz)</span> </span>&#123;</span><br><span class="line">    pointer p;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">posix_memalign</span>(</span><br><span class="line">            <span class="built_in">reinterpret_cast</span>&lt;<span class="type">void</span>**&gt;(&amp;p), ALIGNMENT, <span class="built_in">sizeof</span>(T) * sz)) &#123;</span><br><span class="line">      <span class="built_in">abort</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="title">deallocate</span><span class="params">(pointer p, size_type <span class="comment">/*sz*/</span>)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">free</span>(p);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
@@ -230,150 +350,75 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//假设 x 和 y 要么都对齐到 32 字节，要么未对齐相同的偏移量，就像在对齐缓冲区内的偏移量处减少时会发生的那样</span></span><br><span class="line"><span class="keyword">template</span> &lt;&gt;</span><br><span class="line"><span class="type">void</span> <span class="built_in">sum</span>&lt;float16&gt;(<span class="type">void</span>* c_, <span class="type">const</span> <span class="type">void</span>* a_, <span class="type">const</span> <span class="type">void</span>* b_, <span class="type">size_t</span> n) &#123;</span><br><span class="line">  float16* c = <span class="built_in">static_cast</span>&lt;float16*&gt;(c_);</span><br><span class="line">  <span class="type">const</span> float16* a = <span class="built_in">static_cast</span>&lt;<span class="type">const</span> float16*&gt;(a_);</span><br><span class="line">  <span class="type">const</span> float16* b = <span class="built_in">static_cast</span>&lt;<span class="type">const</span> float16*&gt;(b_);</span><br><span class="line">  <span class="type">size_t</span> i;</span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; (n / <span class="number">8</span>) * <span class="number">8</span>; i += <span class="number">8</span>) &#123;</span><br><span class="line">    __m256 va32 = _mm256_cvtph_ps(_mm_loadu_si128((__m128i*)(&amp;a[i])));</span><br><span class="line">    __m256 vb32 = _mm256_cvtph_ps(_mm_loadu_si128((__m128i*)(&amp;b[i])));</span><br><span class="line">    __m128i vc16 = _mm256_cvtps_ph(_mm256_add_ps(va32, vb32), <span class="number">0</span>);</span><br><span class="line">    _mm_storeu_si128((__m128i*)(&amp;c[i]), vc16);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Leftovers</span></span><br><span class="line">  <span class="keyword">for</span> (; i &lt; n; i++) &#123;</span><br><span class="line">    c[i] = a[i] + b[i];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;&gt;</span><br><span class="line"><span class="type">void</span> <span class="built_in">product</span>&lt;float16&gt;(<span class="type">void</span>* c_, <span class="type">const</span> <span class="type">void</span>* a_, <span class="type">const</span> <span class="type">void</span>* b_, <span class="type">size_t</span> n) &#123;</span><br><span class="line">  float16* c = <span class="built_in">static_cast</span>&lt;float16*&gt;(c_);</span><br><span class="line">  <span class="type">const</span> float16* a = <span class="built_in">static_cast</span>&lt;<span class="type">const</span> float16*&gt;(a_);</span><br><span class="line">  <span class="type">const</span> float16* b = <span class="built_in">static_cast</span>&lt;<span class="type">const</span> float16*&gt;(b_);</span><br><span class="line">  <span class="type">size_t</span> i;</span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; (n / <span class="number">8</span>) * <span class="number">8</span>; i += <span class="number">8</span>) &#123;</span><br><span class="line">    __m256 va32 = _mm256_cvtph_ps(_mm_loadu_si128((__m128i*)(&amp;a[i])));</span><br><span class="line">    __m256 vb32 = _mm256_cvtph_ps(_mm_loadu_si128((__m128i*)(&amp;b[i])));</span><br><span class="line">    __m128i vc16 = _mm256_cvtps_ph(_mm256_mul_ps(va32, vb32), <span class="number">0</span>);</span><br><span class="line">    _mm_storeu_si128((__m128i*)(&amp;c[i]), vc16);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Leftovers</span></span><br><span class="line">  <span class="keyword">for</span> (; i &lt; n; i++) &#123;</span><br><span class="line">    c[i] = a[i] * b[i];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;&gt;</span><br><span class="line"><span class="type">void</span> <span class="built_in">max</span>&lt;float16&gt;(<span class="type">void</span>* c_, <span class="type">const</span> <span class="type">void</span>* a_, <span class="type">const</span> <span class="type">void</span>* b_, <span class="type">size_t</span> n) &#123;</span><br><span class="line">  float16* c = <span class="built_in">static_cast</span>&lt;float16*&gt;(c_);</span><br><span class="line">  <span class="type">const</span> float16* a = <span class="built_in">static_cast</span>&lt;<span class="type">const</span> float16*&gt;(a_);</span><br><span class="line">  <span class="type">const</span> float16* b = <span class="built_in">static_cast</span>&lt;<span class="type">const</span> float16*&gt;(b_);</span><br><span class="line">  <span class="type">size_t</span> i;</span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; (n / <span class="number">8</span>) * <span class="number">8</span>; i += <span class="number">8</span>) &#123;</span><br><span class="line">    __m256 va32 = _mm256_cvtph_ps(_mm_loadu_si128((__m128i*)(&amp;a[i])));</span><br><span class="line">    __m256 vb32 = _mm256_cvtph_ps(_mm_loadu_si128((__m128i*)(&amp;b[i])));</span><br><span class="line">    __m128i vc16 = _mm256_cvtps_ph(_mm256_max_ps(va32, vb32), <span class="number">0</span>);</span><br><span class="line">    _mm_storeu_si128((__m128i*)(&amp;c[i]), vc16);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Leftovers</span></span><br><span class="line">  <span class="keyword">for</span> (; i &lt; n; i++) &#123;</span><br><span class="line">    c[i] = std::<span class="built_in">max</span>(a[i], b[i]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;&gt;</span><br><span class="line"><span class="type">void</span> <span class="built_in">min</span>&lt;float16&gt;(<span class="type">void</span>* c_, <span class="type">const</span> <span class="type">void</span>* a_, <span class="type">const</span> <span class="type">void</span>* b_, <span class="type">size_t</span> n) &#123;</span><br><span class="line">  float16* c = <span class="built_in">static_cast</span>&lt;float16*&gt;(c_);</span><br><span class="line">  <span class="type">const</span> float16* a = <span class="built_in">static_cast</span>&lt;<span class="type">const</span> float16*&gt;(a_);</span><br><span class="line">  <span class="type">const</span> float16* b = <span class="built_in">static_cast</span>&lt;<span class="type">const</span> float16*&gt;(b_);</span><br><span class="line">  <span class="type">size_t</span> i;</span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; (n / <span class="number">8</span>) * <span class="number">8</span>; i += <span class="number">8</span>) &#123;</span><br><span class="line">    __m256 va32 = _mm256_cvtph_ps(_mm_loadu_si128((__m128i*)(&amp;a[i])));</span><br><span class="line">    __m256 vb32 = _mm256_cvtph_ps(_mm_loadu_si128((__m128i*)(&amp;b[i])));</span><br><span class="line">    __m128i vc16 = _mm256_cvtps_ph(_mm256_min_ps(va32, vb32), <span class="number">0</span>);</span><br><span class="line">    _mm_storeu_si128((__m128i*)(&amp;c[i]), vc16);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Leftovers</span></span><br><span class="line">  <span class="keyword">for</span> (; i &lt; n; i++) &#123;</span><br><span class="line">    c[i] = std::<span class="built_in">min</span>(a[i], b[i]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h1 id="reduce"><a href="#reduce" class="headerlink" title="reduce"></a>reduce</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">reduce</span><span class="params">(ReduceOptions&amp; opts)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (opts.elements == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="type">const</span> <span class="keyword">auto</span>&amp; context = opts.context;</span><br><span class="line">  transport::UnboundBuffer* in = opts.in.<span class="built_in">get</span>();</span><br><span class="line">  transport::UnboundBuffer* out = opts.out.<span class="built_in">get</span>();</span><br><span class="line">  <span class="type">const</span> <span class="keyword">auto</span> slot = Slot::<span class="built_in">build</span>(kReduceSlotPrefix, opts.tag);</span><br><span class="line"></span><br><span class="line">  <span class="type">const</span> <span class="keyword">auto</span> recvRank = (context-&gt;size + context-&gt;rank + <span class="number">1</span>) % context-&gt;size;</span><br><span class="line">  <span class="type">const</span> <span class="keyword">auto</span> sendRank = (context-&gt;size + context-&gt;rank - <span class="number">1</span>) % context-&gt;size;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// If input buffer is not specified, the output is also the input</span></span><br><span class="line">  <span class="keyword">if</span> (in == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">    in = out;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 如果只有一个进程，则短路。</span></span><br><span class="line">  <span class="keyword">if</span> (context-&gt;size == <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (in != out) &#123;</span><br><span class="line">      <span class="built_in">memcpy</span>(out-&gt;ptr, in-&gt;ptr, opts.elements * opts.elementSize);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// The ring algorithm works as follows.</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="comment">// 给定的输入被分成与进程数相等的块数。</span></span><br><span class="line">  <span class="comment">// 算法完成后，每个进程按顺序托管一个reduce输出块（rank 0 具有块 0，rank 1 具有块 1，等等）。</span></span><br><span class="line">  <span class="comment">// 由于输入可能不能被进程数整除，因此最终的块可能有部分输出或可能为空。</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="comment">// 当一个块沿着环传递并包含连续更多rank的reduce时，我们必须在为该块执行 I/O 和计算接收到的块和本地块之间的减少之间交替。</span></span><br><span class="line">  <span class="comment">// 为了避免这种交替模式，我们将一个块分成多个段（&gt; = 2），并确保我们有一个段在运行，同时计算另一个段的reduce。</span></span><br><span class="line">  <span class="comment">// 段大小有一个上限，以最大限度地减少内存使用并避免不良的缓存行为。这意味着在处理非常大的输入时，每个块可能有很多段。</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="comment">// 这里的命名法反映在下面的变量命名中（每个rank一个块，每个块多个段）。</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="type">const</span> <span class="type">size_t</span> totalBytes = opts.elements * opts.elementSize;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 确保最大段大小是元素大小的倍数。 否则，在向上舍入到元素大小的最接近倍数后，段大小可能会超过最大段大小。 例如，如果maxSegmentSize = 10，而elementSize = 4，则向上取整后：segmentSize = 12；</span></span><br><span class="line">  <span class="type">const</span> <span class="type">size_t</span> maxSegmentSize =</span><br><span class="line">      opts.elementSize * (opts.maxSegmentSize / opts.elementSize);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 每个段的字节数必须是每个元素的字节数的倍数才能进行缩减； 必要时四舍五入。</span></span><br><span class="line">  <span class="type">const</span> <span class="type">size_t</span> segmentBytes = <span class="built_in">roundUp</span>(</span><br><span class="line">      std::<span class="built_in">min</span>(</span><br><span class="line">          <span class="comment">// Rounded division to have &gt;= 2 segments per chunk.</span></span><br><span class="line">          (totalBytes + (context-&gt;size * <span class="number">2</span> - <span class="number">1</span>)) / (context-&gt;size * <span class="number">2</span>),</span><br><span class="line">          <span class="comment">// Configurable segment size limit</span></span><br><span class="line">          maxSegmentSize),</span><br><span class="line">      opts.elementSize);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Compute how many segments make up the input buffer.</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="comment">// 向上舍入到上下文大小的最接近的倍数，以便每个进程有相同数量的段，并且跨进程的执行是对称的。</span></span><br><span class="line">  <span class="comment">// 最小值是上下文大小的两倍，因为下面的算法将发送/接收一个段与计算另一个段的缩减重叠。</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="type">const</span> <span class="type">size_t</span> numSegments = <span class="built_in">roundUp</span>(</span><br><span class="line">      std::<span class="built_in">max</span>(</span><br><span class="line">          (totalBytes + (segmentBytes - <span class="number">1</span>)) / segmentBytes,</span><br><span class="line">          (<span class="type">size_t</span>)context-&gt;size * <span class="number">2</span>),</span><br><span class="line">      (<span class="type">size_t</span>)context-&gt;size);</span><br><span class="line">  <span class="type">const</span> <span class="type">size_t</span> numSegmentsPerRank = numSegments / context-&gt;size;</span><br><span class="line">  <span class="type">const</span> <span class="type">size_t</span> chunkBytes = numSegmentsPerRank * segmentBytes;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 分配暂存空间以容纳两个块</span></span><br><span class="line">  <span class="function">std::unique_ptr&lt;<span class="type">uint8_t</span>[]&gt; <span class="title">tmpAllocation</span><span class="params">(<span class="keyword">new</span> <span class="type">uint8_t</span>[segmentBytes * <span class="number">2</span>])</span></span>;</span><br><span class="line">  std::unique_ptr&lt;transport::UnboundBuffer&gt; tmpBuffer =</span><br><span class="line">      context-&gt;<span class="built_in">createUnboundBuffer</span>(tmpAllocation.<span class="built_in">get</span>(), segmentBytes * <span class="number">2</span>);</span><br><span class="line">  transport::UnboundBuffer* tmp = tmpBuffer.<span class="built_in">get</span>();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 使用动态查找临时缓冲区中的块偏移量。</span></span><br><span class="line">  <span class="comment">// 在进行两个操作时，我们需要两个偏移量。</span></span><br><span class="line">  <span class="comment">// 可以使用循环计数器对它们进行索引。</span></span><br><span class="line">  std::array&lt;<span class="type">size_t</span>, 2&gt; segmentOffset;</span><br><span class="line">  segmentOffset[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">  segmentOffset[<span class="number">1</span>] = segmentBytes;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 函数计算给定块迭代要发送和接收的块的偏移量和长度。</span></span><br><span class="line">  <span class="keyword">auto</span> computeReduceScatterOffsets = [&amp;](<span class="type">size_t</span> i) &#123;</span><br><span class="line">    <span class="keyword">struct</span> &#123;</span><br><span class="line">      <span class="type">size_t</span> sendOffset;</span><br><span class="line">      <span class="type">size_t</span> recvOffset;</span><br><span class="line">      <span class="type">ssize_t</span> sendLength;</span><br><span class="line">      <span class="type">ssize_t</span> recvLength;</span><br><span class="line">    &#125; result;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计算要发送的段索引（到 rank - 1）和要接收的段索引（从 rank + 1）。</span></span><br><span class="line">    <span class="comment">// 乘以块中的字节数以获得偏移量。</span></span><br><span class="line">    <span class="comment">// 允许偏移量超出范围（&gt;=totalBytes），计算相关长度时会考虑到这一点。</span></span><br><span class="line">    result.sendOffset =</span><br><span class="line">        ((((context-&gt;rank + <span class="number">1</span>) * numSegmentsPerRank) + i) * segmentBytes) %</span><br><span class="line">        (numSegments * segmentBytes);</span><br><span class="line">    result.recvOffset =</span><br><span class="line">        ((((context-&gt;rank + <span class="number">2</span>) * numSegmentsPerRank) + i) * segmentBytes) %</span><br><span class="line">        (numSegments * segmentBytes);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果段完全在范围内，则以下语句等于段字节。</span></span><br><span class="line">    <span class="comment">// 如果不是，它会更少，甚至是负面的。 这就是需要 ssize_t 类型转换的原因。</span></span><br><span class="line">    result.sendLength = std::<span class="built_in">min</span>(</span><br><span class="line">        (<span class="type">ssize_t</span>)segmentBytes,</span><br><span class="line">        (<span class="type">ssize_t</span>)totalBytes - (<span class="type">ssize_t</span>)result.sendOffset);</span><br><span class="line">    result.recvLength = std::<span class="built_in">min</span>(</span><br><span class="line">        (<span class="type">ssize_t</span>)segmentBytes,</span><br><span class="line">        (<span class="type">ssize_t</span>)totalBytes - (<span class="type">ssize_t</span>)result.recvOffset);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> i = <span class="number">0</span>; i &lt; numSegments; i++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (i &gt;= <span class="number">2</span>) &#123;</span><br><span class="line">      <span class="comment">// 计算两次迭代前的发送和接收偏移量和长度。</span></span><br><span class="line">      <span class="comment">// 需要这样我们知道何时等待操作以及何时忽略（当偏移量超出范围时），</span></span><br><span class="line">      <span class="comment">// 并知道在哪里减少临时缓冲区的内容。</span></span><br><span class="line">      <span class="keyword">auto</span> prev = <span class="built_in">computeReduceScatterOffsets</span>(i - <span class="number">2</span>);</span><br><span class="line">      <span class="keyword">if</span> (prev.recvLength &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        tmp-&gt;<span class="built_in">waitRecv</span>(opts.timeout);</span><br><span class="line">        opts.<span class="built_in">reduce</span>(</span><br><span class="line">            <span class="built_in">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(out-&gt;ptr) + prev.recvOffset,</span><br><span class="line">            <span class="built_in">static_cast</span>&lt;<span class="type">const</span> <span class="type">uint8_t</span>*&gt;(in-&gt;ptr) + prev.recvOffset,</span><br><span class="line">            <span class="built_in">static_cast</span>&lt;<span class="type">const</span> <span class="type">uint8_t</span>*&gt;(tmp-&gt;ptr) + segmentOffset[i &amp; <span class="number">0x1</span>],</span><br><span class="line">            prev.recvLength / opts.elementSize);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (prev.sendLength &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> ((i - <span class="number">2</span>) &lt; numSegmentsPerRank) &#123;</span><br><span class="line">          in-&gt;<span class="built_in">waitSend</span>(opts.timeout);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          out-&gt;<span class="built_in">waitSend</span>(opts.timeout);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在最后两次迭代之外的所有迭代中发出新的发送和接收操作。</span></span><br><span class="line">    <span class="comment">// 那时我们已经发送了我们需要的所有数据，只需要等待最终的段被减少到输出中。</span></span><br><span class="line">    <span class="keyword">if</span> (i &lt; (numSegments - <span class="number">2</span>)) &#123;</span><br><span class="line">      <span class="comment">// Compute send and receive offsets and lengths for this iteration.</span></span><br><span class="line">      <span class="keyword">auto</span> cur = <span class="built_in">computeReduceScatterOffsets</span>(i);</span><br><span class="line">      <span class="keyword">if</span> (cur.recvLength &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        tmp-&gt;<span class="built_in">recv</span>(recvRank, slot, segmentOffset[i &amp; <span class="number">0x1</span>], cur.recvLength);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (cur.sendLength &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (i &lt; numSegmentsPerRank) &#123;</span><br><span class="line">          in-&gt;<span class="built_in">send</span>(sendRank, slot, cur.sendOffset, cur.sendLength);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          out-&gt;<span class="built_in">send</span>(sendRank, slot, cur.sendOffset, cur.sendLength);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Gather to root rank.</span></span><br><span class="line">  <span class="comment">// 注意：totalBytes &lt;= (numSegments * segmentBytes)，</span></span><br><span class="line">  <span class="comment">// 这与在进程间贡献相同的通用聚集算法不兼容。</span></span><br><span class="line">  <span class="keyword">if</span> (context-&gt;rank == opts.root) &#123;</span><br><span class="line">    <span class="type">size_t</span> numRecv = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> rank = <span class="number">0</span>; rank &lt; context-&gt;size; rank++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (rank == context-&gt;rank) &#123;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="type">size_t</span> recvOffset = rank * numSegmentsPerRank * segmentBytes;</span><br><span class="line">      <span class="type">ssize_t</span> recvLength = std::<span class="built_in">min</span>(</span><br><span class="line">          (<span class="type">ssize_t</span>)chunkBytes, (<span class="type">ssize_t</span>)totalBytes - (<span class="type">ssize_t</span>)recvOffset);</span><br><span class="line">      <span class="keyword">if</span> (recvLength &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        out-&gt;<span class="built_in">recv</span>(rank, slot, recvOffset, recvLength);</span><br><span class="line">        numRecv++;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; numRecv; i++) &#123;</span><br><span class="line">      out-&gt;<span class="built_in">waitRecv</span>(opts.timeout);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="type">size_t</span> sendOffset = context-&gt;rank * numSegmentsPerRank * segmentBytes;</span><br><span class="line">    <span class="type">ssize_t</span> sendLength = std::<span class="built_in">min</span>(</span><br><span class="line">        (<span class="type">ssize_t</span>)chunkBytes, (<span class="type">ssize_t</span>)totalBytes - (<span class="type">ssize_t</span>)sendOffset);</span><br><span class="line">    <span class="keyword">if</span> (sendLength &gt; <span class="number">0</span>) &#123;</span><br><span class="line">      out-&gt;<span class="built_in">send</span>(opts.root, slot, sendOffset, sendLength);</span><br><span class="line">      out-&gt;<span class="built_in">waitSend</span>(opts.timeout);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2022/08/12/gloo/" data-id="cuidfd5ltwGMa5Ik3t6DYflIo" data-title="gloo介绍" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag"># 积累</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/05/28/%E9%9D%A2%E7%BB%8F%E6%95%B4%E7%90%86%E5%8F%91%E5%B8%83%E7%89%88/" rel="prev" title="面经整理">
+                  <i class="fa fa-angle-left"></i> 面经整理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/08/18/modern-cpp-tutorial/" rel="next" title="modern-cpp-tutorial">
+                  modern-cpp-tutorial <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2022/08/18/modern-cpp-tutorial/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          modern-cpp-tutorial
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2022/05/28/%E9%9D%A2%E7%BB%8F%E6%95%B4%E7%90%86%E5%8F%91%E5%B8%83%E7%89%88/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">面经整理</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

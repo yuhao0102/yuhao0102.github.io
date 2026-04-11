@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>深入理解Linux内核10-12章 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="系统调用POSIX API和系统调用从编程者的观点看，API和系统调用之间的差别是没有关系的：唯一相关的事情就是函数名、参数类型及返回代码的含义。然而，从内核设计者的观点看，这种差别确实有关系，因为系统调用属于内核，而用户态的库函数不属于内核。 大部分封装返回一个整数，其值的含义依赖于相应的系统调用。返回值-1通常表示内核不能满足进程的请求。每个出错码都定义为一个常量宏。POSIX标准制定了很多出">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="系统调用POSIX API和系统调用从编程者的观点看，API和系统调用之间的差别是没有关系的：唯一相关的事情就是函数名、参数类型及返回代码的含义。然而，从内核设计者的观点看，这种差别确实有关系，因为系统调用属于内核，而用户态的库函数不属于内核。 大部分封装返回一个整数，其值的含义依赖于相应的系统调用。返回值-1通常表示内核不能满足进程的请求。每个出错码都定义为一个常量宏。POSIX标准制定了很多出">
 <meta property="og:type" content="article">
 <meta property="og:title" content="深入理解Linux内核10-12章">
 <meta property="og:url" content="http://example.com/2020/10/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B04/index.html">
@@ -56,85 +70,191 @@
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/img/1602756711.png">
+
+
+<link rel="canonical" href="http://example.com/2020/10/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B04/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2020/10/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B04/","path":"2020/10/15/深入理解Linux内核 笔记4/","title":"深入理解Linux内核10-12章"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>深入理解Linux内核10-12章 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#POSIX-API%E5%92%8C%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">1.1.</span> <span class="nav-text">POSIX API和系统调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F%E5%8F%8A%E6%9C%8D%E5%8A%A1%E4%BE%8B%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">系统调用处理程序及服务例程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E5%85%A5%E5%92%8C%E9%80%80%E5%87%BA%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">1.3.</span> <span class="nav-text">进入和退出系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87int-0x80%E6%8C%87%E4%BB%A4%E5%8F%91%E5%87%BA%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">1.3.1.</span> <span class="nav-text">通过int $0x80指令发出系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#system-call%E5%87%BD%E6%95%B0"><span class="nav-number">1.3.2.</span> <span class="nav-text">system_call函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E9%80%80%E5%87%BA"><span class="nav-number">1.3.3.</span> <span class="nav-text">从系统调用退出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87sysenter%E6%8C%87%E4%BB%A4%E5%8F%91%E5%87%BA%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">1.3.4.</span> <span class="nav-text">通过sysenter指令发出系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#sysenter%E6%8C%87%E4%BB%A4"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">sysenter指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vsyscall%E9%A1%B5"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">vsyscall页</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E5%85%A5%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">1.3.4.3.</span> <span class="nav-text">进入系统调用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%80%E5%87%BA%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">1.3.4.4.</span> <span class="nav-text">退出系统调用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sysexit%E6%8C%87%E4%BB%A4"><span class="nav-number">1.3.4.5.</span> <span class="nav-text">sysexit指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SYSENTER-RETURN%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="nav-number">1.3.4.6.</span> <span class="nav-text">SYSENTER_RETURN的代码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92"><span class="nav-number">1.4.</span> <span class="nav-text">参数传递</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E5%8F%82%E6%95%B0"><span class="nav-number">1.4.1.</span> <span class="nav-text">验证参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E8%BF%9B%E7%A8%8B%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="nav-number">1.4.2.</span> <span class="nav-text">访问进程地址空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%9C%B0%E5%9D%80%E6%A3%80%E6%9F%A5%EF%BC%9A%E4%BF%AE%E6%AD%A3%E4%BB%A3%E7%A0%81"><span class="nav-number">1.4.3.</span> <span class="nav-text">动态地址检查：修正代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E8%A1%A8"><span class="nav-number">1.5.</span> <span class="nav-text">异常表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E5%BC%82%E5%B8%B8%E8%A1%A8%E5%92%8C%E4%BF%AE%E6%AD%A3%E4%BB%A3%E7%A0%81"><span class="nav-number">1.5.1.</span> <span class="nav-text">生成异常表和修正代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E5%B0%81%E8%A3%85%E4%BE%8B%E7%A8%8B"><span class="nav-number">1.6.</span> <span class="nav-text">内核封装例程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.</span> <span class="nav-text">信号</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">2.1.</span> <span class="nav-text">信号的作用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E9%80%92%E4%BF%A1%E5%8F%B7%E4%B9%8B%E5%89%8D%E6%89%80%E6%89%A7%E8%A1%8C%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="nav-number">2.1.1.</span> <span class="nav-text">传递信号之前所执行的操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#POSIX-%E4%BF%A1%E5%8F%B7%E5%92%8C%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BA%94%E7%94%A8"><span class="nav-number">2.1.2.</span> <span class="nav-text">POSIX 信号和多线程应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E4%BF%A1%E5%8F%B7%E7%9B%B8%E5%85%B3%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.3.</span> <span class="nav-text">与信号相关的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%92%8C%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">2.1.3.1.</span> <span class="nav-text">信号描述符和信号处理程序描述符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sigaction"><span class="nav-number">2.1.3.2.</span> <span class="nav-text">sigaction</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%82%E8%B5%B7%E4%BF%A1%E5%8F%B7%E9%98%9F%E5%88%97"><span class="nav-number">2.1.3.3.</span> <span class="nav-text">挂起信号队列</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E4%BF%A1%E5%8F%B7%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8A%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="nav-number">2.1.4.</span> <span class="nav-text">在信号数据结构上的操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A7%E7%94%9F%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.2.</span> <span class="nav-text">产生信号</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#specific-send-sig-info"><span class="nav-number">2.2.1.</span> <span class="nav-text">specific_send_sig_info()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#send-signal"><span class="nav-number">2.2.2.</span> <span class="nav-text">send_signal()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#group-send-sig-info"><span class="nav-number">2.2.3.</span> <span class="nav-text">group_send_sig_info()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E9%80%92%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.3.</span> <span class="nav-text">传递信号</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E4%BF%A1%E5%8F%B7%E7%9A%84%E7%BC%BA%E7%9C%81%E6%93%8D%E4%BD%9C"><span class="nav-number">2.3.1.</span> <span class="nav-text">执行信号的缺省操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8D%95%E8%8E%B7%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.4.</span> <span class="nav-text">捕获信号</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E5%B8%A7"><span class="nav-number">2.4.1.</span> <span class="nav-text">建立帧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E4%BF%A1%E5%8F%B7%E6%A0%87%E5%BF%97"><span class="nav-number">2.4.2.</span> <span class="nav-text">检查信号标志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E6%89%A7%E8%A1%8C%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.4.3.</span> <span class="nav-text">开始执行信号处理程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%88%E6%AD%A2%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.4.4.</span> <span class="nav-text">终止信号处理程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%9A%84%E9%87%8D%E6%96%B0%E6%89%A7%E8%A1%8C"><span class="nav-number">2.4.5.</span> <span class="nav-text">系统调用的重新执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E6%89%A7%E8%A1%8C%E8%A2%AB%E6%9C%AA%E6%8D%95%E8%8E%B7%E4%BF%A1%E5%8F%B7%E4%B8%AD%E6%96%AD%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">2.4.6.</span> <span class="nav-text">重新执行被未捕获信号中断的系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E6%89%80%E6%8D%95%E8%8E%B7%E7%9A%84%E4%BF%A1%E5%8F%B7%E9%87%8D%E6%96%B0%E6%89%A7%E8%A1%8C%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">2.4.7.</span> <span class="nav-text">为所捕获的信号重新执行系统调用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8E%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E7%9B%B8%E5%85%B3%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">2.5.</span> <span class="nav-text">与信号处理相关的系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#kill"><span class="nav-number">2.5.1.</span> <span class="nav-text">kill</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tkill-%E5%92%8C-tgkill"><span class="nav-number">2.5.2.</span> <span class="nav-text">tkill() 和 tgkill()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E5%8F%98%E4%BF%A1%E5%8F%B7%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="nav-number">2.5.3.</span> <span class="nav-text">改变信号的操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E6%8C%82%E8%B5%B7%E7%9A%84%E9%98%BB%E5%A1%9E%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.5.4.</span> <span class="nav-text">检查挂起的阻塞信号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%98%BB%E5%A1%9E%E4%BF%A1%E5%8F%B7%E7%9A%84%E9%9B%86%E5%90%88"><span class="nav-number">2.5.5.</span> <span class="nav-text">修改阻塞信号的集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%82%E8%B5%B7%E8%BF%9B%E7%A8%8B"><span class="nav-number">2.5.6.</span> <span class="nav-text">挂起进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E4%BF%A1%E5%8F%B7%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">2.5.7.</span> <span class="nav-text">实时信号的系统调用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.</span> <span class="nav-text">虚拟文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">3.1.</span> <span class="nav-text">虚拟文件系统的作用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E6%96%87%E4%BB%B6%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.1.1.</span> <span class="nav-text">通用文件模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VFS%E6%89%80%E5%A4%84%E7%90%86%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">3.1.2.</span> <span class="nav-text">VFS所处理的系统调用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VFS%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.2.</span> <span class="nav-text">VFS的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E7%BA%A7%E5%9D%97%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.2.1.</span> <span class="nav-text">超级块对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.2.2.</span> <span class="nav-text">索引节点对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.2.3.</span> <span class="nav-text">文件对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E9%A1%B9%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.2.4.</span> <span class="nav-text">目录项对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E9%A1%B9%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98"><span class="nav-number">3.2.5.</span> <span class="nav-text">目录项高速缓存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8E%E8%BF%9B%E7%A8%8B%E7%9B%B8%E5%85%B3%E7%9A%84%E6%96%87%E4%BB%B6"><span class="nav-number">3.3.</span> <span class="nav-text">与进程相关的文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.4.</span> <span class="nav-text">文件系统类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.4.1.</span> <span class="nav-text">特殊文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%B1%BB%E5%9E%8B%E6%B3%A8%E5%86%8C"><span class="nav-number">3.4.2.</span> <span class="nav-text">文件系统类型注册</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%A4%84%E7%90%86"><span class="nav-number">3.5.</span> <span class="nav-text">文件系统处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4"><span class="nav-number">3.5.1.</span> <span class="nav-text">命名空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85"><span class="nav-number">3.5.2.</span> <span class="nav-text">文件系统安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%99%AE%E9%80%9A%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.5.3.</span> <span class="nav-text">安装普通文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#do-kern-mount-%E5%87%BD%E6%95%B0%EF%BC%9A"><span class="nav-number">3.5.4.</span> <span class="nav-text">do_kern_mount()函数：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E9%85%8D%E8%B6%85%E7%BA%A7%E5%9D%97%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.5.5.</span> <span class="nav-text">分配超级块对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.5.6.</span> <span class="nav-text">安装根文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B6%E6%AE%B51%EF%BC%9A%E5%AE%89%E8%A3%85rootfs%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.5.6.1.</span> <span class="nav-text">阶段1：安装rootfs文件系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%AE%9E%E9%99%85%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.5.6.2.</span> <span class="nav-text">安装实际根文件系统</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%B8%E8%BD%BD%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.5.7.</span> <span class="nav-text">卸载文件系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E5%BE%84%E5%90%8D%E6%9F%A5%E6%89%BE"><span class="nav-number">3.6.</span> <span class="nav-text">路径名查找</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E8%B7%AF%E5%BE%84%E5%90%8D%E6%9F%A5%E6%89%BE"><span class="nav-number">3.6.1.</span> <span class="nav-text">标准路径名查找</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%88%B6%E8%B7%AF%E5%BE%84%E5%90%8D%E6%9F%A5%E6%89%BE"><span class="nav-number">3.6.2.</span> <span class="nav-text">父路径名查找</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7%E9%93%BE%E6%8E%A5%E7%9A%84%E6%9F%A5%E6%89%BE"><span class="nav-number">3.6.3.</span> <span class="nav-text">符号链接的查找</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VFS%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.7.</span> <span class="nav-text">VFS系统调用的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#open-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">3.7.1.</span> <span class="nav-text">open()系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#read-%E5%92%8Cwrite-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">3.7.2.</span> <span class="nav-text">read()和write()系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#close-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">3.7.3.</span> <span class="nav-text">close()系统调用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%8A%A0%E9%94%81"><span class="nav-number">3.8.</span> <span class="nav-text">文件加锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E6%96%87%E4%BB%B6%E5%8A%A0%E9%94%81"><span class="nav-number">3.8.1.</span> <span class="nav-text">Linux文件加锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E9%94%81%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.8.2.</span> <span class="nav-text">文件锁的数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FL-FLOCK%E9%94%81"><span class="nav-number">3.8.3.</span> <span class="nav-text">FL_FLOCK锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FL-POSIX%E9%94%81"><span class="nav-number">3.8.4.</span> <span class="nav-text">FL_POSIX锁</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-深入理解Linux内核 笔记4" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/10/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B04/" class="article-date">
-  <time class="dt-published" datetime="2020-10-15T08:00:00.000Z" itemprop="datePublished">2020-10-15</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      深入理解Linux内核10-12章
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B04/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="深入理解Linux内核10-12章 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入理解Linux内核10-12章
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-10-15 16:00:00" itemprop="dateCreated datePublished" datetime="2020-10-15T16:00:00+08:00">2020-10-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2020-10-23 23:11:02" itemprop="dateModified" datetime="2020-10-23T23:11:02+08:00">2020-10-23</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h1><h2 id="POSIX-API和系统调用"><a href="#POSIX-API和系统调用" class="headerlink" title="POSIX API和系统调用"></a>POSIX API和系统调用</h2><p>从编程者的观点看，API和系统调用之间的差别是没有关系的：唯一相关的事情就是函数名、参数类型及返回代码的含义。然而，从内核设计者的观点看，这种差别确实有关系，因为系统调用属于内核，而用户态的库函数不属于内核。</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h1><h2 id="POSIX-API和系统调用"><a href="#POSIX-API和系统调用" class="headerlink" title="POSIX API和系统调用"></a>POSIX API和系统调用</h2><p>从编程者的观点看，API和系统调用之间的差别是没有关系的：唯一相关的事情就是函数名、参数类型及返回代码的含义。然而，从内核设计者的观点看，这种差别确实有关系，因为系统调用属于内核，而用户态的库函数不属于内核。</p>
 <p>大部分封装返回一个整数，其值的含义依赖于相应的系统调用。返回值-1通常表示内核不能满足进程的请求。每个出错码都定义为一个常量宏。POSIX标准制定了很多出错码的宏名。</p>
 <h2 id="系统调用处理程序及服务例程"><a href="#系统调用处理程序及服务例程" class="headerlink" title="系统调用处理程序及服务例程"></a>系统调用处理程序及服务例程</h2><p>当用户态的进程调用一个系统调用时，CPU切换到内核态并开始执行一个内核态函数。在80x86体系结构中，可以用两种不同的方式调用linux的系统调用。两种方式的最终结果都是跳转到所谓<strong>系统调用处理程序的汇编语言函数</strong>。</p>
 <p>因为内核实现了很多不同的系统调用，因此<strong>进程必须传递一个名为系统调用号的参数来识别所需的系统调用，eax寄存器就用作此目的</strong>。</p>
@@ -1502,150 +1622,75 @@
 </li>
 </ol>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/10/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B04/" data-id="cuidrfURwvCHvHV822OZGQYdC" data-title="深入理解Linux内核10-12章" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/10/02/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B03/" rel="prev" title="深入理解Linux内核8-9章">
+                  <i class="fa fa-angle-left"></i> 深入理解Linux内核8-9章
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/10/23/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B05/" rel="next" title="深入理解Linux内核13-15章">
+                  深入理解Linux内核13-15章 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2020/10/23/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B05/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          深入理解Linux内核13-15章
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2020/10/02/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E5%86%85%E6%A0%B8%20%E7%AC%94%E8%AE%B03/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">深入理解Linux内核8-9章</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

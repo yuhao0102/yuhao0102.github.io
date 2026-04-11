@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>UNIX高级编程 笔记 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="UNIX基础知识UNIX体系结构从严格意义上说，可将操作系统定义为一种软件，它控制计算机硬件资源，提供程序运行环境。我们通常将这种软件称为内核(kermel)，因为它相对较小，而且位于环境的核心。 内核的接口被称为系统调用(systemcall)。公用函数库构建在系统调用接口之上，应用程序既可使用公用函数库，也可使用系统调用。 文件和目录文件系统UNIX文件系统是目录和文件的一种层次结构，所有东西">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="UNIX基础知识UNIX体系结构从严格意义上说，可将操作系统定义为一种软件，它控制计算机硬件资源，提供程序运行环境。我们通常将这种软件称为内核(kermel)，因为它相对较小，而且位于环境的核心。 内核的接口被称为系统调用(systemcall)。公用函数库构建在系统调用接口之上，应用程序既可使用公用函数库，也可使用系统调用。 文件和目录文件系统UNIX文件系统是目录和文件的一种层次结构，所有东西">
 <meta property="og:type" content="article">
 <meta property="og:title" content="UNIX高级编程 笔记">
 <meta property="og:url" content="http://example.com/2021/05/13/UNIX%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%20%E7%AC%94%E8%AE%B0/index.html">
@@ -66,85 +80,191 @@
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/img/1620962971.jpg">
+
+
+<link rel="canonical" href="http://example.com/2021/05/13/UNIX%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%20%E7%AC%94%E8%AE%B0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2021/05/13/UNIX%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%20%E7%AC%94%E8%AE%B0/","path":"2021/05/13/UNIX高级编程 笔记/","title":"UNIX高级编程 笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>UNIX高级编程 笔记 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#UNIX%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">UNIX基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#UNIX%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">UNIX体系结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95"><span class="nav-number">1.2.</span> <span class="nav-text">文件和目录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.2.1.</span> <span class="nav-text">文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%90%8D"><span class="nav-number">1.2.2.</span> <span class="nav-text">文件名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E5%BE%84%E5%90%8D"><span class="nav-number">1.2.3.</span> <span class="nav-text">路径名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E7%9B%AE%E5%BD%95"><span class="nav-number">1.2.4.</span> <span class="nav-text">工作目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%B7%E5%A7%8B%E7%9B%AE%E5%BD%95"><span class="nav-number">1.2.5.</span> <span class="nav-text">起始目录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E5%92%8C%E8%BE%93%E5%87%BA"><span class="nav-number">1.3.</span> <span class="nav-text">输入和输出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">1.3.1.</span> <span class="nav-text">文件描述符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E8%BE%93%E5%85%A5%E3%80%81%E6%A0%87%E5%87%86%E8%BE%93%E5%87%BA%E5%92%8C%E6%A0%87%E5%87%86%E9%94%99%E8%AF%AF"><span class="nav-number">1.3.2.</span> <span class="nav-text">标准输入、标准输出和标准错误</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%B8%A6%E7%BC%93%E5%86%B2%E7%9A%84I-O"><span class="nav-number">1.3.3.</span> <span class="nav-text">不带缓冲的I&#x2F;O</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E5%87%86I-O"><span class="nav-number">1.3.4.</span> <span class="nav-text">标准I&#x2F;O</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E5%92%8C%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.4.</span> <span class="nav-text">程序和进程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.4.1.</span> <span class="nav-text">程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8BID"><span class="nav-number">1.4.2.</span> <span class="nav-text">进程和进程ID</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6"><span class="nav-number">1.4.3.</span> <span class="nav-text">进程控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8BID"><span class="nav-number">1.4.4.</span> <span class="nav-text">线程和线程ID</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BA%E9%94%99%E5%A4%84%E7%90%86"><span class="nav-number">1.5.</span> <span class="nav-text">出错处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E6%A0%87%E8%AF%86"><span class="nav-number">1.6.</span> <span class="nav-text">用户标识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7ID"><span class="nav-number">1.6.1.</span> <span class="nav-text">用户ID</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%84%E5%B1%9E%E7%BB%84ID"><span class="nav-number">1.6.2.</span> <span class="nav-text">附属组ID</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7"><span class="nav-number">1.7.</span> <span class="nav-text">信号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E5%80%BC"><span class="nav-number">1.8.</span> <span class="nav-text">时间值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%92%8C%E5%BA%93%E5%87%BD%E6%95%B0"><span class="nav-number">1.9.</span> <span class="nav-text">系统调用和库函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6I-O"><span class="nav-number">2.</span> <span class="nav-text">文件I&#x2F;O</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">2.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6-1"><span class="nav-number">2.2.</span> <span class="nav-text">文件描述符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0open%E5%92%8Copenat"><span class="nav-number">2.3.</span> <span class="nav-text">函数open和openat</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%90%8D%E5%92%8C%E8%B7%AF%E5%BE%84%E5%90%8D%E6%88%AA%E6%96%AD"><span class="nav-number">2.3.1.</span> <span class="nav-text">文件名和路径名截断</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0creat"><span class="nav-number">2.4.</span> <span class="nav-text">函数creat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0close"><span class="nav-number">2.5.</span> <span class="nav-text">函数close</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0lseek"><span class="nav-number">2.6.</span> <span class="nav-text">函数lseek</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0read"><span class="nav-number">2.7.</span> <span class="nav-text">函数read</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0write"><span class="nav-number">2.8.</span> <span class="nav-text">函数write</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-O%E7%9A%84%E6%95%88%E7%8E%87"><span class="nav-number">2.9.</span> <span class="nav-text">I&#x2F;O的效率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB"><span class="nav-number">2.10.</span> <span class="nav-text">文件共享</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C"><span class="nav-number">2.11.</span> <span class="nav-text">原子操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%BD%E5%8A%A0%E5%88%B0%E4%B8%80%E4%B8%AA%E6%96%87%E4%BB%B6"><span class="nav-number">2.11.1.</span> <span class="nav-text">追加到一个文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0pread%E5%92%8Cpwrite"><span class="nav-number">2.11.2.</span> <span class="nav-text">函数pread和pwrite</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%96%87%E4%BB%B6"><span class="nav-number">2.11.3.</span> <span class="nav-text">创建一个文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0dup%E5%92%8Cdup2"><span class="nav-number">2.12.</span> <span class="nav-text">函数dup和dup2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0sync%E3%80%81fsync%E5%92%8Cfdatasync"><span class="nav-number">2.13.</span> <span class="nav-text">函数sync、fsync和fdatasync</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0fcntl"><span class="nav-number">2.14.</span> <span class="nav-text">函数fcntl</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0ioctl"><span class="nav-number">2.15.</span> <span class="nav-text">函数ioctl</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dev-fd"><span class="nav-number">2.16.</span> <span class="nav-text">&#x2F;dev&#x2F;fd</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95-1"><span class="nav-number">3.</span> <span class="nav-text">文件和目录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0stat%E3%80%81fstat%E3%80%81fstatat%E5%92%8Clstat"><span class="nav-number">3.1.</span> <span class="nav-text">函数stat、fstat、fstatat和lstat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.2.</span> <span class="nav-text">文件类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E7%94%A8%E6%88%B7ID%E5%92%8C%E8%AE%BE%E7%BD%AE%E7%BB%84ID"><span class="nav-number">3.3.</span> <span class="nav-text">设置用户ID和设置组ID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90"><span class="nav-number">3.4.</span> <span class="nav-text">文件访问权限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B0%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95%E7%9A%84%E6%89%80%E6%9C%89%E6%9D%83"><span class="nav-number">3.5.</span> <span class="nav-text">新文件和目录的所有权</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0access%E5%92%8Cfaccessat"><span class="nav-number">3.6.</span> <span class="nav-text">函数access和faccessat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0umask"><span class="nav-number">3.7.</span> <span class="nav-text">函数umask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0chmod%E3%80%81fchmod%E5%92%8Cfchmodat"><span class="nav-number">3.8.</span> <span class="nav-text">函数chmod、fchmod和fchmodat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B2%98%E7%9D%80%E4%BD%8D"><span class="nav-number">3.9.</span> <span class="nav-text">粘着位</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0chown%E3%80%81fchown%E3%80%81fchownat%E5%92%8C1chown"><span class="nav-number">3.10.</span> <span class="nav-text">函数chown、fchown、fchownat和1chown</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E9%95%BF%E5%BA%A6"><span class="nav-number">3.11.</span> <span class="nav-text">文件长度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%B8%AD%E7%9A%84%E7%A9%BA%E6%B4%9E"><span class="nav-number">3.11.1.</span> <span class="nav-text">文件中的空洞</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%88%AA%E6%96%AD"><span class="nav-number">3.12.</span> <span class="nav-text">文件截断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-1"><span class="nav-number">3.13.</span> <span class="nav-text">文件系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B01ink%E3%80%81linkat%E3%80%81unlink%E3%80%81unlinkat%E5%92%8Cremove"><span class="nav-number">3.14.</span> <span class="nav-text">函数1ink、linkat、unlink、unlinkat和remove</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0rename%E5%92%8Crenameat"><span class="nav-number">3.15.</span> <span class="nav-text">函数rename和renameat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7%E9%93%BE%E6%8E%A5"><span class="nav-number">3.16.</span> <span class="nav-text">符号链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%92%8C%E8%AF%BB%E5%8F%96%E7%AC%A6%E5%8F%B7%E9%93%BE%E6%8E%A5"><span class="nav-number">3.17.</span> <span class="nav-text">创建和读取符号链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%9A%84%E6%97%B6%E9%97%B4"><span class="nav-number">3.18.</span> <span class="nav-text">文件的时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0futimens%E3%80%81utimensat%E5%92%8Cutimes"><span class="nav-number">3.19.</span> <span class="nav-text">函数futimens、utimensat和utimes</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0mkdir-mkdirat%E5%92%8Crmdir"><span class="nav-number">3.20.</span> <span class="nav-text">函数mkdir, mkdirat和rmdir</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB%E7%9B%AE%E5%BD%95"><span class="nav-number">3.21.</span> <span class="nav-text">读目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0chdir%E3%80%81fchdir%E5%92%8Cgetcwd"><span class="nav-number">3.22.</span> <span class="nav-text">函数chdir、fchdir和getcwd</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E7%89%B9%E6%AE%8A%E6%96%87%E4%BB%B6"><span class="nav-number">3.23.</span> <span class="nav-text">设备特殊文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90%E4%BD%8D%E5%B0%8F%E7%BB%93"><span class="nav-number">3.24.</span> <span class="nav-text">文件访问权限位小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%87%E5%87%86I-O%E5%BA%93"><span class="nav-number">4.</span> <span class="nav-text">标准I&#x2F;O库</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E5%92%8CFILE%E5%AF%B9%E8%B1%A1"><span class="nav-number">4.1.</span> <span class="nav-text">流和FILE对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E8%BE%93%E5%85%A5%E3%80%81%E6%A0%87%E5%87%86%E8%BE%93%E5%87%BA%E5%92%8C%E6%A0%87%E5%87%86%E9%94%99%E8%AF%AF-1"><span class="nav-number">4.2.</span> <span class="nav-text">标准输入、标准输出和标准错误</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%86%B2"><span class="nav-number">4.3.</span> <span class="nav-text">缓冲</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%93%E5%BC%80%E6%B5%81"><span class="nav-number">4.4.</span> <span class="nav-text">打开流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB%E5%92%8C%E5%86%99%E6%B5%81"><span class="nav-number">4.5.</span> <span class="nav-text">读和写流</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E5%87%BD%E6%95%B0"><span class="nav-number">4.5.1.</span> <span class="nav-text">输入函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E5%87%BD%E6%95%B0"><span class="nav-number">4.5.2.</span> <span class="nav-text">输出函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%8F%E6%AC%A1%E4%B8%80%E8%A1%8CI-O"><span class="nav-number">4.6.</span> <span class="nav-text">每次一行I&#x2F;O</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E5%87%86I-O%E7%9A%84%E6%95%88%E7%8E%87"><span class="nav-number">4.7.</span> <span class="nav-text">标准I&#x2F;O的效率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6I-O"><span class="nav-number">4.8.</span> <span class="nav-text">二进制I&#x2F;O</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%BD%8D%E6%B5%81"><span class="nav-number">4.9.</span> <span class="nav-text">定位流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96I-O"><span class="nav-number">4.10.</span> <span class="nav-text">格式化I&#x2F;O</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%87%BA"><span class="nav-number">4.10.1.</span> <span class="nav-text">格式化输出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%85%A5"><span class="nav-number">4.10.2.</span> <span class="nav-text">格式化输入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="nav-number">4.11.</span> <span class="nav-text">实现细节</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6"><span class="nav-number">4.12.</span> <span class="nav-text">临时文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B5%81"><span class="nav-number">4.13.</span> <span class="nav-text">内存流</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%95%B0%E6%8D%AE%E6%96%87%E4%BB%B6%E5%92%8C%E4%BF%A1%E6%81%AF"><span class="nav-number">5.</span> <span class="nav-text">系统数据文件和信息</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80-1"><span class="nav-number">5.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%A3%E4%BB%A4%E6%96%87%E4%BB%B6"><span class="nav-number">5.2.</span> <span class="nav-text">口令文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%B4%E5%BD%B1%E5%8F%A3%E4%BB%A4"><span class="nav-number">5.3.</span> <span class="nav-text">阴影口令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%84%E6%96%87%E4%BB%B6"><span class="nav-number">5.4.</span> <span class="nav-text">组文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%84%E5%B1%9E%E7%BB%84ID-1"><span class="nav-number">5.5.</span> <span class="nav-text">附属组ID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%95%B0%E6%8D%AE%E6%96%87%E4%BB%B6"><span class="nav-number">5.6.</span> <span class="nav-text">其他数据文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%99%BB%E5%BD%95%E8%B4%A6%E6%88%B7%E8%AE%B0%E5%BD%95"><span class="nav-number">5.7.</span> <span class="nav-text">登录账户记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%A0%87%E8%AF%86"><span class="nav-number">5.8.</span> <span class="nav-text">系统标识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E5%92%8C%E6%97%A5%E6%9C%9F%E4%BE%8B%E7%A8%8B"><span class="nav-number">5.9.</span> <span class="nav-text">时间和日期例程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%B8%E7%A8%8B%E7%8E%AF%E5%A2%83"><span class="nav-number">6.</span> <span class="nav-text">迸程环境</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#main%E5%87%BD%E6%95%B0"><span class="nav-number">6.1.</span> <span class="nav-text">main函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%BB%88%E6%AD%A2"><span class="nav-number">6.2.</span> <span class="nav-text">进程终止</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%80%E5%87%BA%E5%87%BD%E6%95%B0"><span class="nav-number">6.2.1.</span> <span class="nav-text">退出函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0atexit"><span class="nav-number">6.2.2.</span> <span class="nav-text">函数atexit</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0"><span class="nav-number">6.3.</span> <span class="nav-text">命令行参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E8%A1%A8"><span class="nav-number">6.4.</span> <span class="nav-text">环境表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-number">6.5.</span> <span class="nav-text">C程序的存储空间布局</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%BA%93"><span class="nav-number">6.6.</span> <span class="nav-text">共享库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D"><span class="nav-number">6.7.</span> <span class="nav-text">存储空间分配</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%BF%E4%BB%A3%E7%9A%84%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E7%A8%8B%E5%BA%8F"><span class="nav-number">6.7.1.</span> <span class="nav-text">替代的存储空间分配程序</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#libmalloc"><span class="nav-number">6.7.1.1.</span> <span class="nav-text">libmalloc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vmalloc"><span class="nav-number">6.7.1.2.</span> <span class="nav-text">vmalloc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#quick-fit"><span class="nav-number">6.7.1.3.</span> <span class="nav-text">quick-fit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jemalloc"><span class="nav-number">6.7.1.4.</span> <span class="nav-text">jemalloc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TCMalloc"><span class="nav-number">6.7.1.5.</span> <span class="nav-text">TCMalloc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%BD%E6%95%B0alloca"><span class="nav-number">6.7.1.6.</span> <span class="nav-text">函数alloca</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">6.8.</span> <span class="nav-text">环境变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0setjmp%E5%92%8C1ongjmp"><span class="nav-number">6.9.</span> <span class="nav-text">函数setjmp和1ongjmp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0getrlimit%E5%92%8Csetrlimit"><span class="nav-number">6.10.</span> <span class="nav-text">函数getrlimit和setrlimit</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6-1"><span class="nav-number">7.</span> <span class="nav-text">进程控制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E6%A0%87%E8%AF%86"><span class="nav-number">7.1.</span> <span class="nav-text">进程标识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0fork"><span class="nav-number">7.2.</span> <span class="nav-text">函数fork</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0vfork"><span class="nav-number">7.3.</span> <span class="nav-text">函数vfork</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0exit"><span class="nav-number">7.4.</span> <span class="nav-text">函数exit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0wait%E5%92%8Cwaitpid"><span class="nav-number">7.5.</span> <span class="nav-text">函数wait和waitpid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0waitid"><span class="nav-number">7.6.</span> <span class="nav-text">函数waitid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0wait3%E5%92%8Cwait4"><span class="nav-number">7.7.</span> <span class="nav-text">函数wait3和wait4</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6"><span class="nav-number">7.8.</span> <span class="nav-text">竞争条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0exec"><span class="nav-number">7.9.</span> <span class="nav-text">函数exec</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E7%94%A8%E6%88%B7ID%E5%92%8C%E6%9B%B4%E6%94%B9%E7%BB%84ID"><span class="nav-number">7.10.</span> <span class="nav-text">更改用户ID和更改组ID</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0setreuid%E5%92%8Csotregid"><span class="nav-number">7.10.1.</span> <span class="nav-text">函数setreuid和sotregid</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0seteuid%E5%92%8Csotegid"><span class="nav-number">7.10.2.</span> <span class="nav-text">函数seteuid和sotegid</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%84ID"><span class="nav-number">7.10.3.</span> <span class="nav-text">组ID</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E9%87%8A%E5%99%A8%E6%96%87%E4%BB%B6"><span class="nav-number">7.11.</span> <span class="nav-text">解释器文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0system"><span class="nav-number">7.12.</span> <span class="nav-text">函数system</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E4%BC%9A%E8%AE%A1"><span class="nav-number">7.13.</span> <span class="nav-text">进程会计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E6%A0%87%E8%AF%86-1"><span class="nav-number">7.14.</span> <span class="nav-text">用户标识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6"><span class="nav-number">7.15.</span> <span class="nav-text">进程调度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E6%97%B6%E9%97%B4"><span class="nav-number">7.16.</span> <span class="nav-text">进程时间</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%85%B3%E7%B3%BB"><span class="nav-number">8.</span> <span class="nav-text">进程关系</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%88%E7%AB%AF%E7%99%BB%E5%BD%95"><span class="nav-number">8.1.</span> <span class="nav-text">终端登录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%BB%84"><span class="nav-number">8.2.</span> <span class="nav-text">进程组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%9A%E8%AF%9D"><span class="nav-number">8.3.</span> <span class="nav-text">会话</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E7%BB%88%E7%AB%AF"><span class="nav-number">8.4.</span> <span class="nav-text">控制终端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0tcgetpgrp%E3%80%81tcsetpgrp%E5%92%8Ctcgetsid"><span class="nav-number">8.5.</span> <span class="nav-text">函数tcgetpgrp、tcsetpgrp和tcgetsid</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%9C%E4%B8%9A%E6%8E%A7%E5%88%B6"><span class="nav-number">9.</span> <span class="nav-text">作业控制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#shell%E6%89%A7%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="nav-number">9.1.</span> <span class="nav-text">shell执行程序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7-1"><span class="nav-number">10.</span> <span class="nav-text">信号</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80-2"><span class="nav-number">10.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E6%A6%82%E5%BF%B5"><span class="nav-number">10.2.</span> <span class="nav-text">信号概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0signal"><span class="nav-number">10.3.</span> <span class="nav-text">函数signal</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E5%90%AF%E5%8A%A8"><span class="nav-number">10.3.1.</span> <span class="nav-text">程序启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%88%9B%E5%BB%BA"><span class="nav-number">10.3.2.</span> <span class="nav-text">进程创建</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%8F%AF%E9%9D%A0%E7%9A%84%E4%BF%A1%E5%8F%B7"><span class="nav-number">10.4.</span> <span class="nav-text">不可靠的信号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">10.5.</span> <span class="nav-text">中断的系统调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E9%87%8D%E5%85%A5%E5%87%BD%E6%95%B0"><span class="nav-number">10.6.</span> <span class="nav-text">可重入函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SIGCLD%E8%AF%AD%E4%B9%89"><span class="nav-number">10.7.</span> <span class="nav-text">SIGCLD语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E9%9D%A0%E4%BF%A1%E5%8F%B7%E6%9C%AF%E8%AF%AD%E5%92%8C%E8%AF%AD%E4%B9%89"><span class="nav-number">10.8.</span> <span class="nav-text">可靠信号术语和语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0kill%E5%92%8Craise"><span class="nav-number">10.9.</span> <span class="nav-text">函数kill和raise</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0alarm%E5%92%8Cpause"><span class="nav-number">10.10.</span> <span class="nav-text">函数alarm和pause</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%9B%86"><span class="nav-number">10.11.</span> <span class="nav-text">信号集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0sigprocmask"><span class="nav-number">10.12.</span> <span class="nav-text">函数sigprocmask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0sigpending"><span class="nav-number">10.13.</span> <span class="nav-text">函数sigpending</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0sigaction"><span class="nav-number">10.14.</span> <span class="nav-text">函数sigaction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0sigsetjmp%E5%92%8Csig1ongjmp"><span class="nav-number">10.15.</span> <span class="nav-text">函数sigsetjmp和sig1ongjmp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0sigsuspend"><span class="nav-number">10.16.</span> <span class="nav-text">函数sigsuspend</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0abort"><span class="nav-number">10.17.</span> <span class="nav-text">函数abort</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0system-1"><span class="nav-number">10.18.</span> <span class="nav-text">函数system</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#system%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">10.18.1.</span> <span class="nav-text">system的返回值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0sleep%E3%80%81nanosleep%E5%92%8Cclock-nanosleep"><span class="nav-number">10.19.</span> <span class="nav-text">函数sleep、nanosleep和clock_nanosleep</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0sigqueue"><span class="nav-number">10.20.</span> <span class="nav-text">函数sigqueue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%9C%E4%B8%9A%E6%8E%A7%E5%88%B6%E4%BF%A1%E5%8F%B7"><span class="nav-number">10.21.</span> <span class="nav-text">作业控制信号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E5%90%8D%E5%92%8C%E7%BC%96%E5%8F%B7"><span class="nav-number">10.22.</span> <span class="nav-text">信号名和编号</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B"><span class="nav-number">11.</span> <span class="nav-text">线程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%A6%82%E5%BF%B5"><span class="nav-number">11.1.</span> <span class="nav-text">线程概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%A0%87%E8%AF%86"><span class="nav-number">11.2.</span> <span class="nav-text">线程标识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA"><span class="nav-number">11.3.</span> <span class="nav-text">线程创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E7%BB%88%E6%AD%A2"><span class="nav-number">11.4.</span> <span class="nav-text">线程终止</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5"><span class="nav-number">11.5.</span> <span class="nav-text">线程同步</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%92%E6%96%A5%E9%87%8F"><span class="nav-number">11.5.1.</span> <span class="nav-text">互斥量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%81%BF%E5%85%8D%E6%AD%BB%E9%94%81"><span class="nav-number">11.5.2.</span> <span class="nav-text">避免死锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0pthread-mutex-timedlock"><span class="nav-number">11.5.3.</span> <span class="nav-text">函数pthread_mutex_timedlock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E9%94%81"><span class="nav-number">11.5.4.</span> <span class="nav-text">读写锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%A6%E6%9C%89%E8%B6%85%E6%97%B6%E7%9A%84%E8%AF%BB%E5%86%99%E9%94%81"><span class="nav-number">11.5.5.</span> <span class="nav-text">带有超时的读写锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F"><span class="nav-number">11.5.6.</span> <span class="nav-text">条件变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-number">11.5.7.</span> <span class="nav-text">自旋锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%8F%E9%9A%9C"><span class="nav-number">11.5.8.</span> <span class="nav-text">屏障</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6"><span class="nav-number">12.</span> <span class="nav-text">线程控制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E9%99%90%E5%88%B6"><span class="nav-number">12.1.</span> <span class="nav-text">线程限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%B1%9E%E6%80%A7"><span class="nav-number">12.2.</span> <span class="nav-text">线程属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E5%B1%9E%E6%80%A7"><span class="nav-number">12.3.</span> <span class="nav-text">同步属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%92%E6%96%A5%E9%87%8F%E5%B1%9E%E6%80%A7"><span class="nav-number">12.4.</span> <span class="nav-text">互斥量属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E9%94%81%E5%B1%9E%E6%80%A7"><span class="nav-number">12.4.1.</span> <span class="nav-text">读写锁属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F%E5%B1%9E%E6%80%A7"><span class="nav-number">12.4.2.</span> <span class="nav-text">条件变量属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%8F%E9%9A%9C%E5%B1%9E%E6%80%A7"><span class="nav-number">12.4.3.</span> <span class="nav-text">屏障属性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E5%85%A5"><span class="nav-number">12.5.</span> <span class="nav-text">重入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E7%89%B9%E5%AE%9A%E6%95%B0%E6%8D%AE"><span class="nav-number">12.6.</span> <span class="nav-text">线程特定数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%96%E6%B6%88%E9%80%89%E9%A1%B9"><span class="nav-number">12.7.</span> <span class="nav-text">取消选项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%92%8C%E4%BF%A1%E5%8F%B7"><span class="nav-number">12.8.</span> <span class="nav-text">线程和信号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%92%8Cfork"><span class="nav-number">12.9.</span> <span class="nav-text">线程和fork</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B"><span class="nav-number">13.</span> <span class="nav-text">守护进程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%89%B9%E5%BE%81"><span class="nav-number">13.1.</span> <span class="nav-text">守护进程的特征</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E7%A8%8B%E8%A7%84%E5%88%99"><span class="nav-number">13.2.</span> <span class="nav-text">编程规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BA%E9%94%99%E8%AE%B0%E5%BD%95"><span class="nav-number">13.3.</span> <span class="nav-text">出错记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E5%AE%9E%E4%BE%8B%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B"><span class="nav-number">13.4.</span> <span class="nav-text">单实例守护进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%83%AF%E4%BE%8B"><span class="nav-number">13.5.</span> <span class="nav-text">守护进程的惯例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7I-O"><span class="nav-number">14.</span> <span class="nav-text">高级I&#x2F;O</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E9%98%BB%E5%A1%9EI-O"><span class="nav-number">14.1.</span> <span class="nav-text">非阻塞I&#x2F;O</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%B0%E5%BD%95%E9%94%81"><span class="nav-number">14.2.</span> <span class="nav-text">记录锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fcntl%E8%AE%B0%E5%BD%95%E9%94%81"><span class="nav-number">14.2.1.</span> <span class="nav-text">fcntl记录锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E7%9A%84%E9%9A%90%E5%90%AB%E7%BB%A7%E6%89%BF%E5%92%8C%E9%87%8A%E6%94%BE"><span class="nav-number">14.2.2.</span> <span class="nav-text">锁的隐含继承和释放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FreeBSD%E5%AE%9E%E7%8E%B0"><span class="nav-number">14.2.3.</span> <span class="nav-text">FreeBSD实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E6%96%87%E4%BB%B6%E5%B0%BE%E7%AB%AF%E5%8A%A0%E9%94%81"><span class="nav-number">14.2.4.</span> <span class="nav-text">在文件尾端加锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E8%AE%AE%E6%80%A7%E9%94%81%E5%92%8C%E5%BC%BA%E5%88%B6%E6%80%A7%E9%94%81"><span class="nav-number">14.2.5.</span> <span class="nav-text">建议性锁和强制性锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-O%E5%A4%9A%E8%B7%AF%E8%BD%AC%E6%8E%A5"><span class="nav-number">14.3.</span> <span class="nav-text">I&#x2F;O多路转接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0select%E5%92%8Cpselect"><span class="nav-number">14.3.1.</span> <span class="nav-text">函数select和pselect</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0poll"><span class="nav-number">14.3.2.</span> <span class="nav-text">函数poll</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5I-O"><span class="nav-number">14.4.</span> <span class="nav-text">异步I&#x2F;O</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#System-V%E5%BC%82%E6%AD%A5I-O"><span class="nav-number">14.4.1.</span> <span class="nav-text">System V异步I&#x2F;O</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BSD%E5%BC%82%E6%AD%A5I-O"><span class="nav-number">14.4.2.</span> <span class="nav-text">BSD异步I&#x2F;O</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#POSIX%E5%BC%82%E6%AD%A5I-O"><span class="nav-number">14.4.3.</span> <span class="nav-text">POSIX异步I&#x2F;O</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0readv%E5%92%8Cwritev"><span class="nav-number">14.5.</span> <span class="nav-text">函数readv和writev</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0readn%E5%92%8Cwriten"><span class="nav-number">14.6.</span> <span class="nav-text">函数readn和writen</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E6%98%A0%E5%B0%84I-O"><span class="nav-number">14.7.</span> <span class="nav-text">存储映射I&#x2F;O</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-number">15.</span> <span class="nav-text">进程间通信</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80-3"><span class="nav-number">15.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%A1%E9%81%93"><span class="nav-number">15.2.</span> <span class="nav-text">管道</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0popen%E5%92%8Cpclose"><span class="nav-number">15.3.</span> <span class="nav-text">函数popen和pclose</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E5%90%8C%E8%BF%9B%E7%A8%8B"><span class="nav-number">15.4.</span> <span class="nav-text">协同进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FIFO"><span class="nav-number">15.5.</span> <span class="nav-text">FIFO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XSI-IPC"><span class="nav-number">15.6.</span> <span class="nav-text">XSI IPC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E8%AF%86%E7%AC%A6%E5%92%8C%E9%94%AE"><span class="nav-number">15.6.1.</span> <span class="nav-text">标识符和键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%BB%93%E6%9E%84"><span class="nav-number">15.6.2.</span> <span class="nav-text">权限结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E9%99%90%E5%88%B6"><span class="nav-number">15.6.3.</span> <span class="nav-text">结构限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9%E5%92%8C%E7%BC%BA%E7%82%B9"><span class="nav-number">15.6.4.</span> <span class="nav-text">优点和缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="nav-number">15.7.</span> <span class="nav-text">消息队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">15.8.</span> <span class="nav-text">信号量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#exit%E6%97%B6%E7%9A%84%E4%BF%A1%E5%8F%B7%E9%87%8F%E8%B0%83%E6%95%B4"><span class="nav-number">15.8.1.</span> <span class="nav-text">exit时的信号量调整</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%AD%98%E5%82%A8"><span class="nav-number">15.9.</span> <span class="nav-text">共享存储</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#POSIX%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">15.10.</span> <span class="nav-text">POSIX信号量</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BD%91%E7%BB%9CIPC%EF%BC%9A%E5%A5%97%E6%8E%A5%E5%AD%97"><span class="nav-number">16.</span> <span class="nav-text">网络IPC：套接字</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80-4"><span class="nav-number">16.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A5%97%E6%8E%A5%E5%AD%97%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">16.2.</span> <span class="nav-text">套接字描述符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BB%E5%9D%80"><span class="nav-number">16.3.</span> <span class="nav-text">寻址</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%87%E8%8A%82%E5%BA%8F"><span class="nav-number">16.3.1.</span> <span class="nav-text">宇节序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%B0%E5%9D%80%E6%A0%BC%E5%BC%8F"><span class="nav-number">16.3.2.</span> <span class="nav-text">地址格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%B0%E5%9D%80%E6%9F%A5%E8%AF%A2"><span class="nav-number">16.3.3.</span> <span class="nav-text">地址查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86%E5%A5%97%E6%8E%A5%E5%AD%97%E4%B8%8E%E5%9C%B0%E5%9D%80%E5%85%B3%E8%81%94"><span class="nav-number">16.3.4.</span> <span class="nav-text">将套接字与地址关联</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E8%BF%9E%E6%8E%A5"><span class="nav-number">16.4.</span> <span class="nav-text">建立连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="nav-number">16.5.</span> <span class="nav-text">数据传输</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A5%97%E6%8E%A5%E5%AD%97%E9%80%89%E9%A1%B9"><span class="nav-number">16.6.</span> <span class="nav-text">套接字选项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%A6%E5%A4%96%E6%95%B0%E6%8D%AE"><span class="nav-number">16.7.</span> <span class="nav-text">带外数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E9%98%BB%E5%A1%9E%E5%92%8C%E5%BC%82%E6%AD%A5I-O"><span class="nav-number">16.8.</span> <span class="nav-text">非阻塞和异步I&#x2F;O</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-number">17.</span> <span class="nav-text">高级进程间通信</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#UNIX%E5%9F%9F%E5%A5%97%E6%8E%A5%E5%AD%97"><span class="nav-number">17.1.</span> <span class="nav-text">UNIX域套接字</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E5%90%8DUNIX%E5%9F%9F%E5%A5%97%E6%8E%A5%E5%AD%97"><span class="nav-number">17.1.1.</span> <span class="nav-text">命名UNIX域套接字</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%94%AF%E4%B8%80%E8%BF%9E%E6%8E%A5"><span class="nav-number">17.2.</span> <span class="nav-text">唯一连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E9%80%81%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">17.3.</span> <span class="nav-text">传送文件描述符</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-UNIX高级编程 笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/13/UNIX%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%20%E7%AC%94%E8%AE%B0/" class="article-date">
-  <time class="dt-published" datetime="2021-05-13T13:00:00.000Z" itemprop="datePublished">2021-05-13</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      UNIX高级编程 笔记
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/13/UNIX%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%20%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="UNIX高级编程 笔记 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UNIX高级编程 笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-05-13 21:00:00" itemprop="dateCreated datePublished" datetime="2021-05-13T21:00:00+08:00">2021-05-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-12-26 18:14:38" itemprop="dateModified" datetime="2022-12-26T18:14:38+08:00">2022-12-26</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="UNIX基础知识"><a href="#UNIX基础知识" class="headerlink" title="UNIX基础知识"></a>UNIX基础知识</h1><h2 id="UNIX体系结构"><a href="#UNIX体系结构" class="headerlink" title="UNIX体系结构"></a>UNIX体系结构</h2><p>从严格意义上说，可将操作系统定义为一种软件，它控制计算机硬件资源，提供程序运行环境。我们通常将这种软件称为内核(kermel)，因为它相对较小，而且位于环境的核心。</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="UNIX基础知识"><a href="#UNIX基础知识" class="headerlink" title="UNIX基础知识"></a>UNIX基础知识</h1><h2 id="UNIX体系结构"><a href="#UNIX体系结构" class="headerlink" title="UNIX体系结构"></a>UNIX体系结构</h2><p>从严格意义上说，可将操作系统定义为一种软件，它控制计算机硬件资源，提供程序运行环境。我们通常将这种软件称为内核(kermel)，因为它相对较小，而且位于环境的核心。</p>
 <p>内核的接口被称为系统调用(systemcall)。公用函数库构建在系统调用接口之上，应用程序既可使用公用函数库，也可使用系统调用。</p>
 <h2 id="文件和目录"><a href="#文件和目录" class="headerlink" title="文件和目录"></a>文件和目录</h2><h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><p>UNIX文件系统是目录和文件的一种层次结构，所有东西的起点是称为根(root)的目录，这个目录的名称是一个字符“&#x2F;“。</p>
 <p>目录(directory)是一个包含目录项的文件。在逻辑上，可以认为每个目录项都包含一个文件名，同时还包含说明该文件属性的信息。文件属性是指文件类型(是普通文件还是目录等)、文件大小、文件所有者、文件权限(其他用户能否访问该文件)以及文件最后的修改时间等。<code>stat</code>和<code>fstat</code>函数返回包含所有文件属性的一个信息结构。</p>
@@ -5513,150 +5633,75 @@
 
 
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/13/UNIX%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%20%E7%AC%94%E8%AE%B0/" data-id="cuidoCg6HWx3Btq1IUaZq2gHL" data-title="UNIX高级编程 笔记" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/04/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84_%E9%87%8F%E5%8C%96%E7%A0%94%E7%A9%B6%E6%96%B9%E6%B3%95%20%E7%AC%94%E8%AE%B03/" rel="prev" title="计算机体系结构 量化研究方法 笔记3">
+                  <i class="fa fa-angle-left"></i> 计算机体系结构 量化研究方法 笔记3
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/06/19/%E5%8C%97%E4%BA%AC%E5%9C%B0%E9%93%81%E8%A7%84%E5%88%92/" rel="next" title="北京地铁2025年规划">
+                  北京地铁2025年规划 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2021/06/19/%E5%8C%97%E4%BA%AC%E5%9C%B0%E9%93%81%E8%A7%84%E5%88%92/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          北京地铁2025年规划
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2021/04/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84_%E9%87%8F%E5%8C%96%E7%A0%94%E7%A9%B6%E6%96%B9%E6%B3%95%20%E7%AC%94%E8%AE%B03/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">计算机体系结构 量化研究方法 笔记3</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

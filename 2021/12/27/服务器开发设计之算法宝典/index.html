@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>服务器开发设计之算法宝典 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="调度算法在服务器逻辑开发设计中，调度算法随处可见，资源的调度，请求的分配，负载均衡的策略等等都与调度算法相关。调度算法没有好坏之分，最适合业务场景的才是最好的。 轮询轮询是非常简单且常用的一种调度算法，轮询即将请求依次分配到各个服务节点，从第一个节点开始，依次将请求分配到最后一个节点，而后重新开始下一轮循环。最终所有的请求会均摊分配在每个节点上，假设每个请求的消耗是一样的，那么轮询调度是最平衡的调">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="调度算法在服务器逻辑开发设计中，调度算法随处可见，资源的调度，请求的分配，负载均衡的策略等等都与调度算法相关。调度算法没有好坏之分，最适合业务场景的才是最好的。 轮询轮询是非常简单且常用的一种调度算法，轮询即将请求依次分配到各个服务节点，从第一个节点开始，依次将请求分配到最后一个节点，而后重新开始下一轮循环。最终所有的请求会均摊分配在每个节点上，假设每个请求的消耗是一样的，那么轮询调度是最平衡的调">
 <meta property="og:type" content="article">
 <meta property="og:title" content="服务器开发设计之算法宝典">
 <meta property="og:url" content="http://example.com/2021/12/27/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%AE%97%E6%B3%95%E5%AE%9D%E5%85%B8/index.html">
@@ -58,85 +72,191 @@
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/img/20211227194118.jpg">
+
+
+<link rel="canonical" href="http://example.com/2021/12/27/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%AE%97%E6%B3%95%E5%AE%9D%E5%85%B8/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2021/12/27/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%AE%97%E6%B3%95%E5%AE%9D%E5%85%B8/","path":"2021/12/27/服务器开发设计之算法宝典/","title":"服务器开发设计之算法宝典"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>服务器开发设计之算法宝典 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">调度算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AE%E8%AF%A2"><span class="nav-number">1.1.</span> <span class="nav-text">轮询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E6%9D%83%E8%BD%AE%E8%AF%A2"><span class="nav-number">1.2.</span> <span class="nav-text">加权轮询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B3%E6%BB%91%E6%9D%83%E9%87%8D%E8%BD%AE%E8%AF%A2"><span class="nav-number">1.3.</span> <span class="nav-text">平滑权重轮询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA"><span class="nav-number">1.4.</span> <span class="nav-text">随机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E6%9D%83%E9%9A%8F%E6%9C%BA"><span class="nav-number">1.5.</span> <span class="nav-text">加权随机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E8%B4%9F%E8%BD%BD"><span class="nav-number">1.6.</span> <span class="nav-text">最小负载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E6%AC%A1%E9%9A%8F%E6%9C%BA%E9%80%89%E6%8B%A9%E7%AD%96%E7%95%A5"><span class="nav-number">1.7.</span> <span class="nav-text">两次随机选择策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E5%93%88%E5%B8%8C"><span class="nav-number">1.8.</span> <span class="nav-text">一致性哈希</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%92%E6%AE%B5"><span class="nav-number">1.8.1.</span> <span class="nav-text">划段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%B2%E7%8E%AF%E6%B3%95"><span class="nav-number">1.8.2.</span> <span class="nav-text">割环法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E6%AC%A1%E5%8F%96%E6%A8%A1"><span class="nav-number">1.8.3.</span> <span class="nav-text">二次取模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E9%AB%98%E9%9A%8F%E6%9C%BA%E6%9D%83%E9%87%8D"><span class="nav-number">1.8.4.</span> <span class="nav-text">最高随机权重</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Jump-consistent-hash"><span class="nav-number">1.8.5.</span> <span class="nav-text">Jump consistent hash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.8.6.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%8D%E6%94%BE%E5%9B%9E%E9%9A%8F%E6%9C%BA%E6%8A%BD%E6%A0%B7%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">不放回随机抽样算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Knuth-%E6%B4%97%E7%89%8C%E6%8A%BD%E6%A0%B7"><span class="nav-number">2.1.</span> <span class="nav-text">Knuth 洗牌抽样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%A0%E4%BD%8D%E6%B4%97%E7%89%8C%E9%9A%8F%E6%9C%BA%E6%8A%BD%E6%A0%B7"><span class="nav-number">2.2.</span> <span class="nav-text">占位洗牌随机抽样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E6%8A%BD%E6%A0%B7%E6%8A%80%E6%9C%AF%E6%8A%BD%E6%A0%B7"><span class="nav-number">2.3.</span> <span class="nav-text">选择抽样技术抽样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%93%84%E6%B0%B4%E6%B1%A0%E6%8A%BD%E6%A0%B7"><span class="nav-number">2.4.</span> <span class="nav-text">蓄水池抽样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E5%88%86%E5%80%BC%E6%8E%92%E5%BA%8F%E6%8A%BD%E6%A0%B7"><span class="nav-number">2.5.</span> <span class="nav-text">随机分值排序抽样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%B4%E7%B4%A0%E7%9A%84%E5%B8%A6%E6%9D%83%E9%87%8D%E6%8A%BD%E6%A0%B7"><span class="nav-number">2.6.</span> <span class="nav-text">朴素的带权重抽样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%A6%E6%9D%83%E9%87%8D%E7%9A%84-A-Res-%E7%AE%97%E6%B3%95%E8%93%84%E6%B0%B4%E6%B1%A0%E6%8A%BD%E6%A0%B7"><span class="nav-number">2.7.</span> <span class="nav-text">带权重的 A-Res 算法蓄水池抽样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%A6%E6%9D%83%E9%87%8D%E7%9A%84-A-ExpJ-%E7%AE%97%E6%B3%95%E8%93%84%E6%B0%B4%E6%B1%A0%E6%8A%BD%E6%A0%B7"><span class="nav-number">2.8.</span> <span class="nav-text">带权重的 A-ExpJ 算法蓄水池抽样</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">排序算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E6%8E%92%E5%BA%8F"><span class="nav-number">3.1.</span> <span class="nav-text">基础排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F"><span class="nav-number">3.1.1.</span> <span class="nav-text">冒泡排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F"><span class="nav-number">3.1.2.</span> <span class="nav-text">插入排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F"><span class="nav-number">3.1.3.</span> <span class="nav-text">选择排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F"><span class="nav-number">3.1.4.</span> <span class="nav-text">快速排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F"><span class="nav-number">3.1.5.</span> <span class="nav-text">归并排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A0%86%E6%8E%92%E5%BA%8F"><span class="nav-number">3.1.6.</span> <span class="nav-text">堆排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%8C%E5%B0%94%E6%8E%92%E5%BA%8F"><span class="nav-number">3.1.7.</span> <span class="nav-text">希尔排序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E9%85%8D%E6%8E%92%E5%BA%8F"><span class="nav-number">3.2.</span> <span class="nav-text">分配排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E6%95%B0%E6%8E%92%E5%BA%8F"><span class="nav-number">3.2.1.</span> <span class="nav-text">计数排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%B6%E6%8E%92%E5%BA%8F"><span class="nav-number">3.2.2.</span> <span class="nav-text">桶排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F"><span class="nav-number">3.2.3.</span> <span class="nav-text">基数排序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%B3%E8%B7%83%E8%A1%A8%E6%8E%92%E5%BA%8F"><span class="nav-number">3.3.</span> <span class="nav-text">跳跃表排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%99%BE%E5%88%86%E6%AF%94%E8%BF%91%E4%BC%BC%E6%8E%92%E5%BA%8F"><span class="nav-number">3.4.</span> <span class="nav-text">百分比近似排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HdrHistogram-%E7%AE%97%E6%B3%95"><span class="nav-number">3.4.1.</span> <span class="nav-text">HdrHistogram 算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CKMS-%E7%AE%97%E6%B3%95"><span class="nav-number">3.4.2.</span> <span class="nav-text">CKMS 算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TDigest-%E7%AE%97%E6%B3%95"><span class="nav-number">3.4.3.</span> <span class="nav-text">TDigest 算法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%90%E6%B5%81%E4%B8%8E%E8%BF%87%E8%BD%BD%E4%BF%9D%E6%8A%A4"><span class="nav-number">4.</span> <span class="nav-text">限流与过载保护</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">4.1.</span> <span class="nav-text">计数器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BC%8F%E6%A1%B6"><span class="nav-number">4.2.</span> <span class="nav-text">漏桶</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A4%E7%89%8C%E6%A1%B6"><span class="nav-number">4.3.</span> <span class="nav-text">令牌桶</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3"><span class="nav-number">4.4.</span> <span class="nav-text">滑动窗口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SRE-%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81"><span class="nav-number">4.5.</span> <span class="nav-text">SRE 自适应限流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%86%94%E6%96%AD"><span class="nav-number">4.6.</span> <span class="nav-text">熔断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hystrix-%E5%8D%8A%E5%BC%80%E7%86%94%E6%96%AD%E5%99%A8"><span class="nav-number">4.7.</span> <span class="nav-text">Hystrix 半开熔断器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%8E%E7%BC%96%E7%A0%81"><span class="nav-number">5.</span> <span class="nav-text">序列化与编码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E8%AF%AD%E8%A8%80"><span class="nav-number">5.1.</span> <span class="nav-text">标记语言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E6%96%87%E6%9C%AC%E6%A0%87%E8%AE%B0%E8%AF%AD%E8%A8%80%EF%BC%88HTML%EF%BC%89"><span class="nav-number">5.1.1.</span> <span class="nav-text">超文本标记语言（HTML）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E6%89%A9%E5%B1%95%E6%A0%87%E8%AE%B0%E8%AF%AD%E8%A8%80%EF%BC%88XML%EF%BC%89"><span class="nav-number">5.1.2.</span> <span class="nav-text">可扩展标记语言（XML）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON"><span class="nav-number">5.1.3.</span> <span class="nav-text">JSON</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TLV-%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">5.2.</span> <span class="nav-text">TLV 二进制序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Protocol-Buffers"><span class="nav-number">5.2.1.</span> <span class="nav-text">Protocol Buffers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TDR"><span class="nav-number">5.2.2.</span> <span class="nav-text">TDR</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Luna-%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">5.2.3.</span> <span class="nav-text">Luna 序列化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Skynet-%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">5.2.4.</span> <span class="nav-text">Skynet 序列化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%8B%E7%BC%A9%E7%BC%96%E7%A0%81"><span class="nav-number">5.3.</span> <span class="nav-text">压缩编码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%86%B5%E7%BC%96%E7%A0%81%E6%B3%95"><span class="nav-number">5.3.1.</span> <span class="nav-text">熵编码法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%B8%E7%A8%8B%E7%BC%96%E7%A0%81"><span class="nav-number">5.3.2.</span> <span class="nav-text">游程编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MTF-%E5%8F%98%E6%8D%A2"><span class="nav-number">5.3.3.</span> <span class="nav-text">MTF 变换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%97%E6%8E%92%E5%BA%8F%E5%8E%8B%E7%BC%A9"><span class="nav-number">5.3.4.</span> <span class="nav-text">块排序压缩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E5%85%B8%E7%BC%96%E7%A0%81%E6%B3%95"><span class="nav-number">5.3.5.</span> <span class="nav-text">字典编码法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%8D%E5%A4%AB%E6%9B%BC%EF%BC%88Huffman%EF%BC%89%E7%BC%96%E7%A0%81"><span class="nav-number">5.3.6.</span> <span class="nav-text">霍夫曼（Huffman）编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%8E%8B%E7%BC%A9%E7%BC%96%E7%A0%81"><span class="nav-number">5.3.7.</span> <span class="nav-text">其他压缩编码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%BC%96%E7%A0%81"><span class="nav-number">5.4.</span> <span class="nav-text">其他编码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Varint"><span class="nav-number">5.4.1.</span> <span class="nav-text">Varint</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ZigZag"><span class="nav-number">5.4.2.</span> <span class="nav-text">ZigZag</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Base-%E7%B3%BB%E5%88%97"><span class="nav-number">5.4.3.</span> <span class="nav-text">Base 系列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%99%BE%E5%88%86%E5%8F%B7%E7%BC%96%E7%A0%81"><span class="nav-number">5.4.4.</span> <span class="nav-text">百分号编码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E4%B8%8E%E6%A0%A1%E9%AA%8C"><span class="nav-number">6.</span> <span class="nav-text">加密与校验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CRC"><span class="nav-number">6.1.</span> <span class="nav-text">CRC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A5%87%E5%81%B6%E6%A0%A1%E9%AA%8C"><span class="nav-number">6.2.</span> <span class="nav-text">奇偶校验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MD-%E7%B3%BB%E5%88%97"><span class="nav-number">6.3.</span> <span class="nav-text">MD 系列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SHA-%E7%B3%BB%E5%88%97"><span class="nav-number">6.4.</span> <span class="nav-text">SHA 系列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E7%A7%B0%E5%AF%86%E9%92%A5%E7%AE%97%E6%B3%95"><span class="nav-number">6.5.</span> <span class="nav-text">对称密钥算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="nav-number">6.6.</span> <span class="nav-text">非对称加密算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E9%93%BE"><span class="nav-number">6.7.</span> <span class="nav-text">哈希链</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5"><span class="nav-number">7.</span> <span class="nav-text">缓存淘汰策略</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#FIFO"><span class="nav-number">7.1.</span> <span class="nav-text">FIFO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LRU"><span class="nav-number">7.2.</span> <span class="nav-text">LRU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LFU"><span class="nav-number">7.3.</span> <span class="nav-text">LFU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LRU-K"><span class="nav-number">7.4.</span> <span class="nav-text">LRU-K</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Two-queues"><span class="nav-number">7.5.</span> <span class="nav-text">Two queues</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LIRS"><span class="nav-number">7.6.</span> <span class="nav-text">LIRS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-InnoDB-LRU"><span class="nav-number">7.7.</span> <span class="nav-text">MySQL InnoDB LRU</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%95%B0%E9%9B%86%E4%B8%8E%E5%9F%BA%E6%95%B0%E7%BB%9F%E8%AE%A1"><span class="nav-number">8.</span> <span class="nav-text">基数集与基数统计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E8%A1%A8"><span class="nav-number">8.1.</span> <span class="nav-text">哈希表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%8D%E5%9B%BE%EF%BC%88Bitmap%EF%BC%89"><span class="nav-number">8.2.</span> <span class="nav-text">位图（Bitmap）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="nav-number">8.3.</span> <span class="nav-text">布隆过滤器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%83%E8%B0%B7%E9%B8%9F%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="nav-number">8.4.</span> <span class="nav-text">布谷鸟过滤器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HyperLogLog"><span class="nav-number">8.5.</span> <span class="nav-text">HyperLogLog</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%B8%B8%E7%94%A8%E7%AE%97%E6%B3%95"><span class="nav-number">9.</span> <span class="nav-text">其他常用算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E8%BD%AE%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">9.1.</span> <span class="nav-text">时间轮定时器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%A2%E5%8C%85%E5%88%86%E9%85%8D"><span class="nav-number">9.2.</span> <span class="nav-text">红包分配</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-服务器开发设计之算法宝典" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/12/27/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%AE%97%E6%B3%95%E5%AE%9D%E5%85%B8/" class="article-date">
-  <time class="dt-published" datetime="2021-12-27T11:35:00.000Z" itemprop="datePublished">2021-12-27</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      服务器开发设计之算法宝典
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/27/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%AE%97%E6%B3%95%E5%AE%9D%E5%85%B8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="服务器开发设计之算法宝典 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          服务器开发设计之算法宝典
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-12-27 19:35:00" itemprop="dateCreated datePublished" datetime="2021-12-27T19:35:00+08:00">2021-12-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-12-28 15:31:32" itemprop="dateModified" datetime="2021-12-28T15:31:32+08:00">2021-12-28</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="调度算法"><a href="#调度算法" class="headerlink" title="调度算法"></a>调度算法</h1><p>在服务器逻辑开发设计中，调度算法随处可见，资源的调度，请求的分配，负载均衡的策略等等都与调度算法相关。调度算法没有好坏之分，最适合业务场景的才是最好的。</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="调度算法"><a href="#调度算法" class="headerlink" title="调度算法"></a>调度算法</h1><p>在服务器逻辑开发设计中，调度算法随处可见，资源的调度，请求的分配，负载均衡的策略等等都与调度算法相关。调度算法没有好坏之分，最适合业务场景的才是最好的。</p>
 <h2 id="轮询"><a href="#轮询" class="headerlink" title="轮询"></a>轮询</h2><p>轮询是非常简单且常用的一种调度算法，轮询即将请求依次分配到各个服务节点，从第一个节点开始，依次将请求分配到最后一个节点，而后重新开始下一轮循环。最终所有的请求会均摊分配在每个节点上，假设每个请求的消耗是一样的，那么轮询调度是最平衡的调度（负载均衡）算法。</p>
 <h2 id="加权轮询"><a href="#加权轮询" class="headerlink" title="加权轮询"></a>加权轮询</h2><p>有些时候服务节点的性能配置各不相同，处理能力不一样，针对这种的情况，可以根据节点处理能力的强弱配置不同的的权重值，采用加权轮询的方式进行调度。</p>
 <p>加权轮询可以描述为：</p>
@@ -729,150 +849,75 @@
 <p>这个算法的公平性在于每个领红包的人能领取到的金额是从 0 到剩余平均金额的 2 倍之间的随机值，所以期望就是剩余平均金额，假设 100 元发给 5 个人，那么第一个人领取到的期望是 20 元，第 2 个人领取到的期望是（100-20）&#x2F; 4 &#x3D; 20 元，通过归纳法可以证明每个人领取到的期望都是 20 元。但是由于每个人领取到的金额随机范围是不一样的，如第一个人能领取到的范围是 0 到 40 元，而最后一个人能领取到的范围是 0 到 100 元，因此方差跟领取的顺序是有关系。这也告诉我们抢微信红包想稳的人可以先抢，想博的人可以后抢。</p>
 <p>这种分配算法的好处是无状态化，不需要在创建红包时预先分配并存储金额列表，在某些场景可能会对性能带来好处。</p>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/27/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%AE%97%E6%B3%95%E5%AE%9D%E5%85%B8/" data-id="cuidduajjQa7ZyXrAAkEQZLwM" data-title="服务器开发设计之算法宝典" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/12/26/cpp%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/" rel="prev" title="C++优化手册 Agner Fog">
+                  <i class="fa fa-angle-left"></i> C++优化手册 Agner Fog
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/12/28/Introduction%20to%20HPC%E2%80%94%E2%80%94%E5%BA%94%E7%94%A8/" rel="next" title="Introduction to HPC——应用">
+                  Introduction to HPC——应用 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2021/12/28/Introduction%20to%20HPC%E2%80%94%E2%80%94%E5%BA%94%E7%94%A8/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Introduction to HPC——应用
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2021/12/26/cpp%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">C++优化手册 Agner Fog</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>

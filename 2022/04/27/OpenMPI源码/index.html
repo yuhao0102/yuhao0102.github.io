@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>OpenMPI源码 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="OpenMPI结构Open MPI 联合了四种MPI的不同实现：  LAM&#x2F;MPI, LA&#x2F;MPI (Los Alamos MPI) FT-MPI (Fault-Tolerant MPI) PACX-MPI  ArchitectureOpen MPI使用C语言编写，是一个非常庞大、复杂的代码库。2003的MPI 标准——MPI-2.0，定义了超过300个API接口。 之前的4个">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="OpenMPI结构Open MPI 联合了四种MPI的不同实现：  LAM&#x2F;MPI, LA&#x2F;MPI (Los Alamos MPI) FT-MPI (Fault-Tolerant MPI) PACX-MPI  ArchitectureOpen MPI使用C语言编写，是一个非常庞大、复杂的代码库。2003的MPI 标准——MPI-2.0，定义了超过300个API接口。 之前的4个">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OpenMPI源码">
 <meta property="og:url" content="http://example.com/2022/04/27/OpenMPI%E6%BA%90%E7%A0%81/index.html">
@@ -21,85 +35,191 @@
 <meta property="article:tag" content="积累">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/img/ea15ad9d6b754529839246ccd79d44a3.awebp">
+
+
+<link rel="canonical" href="http://example.com/2022/04/27/OpenMPI%E6%BA%90%E7%A0%81/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/04/27/OpenMPI%E6%BA%90%E7%A0%81/","path":"2022/04/27/OpenMPI源码/","title":"OpenMPI源码"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>OpenMPI源码 | Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
 
   
+
+
+
+
+
+
   
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OpenMPI%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">OpenMPI结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Architecture"><span class="nav-number">1.1.</span> <span class="nav-text">Architecture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstraction-Layer-Architecture"><span class="nav-number">1.2.</span> <span class="nav-text">Abstraction Layer Architecture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Plugin-Architecture"><span class="nav-number">1.3.</span> <span class="nav-text">Plugin Architecture</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PML"><span class="nav-number">2.</span> <span class="nav-text">PML</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MTL"><span class="nav-number">3.</span> <span class="nav-text">MTL</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#OSC"><span class="nav-number">4.</span> <span class="nav-text">OSC</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MPI-Init"><span class="nav-number">5.</span> <span class="nav-text">MPI_Init</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MPI-Comm-rank"><span class="nav-number">6.</span> <span class="nav-text">MPI_Comm_rank</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MPI-Abort"><span class="nav-number">7.</span> <span class="nav-text">MPI_Abort</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MPI-Barrier"><span class="nav-number">8.</span> <span class="nav-text">MPI_Barrier</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MPI-Bcast"><span class="nav-number">9.</span> <span class="nav-text">MPI_Bcast</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MPI-Send"><span class="nav-number">10.</span> <span class="nav-text">MPI_Send</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP"><span class="nav-number">11.</span> <span class="nav-text">TCP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RDMA"><span class="nav-number">12.</span> <span class="nav-text">RDMA</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UCX"><span class="nav-number">13.</span> <span class="nav-text">UCX</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#convertor"><span class="nav-number">14.</span> <span class="nav-text">convertor</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MPI-Recv"><span class="nav-number">15.</span> <span class="nav-text">MPI_Recv</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MPI-Allgather"><span class="nav-number">16.</span> <span class="nav-text">MPI_Allgather</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MPI-Gather"><span class="nav-number">17.</span> <span class="nav-text">MPI_Gather</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Request%E7%BB%93%E6%9E%84"><span class="nav-number">18.</span> <span class="nav-text">Request结构</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
       </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-OpenMPI源码" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/04/27/OpenMPI%E6%BA%90%E7%A0%81/" class="article-date">
-  <time class="dt-published" datetime="2022-04-27T03:23:00.000Z" itemprop="datePublished">2022-04-27</time>
-</a>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      OpenMPI源码
-    </h1>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/04/27/OpenMPI%E6%BA%90%E7%A0%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="OpenMPI源码 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OpenMPI源码
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-04-27 11:23:00" itemprop="dateCreated datePublished" datetime="2022-04-27T11:23:00+08:00">2022-04-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-05-28 10:30:34" itemprop="dateModified" datetime="2022-05-28T10:30:34+08:00">2022-05-28</time>
+    </span>
+
+  
+</div>
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="OpenMPI结构"><a href="#OpenMPI结构" class="headerlink" title="OpenMPI结构"></a>OpenMPI结构</h1><p>Open MPI 联合了四种MPI的不同实现：</p>
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="OpenMPI结构"><a href="#OpenMPI结构" class="headerlink" title="OpenMPI结构"></a>OpenMPI结构</h1><p>Open MPI 联合了四种MPI的不同实现：</p>
 <ul>
 <li>LAM&#x2F;MPI,</li>
 <li>LA&#x2F;MPI (Los Alamos MPI)</li>
@@ -402,150 +522,75 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span></span></span><br><span class="line"><span class="function"><span class="title">mca_coll_basic_gather_inter</span><span class="params">(<span class="type">const</span> <span class="type">void</span> *sbuf, <span class="type">int</span> scount,</span></span></span><br><span class="line"><span class="params"><span class="function">                            <span class="keyword">struct</span> <span class="type">ompi_datatype_t</span> *sdtype,</span></span></span><br><span class="line"><span class="params"><span class="function">                            <span class="type">void</span> *rbuf, <span class="type">int</span> rcount,</span></span></span><br><span class="line"><span class="params"><span class="function">                            <span class="keyword">struct</span> <span class="type">ompi_datatype_t</span> *rdtype,</span></span></span><br><span class="line"><span class="params"><span class="function">                            <span class="type">int</span> root, <span class="keyword">struct</span> <span class="type">ompi_communicator_t</span> *comm,</span></span></span><br><span class="line"><span class="params"><span class="function">                            <span class="type">mca_coll_base_module_t</span> *<span class="keyword">module</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line">    <span class="type">int</span> err;</span><br><span class="line">    <span class="type">int</span> size;</span><br><span class="line">    <span class="type">char</span> *ptmp;</span><br><span class="line">    MPI_Aint incr;</span><br><span class="line">    MPI_Aint extent;</span><br><span class="line">    MPI_Aint lb;</span><br><span class="line"></span><br><span class="line">    size = <span class="built_in">ompi_comm_remote_size</span>(comm);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (MPI_PROC_NULL == root) &#123;</span><br><span class="line">        <span class="comment">/* do nothing */</span></span><br><span class="line">        err = OMPI_SUCCESS;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (MPI_ROOT != root) &#123;</span><br><span class="line">        <span class="comment">/* Everyone but root sends data and returns. */</span></span><br><span class="line">        err = <span class="built_in">MCA_PML_CALL</span>(<span class="built_in">send</span>(sbuf, scount, sdtype, root,</span><br><span class="line">                                MCA_COLL_BASE_TAG_GATHER,</span><br><span class="line">                                MCA_PML_BASE_SEND_STANDARD, comm));</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">/* I am the root, loop receiving the data. */</span></span><br><span class="line">        err = <span class="built_in">ompi_datatype_get_extent</span>(rdtype, &amp;lb, &amp;extent);</span><br><span class="line">        <span class="keyword">if</span> (OMPI_SUCCESS != err) &#123;</span><br><span class="line">            <span class="keyword">return</span> OMPI_ERROR;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        incr = extent * rcount;</span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>, ptmp = (<span class="type">char</span> *) rbuf; i &lt; size; ++i, ptmp += incr) &#123;</span><br><span class="line">            err = <span class="built_in">MCA_PML_CALL</span>(<span class="built_in">recv</span>(ptmp, rcount, rdtype, i,</span><br><span class="line">                                    MCA_COLL_BASE_TAG_GATHER,</span><br><span class="line">                                    comm, MPI_STATUS_IGNORE));</span><br><span class="line">            <span class="keyword">if</span> (MPI_SUCCESS != err) &#123;</span><br><span class="line">                <span class="keyword">return</span> err;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> err;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h1 id="Request结构"><a href="#Request结构" class="headerlink" title="Request结构"></a>Request结构</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Main top-level request struct definition</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">ompi_request_t</span> &#123;</span><br><span class="line">    <span class="type">opal_free_list_item_t</span> super;                <span class="comment">/**&lt; Base type */</span></span><br><span class="line">    <span class="type">ompi_request_type_t</span> req_type;               <span class="comment">/**&lt; Enum indicating the type of the request */</span></span><br><span class="line">    <span class="type">ompi_status_public_t</span> req_status;            <span class="comment">/**&lt; Completion status */</span></span><br><span class="line">    <span class="keyword">volatile</span> <span class="type">void</span> *req_complete;                <span class="comment">/**&lt; Flag indicating wether request has completed */</span></span><br><span class="line">    <span class="keyword">volatile</span> <span class="type">ompi_request_state_t</span> req_state;    <span class="comment">/**&lt; enum indicate state of the request */</span></span><br><span class="line">    <span class="type">bool</span> req_persistent;                        <span class="comment">/**&lt; flag indicating if the this is a persistent request */</span></span><br><span class="line">    <span class="type">int</span> req_f_to_c_index;                       <span class="comment">/**&lt; Index in Fortran &lt;-&gt; C translation array */</span></span><br><span class="line">    <span class="type">ompi_request_start_fn_t</span> req_start;          <span class="comment">/**&lt; Called by MPI_START and MPI_STARTALL */</span></span><br><span class="line">    <span class="type">ompi_request_free_fn_t</span> req_free;            <span class="comment">/**&lt; Called by free */</span></span><br><span class="line">    <span class="type">ompi_request_cancel_fn_t</span> req_cancel;        <span class="comment">/**&lt; Optional function to cancel the request */</span></span><br><span class="line">    <span class="type">ompi_request_complete_fn_t</span> req_complete_cb; <span class="comment">/**&lt; Called when the request is MPI completed */</span></span><br><span class="line">    <span class="type">void</span> *req_complete_cb_data;</span><br><span class="line">    <span class="type">ompi_mpi_object_t</span> req_mpi_object;           <span class="comment">/**&lt; Pointer to MPI object that created this request */</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">ompi_predefined_request_t</span> &#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">ompi_request_t</span> request;</span><br><span class="line">    <span class="type">char</span> padding[PREDEFINED_REQUEST_PAD - <span class="built_in">sizeof</span>(<span class="type">ompi_request_t</span>)];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">ompi_predefined_request_t</span> <span class="type">ompi_predefined_request_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 初始化一个请求。 这是一个避免函数调用开销的宏，因为它通常在关键性能路径中调用（因为请求可能被重用，我们可能必须多次初始化请求）。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OMPI_REQUEST_INIT(request, persistent)                  \</span></span><br><span class="line"><span class="meta">    do &#123;                                                        \</span></span><br><span class="line"><span class="meta">        (request)-&gt;req_complete =                               \</span></span><br><span class="line"><span class="meta">            (persistent) ? REQUEST_COMPLETED : REQUEST_PENDING; \</span></span><br><span class="line"><span class="meta">        (request)-&gt;req_state = OMPI_REQUEST_INACTIVE;           \</span></span><br><span class="line"><span class="meta">        (request)-&gt;req_persistent = (persistent);               \</span></span><br><span class="line"><span class="meta">        (request)-&gt;req_complete_cb  = NULL;                     \</span></span><br><span class="line"><span class="meta">        (request)-&gt;req_complete_cb_data = NULL;                 \</span></span><br><span class="line"><span class="meta">    &#125; while (0);</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> REQUEST_COMPLETE(req)        (REQUEST_COMPLETED == (req)-&gt;req_complete)</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 完成请求。 这是一个避免函数调用开销的宏，因为它通常在关键性能路径中调用（因为请求可能被重用，我们可能不得不多次完成一个请求）。</span></span><br><span class="line"><span class="comment"> * 当最终确定一个请求时，如果之前对该请求调用了 MPI_Request_f2c()，则该请求已添加到 f2c 表中，我们需要将其删除</span></span><br><span class="line"><span class="comment"> * 该函数只能从 MPI 层调用。 永远不要从 PML 调用它。</span></span><br><span class="line"><span class="comment"> * 它负责上层清理工作。 当用户调用 MPI_Request_free 时，我们应该释放所有 MPI 级别的资源，所以我们也必须调用这个函数。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OMPI_REQUEST_FINI(request)                                      \</span></span><br><span class="line"><span class="meta">do &#123;                                                                    \</span></span><br><span class="line"><span class="meta">    (request)-&gt;req_state = OMPI_REQUEST_INVALID;                        \</span></span><br><span class="line"><span class="meta">    <span class="keyword">if</span> (MPI_UNDEFINED != (request)-&gt;req_f_to_c_index) &#123;                 \</span></span><br><span class="line"><span class="meta">        opal_pointer_array_set_item(&amp;ompi_request_f_to_c_table,         \</span></span><br><span class="line"><span class="meta">                                    (request)-&gt;req_f_to_c_index, NULL); \</span></span><br><span class="line"><span class="meta">        (request)-&gt;req_f_to_c_index = MPI_UNDEFINED;                    \</span></span><br><span class="line"><span class="meta">    &#125;                                                                   \</span></span><br><span class="line"><span class="meta">&#125; while (0);</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 除了在返回 MPI_ERR_IN_STATUS 的过程中，状态对象的 MPI_ERROR 字段永远不会被修改</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OMPI_COPY_STATUS(pdst, src, is_err_in_status)                   \</span></span><br><span class="line"><span class="meta">do &#123;                                                                    \</span></span><br><span class="line"><span class="meta">    <span class="keyword">if</span> (is_err_in_status) &#123;                                             \</span></span><br><span class="line"><span class="meta">        *(pdst) = (src);                                                \</span></span><br><span class="line"><span class="meta">    &#125;                                                                   \</span></span><br><span class="line"><span class="meta">    <span class="keyword">else</span> &#123;                                                              \</span></span><br><span class="line"><span class="meta">        (pdst)-&gt;MPI_TAG = (src).MPI_TAG;                                \</span></span><br><span class="line"><span class="meta">        (pdst)-&gt;MPI_SOURCE = (src).MPI_SOURCE;                          \</span></span><br><span class="line"><span class="meta">        (pdst)-&gt;_ucount = (src)._ucount;                                \</span></span><br><span class="line"><span class="meta">        (pdst)-&gt;_cancelled = (src)._cancelled;                          \</span></span><br><span class="line"><span class="meta">    &#125;                                                                   \</span></span><br><span class="line"><span class="meta">&#125; while(0);</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * request相关的函数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">ompi_request_fns_t</span> &#123;</span><br><span class="line">    <span class="type">ompi_request_test_fn_t</span>      req_test;</span><br><span class="line">    <span class="type">ompi_request_test_any_fn_t</span>  req_test_any;</span><br><span class="line">    <span class="type">ompi_request_test_all_fn_t</span>  req_test_all;</span><br><span class="line">    <span class="type">ompi_request_test_some_fn_t</span> req_test_some;</span><br><span class="line">    <span class="type">ompi_request_wait_fn_t</span>      req_wait;</span><br><span class="line">    <span class="type">ompi_request_wait_any_fn_t</span>  req_wait_any;</span><br><span class="line">    <span class="type">ompi_request_wait_all_fn_t</span>  req_wait_all;</span><br><span class="line">    <span class="type">ompi_request_wait_some_fn_t</span> req_wait_some;</span><br><span class="line">&#125; <span class="type">ompi_request_fns_t</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2022/04/27/OpenMPI%E6%BA%90%E7%A0%81/" data-id="cuidEQCVnKO2_ls8WFLzuHgDa" data-title="OpenMPI源码" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li></ul>
 
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag"># 积累</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/03/21/%E4%B8%8D%E5%90%8Ccpp%E7%89%88%E6%9C%AC%E7%9A%84%E7%BA%BF%E7%A8%8B%E6%B1%A0/" rel="prev" title="c++11&#x2F;14、c++17&#x2F;20 最简单的线程池">
+                  <i class="fa fa-angle-left"></i> c++11/14、c++17/20 最简单的线程池
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/05/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="next" title="Linux 网络编程">
+                  Linux 网络编程 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2022/05/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Linux 网络编程
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2022/03/21/%E4%B8%8D%E5%90%8Ccpp%E7%89%88%E6%9C%AC%E7%9A%84%E7%BA%BF%E7%A8%8B%E6%B1%A0/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">c++11/14、c++17/20 最简单的线程池</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/" rel="tag">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag">分布式系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8/" rel="tag">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%AF%E7%B4%AF/" rel="tag">积累</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li></ul>
-    </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/Leetcode/" style="font-size: 15.71px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 17.14px;">Linux</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style="font-size: 11.43px;">分布式系统</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 12.86px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 12.86px;">数据库</a> <a href="/tags/%E6%97%A5%E5%B8%B8/" style="font-size: 11.43px;">日常</a> <a href="/tags/%E7%A7%AF%E7%B4%AF/" style="font-size: 20px;">积累</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 14.29px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 11.43px;">网络</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/09/08/eBPF%E7%BC%96%E7%A8%8B/">eBPF编程入门</a>
-          </li>
-        
-          <li>
-            <a href="/2023/09/04/bpf%E4%B9%8B%E5%B7%85/">BPF之巅--洞悉Linux系统和应用性能</a>
-          </li>
-        
-          <li>
-            <a href="/2023/08/30/spack%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">spack简明使用手册</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E8%A7%A3%E8%AF%BBCUDA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">解读CUDA最佳实践指南</a>
-          </li>
-        
-          <li>
-            <a href="/2023/04/10/cpp%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">C++ 高性能编程实战</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
 
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
+  </footer>
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 </body>
 </html>
